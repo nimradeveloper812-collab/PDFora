@@ -14,9 +14,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'All fields are required.' });
     }
 
+    const recipientEmail = process.env.NOTIFICATION_EMAIL || process.env.CONTACT_EMAIL || 'contact@nimradev.site';
+
     const data = await resend.emails.send({
       from: 'PDFora Support <contact@nimradev.site>',
-      to: ['contact@nimradev.site'],
+      to: [recipientEmail],
       replyTo: email,
       subject: `[PDFora Support] ${topic} — from ${name}`,
       html: `
