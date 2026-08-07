@@ -435,14 +435,42 @@ export const clientPdfService = {
       console.warn('Canvas compression error:', err);
     }
 
-    // STRICT GUARANTEE: If bestSize >= originalSize, return object stream compressed version or optimized blob
+    // STRICT GUARANTEE: If bestSize >= originalSize, force aggressive canvas downsampling to ensure byte reduction
     if (!bestResult || bestSize >= originalSize) {
       try {
-        const fallbackDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
-        const fallbackBytes = await fallbackDoc.save({ useObjectStreams: true, objectsPerTick: 100 });
-        bestResult = fallbackBytes;
-      } catch {
-        bestResult = new Uint8Array(arrayBuffer);
+        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer.slice(0) });
+        const pdf = await loadingTask.promise;
+        const numPages = pdf.numPages;
+
+        const forceDoc = await PDFDocument.create();
+        for (let i = 1; i <= numPages; i++) {
+          const page = await pdf.getPage(i);
+          const viewport = page.getViewport({ scale: 0.60 });
+
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.floor(viewport.width));
+          canvas.height = Math.max(1, Math.floor(viewport.height));
+          const ctx = canvas.getContext('2d');
+
+          await page.render({ canvasContext: ctx, viewport }).promise;
+
+          const jpegBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.38));
+          const jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
+
+          const embeddedImage = await forceDoc.embedJpg(jpegBytes);
+          const originalViewport = page.getViewport({ scale: 1.0 });
+          const pdfPage = forceDoc.addPage([originalViewport.width, originalViewport.height]);
+          
+          pdfPage.drawImage(embeddedImage, {
+            x: 0,
+            y: 0,
+            width: originalViewport.width,
+            height: originalViewport.height,
+          });
+        }
+        bestResult = await forceDoc.save({ useObjectStreams: true });
+      } catch (err) {
+        console.warn('Forced compression fallback error:', err);
       }
     }
 
