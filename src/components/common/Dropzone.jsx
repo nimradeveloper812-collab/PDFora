@@ -1,0 +1,752 @@
+import React, { useState, useRef } from 'react';
+import {
+  UploadCloud, File, X, Plus, CheckCircle2, Download,
+  RotateCcw, Sparkles, ArrowRight, ShieldCheck, FileText,
+  Sliders, AlertCircle, Clock
+} from 'lucide-react';
+import { pdfApi } from '../../services/pdfApi';
+
+export default function Dropzone({ tool }) {
+  const [files, setFiles]           = useState([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [errorMsg, setErrorMsg]     = useState('');
+  const [optionValues, setOptionValues] = useState(() => {
+    const init = {};
+    tool.options?.forEach(o => { init[o.id] = o.default; });
+    return init;
+  });
+  const [status, setStatus]         = useState('idle');      // idle | processing | completed
+  const [progress, setProgress]     = useState(0);
+  const [progressText, setProgressText] = useState('');
+  const [resultBlobUrl, setResultBlobUrl] = useState(null);
+  const [resultFilename, setResultFilename] = useState('');
+  const [actualResultSize, setActualResultSize] = useState(0);
+  const fileInputRef = useRef(null);
+
+  /* ── helpers ──────────────────────────────────────────── */
+  const fmt = bytes => {
+    if (!bytes) return '0 KB';
+    const k = 1024, s = ['Bytes','KB','MB','GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / k ** i).toFixed(1)) + ' ' + s[i];
+  };
+
+  /* ── drag / drop ──────────────────────────────────────── */
+  const onDragOver  = e => { e.preventDefault(); setIsDragging(true); };
+  const onDragLeave = e => { e.preventDefault(); setIsDragging(false); };
+  const onDrop      = e => {
+    e.preventDefault(); setIsDragging(false);
+    if (e.dataTransfer.files.length) addFiles(Array.from(e.dataTransfer.files));
+  };
+
+  /* ── file validation ──────────────────────────────────── */
+  const addFiles = incoming => {
+    setErrorMsg('');
+    const valid = [];
+
+    const acceptedTokens = tool.acceptedTypes
+      ? tool.acceptedTypes.split(',').map(t => t.trim().toLowerCase())
+      : [];
+    
+    const acceptedExtensions = acceptedTokens
+      .filter(t => t.startsWith('.'))
+      .map(t => t.slice(1));
+      
+    const acceptedMimeTypes = acceptedTokens
+      .filter(t => t.includes('/'));
+
+    for (const f of incoming) {
+      if (f.size > 50 * 1024 * 1024) {
+        setErrorMsg(`"${f.name}" exceeds the 50 MB limit.`);
+        return;
+      }
+
+      const ext = f.name.includes('.') ? f.name.split('.').pop().toLowerCase() : '';
+      const mime = (f.type || '').toLowerCase();
+
+      let ok = false;
+      if (tool.acceptedTypes === '*/*') {
+        ok = true;
+      } else {
+        if (acceptedExtensions.includes(ext)) ok = true;
+        if (!ok && acceptedExtensions.includes('doc') && ['doc', 'docx'].includes(ext)) ok = true;
+        if (!ok && acceptedExtensions.includes('xls') && ['xls', 'xlsx'].includes(ext)) ok = true;
+        if (!ok && acceptedExtensions.includes('ppt') && ['ppt', 'pptx'].includes(ext)) ok = true;
+        if (!ok && acceptedExtensions.includes('jpg') && ['jpg', 'jpeg', 'png', 'webp', 'bmp'].includes(ext)) ok = true;
+
+        if (!ok && mime && acceptedMimeTypes.some(m => {
+          if (m === mime) return true;
+          if (m.endsWith('/*') && mime.startsWith(m.replace('/*', '/'))) return true;
+          return false;
+        })) {
+          ok = true;
+        }
+      }
+
+      if (!ok) {
+        setErrorMsg(`Unsupported format. Please upload: ${tool.acceptedFileLabel}`);
+        return;
+      }
+      valid.push(f);
+    }
+
+    if (!valid.length) return;
+    if (tool.maxFiles === 1) {
+      setFiles([valid[0]]);
+    } else {
+      setFiles(prev => {
+        const combined = [...prev, ...valid];
+        if (combined.length > tool.maxFiles) {
+          setErrorMsg(`Maximum ${tool.maxFiles} files allowed.`);
+          return combined.slice(0, tool.maxFiles);
+        }
+        return combined;
+      });
+    }
+  };
+
+  const removeFile = idx => {
+    setFiles(prev => prev.filter((_, i) => i !== idx));
+    setErrorMsg('');
+  };
+
+  const handleOptionChange = (id, val) =>
+    setOptionValues(prev => ({ ...prev, [id]: val }));
+
+  /* ── real processing ────────────────────────────── */
+  const startProcessing = async () => {
+    if (!files.length) return;
+    setStatus('processing');
+    setProgress(20);
+    setProgressText('Uploading & processing… (this may take a moment)');
+
+    try {
+      let result;
+      let filename = `PDFora_${tool.slug}_output.pdf`;
+      const firstFileName = files[0].name.replace(/\.[^/.]+$/, "");
+
+      switch (tool.id) {
+        case 'word-to-pdf':
+          result = await pdfApi.convertWordToPdf(files[0]);
+          filename = `${firstFileName}.pdf`;
+          break;
+        case 'excel-to-pdf':
+          result = await pdfApi.convertExcelToPdf(files[0]);
+          filename = `${firstFileName}.pdf`;
+          break;
+        case 'powerpoint-to-pdf':
+          result = await pdfApi.convertPowerPointToPdf(files[0]);
+          filename = `${firstFileName}.pdf`;
+          break;
+        case 'jpg-to-pdf':
+          result = await pdfApi.convertJpgToPdf(files);
+          filename = 'images.pdf';
+          break;
+        case 'pdf-to-jpg': {
+          const res = await pdfApi.convertPdfToJpg(files[0]);
+          result = res.blob;
+          filename = res.isZip ? 'pages.zip' : 'page_1.jpg';
+          break;
+        }
+        case 'merge-pdf':
+          result = await pdfApi.mergePdf(files);
+          filename = 'merged.pdf';
+          break;
+        case 'compress-pdf':
+          result = await pdfApi.compressPdf(files[0]);
+          filename = `${firstFileName}_compressed.pdf`;
+          break;
+        case 'split-pdf': {
+          const mode = optionValues['splitMode'] || 'range';
+          let ranges = 'all';
+          if (mode === 'range') {
+            ranges = optionValues['customRanges'] || '1-5';
+          } else if (mode === 'odd-even') {
+            ranges = optionValues['oddEvenSelect'] || 'odd';
+          } else {
+            ranges = 'all';
+          }
+          const res = await pdfApi.splitPdf(files[0], ranges);
+          result = res.blob;
+          filename = res.isZip ? 'split_pages.zip' : `${firstFileName}_split.pdf`;
+          break;
+        }
+        default:
+          throw new Error('Unknown tool');
+      }
+
+      setProgress(100);
+      setProgressText('Done');
+      
+      const url = window.URL.createObjectURL(result);
+      setResultBlobUrl(url);
+      setResultFilename(filename);
+      setActualResultSize(result.size || 0);
+      setStatus('completed');
+    } catch (err) {
+      setErrorMsg(err.message || 'Processing failed.');
+      setStatus('idle');
+      setProgress(0);
+    }
+  };
+
+  const handleDownload = (e) => {
+    if (e) e.preventDefault();
+    if (!resultBlobUrl) return;
+
+    const link = document.createElement('a');
+    link.href = resultBlobUrl;
+    link.download = resultFilename || `PDFora_${tool.slug}_output.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const resetAll = () => {
+    setFiles([]); setStatus('idle'); setProgress(0);
+    setErrorMsg(''); setProgressText('');
+    if (resultBlobUrl) {
+      window.URL.revokeObjectURL(resultBlobUrl);
+      setResultBlobUrl(null);
+    }
+    setResultFilename('');
+    setActualResultSize(0);
+    const init = {};
+    tool.options?.forEach(o => { init[o.id] = o.default; });
+    setOptionValues(init);
+  };
+
+  /* ── computed ──────────────────────────────────────────── */
+  const totalSize   = files.reduce((a, f) => a + (f.size || 0), 0);
+  const resultSize  = actualResultSize > 0 ? actualResultSize : Math.round(totalSize * 0.95);
+  const savedPct    = totalSize > 0 && actualResultSize > 0 && actualResultSize < totalSize
+    ? Math.round(((totalSize - actualResultSize) / totalSize) * 100)
+    : 0;
+
+  /* ─────────────────────────────────────────────────────── */
+  return (
+    <div className="w-full max-w-4xl mx-auto">
+      {/* Single file input element to maintain ref integrity */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={tool.acceptedTypes}
+        multiple={tool.maxFiles > 1}
+        onChange={e => {
+          if (e.target.files?.length) {
+            addFiles(Array.from(e.target.files));
+          }
+          e.target.value = '';
+        }}
+        className="hidden"
+        aria-hidden="true"
+      />
+
+      <div
+        className="rounded-3xl overflow-hidden transition-all"
+        style={{
+          background: '#FFFFFF',
+          border: '1px solid #F1D5E3',
+          boxShadow: '0 8px 32px rgba(232,93,158,0.07), 0 2px 8px rgba(0,0,0,0.04)',
+          padding: 'clamp(1.25rem, 4vw, 1.75rem)',
+        }}
+      >
+        {status === 'idle' && (
+          <div className="space-y-5">
+            {errorMsg && (
+              <div
+                className="flex items-start gap-3 p-4 rounded-2xl animate-fade-up"
+                style={{ background: '#FFF5F5', border: '1px solid #FCA5A5' }}
+                role="alert"
+                aria-live="polite"
+              >
+                <AlertCircle className="w-4.5 h-4.5 mt-0.5 shrink-0" style={{ color: '#EF4444' }} aria-hidden="true" />
+                <div className="flex-1">
+                  <p className="text-xs font-bold" style={{ color: '#B91C1C' }}>Upload issue</p>
+                  <p className="text-xs mt-0.5" style={{ color: '#DC2626' }}>{errorMsg}</p>
+                </div>
+                <button
+                  onClick={() => setErrorMsg('')}
+                  className="shrink-0 p-1 rounded-lg transition-colors hover:bg-red-100"
+                  style={{ color: '#EF4444' }}
+                  aria-label="Dismiss error"
+                >
+                  <X className="w-3.5 h-3.5" aria-hidden="true" />
+                </button>
+              </div>
+            )}
+
+            {files.length === 0 ? (
+              <div
+                onDragOver={onDragOver}
+                onDragLeave={onDragLeave}
+                onDrop={onDrop}
+                onClick={() => fileInputRef.current?.click()}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => e.key === 'Enter' && fileInputRef.current?.click()}
+                aria-label={`Upload ${tool.acceptedFileLabel} file — click or drag to upload`}
+                className="relative cursor-pointer text-center flex flex-col items-center justify-center transition-all duration-200"
+                style={{
+                  minHeight: '260px',
+                  padding: 'clamp(2rem, 6vw, 3.5rem)',
+                  borderRadius: '1rem',
+                  border: isDragging ? '2px solid #E85D9E' : '2px dashed #F1D5E3',
+                  background: isDragging
+                    ? 'linear-gradient(180deg, #FFF0F8 0%, #FCE7F3 100%)'
+                    : 'linear-gradient(180deg, #FFFFFF 0%, #FFF9FC 100%)',
+                  transform: isDragging ? 'scale(0.995)' : 'scale(1)',
+                  boxShadow: isDragging ? '0 0 0 6px rgba(232,93,158,0.08)' : 'none',
+                }}
+              >
+                <div
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 transition-all duration-300"
+                  style={{
+                    background: isDragging ? '#E85D9E' : '#FCE7F3',
+                    color: isDragging ? '#FFFFFF' : '#E85D9E',
+                    transform: isDragging ? 'scale(1.08)' : 'scale(1)',
+                    boxShadow: isDragging ? '0 8px 24px rgba(232,93,158,0.30)' : 'none',
+                  }}
+                  aria-hidden="true"
+                >
+                  <UploadCloud className="w-8 h-8" strokeWidth={1.8} />
+                </div>
+
+                <h3 className="text-lg sm:text-xl font-bold mb-1.5" style={{ color: '#18181B' }}>
+                  {isDragging
+                    ? 'Release to upload'
+                    : <>Drop your file here, or{' '}
+                        <span style={{ color: '#E85D9E' }}>browse</span>
+                      </>
+                  }
+                </h3>
+                <p className="text-sm mb-6 max-w-sm" style={{ color: '#71717A' }}>
+                  Supports <strong style={{ color: '#3F3F46' }}>{tool.acceptedFileLabel}</strong>.
+                  Maximum file size: 50 MB.
+                </p>
+
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white transition-all duration-150 active:scale-95"
+                  style={{
+                    background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
+                    boxShadow: '0 4px 14px rgba(232,93,158,0.28)',
+                  }}
+                  onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }}
+                  aria-label={`Choose ${tool.acceptedFileLabel} file`}
+                >
+                  <UploadCloud className="w-4 h-4" aria-hidden="true" />
+                  Choose File
+                </button>
+
+                <div
+                  className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-4 text-[11px] font-medium"
+                  style={{ color: '#A1A1AA' }}
+                  aria-label="Security information"
+                >
+                  <span className="flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
+                    Secure SSL Connection
+                  </span>
+                  <span aria-hidden="true">·</span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
+                    Auto-deleted after 1 hour
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-5 animate-fade-up">
+                <div
+                  className="flex items-center justify-between pb-4"
+                  style={{ borderBottom: '1px solid #F9F0F5' }}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold" style={{ color: '#18181B' }}>
+                      {files.length} File{files.length > 1 ? 's' : ''} Selected
+                    </span>
+                    <span
+                      className="text-[11px] font-bold px-2.5 py-0.5 rounded-full"
+                      style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
+                    >
+                      {fmt(totalSize)}
+                    </span>
+                  </div>
+
+                  {tool.maxFiles > 1 && files.length < tool.maxFiles && (
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-all"
+                      style={{
+                        color: '#E85D9E',
+                        background: '#FCE7F3',
+                        border: '1px solid #F1D5E3',
+                      }}
+                      aria-label="Add more files"
+                    >
+                      <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+                      Add More
+                    </button>
+                  )}
+                </div>
+
+                <div
+                  className="space-y-2 max-h-52 overflow-y-auto pr-1"
+                  role="list"
+                  aria-label="Selected files"
+                >
+                  {files.map((file, idx) => (
+                    <div
+                      key={idx}
+                      role="listitem"
+                      className="flex items-center justify-between p-3 rounded-xl transition-colors"
+                      style={{
+                        border: '1px solid #F1D5E3',
+                        background: '#FFF9FC',
+                      }}
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div
+                          className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                          style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                          aria-hidden="true"
+                        >
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs sm:text-sm font-semibold truncate max-w-[180px] sm:max-w-sm" style={{ color: '#18181B' }}>
+                            {file.name}
+                          </p>
+                          <p className="text-[11px] mt-0.5" style={{ color: '#A1A1AA' }}>
+                            {fmt(file.size)}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => removeFile(idx)}
+                        className="p-1.5 rounded-lg transition-colors hover:bg-red-50"
+                        style={{ color: '#A1A1AA' }}
+                        aria-label={`Remove ${file.name}`}
+                        onMouseEnter={e => (e.currentTarget.style.color = '#EF4444')}
+                        onMouseLeave={e => (e.currentTarget.style.color = '#A1A1AA')}
+                      >
+                        <X className="w-3.5 h-3.5" aria-hidden="true" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {tool.options?.length > 0 && (
+                  <div
+                    className="p-5 rounded-2xl space-y-4"
+                    style={{ background: '#FFF7FB', border: '1px solid #F1D5E3' }}
+                  >
+                    <div
+                      className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider"
+                      style={{ color: '#E85D9E' }}
+                    >
+                      <Sliders className="w-3.5 h-3.5" aria-hidden="true" />
+                      {tool.name} Options
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {tool.options.map(opt => (
+                        <div key={opt.id} className="space-y-1.5">
+                          <label
+                            htmlFor={`opt-${opt.id}`}
+                            className="block text-xs font-semibold"
+                            style={{ color: '#3F3F46' }}
+                          >
+                            {opt.label}
+                          </label>
+
+                          {opt.type === 'select' && (
+                            <select
+                              id={`opt-${opt.id}`}
+                              value={optionValues[opt.id]}
+                              onChange={e => handleOptionChange(opt.id, e.target.value)}
+                              className="w-full text-xs sm:text-sm rounded-xl px-3 py-2.5 transition-all appearance-none cursor-pointer"
+                              style={{
+                                background: '#FFFFFF',
+                                border: '1.5px solid #F1D5E3',
+                                color: '#18181B',
+                                outline: 'none',
+                              }}
+                              onFocus={e => (e.currentTarget.style.borderColor = '#E85D9E')}
+                              onBlur={e => (e.currentTarget.style.borderColor = '#F1D5E3')}
+                            >
+                              {opt.choices.map(c => (
+                                <option key={c.value} value={c.value}>{c.label}</option>
+                              ))}
+                            </select>
+                          )}
+
+                          {opt.type === 'text' && (
+                            <input
+                              id={`opt-${opt.id}`}
+                              type="text"
+                              value={optionValues[opt.id] || ''}
+                              placeholder={opt.placeholder}
+                              onChange={e => handleOptionChange(opt.id, e.target.value)}
+                              className="w-full text-xs sm:text-sm rounded-xl px-3.5 py-2.5 transition-all"
+                              style={{
+                                background: '#FFFFFF',
+                                border: '1.5px solid #F1D5E3',
+                                color: '#18181B',
+                                outline: 'none',
+                              }}
+                              onFocus={e => (e.currentTarget.style.borderColor = '#E85D9E')}
+                              onBlur={e => (e.currentTarget.style.borderColor = '#F1D5E3')}
+                            />
+                          )}
+
+                          {opt.type === 'radio' && (
+                            <div
+                              className="space-y-2 col-span-full"
+                              role="radiogroup"
+                              aria-labelledby={`radio-group-${opt.id}`}
+                            >
+                              <span id={`radio-group-${opt.id}`} className="sr-only">{opt.label}</span>
+                              {opt.choices.map(c => {
+                                const selected = optionValues[opt.id] === c.value;
+                                return (
+                                  <label
+                                    key={c.value}
+                                    className="flex items-start gap-3 p-3.5 rounded-xl cursor-pointer transition-all duration-150"
+                                    style={{
+                                      border: `1.5px solid ${selected ? '#E85D9E' : '#F1D5E3'}`,
+                                      background: selected ? '#FFF7FB' : '#FFFFFF',
+                                      boxShadow: selected ? '0 0 0 3px rgba(232,93,158,0.08)' : 'none',
+                                    }}
+                                  >
+                                    <input
+                                      type="radio"
+                                      name={opt.id}
+                                      value={c.value}
+                                      checked={selected}
+                                      onChange={e => handleOptionChange(opt.id, e.target.value)}
+                                      className="mt-0.5 shrink-0"
+                                      style={{ accentColor: '#E85D9E' }}
+                                    />
+                                    <div>
+                                      <div className="text-xs sm:text-sm font-semibold" style={{ color: '#18181B' }}>
+                                        {c.label}
+                                      </div>
+                                      {c.desc && (
+                                        <div className="text-[11px] mt-0.5 leading-relaxed" style={{ color: '#71717A' }}>
+                                          {c.desc}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </label>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div
+                  className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-3"
+                  style={{ borderTop: '1px solid #F9F0F5' }}
+                >
+                  <button
+                    onClick={resetAll}
+                    className="w-full sm:w-auto px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-150"
+                    style={{
+                      color: '#71717A',
+                      border: '1.5px solid #E4E4E7',
+                      background: '#FFFFFF',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.background = '#FAFAFA')}
+                    onMouseLeave={e => (e.currentTarget.style.background = '#FFFFFF')}
+                    aria-label="Reset and clear all files"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    onClick={startProcessing}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold text-white transition-all duration-150 active:scale-95"
+                    style={{
+                      background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
+                      boxShadow: '0 4px 14px rgba(232,93,158,0.28)',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,93,158,0.38)')}
+                    onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 4px 14px rgba(232,93,158,0.28)')}
+                    aria-label={`Process and convert ${files.length} file${files.length > 1 ? 's' : ''}`}
+                  >
+                    <Sparkles className="w-4 h-4" aria-hidden="true" />
+                    Process &amp; Convert
+                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {status === 'processing' && (
+          <div
+            className="py-16 px-4 text-center space-y-8 animate-fade-up"
+            role="status"
+            aria-live="polite"
+            aria-label={`Processing: ${progress}% complete`}
+          >
+            <div className="relative w-20 h-20 mx-auto" aria-hidden="true">
+              <div
+                className="absolute inset-0 rounded-full animate-ping-brand opacity-50"
+                style={{ border: '3px solid #F1D5E3' }}
+              />
+              <div
+                className="w-20 h-20 rounded-full animate-spin-brand"
+                style={{
+                  border: '3px solid #FCE7F3',
+                  borderTopColor: '#E85D9E',
+                }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Sparkles className="w-7 h-7" style={{ color: '#E85D9E' }} />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <h4 className="text-xl font-bold" style={{ color: '#18181B' }}>
+                Processing Your Document
+              </h4>
+              <p className="text-sm" style={{ color: '#71717A' }}>
+                {progressText}
+              </p>
+            </div>
+
+            <div className="max-w-sm mx-auto space-y-2">
+              <div className="progress-track" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
+                <div className="progress-fill" style={{ width: `${progress}%` }} />
+              </div>
+              <div className="flex items-center justify-between text-[11px] font-semibold" style={{ color: '#A1A1AA' }}>
+                <span>{progress}% complete</span>
+                <span>Secure pipeline</span>
+              </div>
+            </div>
+
+            <p className="text-xs" style={{ color: '#A1A1AA' }}>
+              This usually takes under 10 seconds…
+            </p>
+          </div>
+        )}
+
+        {status === 'completed' && (
+          <div
+            className="py-10 px-4 text-center space-y-6 animate-scale-in"
+            role="status"
+            aria-live="polite"
+          >
+            <div
+              className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto"
+              style={{
+                background: 'linear-gradient(135deg, #FCE7F3 0%, #FFF7FB 100%)',
+                border: '1px solid #F1D5E3',
+                boxShadow: '0 4px 16px rgba(232,93,158,0.12)',
+              }}
+              aria-hidden="true"
+            >
+              <CheckCircle2 className="w-8 h-8" style={{ color: '#E85D9E' }} strokeWidth={2.2} />
+            </div>
+
+            <div className="space-y-1">
+              <span
+                className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full"
+                style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
+              >
+                <Sparkles className="w-3 h-3" aria-hidden="true" />
+                Ready to Download
+              </span>
+              <h3 className="text-xl sm:text-2xl font-bold mt-2" style={{ color: '#18181B' }}>
+                Conversion Successful
+              </h3>
+              <p className="text-sm" style={{ color: '#71717A' }}>
+                Your file has been processed and is ready.
+              </p>
+            </div>
+
+            <div
+              className="max-w-sm mx-auto flex items-center justify-between p-4 rounded-2xl text-left gap-3"
+              style={{ background: '#FFF7FB', border: '1px solid #F1D5E3' }}
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center text-white shrink-0"
+                  style={{
+                    background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
+                    boxShadow: '0 3px 8px rgba(232,93,158,0.25)',
+                  }}
+                  aria-hidden="true"
+                >
+                  <File className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold truncate" style={{ color: '#18181B' }}>
+                    {resultFilename || `PDFora_${tool.slug}_output.pdf`}
+                  </p>
+                  <p className="text-[11px] mt-0.5 flex items-center gap-1.5" style={{ color: '#71717A' }}>
+                    <span>{fmt(totalSize)}</span>
+                    <span aria-hidden="true">→</span>
+                    <span className="font-semibold" style={{ color: '#E85D9E' }}>{fmt(resultSize)}</span>
+                  </p>
+                </div>
+              </div>
+              {savedPct > 5 && (
+                <span
+                  className="shrink-0 text-[11px] font-bold px-2 py-0.5 rounded-md"
+                  style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
+                  aria-label={`${savedPct}% smaller`}
+                >
+                  -{savedPct}%
+                </span>
+              )}
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-sm mx-auto">
+              <a
+                href={resultBlobUrl || '#'}
+                download={resultFilename || `PDFora_${tool.slug}_output.pdf`}
+                onClick={handleDownload}
+                className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold text-white transition-all active:scale-95 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
+                  boxShadow: '0 4px 14px rgba(232,93,158,0.28)',
+                  textDecoration: 'none',
+                }}
+                aria-label="Download converted file"
+              >
+                <Download className="w-4 h-4" aria-hidden="true" />
+                {resultFilename?.endsWith('.zip') ? 'Download ZIP' : resultFilename?.endsWith('.jpg') ? 'Download JPG' : 'Download PDF'}
+              </a>
+              <button
+                onClick={resetAll}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl text-sm font-semibold transition-all"
+                style={{
+                  color: '#71717A',
+                  border: '1.5px solid #E4E4E7',
+                  background: '#FFFFFF',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#FAFAFA')}
+                onMouseLeave={e => (e.currentTarget.style.background = '#FFFFFF')}
+                aria-label="Start over with a new file"
+              >
+                <RotateCcw className="w-4 h-4" aria-hidden="true" />
+                Start Over
+              </button>
+            </div>
+
+            <p className="text-[11px]" style={{ color: '#A1A1AA' }}>
+              Files are permanently deleted from our servers within 60 minutes.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
