@@ -21,4 +21,19 @@ export default defineConfig({
   preview: {
     allowedHosts: ['pdfora.nimradev.site'],
   },
+  build: {
+    chunkSizeWarningLimit: 3000,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('pdf-lib') || id.includes('pdfjs-dist') || id.includes('xlsx') || id.includes('mammoth') || id.includes('jszip')) {
+              return 'pdf-vendor';
+            }
+            return 'vendor';
+          }
+        },
+      },
+    },
+  },
 });
