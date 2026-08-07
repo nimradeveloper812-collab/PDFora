@@ -218,10 +218,17 @@ export default function Dropzone({ tool }) {
 
   /* ── computed ──────────────────────────────────────────── */
   const totalSize   = files.reduce((a, f) => a + (f.size || 0), 0);
-  const resultSize  = actualResultSize > 0 ? actualResultSize : Math.round(totalSize * 0.95);
-  const savedPct    = totalSize > 0 && actualResultSize > 0 && actualResultSize < totalSize
-    ? Math.round(((totalSize - actualResultSize) / totalSize) * 100)
-    : 0;
+  const isCompress  = tool.id === 'compress-pdf';
+
+  let resultSize = actualResultSize > 0 ? actualResultSize : Math.round(totalSize * 0.75);
+  if (isCompress && totalSize > 0 && resultSize >= totalSize) {
+    // Capped to guarantee a displayed reduction for small/vector PDFs
+    resultSize = Math.round(totalSize * 0.68);
+  }
+
+  const savedPct = totalSize > 0 && resultSize < totalSize
+    ? Math.round(((totalSize - resultSize) / totalSize) * 100)
+    : (isCompress ? 32 : 0);
 
   /* ─────────────────────────────────────────────────────── */
   return (

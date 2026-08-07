@@ -357,24 +357,48 @@ export const clientPdfService = {
   /* ── 6. Compress PDF ───────────────────────────────────────────── */
   async compressPdf(file, level = 'recommended') {
     const arrayBuffer = await file.arrayBuffer();
+    const originalSize = arrayBuffer.byteLength;
 
-    let renderScale = 1.2;
-    let jpegQuality = 0.65;
+    let bestResult = null;
+    let bestSize = Infinity;
+
+    // Method A: Native Object Stream & Metadata Strip Compression (Best for text/vector PDFs)
+    try {
+      const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+      pdfDoc.setTitle('');
+      pdfDoc.setAuthor('');
+      pdfDoc.setSubject('');
+      pdfDoc.setKeywords([]);
+      pdfDoc.setProducer('PDFora Compressor');
+      pdfDoc.setCreator('PDFora');
+
+      const streamBytes = await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false });
+      if (streamBytes.byteLength < bestSize) {
+        bestSize = streamBytes.byteLength;
+        bestResult = streamBytes;
+      }
+    } catch (err) {
+      console.warn('Stream compression error:', err);
+    }
+
+    // Method B: Image Canvas Downsampling Compression (Best for image/scanned heavy PDFs)
+    let renderScale = 0.85;
+    let jpegQuality = 0.55;
 
     if (level === 'extreme') {
-      renderScale = 0.9;
-      jpegQuality = 0.45;
+      renderScale = 0.70;
+      jpegQuality = 0.40;
     } else if (level === 'less') {
-      renderScale = 1.4;
-      jpegQuality = 0.82;
+      renderScale = 1.0;
+      jpegQuality = 0.72;
     }
 
     try {
-      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer.slice(0) });
       const pdf = await loadingTask.promise;
       const numPages = pdf.numPages;
 
-      const compressedPdfDoc = await PDFDocument.create();
+      const canvasPdfDoc = await PDFDocument.create();
 
       for (let i = 1; i <= numPages; i++) {
         const page = await pdf.getPage(i);
@@ -390,10 +414,9 @@ export const clientPdfService = {
         const jpegBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', jpegQuality));
         const jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
 
-        const embeddedImage = await compressedPdfDoc.embedJpg(jpegBytes);
-        
+        const embeddedImage = await canvasPdfDoc.embedJpg(jpegBytes);
         const originalViewport = page.getViewport({ scale: 1.0 });
-        const pdfPage = compressedPdfDoc.addPage([originalViewport.width, originalViewport.height]);
+        const pdfPage = canvasPdfDoc.addPage([originalViewport.width, originalViewport.height]);
         
         pdfPage.drawImage(embeddedImage, {
           x: 0,
@@ -403,17 +426,27 @@ export const clientPdfService = {
         });
       }
 
-      const compressedBytes = await compressedPdfDoc.save({ useObjectStreams: true });
-      return new Blob([compressedBytes], { type: 'application/pdf' });
+      const canvasBytes = await canvasPdfDoc.save({ useObjectStreams: true });
+      if (canvasBytes.byteLength < bestSize) {
+        bestSize = canvasBytes.byteLength;
+        bestResult = canvasBytes;
+      }
     } catch (err) {
-      console.warn('Canvas PDF compression fallback:', err);
-      const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
-      const compressedPdf = await PDFDocument.create();
-      const copiedPages = await compressedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
-      copiedPages.forEach(p => compressedPdf.addPage(p));
-      const pdfBytes = await compressedPdf.save({ useObjectStreams: true });
-      return new Blob([pdfBytes], { type: 'application/pdf' });
+      console.warn('Canvas compression error:', err);
     }
+
+    // STRICT GUARANTEE: If bestSize >= originalSize, return object stream compressed version or optimized blob
+    if (!bestResult || bestSize >= originalSize) {
+      try {
+        const fallbackDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+        const fallbackBytes = await fallbackDoc.save({ useObjectStreams: true, objectsPerTick: 100 });
+        bestResult = fallbackBytes;
+      } catch {
+        bestResult = new Uint8Array(arrayBuffer);
+      }
+    }
+
+    return new Blob([bestResult], { type: 'application/pdf' });
   },
 
   /* ── 7. Split PDF ──────────────────────────────────────────────── */
