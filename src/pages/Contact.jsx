@@ -156,7 +156,7 @@ export default function Contact() {
                 <h4 className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: '#18181B' }}>
                   Email Address
                 </h4>
-                <p className="text-sm font-semibold" style={{ color: '#3F3F46' }}>support@pdfora.com</p>
+                <p className="text-sm font-semibold" style={{ color: '#3F3F46' }}>contact@nimradev.site</p>
                 <p className="text-[11px] mt-0.5" style={{ color: '#A1A1AA' }}>Response within 24 hours</p>
               </div>
             </div>
