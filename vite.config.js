@@ -9,7 +9,7 @@ export default defineConfig({
     tailwindcss()
   ],
   server: {
-    allowedHosts: ['pdfora.nimradev.site'],
+    allowedHosts: true,
     proxy: {
       '/api': {
         target: 'http://localhost:5089',
@@ -19,7 +19,7 @@ export default defineConfig({
     }
   },
   preview: {
-    allowedHosts: ['pdfora.nimradev.site'],
+    allowedHosts: true,
   },
   build: {
     chunkSizeWarningLimit: 3000,
