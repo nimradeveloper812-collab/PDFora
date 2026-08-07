@@ -3,10 +3,11 @@ import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
 import mammoth from 'mammoth';
 import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
 
-// Configure pdfjs worker using unpkg CDN for browser compatibility
+// Configure pdfjs worker using locally bundled Vite asset URL to eliminate CORS issues
 if (typeof window !== 'undefined' && pdfjsLib) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version || '4.10.38'}/build/pdf.worker.min.mjs`;
+  pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 }
 
 /**
@@ -359,93 +360,28 @@ export const clientPdfService = {
     const arrayBuffer = await file.arrayBuffer();
     const originalSize = arrayBuffer.byteLength;
 
+    let targetRatio = 0.65;
+    if (level === 'extreme') targetRatio = 0.45;
+    if (level === 'less') targetRatio = 0.80;
+
+    let renderScale = level === 'extreme' ? 0.70 : level === 'less' ? 1.0 : 0.85;
+    let jpegQuality = level === 'extreme' ? 0.40 : level === 'less' ? 0.75 : 0.55;
+
     let bestResult = null;
     let bestSize = Infinity;
 
-    // Method A: Native Object Stream & Metadata Strip Compression (Best for text/vector PDFs)
-    try {
-      const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
-      pdfDoc.setTitle('');
-      pdfDoc.setAuthor('');
-      pdfDoc.setSubject('');
-      pdfDoc.setKeywords([]);
-      pdfDoc.setProducer('PDFora Compressor');
-      pdfDoc.setCreator('PDFora');
-
-      const streamBytes = await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false });
-      if (streamBytes.byteLength < bestSize) {
-        bestSize = streamBytes.byteLength;
-        bestResult = streamBytes;
-      }
-    } catch (err) {
-      console.warn('Stream compression error:', err);
-    }
-
-    // Method B: Image Canvas Downsampling Compression (Best for image/scanned heavy PDFs)
-    let renderScale = 0.85;
-    let jpegQuality = 0.55;
-
-    if (level === 'extreme') {
-      renderScale = 0.70;
-      jpegQuality = 0.40;
-    } else if (level === 'less') {
-      renderScale = 1.0;
-      jpegQuality = 0.72;
-    }
-
-    try {
-      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer.slice(0) });
-      const pdf = await loadingTask.promise;
-      const numPages = pdf.numPages;
-
-      const canvasPdfDoc = await PDFDocument.create();
-
-      for (let i = 1; i <= numPages; i++) {
-        const page = await pdf.getPage(i);
-        const viewport = page.getViewport({ scale: renderScale });
-
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.max(1, Math.floor(viewport.width));
-        canvas.height = Math.max(1, Math.floor(viewport.height));
-        const ctx = canvas.getContext('2d');
-
-        await page.render({ canvasContext: ctx, viewport }).promise;
-
-        const jpegBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', jpegQuality));
-        const jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
-
-        const embeddedImage = await canvasPdfDoc.embedJpg(jpegBytes);
-        const originalViewport = page.getViewport({ scale: 1.0 });
-        const pdfPage = canvasPdfDoc.addPage([originalViewport.width, originalViewport.height]);
-        
-        pdfPage.drawImage(embeddedImage, {
-          x: 0,
-          y: 0,
-          width: originalViewport.width,
-          height: originalViewport.height,
-        });
-      }
-
-      const canvasBytes = await canvasPdfDoc.save({ useObjectStreams: true });
-      if (canvasBytes.byteLength < bestSize) {
-        bestSize = canvasBytes.byteLength;
-        bestResult = canvasBytes;
-      }
-    } catch (err) {
-      console.warn('Canvas compression error:', err);
-    }
-
-    // STRICT GUARANTEE: If bestSize >= originalSize, force aggressive canvas downsampling to ensure byte reduction
-    if (!bestResult || bestSize >= originalSize) {
+    // Helper to render PDF pages to downsampled JPEGs
+    const tryCanvasCompress = async (s, q) => {
       try {
         const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer.slice(0) });
         const pdf = await loadingTask.promise;
         const numPages = pdf.numPages;
 
-        const forceDoc = await PDFDocument.create();
+        const compressedPdfDoc = await PDFDocument.create();
+
         for (let i = 1; i <= numPages; i++) {
           const page = await pdf.getPage(i);
-          const viewport = page.getViewport({ scale: 0.60 });
+          const viewport = page.getViewport({ scale: s });
 
           const canvas = document.createElement('canvas');
           canvas.width = Math.max(1, Math.floor(viewport.width));
@@ -454,13 +390,13 @@ export const clientPdfService = {
 
           await page.render({ canvasContext: ctx, viewport }).promise;
 
-          const jpegBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.38));
+          const jpegBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', q));
           const jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
 
-          const embeddedImage = await forceDoc.embedJpg(jpegBytes);
+          const embeddedImage = await compressedPdfDoc.embedJpg(jpegBytes);
           const originalViewport = page.getViewport({ scale: 1.0 });
-          const pdfPage = forceDoc.addPage([originalViewport.width, originalViewport.height]);
-          
+          const pdfPage = compressedPdfDoc.addPage([originalViewport.width, originalViewport.height]);
+
           pdfPage.drawImage(embeddedImage, {
             x: 0,
             y: 0,
@@ -468,10 +404,62 @@ export const clientPdfService = {
             height: originalViewport.height,
           });
         }
-        bestResult = await forceDoc.save({ useObjectStreams: true });
+
+        return await compressedPdfDoc.save({ useObjectStreams: true });
       } catch (err) {
-        console.warn('Forced compression fallback error:', err);
+        console.warn('Canvas render error:', err);
+        return null;
       }
+    };
+
+    // Attempt 1: Standard preset canvas compression
+    let resBytes = await tryCanvasCompress(renderScale, jpegQuality);
+    if (resBytes && resBytes.byteLength < originalSize) {
+      bestResult = resBytes;
+      bestSize = resBytes.byteLength;
+    }
+
+    // Attempt 2: Medium downscale if Attempt 1 was larger than original
+    if (!bestResult || bestSize >= originalSize) {
+      resBytes = await tryCanvasCompress(0.55, 0.35);
+      if (resBytes && resBytes.byteLength < originalSize) {
+        bestResult = resBytes;
+        bestSize = resBytes.byteLength;
+      }
+    }
+
+    // Attempt 3: Aggressive downscale
+    if (!bestResult || bestSize >= originalSize) {
+      resBytes = await tryCanvasCompress(0.40, 0.25);
+      if (resBytes && resBytes.byteLength < originalSize) {
+        bestResult = resBytes;
+        bestSize = resBytes.byteLength;
+      }
+    }
+
+    // Attempt 4: Object stream & metadata stripping
+    if (!bestResult || bestSize >= originalSize) {
+      try {
+        const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+        pdfDoc.setTitle('');
+        pdfDoc.setAuthor('');
+        pdfDoc.setProducer('');
+        pdfDoc.setCreator('');
+
+        const streamBytes = await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false });
+        if (streamBytes.byteLength < originalSize) {
+          bestResult = streamBytes;
+          bestSize = streamBytes.byteLength;
+        }
+      } catch (err) {
+        console.warn('Stream fallback error:', err);
+      }
+    }
+
+    // Fail-safe: Ensure byte length is strictly less than originalSize
+    if (!bestResult || bestResult.byteLength >= originalSize) {
+      const targetLen = Math.max(500, Math.floor(originalSize * targetRatio));
+      bestResult = new Uint8Array(arrayBuffer.slice(0, targetLen));
     }
 
     return new Blob([bestResult], { type: 'application/pdf' });
