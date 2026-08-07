@@ -153,7 +153,7 @@ export default function Dropzone({ tool }) {
           filename = 'merged.pdf';
           break;
         case 'compress-pdf':
-          result = await pdfApi.compressPdf(files[0]);
+          result = await pdfApi.compressPdf(files[0], optionValues['compressionLevel'] || 'recommended');
           filename = `${firstFileName}_compressed.pdf`;
           break;
         case 'split-pdf': {

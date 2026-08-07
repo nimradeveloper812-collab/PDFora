@@ -355,16 +355,65 @@ export const clientPdfService = {
   },
 
   /* ── 6. Compress PDF ───────────────────────────────────────────── */
-  async compressPdf(file) {
-    const bytes = await file.arrayBuffer();
-    const pdfDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
-    
-    const compressedPdf = await PDFDocument.create();
-    const copiedPages = await compressedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
-    copiedPages.forEach(p => compressedPdf.addPage(p));
+  async compressPdf(file, level = 'recommended') {
+    const arrayBuffer = await file.arrayBuffer();
 
-    const pdfBytes = await compressedPdf.save({ useObjectStreams: true });
-    return new Blob([pdfBytes], { type: 'application/pdf' });
+    let renderScale = 1.2;
+    let jpegQuality = 0.65;
+
+    if (level === 'extreme') {
+      renderScale = 0.9;
+      jpegQuality = 0.45;
+    } else if (level === 'less') {
+      renderScale = 1.4;
+      jpegQuality = 0.82;
+    }
+
+    try {
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+      const pdf = await loadingTask.promise;
+      const numPages = pdf.numPages;
+
+      const compressedPdfDoc = await PDFDocument.create();
+
+      for (let i = 1; i <= numPages; i++) {
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: renderScale });
+
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.floor(viewport.width));
+        canvas.height = Math.max(1, Math.floor(viewport.height));
+        const ctx = canvas.getContext('2d');
+
+        await page.render({ canvasContext: ctx, viewport }).promise;
+
+        const jpegBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', jpegQuality));
+        const jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
+
+        const embeddedImage = await compressedPdfDoc.embedJpg(jpegBytes);
+        
+        const originalViewport = page.getViewport({ scale: 1.0 });
+        const pdfPage = compressedPdfDoc.addPage([originalViewport.width, originalViewport.height]);
+        
+        pdfPage.drawImage(embeddedImage, {
+          x: 0,
+          y: 0,
+          width: originalViewport.width,
+          height: originalViewport.height,
+        });
+      }
+
+      const compressedBytes = await compressedPdfDoc.save({ useObjectStreams: true });
+      return new Blob([compressedBytes], { type: 'application/pdf' });
+    } catch (err) {
+      console.warn('Canvas PDF compression fallback:', err);
+      const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+      const compressedPdf = await PDFDocument.create();
+      const copiedPages = await compressedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+      copiedPages.forEach(p => compressedPdf.addPage(p));
+      const pdfBytes = await compressedPdf.save({ useObjectStreams: true });
+      return new Blob([pdfBytes], { type: 'application/pdf' });
+    }
   },
 
   /* ── 7. Split PDF ──────────────────────────────────────────────── */

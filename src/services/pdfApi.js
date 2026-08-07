@@ -79,14 +79,15 @@ export const pdfApi = {
     return await clientPdfService.mergePdf(files);
   },
 
-  async compressPdf(file) {
+  async compressPdf(file, level = 'recommended') {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('level', level);
 
     const res = await safeRequest(() => fetch('/api/pdf/compress', { method: 'POST', body: formData }));
     if (res) return await res.blob();
 
-    return await clientPdfService.compressPdf(file);
+    return await clientPdfService.compressPdf(file, level);
   },
 
   async splitPdf(file, ranges = 'all') {
