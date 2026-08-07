@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://pdfora.com/sitemap.xml
+Sitemap: https://pdfora.nimradev.site/sitemap.xml
