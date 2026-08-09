@@ -327,8 +327,9 @@ export default function Header() {
 
           {/* ── Mobile Hamburger ───────────────────────────────── */}
           <button
+            type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-xl transition-colors duration-150"
+            className="md:hidden p-2 rounded-xl transition-colors duration-150 relative z-50 cursor-pointer touch-manipulation"
             style={{
               color: '#18181B',
               background: isMobileMenuOpen ? '#DBEAFE' : 'transparent',
@@ -338,8 +339,8 @@ export default function Header() {
             aria-controls="mobile-nav"
           >
             {isMobileMenuOpen
-              ? <X className="w-5 h-5" aria-hidden="true" />
-              : <Menu className="w-5 h-5" aria-hidden="true" />
+              ? <X className="w-5 h-5 pointer-events-none" aria-hidden="true" />
+              : <Menu className="w-5 h-5 pointer-events-none" aria-hidden="true" />
             }
           </button>
         </div>
