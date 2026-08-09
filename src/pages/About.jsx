@@ -59,8 +59,8 @@ export default function About() {
       <section
         className="py-14 px-4 sm:px-6 lg:px-8 text-center"
         style={{
-          background: 'radial-gradient(ellipse 85% 55% at 50% -5%, #FCE7F3 0%, #FFFFFF 68%)',
-          borderBottom: '1px solid #F1D5E3',
+          background: 'radial-gradient(ellipse 85% 55% at 50% -5%, #DBEAFE 0%, #FFFFFF 68%)',
+          borderBottom: '1px solid #BFDBFE',
         }}
         aria-labelledby="about-heading"
       >
@@ -68,10 +68,10 @@ export default function About() {
           <div
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold"
             style={{
-              background: '#FCE7F3',
-              color: '#B83A7C',
-              border: '1px solid #F1D5E3',
-              boxShadow: '0 1px 4px rgba(232,93,158,0.08)',
+              background: '#DBEAFE',
+              color: '#1D4ED8',
+              border: '1px solid #BFDBFE',
+              boxShadow: '0 1px 4px rgba(59, 130, 246,0.08)',
             }}
           >
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
@@ -126,14 +126,14 @@ export default function About() {
                   key={label}
                   className="p-4 rounded-2xl text-center"
                   style={{
-                    background: '#FFF7FB',
-                    border: '1px solid #F1D5E3',
-                    boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
+                    background: '#EFF6FF',
+                    border: '1px solid #BFDBFE',
+                    boxShadow: '0 1px 4px rgba(59, 130, 246,0.04)',
                   }}
                 >
                   <div
                     className="text-2xl font-black"
-                    style={{ color: '#E85D9E', letterSpacing: '-0.03em' }}
+                    style={{ color: '#3B82F6', letterSpacing: '-0.03em' }}
                   >
                     {value}
                   </div>
@@ -153,15 +153,15 @@ export default function About() {
             className="rounded-3xl p-7 space-y-5"
             style={{
               background: '#FFFFFF',
-              border: '1px solid #F1D5E3',
-              boxShadow: '0 8px 32px rgba(232,93,158,0.08), 0 2px 8px rgba(0,0,0,0.04)',
+              border: '1px solid #BFDBFE',
+              boxShadow: '0 8px 32px rgba(59, 130, 246,0.08), 0 2px 8px rgba(0,0,0,0.04)',
             }}
           >
             <h3
               className="text-base font-bold flex items-center gap-2"
               style={{ color: '#18181B' }}
             >
-              <Award className="w-5 h-5 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
+              <Award className="w-5 h-5 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
               Core Commitments
             </h3>
 
@@ -170,7 +170,7 @@ export default function About() {
                 <div key={title} className="flex items-start gap-3">
                   <div
                     className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-                    style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                    style={{ background: '#DBEAFE', color: '#3B82F6' }}
                     aria-hidden="true"
                   >
                     <Icon className="w-4 h-4" />
@@ -185,13 +185,13 @@ export default function About() {
               ))}
             </div>
 
-            <div style={{ borderTop: '1px solid #F1D5E3', paddingTop: '1rem' }}>
+            <div style={{ borderTop: '1px solid #BFDBFE', paddingTop: '1rem' }}>
               <Link
                 to="/tools"
                 className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold text-white transition-all active:scale-95"
                 style={{
-                  background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                  boxShadow: '0 4px 14px rgba(232,93,158,0.28)',
+                  background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                  boxShadow: '0 4px 14px rgba(59, 130, 246,0.28)',
                   textDecoration: 'none',
                 }}
               >
@@ -206,7 +206,7 @@ export default function About() {
       {/* ── Values Section ────────────────────────────────── */}
       <section
         className="py-16 px-4 sm:px-6 lg:px-8"
-        style={{ background: '#FFF7FB', borderTop: '1px solid #F1D5E3', borderBottom: '1px solid #F1D5E3' }}
+        style={{ background: '#EFF6FF', borderTop: '1px solid #BFDBFE', borderBottom: '1px solid #BFDBFE' }}
         aria-labelledby="values-heading"
       >
         <div className="max-w-4xl mx-auto">
@@ -231,13 +231,13 @@ export default function About() {
                 className="p-6 rounded-2xl text-center space-y-3"
                 style={{
                   background: '#FFFFFF',
-                  border: '1px solid #F1D5E3',
-                  boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
+                  border: '1px solid #BFDBFE',
+                  boxShadow: '0 1px 4px rgba(59, 130, 246,0.04)',
                 }}
               >
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto"
-                  style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                  style={{ background: '#DBEAFE', color: '#3B82F6' }}
                   aria-hidden="true"
                 >
                   <Icon className="w-6 h-6" strokeWidth={2} />
@@ -270,8 +270,8 @@ export default function About() {
             to="/tools"
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold text-white transition-all active:scale-95"
             style={{
-              background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-              boxShadow: '0 6px 20px rgba(232,93,158,0.30)',
+              background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+              boxShadow: '0 6px 20px rgba(59, 130, 246,0.30)',
               textDecoration: 'none',
             }}
           >

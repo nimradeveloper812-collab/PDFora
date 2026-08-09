@@ -12,19 +12,19 @@ export default function Footer() {
   return (
     <footer
       className="mt-16"
-      style={{ background: '#FFFFFF', borderTop: '1px solid #F1D5E3' }}
+      style={{ background: '#FFFFFF', borderTop: '1px solid #BFDBFE' }}
       role="contentinfo"
     >
       {/* ── Trust Banner ───────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
         <div
           className="rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5"
-          style={{ background: '#FFF7FB', border: '1px solid #F1D5E3' }}
+          style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}
         >
           <div className="flex items-start gap-4">
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-              style={{ background: '#FCE7F3', color: '#E85D9E' }}
+              style={{ background: '#DBEAFE', color: '#3B82F6' }}
               aria-hidden="true"
             >
               <ShieldCheck className="w-5 h-5" strokeWidth={2} />
@@ -40,13 +40,13 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="flex items-center gap-5 shrink-0 sm:pl-4" style={{ borderLeft: '1px solid #F1D5E3' }}>
+          <div className="flex items-center gap-5 shrink-0 sm:pl-4" style={{ borderLeft: '1px solid #BFDBFE' }}>
             <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: '#3F3F46' }}>
-              <Lock className="w-3.5 h-3.5 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
+              <Lock className="w-3.5 h-3.5 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
               TLS Encrypted
             </span>
             <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: '#3F3F46' }}>
-              <Zap className="w-3.5 h-3.5 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
+              <Zap className="w-3.5 h-3.5 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
               Auto-deleted
             </span>
           </div>
@@ -67,8 +67,8 @@ export default function Footer() {
               <div
                 className="w-8 h-8 rounded-xl flex items-center justify-center text-white transition-transform group-hover:scale-105"
                 style={{
-                  background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                  boxShadow: '0 4px 10px rgba(232, 93, 158, 0.25)',
+                  background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                  boxShadow: '0 4px 10px rgba(59, 130, 246, 0.25)',
                 }}
               >
                 <FileCheck className="w-4.5 h-4.5" strokeWidth={2.2} aria-hidden="true" />
@@ -77,7 +77,7 @@ export default function Footer() {
                 className="text-lg font-extrabold tracking-tight"
                 style={{ color: '#18181B', letterSpacing: '-0.03em' }}
               >
-                PDF<span style={{ color: '#E85D9E' }}>ora</span>
+                PDF<span style={{ color: '#3B82F6' }}>ora</span>
               </span>
             </Link>
 
@@ -90,7 +90,7 @@ export default function Footer() {
               <span>Made with</span>
               <Heart
                 className="w-3 h-3"
-                style={{ color: '#E85D9E', fill: '#E85D9E' }}
+                style={{ color: '#3B82F6', fill: '#3B82F6' }}
                 aria-hidden="true"
               />
               <span>in Pakistan 🇵🇰 for students, freelancers &amp; businesses</span>
@@ -112,7 +112,7 @@ export default function Footer() {
                     to={tool.path}
                     className="text-xs font-medium transition-colors hover:underline"
                     style={{ color: '#71717A', textDecoration: 'none' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = '#E85D9E')}
+                    onMouseEnter={e => (e.currentTarget.style.color = '#3B82F6')}
                     onMouseLeave={e => (e.currentTarget.style.color = '#71717A')}
                   >
                     {tool.name}
@@ -137,7 +137,7 @@ export default function Footer() {
                     to={tool.path}
                     className="text-xs font-medium transition-colors"
                     style={{ color: '#71717A', textDecoration: 'none' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = '#E85D9E')}
+                    onMouseEnter={e => (e.currentTarget.style.color = '#3B82F6')}
                     onMouseLeave={e => (e.currentTarget.style.color = '#71717A')}
                   >
                     {tool.name}
@@ -148,7 +148,7 @@ export default function Footer() {
                 <Link
                   to="/tools"
                   className="inline-flex items-center gap-1 text-xs font-bold mt-1 group/more"
-                  style={{ color: '#E85D9E', textDecoration: 'none' }}
+                  style={{ color: '#3B82F6', textDecoration: 'none' }}
                 >
                   All Tools
                   <ArrowRight
@@ -180,7 +180,7 @@ export default function Footer() {
                     to={to}
                     className="text-xs font-medium"
                     style={{ color: '#71717A', textDecoration: 'none' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = '#E85D9E')}
+                    onMouseEnter={e => (e.currentTarget.style.color = '#3B82F6')}
                     onMouseLeave={e => (e.currentTarget.style.color = '#71717A')}
                   >
                     {label}
@@ -211,7 +211,7 @@ export default function Footer() {
               to={to}
               className="text-xs font-medium"
               style={{ color: '#A1A1AA', textDecoration: 'none' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#E85D9E')}
+              onMouseEnter={e => (e.currentTarget.style.color = '#3B82F6')}
               onMouseLeave={e => (e.currentTarget.style.color = '#A1A1AA')}
             >
               {label}

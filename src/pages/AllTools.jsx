@@ -35,8 +35,8 @@ export default function AllTools() {
       <section
         className="py-14 px-4 sm:px-6 lg:px-8 text-center"
         style={{
-          background: 'radial-gradient(ellipse 85% 55% at 50% -5%, #FCE7F3 0%, #FFFFFF 68%)',
-          borderBottom: '1px solid #F1D5E3',
+          background: 'radial-gradient(ellipse 85% 55% at 50% -5%, #DBEAFE 0%, #FFFFFF 68%)',
+          borderBottom: '1px solid #BFDBFE',
         }}
         aria-labelledby="all-tools-heading"
       >
@@ -44,10 +44,10 @@ export default function AllTools() {
           <div
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold"
             style={{
-              background: '#FCE7F3',
-              color: '#B83A7C',
-              border: '1px solid #F1D5E3',
-              boxShadow: '0 1px 4px rgba(232,93,158,0.08)',
+              background: '#DBEAFE',
+              color: '#1D4ED8',
+              border: '1px solid #BFDBFE',
+              boxShadow: '0 1px 4px rgba(59, 130, 246,0.08)',
             }}
           >
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
@@ -71,14 +71,14 @@ export default function AllTools() {
           <div className="max-w-md mx-auto pt-2" role="search" aria-label="Search PDF tools">
             <div
               className="flex items-center rounded-2xl bg-white transition-all duration-200"
-              style={{ border: '1.5px solid #F1D5E3', boxShadow: '0 2px 8px rgba(232,93,158,0.05)' }}
+              style={{ border: '1.5px solid #BFDBFE', boxShadow: '0 2px 8px rgba(59, 130, 246,0.05)' }}
               onFocusCapture={e => {
-                e.currentTarget.style.borderColor = '#E85D9E';
-                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(232,93,158,0.10)';
+                e.currentTarget.style.borderColor = '#3B82F6';
+                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246,0.10)';
               }}
               onBlurCapture={e => {
-                e.currentTarget.style.borderColor = '#F1D5E3';
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(232,93,158,0.05)';
+                e.currentTarget.style.borderColor = '#BFDBFE';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246,0.05)';
               }}
             >
               <Search className="w-4 h-4 ml-3.5 shrink-0" style={{ color: '#A1A1AA' }} aria-hidden="true" />
@@ -96,7 +96,7 @@ export default function AllTools() {
                   onClick={() => setSearchQuery('')}
                   className="mr-3 text-xs font-bold px-2 py-1 rounded-lg transition-colors"
                   style={{ color: '#A1A1AA' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#E85D9E')}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#3B82F6')}
                   onMouseLeave={e => (e.currentTarget.style.color = '#A1A1AA')}
                   aria-label="Clear search"
                 >
@@ -131,27 +131,27 @@ export default function AllTools() {
                 style={
                   isActive
                     ? {
-                        background: '#E85D9E',
+                        background: '#3B82F6',
                         color: '#FFFFFF',
-                        border: '1.5px solid #E85D9E',
-                        boxShadow: '0 3px 10px rgba(232,93,158,0.25)',
+                        border: '1.5px solid #3B82F6',
+                        boxShadow: '0 3px 10px rgba(59, 130, 246,0.25)',
                       }
                     : {
                         background: '#FFFFFF',
                         color: '#52525B',
-                        border: '1.5px solid #F1D5E3',
+                        border: '1.5px solid #BFDBFE',
                       }
                 }
                 onMouseEnter={e => {
                   if (!isActive) {
-                    e.currentTarget.style.borderColor = '#E85D9E';
-                    e.currentTarget.style.color = '#E85D9E';
-                    e.currentTarget.style.background = '#FFF7FB';
+                    e.currentTarget.style.borderColor = '#3B82F6';
+                    e.currentTarget.style.color = '#3B82F6';
+                    e.currentTarget.style.background = '#EFF6FF';
                   }
                 }}
                 onMouseLeave={e => {
                   if (!isActive) {
-                    e.currentTarget.style.borderColor = '#F1D5E3';
+                    e.currentTarget.style.borderColor = '#BFDBFE';
                     e.currentTarget.style.color = '#52525B';
                     e.currentTarget.style.background = '#FFFFFF';
                   }
@@ -163,7 +163,7 @@ export default function AllTools() {
                   style={
                     isActive
                       ? { background: 'rgba(255,255,255,0.25)', color: '#FFFFFF' }
-                      : { background: '#FCE7F3', color: '#B83A7C' }
+                      : { background: '#DBEAFE', color: '#1D4ED8' }
                   }
                 >
                   {count}
@@ -197,18 +197,18 @@ export default function AllTools() {
                     className="group flex flex-col justify-between p-5 rounded-2xl transition-all duration-200"
                     style={{
                       background: '#FFFFFF',
-                      border: '1px solid #F1D5E3',
-                      boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
+                      border: '1px solid #BFDBFE',
+                      boxShadow: '0 1px 4px rgba(59, 130, 246,0.04)',
                       textDecoration: 'none',
                     }}
                     onMouseEnter={e => {
-                      e.currentTarget.style.borderColor = '#E85D9E';
-                      e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,93,158,0.10), 0 2px 8px rgba(0,0,0,0.04)';
+                      e.currentTarget.style.borderColor = '#3B82F6';
+                      e.currentTarget.style.boxShadow = '0 8px 24px rgba(59, 130, 246,0.10), 0 2px 8px rgba(0,0,0,0.04)';
                       e.currentTarget.style.transform = 'translateY(-2px)';
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.borderColor = '#F1D5E3';
-                      e.currentTarget.style.boxShadow = '0 1px 4px rgba(232,93,158,0.04)';
+                      e.currentTarget.style.borderColor = '#BFDBFE';
+                      e.currentTarget.style.boxShadow = '0 1px 4px rgba(59, 130, 246,0.04)';
                       e.currentTarget.style.transform = 'translateY(0)';
                     }}
                   >
@@ -216,7 +216,7 @@ export default function AllTools() {
                       <div className="flex items-start justify-between mb-4">
                         <div
                           className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 group-hover:scale-105"
-                          style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                          style={{ background: '#DBEAFE', color: '#3B82F6' }}
                           aria-hidden="true"
                         >
                           <Icon className="w-5 h-5" strokeWidth={2} />
@@ -224,7 +224,7 @@ export default function AllTools() {
                         {tool.badge && (
                           <span
                             className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                            style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
+                            style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
                           >
                             {tool.badge}
                           </span>
@@ -232,7 +232,7 @@ export default function AllTools() {
                       </div>
 
                       <h3
-                        className="text-sm font-bold mb-1.5 transition-colors group-hover:text-pink-600"
+                        className="text-sm font-bold mb-1.5 transition-colors group-hover:text-blue-600"
                         style={{ color: '#18181B' }}
                       >
                         {tool.name}
@@ -244,7 +244,7 @@ export default function AllTools() {
 
                     <div
                       className="flex items-center justify-between pt-4 mt-4 text-xs font-bold"
-                      style={{ borderTop: '1px solid #FFF0F8', color: '#E85D9E' }}
+                      style={{ borderTop: '1px solid #FFF0F8', color: '#3B82F6' }}
                     >
                       <span>Open Tool</span>
                       <ArrowRight
@@ -263,15 +263,15 @@ export default function AllTools() {
             className="max-w-sm mx-auto text-center py-16 px-8 rounded-3xl animate-scale-in"
             style={{
               background: '#FFFFFF',
-              border: '1px solid #F1D5E3',
-              boxShadow: '0 4px 16px rgba(232,93,158,0.06)',
+              border: '1px solid #BFDBFE',
+              boxShadow: '0 4px 16px rgba(59, 130, 246,0.06)',
             }}
             role="status"
             aria-live="polite"
           >
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
-              style={{ background: '#FCE7F3', color: '#E85D9E' }}
+              style={{ background: '#DBEAFE', color: '#3B82F6' }}
               aria-hidden="true"
             >
               <Search className="w-7 h-7" />
@@ -288,12 +288,12 @@ export default function AllTools() {
               onClick={() => { setActiveCategory('all'); setSearchQuery(''); }}
               className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
               style={{
-                background: '#FCE7F3',
-                color: '#E85D9E',
-                border: '1px solid #F1D5E3',
+                background: '#DBEAFE',
+                color: '#3B82F6',
+                border: '1px solid #BFDBFE',
               }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#F1D5E3')}
-              onMouseLeave={e => (e.currentTarget.style.background = '#FCE7F3')}
+              onMouseEnter={e => (e.currentTarget.style.background = '#BFDBFE')}
+              onMouseLeave={e => (e.currentTarget.style.background = '#DBEAFE')}
             >
               <X className="w-4 h-4" aria-hidden="true" />
               Clear Filters

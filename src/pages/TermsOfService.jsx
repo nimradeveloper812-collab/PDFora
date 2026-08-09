@@ -103,15 +103,15 @@ export default function TermsOfService() {
       <section
         className="py-12 px-4 sm:px-6 lg:px-8 text-center"
         style={{
-          background: 'radial-gradient(ellipse 85% 55% at 50% -5%, #FCE7F3 0%, #FFFFFF 68%)',
-          borderBottom: '1px solid #F1D5E3',
+          background: 'radial-gradient(ellipse 85% 55% at 50% -5%, #DBEAFE 0%, #FFFFFF 68%)',
+          borderBottom: '1px solid #BFDBFE',
         }}
         aria-labelledby="tos-heading"
       >
         <div className="max-w-3xl mx-auto space-y-4">
           <div
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold"
-            style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
+            style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
           >
             <FileText className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Legal Agreement</span>
@@ -138,16 +138,16 @@ export default function TermsOfService() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
         <div
           className="rounded-2xl p-5 flex items-start gap-3"
-          style={{ background: '#FFF7FB', border: '1px solid #F1D5E3' }}
+          style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}
         >
-          <Sparkles className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
+          <Sparkles className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
           <div>
             <p className="text-sm font-bold" style={{ color: '#18181B' }}>Plain English Summary</p>
             <p className="text-xs mt-1 leading-relaxed" style={{ color: '#52525B' }}>
               PDFora is free to use. You own your files. Don't upload illegal content.
               We can't guarantee 100% uptime. We auto-delete your files within 1 hour.
               Use the service fairly. Questions? Email{' '}
-              <a href="mailto:legal@pdfora.com" style={{ color: '#E85D9E' }}>legal@pdfora.com</a>.
+              <a href="mailto:legal@pdfora.com" style={{ color: '#3B82F6' }}>legal@pdfora.com</a>.
             </p>
           </div>
         </div>
@@ -159,13 +159,13 @@ export default function TermsOfService() {
           <div
             key={idx}
             className="rounded-2xl p-6 sm:p-7"
-            style={{ background: '#FFFFFF', border: '1px solid #F1D5E3', boxShadow: '0 1px 4px rgba(232,93,158,0.04)' }}
+            style={{ background: '#FFFFFF', border: '1px solid #BFDBFE', boxShadow: '0 1px 4px rgba(59, 130, 246,0.04)' }}
           >
             <h2
               className="text-base sm:text-lg font-extrabold mb-4 flex items-start gap-2"
               style={{ color: '#18181B' }}
             >
-              <span className="shrink-0" style={{ color: '#E85D9E' }}>{section.title.split('.')[0]}.</span>
+              <span className="shrink-0" style={{ color: '#3B82F6' }}>{section.title.split('.')[0]}.</span>
               <span>{section.title.split('. ').slice(1).join('. ')}</span>
             </h2>
             <div className="text-sm leading-relaxed space-y-3" style={{ color: '#52525B' }}>

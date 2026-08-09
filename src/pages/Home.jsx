@@ -23,18 +23,18 @@ function ToolCard({ tool }) {
       className="group flex flex-col justify-between rounded-2xl p-5 transition-all duration-200"
       style={{
         background: '#FFFFFF',
-        border: '1px solid #F1D5E3',
-        boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
+        border: '1px solid #BFDBFE',
+        boxShadow: '0 1px 4px rgba(59, 130, 246,0.04)',
         textDecoration: 'none',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.borderColor = '#E85D9E';
-        e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,93,158,0.10), 0 2px 8px rgba(0,0,0,0.04)';
+        e.currentTarget.style.borderColor = '#3B82F6';
+        e.currentTarget.style.boxShadow = '0 8px 24px rgba(59, 130, 246,0.10), 0 2px 8px rgba(0,0,0,0.04)';
         e.currentTarget.style.transform = 'translateY(-2px)';
       }}
       onMouseLeave={e => {
-        e.currentTarget.style.borderColor = '#F1D5E3';
-        e.currentTarget.style.boxShadow = '0 1px 4px rgba(232,93,158,0.04)';
+        e.currentTarget.style.borderColor = '#BFDBFE';
+        e.currentTarget.style.boxShadow = '0 1px 4px rgba(59, 130, 246,0.04)';
         e.currentTarget.style.transform = 'translateY(0)';
       }}
     >
@@ -43,7 +43,7 @@ function ToolCard({ tool }) {
         <div className="flex items-start justify-between mb-4">
           <div
             className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 group-hover:scale-105"
-            style={{ background: '#FCE7F3', color: '#E85D9E' }}
+            style={{ background: '#DBEAFE', color: '#3B82F6' }}
             aria-hidden="true"
           >
             <Icon className="w-5 h-5" strokeWidth={2} />
@@ -51,7 +51,7 @@ function ToolCard({ tool }) {
           {tool.badge && (
             <span
               className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-              style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
+              style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
             >
               {tool.badge}
             </span>
@@ -59,7 +59,7 @@ function ToolCard({ tool }) {
         </div>
 
         <h3
-          className="text-sm font-bold mb-1.5 transition-colors duration-150 group-hover:text-pink-600"
+          className="text-sm font-bold mb-1.5 transition-colors duration-150 group-hover:text-blue-600"
           style={{ color: '#18181B' }}
         >
           {tool.name}
@@ -72,7 +72,7 @@ function ToolCard({ tool }) {
       {/* Bottom: CTA row */}
       <div
         className="flex items-center justify-between pt-4 mt-4 text-xs font-bold transition-all duration-150"
-        style={{ borderTop: '1px solid #FFF0F8', color: '#E85D9E' }}
+        style={{ borderTop: '1px solid #FFF0F8', color: '#3B82F6' }}
       >
         <span>Open Tool</span>
         <ArrowRight
@@ -87,10 +87,10 @@ function ToolCard({ tool }) {
 // ── Category Header ───────────────────────────────────────────────────────────
 function CategoryHeader({ number, title }) {
   return (
-    <div className="flex items-center gap-3 mb-5 pb-3" style={{ borderBottom: '1px solid #F1D5E3' }}>
+    <div className="flex items-center gap-3 mb-5 pb-3" style={{ borderBottom: '1px solid #BFDBFE' }}>
       <span
         className="w-7 h-7 rounded-lg text-xs font-black flex items-center justify-center shrink-0"
-        style={{ background: '#FCE7F3', color: '#E85D9E' }}
+        style={{ background: '#DBEAFE', color: '#3B82F6' }}
         aria-hidden="true"
       >
         {number}
@@ -130,19 +130,19 @@ export default function Home() {
       <section
         className="relative pt-14 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
         style={{
-          background: 'radial-gradient(ellipse 90% 60% at 50% -5%, #FCE7F3 0%, #FFFFFF 70%)',
-          borderBottom: '1px solid #F1D5E3',
+          background: 'radial-gradient(ellipse 90% 60% at 50% -5%, #DBEAFE 0%, #FFFFFF 70%)',
+          borderBottom: '1px solid #BFDBFE',
         }}
       >
         {/* Subtle decorative blobs */}
         <div
           className="absolute top-0 right-0 w-72 h-72 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(232,93,158,0.06) 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, rgba(59, 130, 246,0.06) 0%, transparent 70%)' }}
           aria-hidden="true"
         />
         <div
           className="absolute bottom-0 left-10 w-48 h-48 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(232,93,158,0.04) 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, rgba(59, 130, 246,0.04) 0%, transparent 70%)' }}
           aria-hidden="true"
         />
 
@@ -155,10 +155,10 @@ export default function Home() {
             <div
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold"
               style={{
-                background: '#FCE7F3',
-                color: '#B83A7C',
-                border: '1px solid #F1D5E3',
-                boxShadow: '0 1px 4px rgba(232,93,158,0.08)',
+                background: '#DBEAFE',
+                color: '#1D4ED8',
+                border: '1px solid #BFDBFE',
+                boxShadow: '0 1px 4px rgba(59, 130, 246,0.08)',
               }}
             >
               <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
@@ -171,7 +171,7 @@ export default function Home() {
               style={{ color: '#18181B', letterSpacing: '-0.035em' }}
             >
               Convert &amp; Organize<br />
-              <span style={{ color: '#E85D9E' }}>Your PDF Documents</span><br />
+              <span style={{ color: '#3B82F6' }}>Your PDF Documents</span><br />
               Instantly. 100% Free.
             </h1>
 
@@ -190,12 +190,12 @@ export default function Home() {
                 to="/tools"
                 className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white transition-all duration-200 active:scale-95"
                 style={{
-                  background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                  boxShadow: '0 6px 20px rgba(232, 93, 158, 0.30)',
+                  background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                  boxShadow: '0 6px 20px rgba(59, 130, 246, 0.30)',
                   textDecoration: 'none',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 8px 28px rgba(232, 93, 158, 0.40)')}
-                onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 6px 20px rgba(232, 93, 158, 0.30)')}
+                onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 8px 28px rgba(59, 130, 246, 0.40)')}
+                onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.30)')}
               >
                 Explore All Tools
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -210,9 +210,9 @@ export default function Home() {
                   textDecoration: 'none',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.background = '#FFF7FB';
-                  e.currentTarget.style.borderColor = '#F1D5E3';
-                  e.currentTarget.style.color = '#E85D9E';
+                  e.currentTarget.style.background = '#EFF6FF';
+                  e.currentTarget.style.borderColor = '#BFDBFE';
+                  e.currentTarget.style.color = '#3B82F6';
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.background = '#FFFFFF';
@@ -228,14 +228,14 @@ export default function Home() {
             <div className="relative pt-3 max-w-xl" role="search" aria-label="Search PDF tools">
               <div
                 className="flex items-center rounded-2xl bg-white p-1.5 transition-all duration-200"
-                style={{ border: '1.5px solid #F1D5E3', boxShadow: '0 2px 8px rgba(232,93,158,0.05)' }}
+                style={{ border: '1.5px solid #BFDBFE', boxShadow: '0 2px 8px rgba(59, 130, 246,0.05)' }}
                 onFocusCapture={e => {
-                  e.currentTarget.style.borderColor = '#E85D9E';
-                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(232,93,158,0.12)';
+                  e.currentTarget.style.borderColor = '#3B82F6';
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246,0.12)';
                 }}
                 onBlurCapture={e => {
-                  e.currentTarget.style.borderColor = '#F1D5E3';
-                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(232,93,158,0.05)';
+                  e.currentTarget.style.borderColor = '#BFDBFE';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246,0.05)';
                 }}
               >
                 <Search className="w-5 h-5 ml-3 shrink-0" style={{ color: '#A1A1AA' }} aria-hidden="true" />
@@ -251,9 +251,9 @@ export default function Home() {
                 <button
                   onClick={() => {}}
                   className="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all duration-150 active:scale-95 shrink-0"
-                  style={{ background: '#E85D9E' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = '#D44D8A')}
-                  onMouseLeave={e => (e.currentTarget.style.background = '#E85D9E')}
+                  style={{ background: '#3B82F6' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#2563EB')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#3B82F6')}
                   aria-label="Search"
                 >
                   Search
@@ -266,8 +266,8 @@ export default function Home() {
                   className="absolute top-full left-0 right-0 mt-2 rounded-2xl p-2 z-30 max-h-72 overflow-y-auto animate-scale-in"
                   style={{
                     background: '#FFFFFF',
-                    border: '1px solid #F1D5E3',
-                    boxShadow: '0 20px 48px rgba(232,93,158,0.12), 0 4px 16px rgba(0,0,0,0.06)',
+                    border: '1px solid #BFDBFE',
+                    boxShadow: '0 20px 48px rgba(59, 130, 246,0.12), 0 4px 16px rgba(0,0,0,0.06)',
                   }}
                   role="listbox"
                   aria-label="Search results"
@@ -280,13 +280,13 @@ export default function Home() {
                           key={t.id}
                           to={t.path}
                           role="option"
-                          className="flex items-center gap-3 p-2.5 rounded-xl transition-colors duration-100 hover:bg-pink-50"
+                          className="flex items-center gap-3 p-2.5 rounded-xl transition-colors duration-100 hover:bg-blue-50"
                           style={{ textDecoration: 'none' }}
                           onClick={() => setSearchQuery('')}
                         >
                           <div
                             className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                            style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                            style={{ background: '#DBEAFE', color: '#3B82F6' }}
                             aria-hidden="true"
                           >
                             <Icon className="w-4 h-4" />
@@ -306,7 +306,7 @@ export default function Home() {
                       <button
                         onClick={() => setSearchQuery('')}
                         className="mt-2 text-xs font-bold"
-                        style={{ color: '#E85D9E' }}
+                        style={{ color: '#3B82F6' }}
                       >
                         Clear search
                       </button>
@@ -323,10 +323,10 @@ export default function Home() {
               className="w-full max-w-sm relative"
               style={{
                 background: '#FFFFFF',
-                border: '1px solid #F1D5E3',
+                border: '1px solid #BFDBFE',
                 borderRadius: '1.5rem',
                 padding: '1.5rem',
-                boxShadow: '0 24px 64px rgba(232,93,158,0.12), 0 4px 16px rgba(0,0,0,0.05)',
+                boxShadow: '0 24px 64px rgba(59, 130, 246,0.12), 0 4px 16px rgba(0,0,0,0.05)',
               }}
             >
               {/* Card header */}
@@ -336,7 +336,7 @@ export default function Home() {
               >
                 <span
                   className="text-[10px] font-bold uppercase tracking-widest"
-                  style={{ color: '#E85D9E' }}
+                  style={{ color: '#3B82F6' }}
                 >
                   Document Conversion
                 </span>
@@ -348,7 +348,7 @@ export default function Home() {
               {/* Step 1 – Source file */}
               <div
                 className="flex items-center gap-3 p-3.5 rounded-xl mb-3"
-                style={{ border: '1px solid #F1D5E3', background: '#FAFAFA' }}
+                style={{ border: '1px solid #BFDBFE', background: '#FAFAFA' }}
               >
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-black shrink-0"
@@ -372,27 +372,27 @@ export default function Home() {
 
               {/* Arrow / Processing indicator */}
               <div className="flex items-center justify-center py-2 gap-2 my-1">
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, #F1D5E3)' }} />
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, #BFDBFE)' }} />
                 <div
                   className="w-8 h-8 rounded-xl flex items-center justify-center"
-                  style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                  style={{ background: '#DBEAFE', color: '#3B82F6' }}
                   aria-label="Converting"
                 >
                   <Sparkles className="w-4 h-4" aria-hidden="true" />
                 </div>
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, #F1D5E3, transparent)' }} />
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, #BFDBFE, transparent)' }} />
               </div>
 
               {/* Step 2 – Result file */}
               <div
                 className="flex items-center gap-3 p-3.5 rounded-xl mb-4"
-                style={{ border: '1px solid #F1D5E3', background: '#FFF7FB' }}
+                style={{ border: '1px solid #BFDBFE', background: '#EFF6FF' }}
               >
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-black text-white shrink-0"
                   style={{
-                    background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                    boxShadow: '0 3px 8px rgba(232,93,158,0.25)',
+                    background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                    boxShadow: '0 3px 8px rgba(59, 130, 246,0.25)',
                   }}
                   aria-label="PDF result"
                 >
@@ -400,13 +400,13 @@ export default function Home() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-bold truncate" style={{ color: '#18181B' }}>report_final.pdf</p>
-                  <p className="text-[11px] font-semibold mt-0.5" style={{ color: '#E85D9E' }}>
+                  <p className="text-[11px] font-semibold mt-0.5" style={{ color: '#3B82F6' }}>
                     Ready — 1.2 MB
                   </p>
                 </div>
                 <span
                   className="text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0"
-                  style={{ background: '#E85D9E', color: '#FFFFFF' }}
+                  style={{ background: '#3B82F6', color: '#FFFFFF' }}
                 >
                   Free
                 </span>
@@ -424,7 +424,7 @@ export default function Home() {
                     className="inline-flex items-center gap-1.5 text-[11px] font-medium"
                     style={{ color: '#71717A' }}
                   >
-                    <Icon className="w-3 h-3 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
+                    <Icon className="w-3 h-3 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
                     {text}
                   </span>
                 ))}
@@ -439,7 +439,7 @@ export default function Home() {
           ════════════════════════════════════════════════════ */}
       <section
         className="py-10 px-4 sm:px-6 lg:px-8"
-        style={{ background: '#FFFFFF', borderBottom: '1px solid #F1D5E3' }}
+        style={{ background: '#FFFFFF', borderBottom: '1px solid #BFDBFE' }}
         aria-label="Platform highlights"
       >
         <div className="max-w-5xl mx-auto">
@@ -453,7 +453,7 @@ export default function Home() {
               <div key={title} className="space-y-2">
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto"
-                  style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                  style={{ background: '#DBEAFE', color: '#3B82F6' }}
                   aria-hidden="true"
                 >
                   <Icon className="w-5 h-5" strokeWidth={2} />
@@ -528,17 +528,17 @@ export default function Home() {
               to="/tools"
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-all duration-200 hover:shadow-md group"
               style={{
-                border: '1.5px solid #F1D5E3',
-                color: '#E85D9E',
+                border: '1.5px solid #BFDBFE',
+                color: '#3B82F6',
                 textDecoration: 'none',
                 background: '#FFFFFF',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.borderColor = '#E85D9E';
-                e.currentTarget.style.background = '#FFF7FB';
+                e.currentTarget.style.borderColor = '#3B82F6';
+                e.currentTarget.style.background = '#EFF6FF';
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.borderColor = '#F1D5E3';
+                e.currentTarget.style.borderColor = '#BFDBFE';
                 e.currentTarget.style.background = '#FFFFFF';
               }}
             >
@@ -558,7 +558,7 @@ export default function Home() {
       <span id="how-it-works" aria-hidden="true" />
       <section
         className="py-20 px-4 sm:px-6 lg:px-8"
-        style={{ background: '#FFF7FB', borderTop: '1px solid #F1D5E3', borderBottom: '1px solid #F1D5E3' }}
+        style={{ background: '#EFF6FF', borderTop: '1px solid #BFDBFE', borderBottom: '1px solid #BFDBFE' }}
         aria-labelledby="how-it-works-heading"
       >
         <div className="max-w-5xl mx-auto">
@@ -580,7 +580,7 @@ export default function Home() {
             {/* Connector lines on desktop */}
             <div
               className="hidden md:block absolute top-10 left-[calc(33.33%+1rem)] right-[calc(33.33%+1rem)] h-px"
-              style={{ background: 'linear-gradient(90deg, #F1D5E3 0%, #E85D9E 50%, #F1D5E3 100%)' }}
+              style={{ background: 'linear-gradient(90deg, #BFDBFE 0%, #3B82F6 50%, #BFDBFE 100%)' }}
               aria-hidden="true"
             />
 
@@ -609,14 +609,14 @@ export default function Home() {
                 className="relative p-7 rounded-2xl space-y-4 text-left"
                 style={{
                   background: '#FFFFFF',
-                  border: '1px solid #F1D5E3',
-                  boxShadow: '0 2px 8px rgba(232,93,158,0.05)',
+                  border: '1px solid #BFDBFE',
+                  boxShadow: '0 2px 8px rgba(59, 130, 246,0.05)',
                 }}
               >
                 {/* Step number */}
                 <span
                   className="block text-5xl font-black leading-none select-none"
-                  style={{ color: '#FCE7F3', letterSpacing: '-0.05em' }}
+                  style={{ color: '#DBEAFE', letterSpacing: '-0.05em' }}
                   aria-hidden="true"
                 >
                   {step}
@@ -624,7 +624,7 @@ export default function Home() {
 
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                  style={{ background: '#DBEAFE', color: '#3B82F6' }}
                   aria-hidden="true"
                 >
                   <Icon className="w-5 h-5" strokeWidth={2} />
@@ -692,13 +692,13 @@ export default function Home() {
                 className="p-6 rounded-2xl space-y-3"
                 style={{
                   background: '#FFFFFF',
-                  border: '1px solid #F1D5E3',
-                  boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
+                  border: '1px solid #BFDBFE',
+                  boxShadow: '0 1px 4px rgba(59, 130, 246,0.04)',
                 }}
               >
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                  style={{ background: '#DBEAFE', color: '#3B82F6' }}
                   aria-hidden="true"
                 >
                   <Icon className="w-5 h-5" strokeWidth={2} />
@@ -720,7 +720,7 @@ export default function Home() {
           ════════════════════════════════════════════════════ */}
       <section
         className="py-20 px-4 sm:px-6 lg:px-8"
-        style={{ background: '#FFF7FB', borderTop: '1px solid #F1D5E3', borderBottom: '1px solid #F1D5E3' }}
+        style={{ background: '#EFF6FF', borderTop: '1px solid #BFDBFE', borderBottom: '1px solid #BFDBFE' }}
         aria-labelledby="faq-heading"
       >
         <div className="max-w-3xl mx-auto">
@@ -731,7 +731,7 @@ export default function Home() {
               className="text-3xl font-extrabold flex items-center justify-center gap-2.5"
               style={{ color: '#18181B', letterSpacing: '-0.03em' }}
             >
-              <HelpCircle className="w-7 h-7 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
+              <HelpCircle className="w-7 h-7 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
               Frequently Asked Questions
             </h2>
             <p className="text-sm" style={{ color: '#71717A' }}>
@@ -749,20 +749,20 @@ export default function Home() {
                   className="rounded-2xl overflow-hidden transition-all duration-200"
                   style={{
                     background: '#FFFFFF',
-                    border: `1px solid ${isOpen ? '#E85D9E' : '#F1D5E3'}`,
-                    boxShadow: isOpen ? '0 4px 16px rgba(232,93,158,0.08)' : '0 1px 4px rgba(232,93,158,0.03)',
+                    border: `1px solid ${isOpen ? '#3B82F6' : '#BFDBFE'}`,
+                    boxShadow: isOpen ? '0 4px 16px rgba(59, 130, 246,0.08)' : '0 1px 4px rgba(59, 130, 246,0.03)',
                   }}
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
                     className="w-full px-5 sm:px-6 py-4 sm:py-5 text-left flex items-center justify-between gap-4 transition-colors duration-150"
                     aria-expanded={isOpen}
-                    style={{ color: isOpen ? '#E85D9E' : '#18181B' }}
+                    style={{ color: isOpen ? '#3B82F6' : '#18181B' }}
                   >
                     <span className="text-sm font-semibold leading-snug">{faq.question}</span>
                     <ChevronDown
                       className={`w-4 h-4 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-                      style={{ color: isOpen ? '#E85D9E' : '#A1A1AA' }}
+                      style={{ color: isOpen ? '#3B82F6' : '#A1A1AA' }}
                       aria-hidden="true"
                     />
                   </button>
@@ -790,8 +790,8 @@ export default function Home() {
           <div
             className="relative rounded-3xl p-8 sm:p-14 text-center overflow-hidden"
             style={{
-              background: 'linear-gradient(135deg, #E85D9E 0%, #C03978 100%)',
-              boxShadow: '0 24px 56px rgba(232,93,158,0.30)',
+              background: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+              boxShadow: '0 24px 56px rgba(59, 130, 246,0.30)',
             }}
           >
             {/* Decorative orb */}
@@ -818,7 +818,7 @@ export default function Home() {
                   className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-all duration-200 active:scale-95 hover:shadow-lg"
                   style={{
                     background: '#FFFFFF',
-                    color: '#E85D9E',
+                    color: '#3B82F6',
                     textDecoration: 'none',
                     boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
                   }}

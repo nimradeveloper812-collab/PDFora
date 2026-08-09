@@ -32,13 +32,13 @@ function ScrollToTop() {
 
 function NotFound() {
   return (
-    <div className="min-h-screen pt-24 pb-20 flex flex-col items-center justify-center text-center px-4" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% -5%, #FCE7F3 0%, #FFFFFF 70%)' }}>
+    <div className="min-h-screen pt-24 pb-20 flex flex-col items-center justify-center text-center px-4" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% -5%, #DBEAFE 0%, #FFFFFF 70%)' }}>
       <div className="max-w-md mx-auto space-y-6">
-        <div className="text-8xl font-black leading-none select-none" style={{ color: '#F1D5E3', letterSpacing: '-0.05em' }} aria-hidden="true">
+        <div className="text-8xl font-black leading-none select-none" style={{ color: '#BFDBFE', letterSpacing: '-0.05em' }} aria-hidden="true">
           404
         </div>
-        <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto" style={{ background: '#FCE7F3' }}>
-          <svg className="w-8 h-8" style={{ color: '#E85D9E' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+        <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto" style={{ background: '#DBEAFE' }}>
+          <svg className="w-8 h-8" style={{ color: '#3B82F6' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>

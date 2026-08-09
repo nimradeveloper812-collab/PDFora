@@ -18,7 +18,7 @@ function InputField({ id, label, required, error, children }) {
   return (
     <div className="space-y-1.5">
       <label htmlFor={id} className="block text-xs font-semibold" style={{ color: '#3F3F46' }}>
-        {label}{required && <span className="ml-0.5" style={{ color: '#E85D9E' }} aria-hidden="true"> *</span>}
+        {label}{required && <span className="ml-0.5" style={{ color: '#3B82F6' }} aria-hidden="true"> *</span>}
         {required && <span className="sr-only"> (required)</span>}
       </label>
       {children}
@@ -37,7 +37,7 @@ const inputStyle = (hasError) => ({
   fontSize: '0.875rem',
   color: '#18181B',
   background: '#FFFFFF',
-  border: `1.5px solid ${hasError ? '#FCA5A5' : '#F1D5E3'}`,
+  border: `1.5px solid ${hasError ? '#FCA5A5' : '#BFDBFE'}`,
   borderRadius: '0.75rem',
   outline: 'none',
   fontFamily: 'inherit',
@@ -92,8 +92,8 @@ export default function Contact() {
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
   };
 
-  const focusStyle  = e => { e.currentTarget.style.borderColor = '#E85D9E'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(232,93,158,0.10)'; };
-  const blurStyle   = e => { e.currentTarget.style.borderColor = errors[e.currentTarget.name] ? '#FCA5A5' : '#F1D5E3'; e.currentTarget.style.boxShadow = 'none'; };
+  const focusStyle  = e => { e.currentTarget.style.borderColor = '#3B82F6'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246,0.10)'; };
+  const blurStyle   = e => { e.currentTarget.style.borderColor = errors[e.currentTarget.name] ? '#FCA5A5' : '#BFDBFE'; e.currentTarget.style.boxShadow = 'none'; };
 
   return (
     <div className="pt-16 pb-20 min-h-screen">
@@ -106,15 +106,15 @@ export default function Contact() {
       <section
         className="py-14 px-4 sm:px-6 lg:px-8 text-center"
         style={{
-          background: 'radial-gradient(ellipse 85% 55% at 50% -5%, #FCE7F3 0%, #FFFFFF 68%)',
-          borderBottom: '1px solid #F1D5E3',
+          background: 'radial-gradient(ellipse 85% 55% at 50% -5%, #DBEAFE 0%, #FFFFFF 68%)',
+          borderBottom: '1px solid #BFDBFE',
         }}
         aria-labelledby="contact-heading"
       >
         <div className="max-w-2xl mx-auto space-y-4">
           <div
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold"
-            style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
+            style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
           >
             <MessageCircle className="w-3.5 h-3.5" aria-hidden="true" />
             We&apos;re here to help
@@ -143,11 +143,11 @@ export default function Contact() {
             {/* Email */}
             <div
               className="flex items-start gap-4 p-5 rounded-2xl"
-              style={{ background: '#FFFFFF', border: '1px solid #F1D5E3', boxShadow: '0 1px 4px rgba(232,93,158,0.04)' }}
+              style={{ background: '#FFFFFF', border: '1px solid #BFDBFE', boxShadow: '0 1px 4px rgba(59, 130, 246,0.04)' }}
             >
               <div
                 className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-                style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                style={{ background: '#DBEAFE', color: '#3B82F6' }}
                 aria-hidden="true"
               >
                 <Mail className="w-4 h-4" />
@@ -164,11 +164,11 @@ export default function Contact() {
             {/* Hours */}
             <div
               className="flex items-start gap-4 p-5 rounded-2xl"
-              style={{ background: '#FFFFFF', border: '1px solid #F1D5E3', boxShadow: '0 1px 4px rgba(232,93,158,0.04)' }}
+              style={{ background: '#FFFFFF', border: '1px solid #BFDBFE', boxShadow: '0 1px 4px rgba(59, 130, 246,0.04)' }}
             >
               <div
                 className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-                style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                style={{ background: '#DBEAFE', color: '#3B82F6' }}
                 aria-hidden="true"
               >
                 <Clock className="w-4 h-4" />
@@ -185,11 +185,11 @@ export default function Contact() {
             {/* Location */}
             <div
               className="flex items-start gap-4 p-5 rounded-2xl"
-              style={{ background: '#FFFFFF', border: '1px solid #F1D5E3', boxShadow: '0 1px 4px rgba(232,93,158,0.04)' }}
+              style={{ background: '#FFFFFF', border: '1px solid #BFDBFE', boxShadow: '0 1px 4px rgba(59, 130, 246,0.04)' }}
             >
               <div
                 className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-                style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                style={{ background: '#DBEAFE', color: '#3B82F6' }}
                 aria-hidden="true"
               >
                 <MapPin className="w-4 h-4" />
@@ -207,8 +207,8 @@ export default function Contact() {
             <div
               className="p-5 rounded-2xl space-y-2"
               style={{
-                background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                boxShadow: '0 6px 20px rgba(232,93,158,0.25)',
+                background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                boxShadow: '0 6px 20px rgba(59, 130, 246,0.25)',
               }}
               aria-label="Tip: check FAQ first"
             >
@@ -229,18 +229,18 @@ export default function Contact() {
                 className="rounded-3xl p-10 sm:p-14 text-center space-y-5 animate-scale-in"
                 style={{
                   background: '#FFFFFF',
-                  border: '1px solid #F1D5E3',
-                  boxShadow: '0 8px 32px rgba(232,93,158,0.08)',
+                  border: '1px solid #BFDBFE',
+                  boxShadow: '0 8px 32px rgba(59, 130, 246,0.08)',
                 }}
                 role="status"
                 aria-live="polite"
               >
                 <div
                   className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto"
-                  style={{ background: '#FCE7F3', border: '1px solid #F1D5E3' }}
+                  style={{ background: '#DBEAFE', border: '1px solid #BFDBFE' }}
                   aria-hidden="true"
                 >
-                  <CheckCircle2 className="w-8 h-8" style={{ color: '#E85D9E' }} strokeWidth={2.2} />
+                  <CheckCircle2 className="w-8 h-8" style={{ color: '#3B82F6' }} strokeWidth={2.2} />
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold" style={{ color: '#18181B' }}>
@@ -259,12 +259,12 @@ export default function Contact() {
                   }}
                   className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all"
                   style={{
-                    color: '#E85D9E',
-                    border: '1.5px solid #F1D5E3',
+                    color: '#3B82F6',
+                    border: '1.5px solid #BFDBFE',
                     background: '#FFFFFF',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#FFF7FB'; e.currentTarget.style.borderColor = '#E85D9E'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#FFFFFF'; e.currentTarget.style.borderColor = '#F1D5E3'; }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#EFF6FF'; e.currentTarget.style.borderColor = '#3B82F6'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#FFFFFF'; e.currentTarget.style.borderColor = '#BFDBFE'; }}
                 >
                   Send Another Message
                 </button>
@@ -277,8 +277,8 @@ export default function Contact() {
                 className="rounded-3xl p-6 sm:p-8 space-y-5"
                 style={{
                   background: '#FFFFFF',
-                  border: '1px solid #F1D5E3',
-                  boxShadow: '0 8px 32px rgba(232,93,158,0.07), 0 2px 8px rgba(0,0,0,0.04)',
+                  border: '1px solid #BFDBFE',
+                  boxShadow: '0 8px 32px rgba(59, 130, 246,0.07), 0 2px 8px rgba(0,0,0,0.04)',
                 }}
                 aria-label="Contact support form"
               >
@@ -287,7 +287,7 @@ export default function Contact() {
                     Send a Message
                   </h2>
                   <p className="text-xs mt-0.5" style={{ color: '#A1A1AA' }}>
-                    Fields marked <span style={{ color: '#E85D9E' }}>*</span> are required.
+                    Fields marked <span style={{ color: '#3B82F6' }}>*</span> are required.
                   </p>
                 </div>
 
@@ -379,7 +379,7 @@ export default function Contact() {
                   <div className="flex justify-end">
                     <span
                       className="text-[11px] font-medium"
-                      style={{ color: form.message.length >= 20 ? '#E85D9E' : '#A1A1AA' }}
+                      style={{ color: form.message.length >= 20 ? '#3B82F6' : '#A1A1AA' }}
                       aria-live="polite"
                     >
                       {form.message.length} characters{form.message.length < 20 ? ` (${20 - form.message.length} more needed)` : ''}
@@ -393,13 +393,13 @@ export default function Contact() {
                   disabled={submitting}
                   className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold text-white transition-all active:scale-95"
                   style={{
-                    background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                    boxShadow: '0 4px 14px rgba(232,93,158,0.28)',
+                    background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                    boxShadow: '0 4px 14px rgba(59, 130, 246,0.28)',
                     opacity: submitting ? 0.7 : 1,
                     cursor: submitting ? 'not-allowed' : 'pointer',
                   }}
-                  onMouseEnter={e => { if (!submitting) e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,93,158,0.38)'; }}
-                  onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 4px 14px rgba(232,93,158,0.28)')}
+                  onMouseEnter={e => { if (!submitting) e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246,0.38)'; }}
+                  onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 4px 14px rgba(59, 130, 246,0.28)')}
                 >
                   <Send className="w-4 h-4" aria-hidden="true" />
                   {submitting ? 'Sending…' : 'Send Message'}

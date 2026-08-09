@@ -19,10 +19,10 @@ function NavLink({ to, children, isActive }) {
       to={to}
       className={`relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
         isActive
-          ? 'text-pink-600 bg-pink-50 font-semibold nav-active-indicator'
+          ? 'text-blue-600 bg-blue-50 font-semibold nav-active-indicator'
           : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
       }`}
-      style={isActive ? { color: '#E85D9E', backgroundColor: '#FCE7F3' } : {}}
+      style={isActive ? { color: '#3B82F6', backgroundColor: '#DBEAFE' } : {}}
     >
       {children}
     </Link>
@@ -96,9 +96,9 @@ export default function Header() {
       }`}
       style={{
         borderBottom: scrolled
-          ? '1px solid #F1D5E3'
+          ? '1px solid #BFDBFE'
           : '1px solid rgba(241, 213, 227, 0.4)',
-        boxShadow: scrolled ? '0 1px 16px rgba(232, 93, 158, 0.06)' : 'none',
+        boxShadow: scrolled ? '0 1px 16px rgba(59, 130, 246, 0.06)' : 'none',
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -113,18 +113,18 @@ export default function Header() {
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
               style={{
-                background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                boxShadow: '0 4px 12px rgba(232, 93, 158, 0.30)',
+                background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.30)',
               }}
             >
               <FileCheck className="w-5 h-5" strokeWidth={2.3} aria-hidden="true" />
             </div>
             <span className="text-xl font-extrabold tracking-tight" style={{ color: '#18181B', letterSpacing: '-0.03em' }}>
-              PDF<span style={{ color: '#E85D9E' }}>ora</span>
+              PDF<span style={{ color: '#3B82F6' }}>ora</span>
             </span>
             <span
               className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold"
-              style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
+              style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
               aria-label="Pakistan's free tool"
             >
               <span>🇵🇰</span>
@@ -154,14 +154,14 @@ export default function Header() {
                 }`}
                 style={
                   isToolsActive || isToolsOpen
-                    ? { color: '#E85D9E', backgroundColor: '#FCE7F3' }
+                    ? { color: '#3B82F6', backgroundColor: '#DBEAFE' }
                     : {}
                 }
               >
                 <span>PDF Tools</span>
                 <ChevronDown
                   className={`w-3.5 h-3.5 transition-transform duration-250 ${isToolsOpen ? 'rotate-180' : ''}`}
-                  style={{ color: isToolsOpen ? '#E85D9E' : '#A1A1AA' }}
+                  style={{ color: isToolsOpen ? '#3B82F6' : '#A1A1AA' }}
                   aria-hidden="true"
                 />
               </button>
@@ -173,15 +173,15 @@ export default function Header() {
                   role="menu"
                   className="absolute top-full left-1/2 -translate-x-1/2 mt-2.5 w-[660px] bg-white rounded-2xl p-5 z-50 animate-slide-in-top"
                   style={{
-                    border: '1px solid #F1D5E3',
-                    boxShadow: '0 20px 48px rgba(232, 93, 158, 0.12), 0 4px 16px rgba(0,0,0,0.06)',
+                    border: '1px solid #BFDBFE',
+                    boxShadow: '0 20px 48px rgba(59, 130, 246, 0.12), 0 4px 16px rgba(0,0,0,0.06)',
                   }}
                 >
                   {/* Dropdown Header */}
                   <div className="flex items-center justify-between pb-3 mb-3" style={{ borderBottom: '1px solid #F9F0F5' }}>
                     <span
                       className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider"
-                      style={{ color: '#E85D9E' }}
+                      style={{ color: '#3B82F6' }}
                     >
                       <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
                       PDF Tool Suite
@@ -219,18 +219,18 @@ export default function Header() {
                               to={tool.path}
                               onClick={() => setIsToolsOpen(false)}
                               role="menuitem"
-                              className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-150 group/item hover:bg-pink-50"
+                              className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-150 group/item hover:bg-blue-50"
                               style={{ textDecoration: 'none' }}
                             >
                               <div
                                 className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 group-hover/item:scale-105"
-                                style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                                style={{ background: '#DBEAFE', color: '#3B82F6' }}
                               >
                                 <Icon className="w-4 h-4" aria-hidden="true" />
                               </div>
                               <div className="min-w-0">
                                 <div
-                                  className="text-xs font-semibold transition-colors group-hover/item:text-pink-600 truncate"
+                                  className="text-xs font-semibold transition-colors group-hover/item:text-blue-600 truncate"
                                   style={{ color: '#18181B' }}
                                 >
                                   {tool.name}
@@ -265,18 +265,18 @@ export default function Header() {
                               to={tool.path}
                               onClick={() => setIsToolsOpen(false)}
                               role="menuitem"
-                              className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-150 group/item hover:bg-pink-50"
+                              className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-150 group/item hover:bg-blue-50"
                               style={{ textDecoration: 'none' }}
                             >
                               <div
                                 className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 group-hover/item:scale-105"
-                                style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                                style={{ background: '#DBEAFE', color: '#3B82F6' }}
                               >
                                 <Icon className="w-4 h-4" aria-hidden="true" />
                               </div>
                               <div className="min-w-0">
                                 <div
-                                  className="text-xs font-semibold transition-colors group-hover/item:text-pink-600 truncate"
+                                  className="text-xs font-semibold transition-colors group-hover/item:text-blue-600 truncate"
                                   style={{ color: '#18181B' }}
                                 >
                                   {tool.name}
@@ -315,8 +315,8 @@ export default function Header() {
               to="/tools"
               className="inline-flex items-center gap-2 text-sm font-bold text-white rounded-xl px-4 py-2.5 transition-all duration-200 hover:shadow-lg active:scale-95"
               style={{
-                background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                boxShadow: '0 4px 14px rgba(232, 93, 158, 0.30)',
+                background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                boxShadow: '0 4px 14px rgba(59, 130, 246, 0.30)',
                 textDecoration: 'none',
               }}
             >
@@ -331,7 +331,7 @@ export default function Header() {
             className="md:hidden p-2 rounded-xl transition-colors duration-150"
             style={{
               color: '#18181B',
-              background: isMobileMenuOpen ? '#FCE7F3' : 'transparent',
+              background: isMobileMenuOpen ? '#DBEAFE' : 'transparent',
             }}
             aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={isMobileMenuOpen}
@@ -354,7 +354,7 @@ export default function Header() {
           className="md:hidden fixed inset-x-0 bottom-0 bg-white overflow-y-auto mobile-nav-enter"
           style={{
             top: scrolled ? '57px' : '65px',
-            borderTop: '1px solid #F1D5E3',
+            borderTop: '1px solid #BFDBFE',
             zIndex: 40,
           }}
         >
@@ -371,8 +371,8 @@ export default function Header() {
                 to={to}
                 className="flex items-center px-4 py-3 rounded-xl text-base font-semibold transition-all duration-150"
                 style={{
-                  color: location.pathname === to ? '#E85D9E' : '#18181B',
-                  background: location.pathname === to ? '#FCE7F3' : 'transparent',
+                  color: location.pathname === to ? '#3B82F6' : '#18181B',
+                  background: location.pathname === to ? '#DBEAFE' : 'transparent',
                   textDecoration: 'none',
                 }}
               >
@@ -385,15 +385,15 @@ export default function Header() {
               to="/tools"
               className="flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold transition-all duration-150"
               style={{
-                color: location.pathname === '/tools' ? '#E85D9E' : '#18181B',
-                background: location.pathname === '/tools' ? '#FCE7F3' : 'transparent',
+                color: location.pathname === '/tools' ? '#3B82F6' : '#18181B',
+                background: location.pathname === '/tools' ? '#DBEAFE' : 'transparent',
                 textDecoration: 'none',
               }}
             >
               <span>All PDF Tools</span>
               <span
                 className="text-[11px] font-bold px-2.5 py-0.5 rounded-full"
-                style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
+                style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
               >
                 {TOOLS.length} Tools
               </span>
@@ -402,12 +402,12 @@ export default function Header() {
             {/* Quick Tool Links */}
             <div
               className="mx-1 mt-3 p-4 rounded-2xl space-y-4"
-              style={{ background: '#FFF7FB', border: '1px solid #F1D5E3' }}
+              style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}
             >
               <div>
                 <p
                   className="text-[10px] font-bold uppercase tracking-widest mb-2.5"
-                  style={{ color: '#E85D9E' }}
+                  style={{ color: '#3B82F6' }}
                 >
                   Popular Converters
                 </p>
@@ -421,7 +421,7 @@ export default function Header() {
                     >
                       <span
                         className="w-1.5 h-1.5 rounded-full shrink-0"
-                        style={{ background: '#E85D9E' }}
+                        style={{ background: '#3B82F6' }}
                         aria-hidden="true"
                       />
                       <span className="truncate">{t.name}</span>
@@ -430,10 +430,10 @@ export default function Header() {
                 </div>
               </div>
 
-              <div style={{ borderTop: '1px solid #F1D5E3', paddingTop: '0.75rem' }}>
+              <div style={{ borderTop: '1px solid #BFDBFE', paddingTop: '0.75rem' }}>
                 <p
                   className="text-[10px] font-bold uppercase tracking-widest mb-2.5"
-                  style={{ color: '#E85D9E' }}
+                  style={{ color: '#3B82F6' }}
                 >
                   Edit &amp; Organize
                 </p>
@@ -447,7 +447,7 @@ export default function Header() {
                     >
                       <span
                         className="w-1.5 h-1.5 rounded-full shrink-0"
-                        style={{ background: '#E85D9E' }}
+                        style={{ background: '#3B82F6' }}
                         aria-hidden="true"
                       />
                       <span className="truncate">{t.name}</span>
@@ -463,8 +463,8 @@ export default function Header() {
                 to="/tools"
                 className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all active:scale-95"
                 style={{
-                  background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                  boxShadow: '0 4px 14px rgba(232, 93, 158, 0.28)',
+                  background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                  boxShadow: '0 4px 14px rgba(59, 130, 246, 0.28)',
                   textDecoration: 'none',
                 }}
               >

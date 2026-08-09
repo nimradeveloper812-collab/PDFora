@@ -253,8 +253,8 @@ export default function Dropzone({ tool }) {
         className="rounded-3xl overflow-hidden transition-all"
         style={{
           background: '#FFFFFF',
-          border: '1px solid #F1D5E3',
-          boxShadow: '0 8px 32px rgba(232,93,158,0.07), 0 2px 8px rgba(0,0,0,0.04)',
+          border: '1px solid #BFDBFE',
+          boxShadow: '0 8px 32px rgba(59, 130, 246,0.07), 0 2px 8px rgba(0,0,0,0.04)',
           padding: 'clamp(1.25rem, 4vw, 1.75rem)',
         }}
       >
@@ -298,21 +298,21 @@ export default function Dropzone({ tool }) {
                   minHeight: '260px',
                   padding: 'clamp(2rem, 6vw, 3.5rem)',
                   borderRadius: '1rem',
-                  border: isDragging ? '2px solid #E85D9E' : '2px dashed #F1D5E3',
+                  border: isDragging ? '2px solid #3B82F6' : '2px dashed #BFDBFE',
                   background: isDragging
-                    ? 'linear-gradient(180deg, #FFF0F8 0%, #FCE7F3 100%)'
-                    : 'linear-gradient(180deg, #FFFFFF 0%, #FFF9FC 100%)',
+                    ? 'linear-gradient(180deg, #FFF0F8 0%, #DBEAFE 100%)'
+                    : 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)',
                   transform: isDragging ? 'scale(0.995)' : 'scale(1)',
-                  boxShadow: isDragging ? '0 0 0 6px rgba(232,93,158,0.08)' : 'none',
+                  boxShadow: isDragging ? '0 0 0 6px rgba(59, 130, 246,0.08)' : 'none',
                 }}
               >
                 <div
                   className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 transition-all duration-300"
                   style={{
-                    background: isDragging ? '#E85D9E' : '#FCE7F3',
-                    color: isDragging ? '#FFFFFF' : '#E85D9E',
+                    background: isDragging ? '#3B82F6' : '#DBEAFE',
+                    color: isDragging ? '#FFFFFF' : '#3B82F6',
                     transform: isDragging ? 'scale(1.08)' : 'scale(1)',
-                    boxShadow: isDragging ? '0 8px 24px rgba(232,93,158,0.30)' : 'none',
+                    boxShadow: isDragging ? '0 8px 24px rgba(59, 130, 246,0.30)' : 'none',
                   }}
                   aria-hidden="true"
                 >
@@ -323,7 +323,7 @@ export default function Dropzone({ tool }) {
                   {isDragging
                     ? 'Release to upload'
                     : <>Drop your file here, or{' '}
-                        <span style={{ color: '#E85D9E' }}>browse</span>
+                        <span style={{ color: '#3B82F6' }}>browse</span>
                       </>
                   }
                 </h3>
@@ -336,8 +336,8 @@ export default function Dropzone({ tool }) {
                   type="button"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white transition-all duration-150 active:scale-95"
                   style={{
-                    background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                    boxShadow: '0 4px 14px rgba(232,93,158,0.28)',
+                    background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                    boxShadow: '0 4px 14px rgba(59, 130, 246,0.28)',
                   }}
                   onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }}
                   aria-label={`Choose ${tool.acceptedFileLabel} file`}
@@ -352,12 +352,12 @@ export default function Dropzone({ tool }) {
                   aria-label="Security information"
                 >
                   <span className="flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
+                    <ShieldCheck className="w-3 h-3 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
                     Secure SSL Connection
                   </span>
                   <span aria-hidden="true">·</span>
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
+                    <Clock className="w-3 h-3 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
                     Auto-deleted after 1 hour
                   </span>
                 </div>
@@ -374,7 +374,7 @@ export default function Dropzone({ tool }) {
                     </span>
                     <span
                       className="text-[11px] font-bold px-2.5 py-0.5 rounded-full"
-                      style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
+                      style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
                     >
                       {fmt(totalSize)}
                     </span>
@@ -385,9 +385,9 @@ export default function Dropzone({ tool }) {
                       onClick={() => fileInputRef.current?.click()}
                       className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-all"
                       style={{
-                        color: '#E85D9E',
-                        background: '#FCE7F3',
-                        border: '1px solid #F1D5E3',
+                        color: '#3B82F6',
+                        background: '#DBEAFE',
+                        border: '1px solid #BFDBFE',
                       }}
                       aria-label="Add more files"
                     >
@@ -408,14 +408,14 @@ export default function Dropzone({ tool }) {
                       role="listitem"
                       className="flex items-center justify-between p-3 rounded-xl transition-colors"
                       style={{
-                        border: '1px solid #F1D5E3',
-                        background: '#FFF9FC',
+                        border: '1px solid #BFDBFE',
+                        background: '#F8FAFC',
                       }}
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div
                           className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-                          style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                          style={{ background: '#DBEAFE', color: '#3B82F6' }}
                           aria-hidden="true"
                         >
                           <FileText className="w-4 h-4" />
@@ -446,11 +446,11 @@ export default function Dropzone({ tool }) {
                 {tool.options?.length > 0 && (
                   <div
                     className="p-5 rounded-2xl space-y-4"
-                    style={{ background: '#FFF7FB', border: '1px solid #F1D5E3' }}
+                    style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}
                   >
                     <div
                       className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider"
-                      style={{ color: '#E85D9E' }}
+                      style={{ color: '#3B82F6' }}
                     >
                       <Sliders className="w-3.5 h-3.5" aria-hidden="true" />
                       {tool.name} Options
@@ -475,12 +475,12 @@ export default function Dropzone({ tool }) {
                               className="w-full text-xs sm:text-sm rounded-xl px-3 py-2.5 transition-all appearance-none cursor-pointer"
                               style={{
                                 background: '#FFFFFF',
-                                border: '1.5px solid #F1D5E3',
+                                border: '1.5px solid #BFDBFE',
                                 color: '#18181B',
                                 outline: 'none',
                               }}
-                              onFocus={e => (e.currentTarget.style.borderColor = '#E85D9E')}
-                              onBlur={e => (e.currentTarget.style.borderColor = '#F1D5E3')}
+                              onFocus={e => (e.currentTarget.style.borderColor = '#3B82F6')}
+                              onBlur={e => (e.currentTarget.style.borderColor = '#BFDBFE')}
                             >
                               {opt.choices.map(c => (
                                 <option key={c.value} value={c.value}>{c.label}</option>
@@ -498,12 +498,12 @@ export default function Dropzone({ tool }) {
                               className="w-full text-xs sm:text-sm rounded-xl px-3.5 py-2.5 transition-all"
                               style={{
                                 background: '#FFFFFF',
-                                border: '1.5px solid #F1D5E3',
+                                border: '1.5px solid #BFDBFE',
                                 color: '#18181B',
                                 outline: 'none',
                               }}
-                              onFocus={e => (e.currentTarget.style.borderColor = '#E85D9E')}
-                              onBlur={e => (e.currentTarget.style.borderColor = '#F1D5E3')}
+                              onFocus={e => (e.currentTarget.style.borderColor = '#3B82F6')}
+                              onBlur={e => (e.currentTarget.style.borderColor = '#BFDBFE')}
                             />
                           )}
 
@@ -521,9 +521,9 @@ export default function Dropzone({ tool }) {
                                     key={c.value}
                                     className="flex items-start gap-3 p-3.5 rounded-xl cursor-pointer transition-all duration-150"
                                     style={{
-                                      border: `1.5px solid ${selected ? '#E85D9E' : '#F1D5E3'}`,
-                                      background: selected ? '#FFF7FB' : '#FFFFFF',
-                                      boxShadow: selected ? '0 0 0 3px rgba(232,93,158,0.08)' : 'none',
+                                      border: `1.5px solid ${selected ? '#3B82F6' : '#BFDBFE'}`,
+                                      background: selected ? '#EFF6FF' : '#FFFFFF',
+                                      boxShadow: selected ? '0 0 0 3px rgba(59, 130, 246,0.08)' : 'none',
                                     }}
                                   >
                                     <input
@@ -533,7 +533,7 @@ export default function Dropzone({ tool }) {
                                       checked={selected}
                                       onChange={e => handleOptionChange(opt.id, e.target.value)}
                                       className="mt-0.5 shrink-0"
-                                      style={{ accentColor: '#E85D9E' }}
+                                      style={{ accentColor: '#3B82F6' }}
                                     />
                                     <div>
                                       <div className="text-xs sm:text-sm font-semibold" style={{ color: '#18181B' }}>
@@ -578,11 +578,11 @@ export default function Dropzone({ tool }) {
                     onClick={startProcessing}
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold text-white transition-all duration-150 active:scale-95"
                     style={{
-                      background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                      boxShadow: '0 4px 14px rgba(232,93,158,0.28)',
+                      background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                      boxShadow: '0 4px 14px rgba(59, 130, 246,0.28)',
                     }}
-                    onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,93,158,0.38)')}
-                    onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 4px 14px rgba(232,93,158,0.28)')}
+                    onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246,0.38)')}
+                    onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 4px 14px rgba(59, 130, 246,0.28)')}
                     aria-label={`Process and convert ${files.length} file${files.length > 1 ? 's' : ''}`}
                   >
                     <Sparkles className="w-4 h-4" aria-hidden="true" />
@@ -605,17 +605,17 @@ export default function Dropzone({ tool }) {
             <div className="relative w-20 h-20 mx-auto" aria-hidden="true">
               <div
                 className="absolute inset-0 rounded-full animate-ping-brand opacity-50"
-                style={{ border: '3px solid #F1D5E3' }}
+                style={{ border: '3px solid #BFDBFE' }}
               />
               <div
                 className="w-20 h-20 rounded-full animate-spin-brand"
                 style={{
-                  border: '3px solid #FCE7F3',
-                  borderTopColor: '#E85D9E',
+                  border: '3px solid #DBEAFE',
+                  borderTopColor: '#3B82F6',
                 }}
               />
               <div className="absolute inset-0 flex items-center justify-center">
-                <Sparkles className="w-7 h-7" style={{ color: '#E85D9E' }} />
+                <Sparkles className="w-7 h-7" style={{ color: '#3B82F6' }} />
               </div>
             </div>
 
@@ -653,19 +653,19 @@ export default function Dropzone({ tool }) {
             <div
               className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto"
               style={{
-                background: 'linear-gradient(135deg, #FCE7F3 0%, #FFF7FB 100%)',
-                border: '1px solid #F1D5E3',
-                boxShadow: '0 4px 16px rgba(232,93,158,0.12)',
+                background: 'linear-gradient(135deg, #DBEAFE 0%, #EFF6FF 100%)',
+                border: '1px solid #BFDBFE',
+                boxShadow: '0 4px 16px rgba(59, 130, 246,0.12)',
               }}
               aria-hidden="true"
             >
-              <CheckCircle2 className="w-8 h-8" style={{ color: '#E85D9E' }} strokeWidth={2.2} />
+              <CheckCircle2 className="w-8 h-8" style={{ color: '#3B82F6' }} strokeWidth={2.2} />
             </div>
 
             <div className="space-y-1">
               <span
                 className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full"
-                style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
+                style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
               >
                 <Sparkles className="w-3 h-3" aria-hidden="true" />
                 Ready to Download
@@ -680,14 +680,14 @@ export default function Dropzone({ tool }) {
 
             <div
               className="max-w-sm mx-auto flex items-center justify-between p-4 rounded-2xl text-left gap-3"
-              style={{ background: '#FFF7FB', border: '1px solid #F1D5E3' }}
+              style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}
             >
               <div className="flex items-center gap-3 min-w-0">
                 <div
                   className="w-11 h-11 rounded-xl flex items-center justify-center text-white shrink-0"
                   style={{
-                    background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                    boxShadow: '0 3px 8px rgba(232,93,158,0.25)',
+                    background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                    boxShadow: '0 3px 8px rgba(59, 130, 246,0.25)',
                   }}
                   aria-hidden="true"
                 >
@@ -700,14 +700,14 @@ export default function Dropzone({ tool }) {
                   <p className="text-[11px] mt-0.5 flex items-center gap-1.5" style={{ color: '#71717A' }}>
                     <span>{fmt(totalSize)}</span>
                     <span aria-hidden="true">→</span>
-                    <span className="font-semibold" style={{ color: '#E85D9E' }}>{fmt(resultSize)}</span>
+                    <span className="font-semibold" style={{ color: '#3B82F6' }}>{fmt(resultSize)}</span>
                   </p>
                 </div>
               </div>
               {savedPct > 5 && (
                 <span
                   className="shrink-0 text-[11px] font-bold px-2 py-0.5 rounded-md"
-                  style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
+                  style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
                   aria-label={`${savedPct}% smaller`}
                 >
                   -{savedPct}%
@@ -722,8 +722,8 @@ export default function Dropzone({ tool }) {
                 onClick={handleDownload}
                 className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold text-white transition-all active:scale-95 cursor-pointer"
                 style={{
-                  background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                  boxShadow: '0 4px 14px rgba(232,93,158,0.28)',
+                  background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                  boxShadow: '0 4px 14px rgba(59, 130, 246,0.28)',
                   textDecoration: 'none',
                 }}
                 aria-label="Download converted file"
