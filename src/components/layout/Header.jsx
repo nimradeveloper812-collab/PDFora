@@ -88,6 +88,7 @@ export default function Header() {
   const isToolsActive = location.pathname.startsWith('/tools');
 
   return (
+    <>
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
@@ -346,6 +347,8 @@ export default function Header() {
         </div>
       </div>
 
+      </header>
+
       {/* ── Mobile Navigation Drawer ───────────────────────────── */}
       {isMobileMenuOpen && (
         <div
@@ -370,6 +373,7 @@ export default function Header() {
               <Link
                 key={to}
                 to={to}
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center px-4 py-3 rounded-xl text-base font-semibold transition-all duration-150"
                 style={{
                   color: location.pathname === to ? '#3B82F6' : '#18181B',
@@ -384,6 +388,7 @@ export default function Header() {
             {/* All Tools Link */}
             <Link
               to="/tools"
+              onClick={() => setIsMobileMenuOpen(false)}
               className="flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold transition-all duration-150"
               style={{
                 color: location.pathname === '/tools' ? '#3B82F6' : '#18181B',
@@ -417,6 +422,7 @@ export default function Header() {
                     <Link
                       key={t.id}
                       to={t.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
                       className="flex items-center gap-2 px-2 py-2 rounded-lg text-xs font-semibold transition-colors"
                       style={{ color: '#3F3F46', textDecoration: 'none' }}
                     >
@@ -443,6 +449,7 @@ export default function Header() {
                     <Link
                       key={t.id}
                       to={t.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
                       className="flex items-center gap-2 px-2 py-2 rounded-lg text-xs font-semibold transition-colors"
                       style={{ color: '#3F3F46', textDecoration: 'none' }}
                     >
@@ -462,6 +469,7 @@ export default function Header() {
             <div className="pt-4">
               <Link
                 to="/tools"
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all active:scale-95"
                 style={{
                   background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
@@ -476,6 +484,6 @@ export default function Header() {
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }
