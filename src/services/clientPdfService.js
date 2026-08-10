@@ -10,6 +10,12 @@ if (typeof window !== 'undefined' && pdfjsLib) {
   pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 }
 
+// Helper to remove characters not supported by standard WinAnsi encoding
+const sanitizeForWinAnsi = (str) => {
+  if (!str) return '';
+  return str.replace(/[^\x00-\xFF]/g, '');
+};
+
 /**
  * Pure Client-Side PDF Service
  * Processes all document & PDF conversions directly in the user's browser.
@@ -97,8 +103,9 @@ export const clientPdfService = {
 
           // Cell Text (truncated if long)
           if (val) {
+            const safeVal = sanitizeForWinAnsi(val);
             const maxChars = Math.floor(colWidth / 7);
-            const truncated = val.length > maxChars ? val.substring(0, maxChars - 1) + '…' : val;
+            const truncated = safeVal.length > maxChars ? safeVal.substring(0, maxChars - 3) + '...' : safeVal;
             page.drawText(truncated, {
               x: cellX + 6,
               y: cellY + 7,
@@ -162,7 +169,8 @@ export const clientPdfService = {
 
     for (const rawLine of lines) {
       // Word wrap long lines
-      const words = rawLine.split(' ');
+      const safeLine = sanitizeForWinAnsi(rawLine);
+      const words = safeLine.split(' ');
       let currentLine = '';
 
       for (const word of words) {
@@ -264,7 +272,8 @@ export const clientPdfService = {
         });
 
         let currentY = pageHeight - margin - 60;
-        for (const line of slideTexts) {
+        for (const rawLine of slideTexts) {
+          const line = sanitizeForWinAnsi(rawLine);
           if (currentY < margin) break;
           page.drawText(`• ${line}`, {
             x: margin + 15,
