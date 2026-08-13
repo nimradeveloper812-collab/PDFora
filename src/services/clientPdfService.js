@@ -57,98 +57,50 @@ export const clientPdfService = {
     const arrayBuffer = await file.arrayBuffer();
     const workbook = XLSX.read(arrayBuffer, { type: 'array' });
     
-    const { pdfDoc, font, fontBold, hasCustomFont } = await createPdfDocWithCustomFont();
+    let fullHtml = `
+      <style>
+        body { font-family: "Noto Sans", "Helvetica Neue", Helvetica, sans-serif; padding: 20px; color: #222; }
+        h2 { color: #444; margin-top: 20px; border-bottom: 2px solid #ccc; padding-bottom: 5px; font-size: 18px; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 30px; font-size: 12px; }
+        th, td { border: 1px solid #aaa; padding: 6px; text-align: left; }
+        th { background-color: #f0f0f0; font-weight: bold; }
+      </style>
+      <div>
+    `;
 
-    // Process each worksheet
     for (const sheetName of workbook.SheetNames) {
       const sheet = workbook.Sheets[sheetName];
-      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
-      if (!rows || rows.length === 0) continue;
-
-      // Landscape A4 page dimensions
-      const pageWidth = 841.89;
-      const pageHeight = 595.28;
-      const margin = 40;
-      const contentWidth = pageWidth - margin * 2;
-      const rowHeight = 24;
-
-      let page = pdfDoc.addPage([pageWidth, pageHeight]);
-      let currentY = pageHeight - margin;
-
-      // Draw Sheet Title
-      page.drawText(`Sheet: ${sheetName}`, {
-        x: margin,
-        y: currentY - 14,
-        size: 14,
-        font: fontBold,
-        color: rgb(0.1, 0.1, 0.1),
-      });
-      currentY -= 32;
-
-      // Calculate column count & widths
-      const colCount = Math.max(...rows.map(r => (Array.isArray(r) ? r.length : 0)), 1);
-      const colWidth = Math.min(contentWidth / colCount, 160);
-
-      for (let rIdx = 0; rIdx < rows.length; rIdx++) {
-        const row = rows[rIdx] || [];
-
-        // Check if page overflow
-        if (currentY - rowHeight < margin) {
-          page = pdfDoc.addPage([pageWidth, pageHeight]);
-          currentY = pageHeight - margin;
-        }
-
-        const isHeader = rIdx === 0;
-
-        // Header / Row Background
-        if (isHeader) {
-          page.drawRectangle({
-            x: margin,
-            y: currentY - rowHeight,
-            width: colCount * colWidth,
-            height: rowHeight,
-            color: rgb(0.95, 0.9, 0.95),
-            borderColor: rgb(0.85, 0.75, 0.85),
-            borderWidth: 1,
-          });
-        }
-
-        // Draw Cells
-        for (let cIdx = 0; cIdx < colCount; cIdx++) {
-          const val = row[cIdx] !== undefined ? String(row[cIdx]).trim() : '';
-          const cellX = margin + cIdx * colWidth;
-          const cellY = currentY - rowHeight;
-
-          // Cell Border
-          page.drawRectangle({
-            x: cellX,
-            y: cellY,
-            width: colWidth,
-            height: rowHeight,
-            borderColor: rgb(0.88, 0.88, 0.9),
-            borderWidth: 0.5,
-          });
-
-          // Cell Text (truncated if long)
-          if (val) {
-            const safeVal = sanitizeText(val, hasCustomFont);
-            const maxChars = Math.floor(colWidth / 7);
-            const truncated = safeVal.length > maxChars ? safeVal.substring(0, maxChars - 3) + '...' : safeVal;
-            page.drawText(truncated, {
-              x: cellX + 6,
-              y: cellY + 7,
-              size: isHeader ? 10 : 9,
-              font: isHeader ? fontBold : font,
-              color: isHeader ? rgb(0.75, 0.15, 0.45) : rgb(0.2, 0.2, 0.2),
-            });
-          }
-        }
-        currentY -= rowHeight;
-      }
+      const htmlTable = XLSX.utils.sheet_to_html(sheet);
+      
+      fullHtml += `<h2>Sheet: ${sheetName}</h2>`;
+      fullHtml += htmlTable;
+      fullHtml += `<div class="html2pdf__page-break"></div>`;
     }
+    fullHtml += `</div>`;
 
-    const pdfBytes = await pdfDoc.save();
-    return new Blob([pdfBytes], { type: 'application/pdf' });
+    const container = document.createElement('div');
+    container.innerHTML = fullHtml;
+    
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
+    container.style.top = '0';
+    container.style.width = '1122px'; // Approximate A4 Landscape width
+    document.body.appendChild(container);
+
+    const opt = {
+      margin:       [15, 15, 15, 15],
+      filename:     file.name.replace(/\.[^/.]+$/, '') + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true, logging: false },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    };
+
+    try {
+      const pdfBlob = await html2pdf().set(opt).from(container).output('blob');
+      return pdfBlob;
+    } finally {
+      document.body.removeChild(container);
+    }
   },
 
   /* ── 2. Word to PDF ────────────────────────────────────────────── */
@@ -228,63 +180,119 @@ export const clientPdfService = {
         return numA - numB;
       });
 
-    const { pdfDoc, font, fontBold, hasCustomFont } = await createPdfDocWithCustomFont();
-
-    const pageWidth = 841.89; // Landscape A4
-    const pageHeight = 595.28;
-    const margin = 50;
+    const container = document.createElement('div');
+    container.style.padding = '20px';
+    container.style.fontFamily = '"Noto Sans", "Helvetica Neue", Helvetica, sans-serif';
+    container.style.color = '#111';
+    container.style.width = '1122px'; // Landscape A4 width
+    
+    // Global styles for slides
+    const styleNode = document.createElement('style');
+    styleNode.innerHTML = `
+      .slide-card {
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        padding: 30px;
+        margin-bottom: 30px;
+        background-color: #fff;
+        page-break-inside: avoid;
+      }
+      .slide-card h3 { color: #9d316e; margin-top: 0; font-size: 22px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+      .slide-card ul { padding-left: 20px; font-size: 16px; line-height: 1.6; }
+      .slide-card img { max-width: 100%; max-height: 400px; margin-top: 15px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: block; }
+    `;
+    container.appendChild(styleNode);
 
     if (slideFiles.length === 0) {
-      // Fallback single page if empty
-      const page = pdfDoc.addPage([pageWidth, pageHeight]);
-      page.drawText(`Presentation: ${file.name}`, { x: margin, y: pageHeight - margin - 20, size: 18, font: fontBold });
+      container.innerHTML += `<div class="slide-card"><h3>Presentation: ${file.name}</h3><p>No slides found.</p></div>`;
     } else {
       for (let idx = 0; idx < slideFiles.length; idx++) {
-        const xmlText = await zip.files[slideFiles[idx]].async('text');
+        const slideFileName = slideFiles[idx];
+        const xmlText = await zip.files[slideFileName].async('text');
         
-        // Extract text inside <a:t> elements
+        const slideDiv = document.createElement('div');
+        slideDiv.className = 'slide-card';
+        slideDiv.innerHTML = `<h3>Slide ${idx + 1}</h3>`;
+
+        // Extract Text
         const matches = xmlText.match(/<a:t[^>]*>(.*?)<\/a:t>/gi) || [];
         const slideTexts = matches.map(m => m.replace(/<[^>]+>/g, '').trim()).filter(Boolean);
-
-        const page = pdfDoc.addPage([pageWidth, pageHeight]);
-
-        // Slide card border
-        page.drawRectangle({
-          x: margin / 2,
-          y: margin / 2,
-          width: pageWidth - margin,
-          height: pageHeight - margin,
-          borderColor: rgb(0.9, 0.8, 0.9),
-          borderWidth: 1,
-        });
-
-        // Slide header
-        page.drawText(`Slide ${idx + 1}`, {
-          x: margin,
-          y: pageHeight - margin - 20,
-          size: 18,
-          font: fontBold,
-          color: rgb(0.85, 0.25, 0.55),
-        });
-
-        let currentY = pageHeight - margin - 60;
-        for (const rawLine of slideTexts) {
-          const line = sanitizeText(rawLine, hasCustomFont);
-          if (currentY < margin) break;
-          page.drawText(`• ${line}`, {
-            x: margin + 15,
-            y: currentY,
-            size: 12,
-            font,
-            color: rgb(0.2, 0.2, 0.2),
+        
+        if (slideTexts.length > 0) {
+          const ul = document.createElement('ul');
+          slideTexts.forEach(t => {
+            const li = document.createElement('li');
+            li.textContent = t;
+            ul.appendChild(li);
           });
-          currentY -= 22;
+          slideDiv.appendChild(ul);
         }
+
+        // Extract Images
+        // Find corresponding relationships file: ppt/slides/_rels/slideN.xml.rels
+        const slideBaseName = slideFileName.split('/').pop();
+        const relPath = `ppt/slides/_rels/${slideBaseName}.rels`;
+        
+        if (zip.files[relPath]) {
+          try {
+            const relXml = await zip.files[relPath].async('text');
+            // Regex to find image relationships
+            const relMatches = [...relXml.matchAll(/<Relationship[^>]+Id="([^"]+)"[^>]+Target="([^"]+)"/gi)];
+            
+            for (const match of relMatches) {
+              const relId = match[1];
+              let target = match[2]; // e.g. ../media/image1.jpeg
+              
+              // Only include if the slide XML actually uses this relId (e.g., <a:blip r:embed="rId2")
+              if (xmlText.includes(`r:embed="${relId}"`)) {
+                // Resolve relative target to absolute zip path
+                let mediaPath = target;
+                if (target.startsWith('../')) {
+                  mediaPath = target.replace('../', 'ppt/');
+                }
+                
+                if (zip.files[mediaPath]) {
+                  const imgBase64 = await zip.files[mediaPath].async('base64');
+                  const ext = mediaPath.split('.').pop().toLowerCase();
+                  let mime = 'image/jpeg';
+                  if (ext === 'png') mime = 'image/png';
+                  else if (ext === 'gif') mime = 'image/gif';
+                  else if (ext === 'svg') mime = 'image/svg+xml';
+                  
+                  const img = document.createElement('img');
+                  img.src = `data:${mime};base64,${imgBase64}`;
+                  slideDiv.appendChild(img);
+                }
+              }
+            }
+          } catch (err) {
+            console.warn(`Could not extract images for Slide ${idx + 1}`, err);
+          }
+        }
+        
+        container.appendChild(slideDiv);
       }
     }
 
-    const pdfBytes = await pdfDoc.save();
-    return new Blob([pdfBytes], { type: 'application/pdf' });
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
+    container.style.top = '0';
+    document.body.appendChild(container);
+
+    const opt = {
+      margin:       [15, 15, 15, 15],
+      filename:     file.name.replace(/\.[^/.]+$/, '') + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true, logging: false },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    };
+
+    try {
+      const pdfBlob = await html2pdf().set(opt).from(container).output('blob');
+      return pdfBlob;
+    } finally {
+      document.body.removeChild(container);
+    }
   },
 
   /* ── 4. JPG to PDF ─────────────────────────────────────────────── */
