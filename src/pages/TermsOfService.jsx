@@ -1,11 +1,12 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { FileText, Sparkles } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 const SECTIONS = [
   {
     title: '1. Acceptance of Terms',
-    content: `By accessing or using the PDFora website (pdfora.com) and its services, you confirm that you are at least 13 years of age and that you have read, understood, and agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please discontinue your use of PDFora immediately.
+    content: `By accessing or using the PDFora website (pdfora.nimradev.site) and its services, you confirm that you are at least 13 years of age and that you have read, understood, and agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please discontinue your use of PDFora immediately.
 
 PDFora reserves the right to update these Terms at any time. Continued use of the service after changes constitutes your acceptance of the updated Terms.`,
   },
@@ -85,18 +86,20 @@ Our total cumulative liability for any claim shall not exceed PKR 10,000 or the 
     title: '10. Contact',
     content: `For questions about these Terms of Service, please contact us:
 
-• **Email:** legal@pdfora.com
+• **Email:** legal@nimradev.site
 • **Location:** PDFora Operations, Lahore, Punjab, Pakistan 🇵🇰
 • **Response Time:** Within 5 business days`,
   },
 ];
 
 export default function TermsOfService() {
+  const location = useLocation();
   return (
     <div className="pt-24 pb-20 min-h-screen">
       <Helmet>
         <title>Terms of Service — PDFora | Free Online PDF Tools Pakistan</title>
         <meta name="description" content="Terms of Service for PDFora, Pakistan's free online PDF platform." />
+        <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
       </Helmet>
 
       {/* Hero */}
@@ -147,7 +150,7 @@ export default function TermsOfService() {
               PDFora is free to use. You own your files. Don't upload illegal content.
               We can't guarantee 100% uptime. We auto-delete your files within 1 hour.
               Use the service fairly. Questions? Email{' '}
-              <a href="mailto:legal@pdfora.com" style={{ color: '#3B82F6' }}>legal@pdfora.com</a>.
+              <a href="mailto:legal@nimradev.site" style={{ color: '#3B82F6' }}>legal@nimradev.site</a>.
             </p>
           </div>
         </div>

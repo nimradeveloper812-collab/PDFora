@@ -1,15 +1,32 @@
 import { clientPdfService } from './clientPdfService';
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 const safeRequest = async (fetchCall) => {
+  let isClientError = false;
+  let clientErrorMessage = '';
   try {
     const res = await fetchCall();
     if (res.ok) {
       return res;
     }
-    // If status is 404, 405 (method not allowed on static host), or 500: use client-side processing
-    console.info(`Server returned status ${res.status}. Falling back to client-side PDF processing.`);
+    if (res.status === 400 || res.status === 422) {
+      isClientError = true;
+      try {
+        const errJson = await res.json();
+        clientErrorMessage = errJson.error || errJson.message || 'Invalid request.';
+      } catch (e) {
+        clientErrorMessage = 'Invalid request.';
+      }
+    } else {
+      console.info(`Server returned status ${res.status}. Falling back to client-side PDF processing.`);
+    }
   } catch (err) {
     console.info('Server unavailable. Processing client-side:', err);
+  }
+
+  if (isClientError) {
+    throw new Error(clientErrorMessage);
   }
   return null;
 };
@@ -19,7 +36,7 @@ export const pdfApi = {
     const formData = new FormData();
     formData.append('file', file);
 
-    const res = await safeRequest(() => fetch('/api/pdf/word-to-pdf', { method: 'POST', body: formData }));
+    const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/word-to-pdf`, { method: 'POST', body: formData }));
     if (res) return await res.blob();
 
     return await clientPdfService.convertWordToPdf(file);
@@ -29,7 +46,7 @@ export const pdfApi = {
     const formData = new FormData();
     formData.append('file', file);
 
-    const res = await safeRequest(() => fetch('/api/pdf/excel-to-pdf', { method: 'POST', body: formData }));
+    const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/excel-to-pdf`, { method: 'POST', body: formData }));
     if (res) return await res.blob();
 
     return await clientPdfService.convertExcelToPdf(file);
@@ -39,7 +56,7 @@ export const pdfApi = {
     const formData = new FormData();
     formData.append('file', file);
 
-    const res = await safeRequest(() => fetch('/api/pdf/powerpoint-to-pdf', { method: 'POST', body: formData }));
+    const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/powerpoint-to-pdf`, { method: 'POST', body: formData }));
     if (res) return await res.blob();
 
     return await clientPdfService.convertPowerPointToPdf(file);
@@ -49,7 +66,7 @@ export const pdfApi = {
     const formData = new FormData();
     files.forEach(f => formData.append('files', f));
 
-    const res = await safeRequest(() => fetch('/api/pdf/jpg-to-pdf', { method: 'POST', body: formData }));
+    const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/jpg-to-pdf`, { method: 'POST', body: formData }));
     if (res) return await res.blob();
 
     return await clientPdfService.convertJpgToPdf(files);
@@ -59,7 +76,7 @@ export const pdfApi = {
     const formData = new FormData();
     formData.append('file', file);
 
-    const res = await safeRequest(() => fetch('/api/pdf/pdf-to-jpg', { method: 'POST', body: formData }));
+    const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/pdf-to-jpg`, { method: 'POST', body: formData }));
     if (res) {
       const contentType = res.headers.get('content-type') || '';
       const isZip = contentType.includes('zip');
@@ -73,7 +90,7 @@ export const pdfApi = {
     const formData = new FormData();
     files.forEach(f => formData.append('files', f));
 
-    const res = await safeRequest(() => fetch('/api/pdf/merge', { method: 'POST', body: formData }));
+    const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/merge`, { method: 'POST', body: formData }));
     if (res) return await res.blob();
 
     return await clientPdfService.mergePdf(files);
@@ -84,7 +101,7 @@ export const pdfApi = {
     formData.append('file', file);
     formData.append('level', level);
 
-    const res = await safeRequest(() => fetch('/api/pdf/compress', { method: 'POST', body: formData }));
+    const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/compress`, { method: 'POST', body: formData }));
     if (res) return await res.blob();
 
     return await clientPdfService.compressPdf(file, level);
@@ -95,7 +112,7 @@ export const pdfApi = {
     formData.append('file', file);
     formData.append('ranges', ranges);
 
-    const res = await safeRequest(() => fetch('/api/pdf/split', { method: 'POST', body: formData }));
+    const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/split`, { method: 'POST', body: formData }));
     if (res) {
       const contentType = res.headers.get('content-type') || '';
       const isZip = contentType.includes('zip');

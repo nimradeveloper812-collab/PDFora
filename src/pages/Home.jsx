@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Search, Sparkles, ArrowRight, ShieldCheck, Zap, FileCheck,
   ChevronDown, FileText, Table, Presentation, Image as ImageIcon,
@@ -58,12 +58,12 @@ function ToolCard({ tool }) {
           )}
         </div>
 
-        <h3
+        <h4
           className="text-sm font-bold mb-1.5 transition-colors duration-150 group-hover:text-blue-600"
           style={{ color: '#18181B' }}
         >
           {tool.name}
-        </h3>
+        </h4>
         <p className="text-xs leading-relaxed line-clamp-2" style={{ color: '#71717A' }}>
           {tool.shortDesc}
         </p>
@@ -104,6 +104,7 @@ function CategoryHeader({ number, title }) {
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function Home() {
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [openFaq, setOpenFaq] = useState(null);
 
@@ -122,6 +123,7 @@ export default function Home() {
       <Helmet>
         <title>PDFora — Free Online PDF Tools in Pakistan | Convert, Compress &amp; Merge</title>
         <meta name="description" content="Pakistan's premier free PDF platform. Convert Word, Excel, PPT &amp; images to PDF. Merge, compress, and split PDFs instantly — fast, private, and 100% free." />
+        <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
       </Helmet>
 
       {/* ════════════════════════════════════════════════════
@@ -240,6 +242,7 @@ export default function Home() {
               >
                 <Search className="w-5 h-5 ml-3 shrink-0" style={{ color: '#A1A1AA' }} aria-hidden="true" />
                 <input
+                  id="home-search-input"
                   type="search"
                   placeholder="Search tools — Word to PDF, Compress, Merge…"
                   value={searchQuery}
@@ -249,7 +252,10 @@ export default function Home() {
                   aria-label="Search PDF tools"
                 />
                 <button
-                  onClick={() => {}}
+                  onClick={() => {
+                    const input = document.getElementById('home-search-input');
+                    if (input) input.focus();
+                  }}
                   className="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all duration-150 active:scale-95 shrink-0"
                   style={{ background: '#3B82F6' }}
                   onMouseEnter={e => (e.currentTarget.style.background = '#2563EB')}

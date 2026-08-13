@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Search, ArrowRight, Sparkles, FileText, Table,
   Presentation, Image as ImageIcon, FileImage,
@@ -14,6 +14,7 @@ const iconMap = {
 };
 
 export default function AllTools() {
+  const location = useLocation();
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery]       = useState('');
 
@@ -29,6 +30,7 @@ export default function AllTools() {
       <Helmet>
         <title>All Free PDF Tools — PDFora | Pakistan's PDF Converter Suite</title>
         <meta name="description" content="Explore all free PDF tools on PDFora. Convert Word, Excel, PPT, images to PDF, merge, compress, and split PDFs instantly." />
+        <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
       </Helmet>
 
       {/* ── Hero ──────────────────────────────────────────── */}
@@ -231,12 +233,12 @@ export default function AllTools() {
                         )}
                       </div>
 
-                      <h3
+                      <h4
                         className="text-sm font-bold mb-1.5 transition-colors group-hover:text-blue-600"
                         style={{ color: '#18181B' }}
                       >
                         {tool.name}
-                      </h3>
+                      </h4>
                       <p className="text-xs leading-relaxed line-clamp-2" style={{ color: '#71717A' }}>
                         {tool.shortDesc}
                       </p>

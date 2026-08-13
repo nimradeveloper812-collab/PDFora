@@ -105,6 +105,10 @@ export const clientPdfService = {
 
   /* ── 2. Word to PDF ────────────────────────────────────────────── */
   async convertWordToPdf(file) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (ext === 'doc') {
+      throw new Error('Older .doc formats are not supported for local client-side conversion. Please convert your file to .docx or ensure the server is online.');
+    }
     const arrayBuffer = await file.arrayBuffer();
     // mammoth extracts HTML with basic styling, images (base64), and tables
     const result = await mammoth.convertToHtml({ arrayBuffer });
@@ -112,8 +116,18 @@ export const clientPdfService = {
 
     if (!html) {
       // Fallback empty pdf
-      const { pdfDoc } = await createPdfDocWithCustomFont();
-      pdfDoc.addPage([595.28, 841.89]);
+      const { pdfDoc, font, hasCustomFont } = await createPdfDocWithCustomFont();
+      const page = pdfDoc.addPage([595.28, 841.89]);
+      
+      const safeText = sanitizeText("Empty Document", hasCustomFont);
+      page.drawText(safeText, {
+        x: 50,
+        y: 800,
+        size: 14,
+        font: font,
+        color: rgb(0.5, 0.5, 0.5)
+      });
+
       const pdfBytes = await pdfDoc.save();
       return new Blob([pdfBytes], { type: 'application/pdf' });
     }
@@ -469,10 +483,9 @@ export const clientPdfService = {
       }
     }
 
-    // Fail-safe: Ensure byte length is strictly less than originalSize
+    // Fail-safe: If no compression was achieved, return the original file
     if (!bestResult || bestResult.byteLength >= originalSize) {
-      const targetLen = Math.max(500, Math.floor(originalSize * targetRatio));
-      bestResult = new Uint8Array(arrayBuffer.slice(0, targetLen));
+      return file;
     }
 
     return new Blob([bestResult], { type: 'application/pdf' });
@@ -497,17 +510,36 @@ export const clientPdfService = {
       return { blob: zipBlob, isZip: true };
     }
 
-    // Single range split
+    // Multi-range and comma-separated parser
     let indices = [];
     if (ranges === 'odd') {
       indices = Array.from({ length: totalPages }, (_, i) => i).filter(i => (i + 1) % 2 !== 0);
     } else if (ranges === 'even') {
       indices = Array.from({ length: totalPages }, (_, i) => i).filter(i => (i + 1) % 2 === 0);
-    } else if (typeof ranges === 'string' && ranges.includes('-')) {
-      const [start, end] = ranges.split('-').map(n => parseInt(n.trim(), 10));
-      const s = Math.max(1, start || 1) - 1;
-      const e = Math.min(totalPages, end || totalPages) - 1;
-      for (let i = s; i <= e; i++) indices.push(i);
+    } else if (typeof ranges === 'string') {
+      const result = new Set();
+      const parts = ranges.split(',');
+      for (const part of parts) {
+        const p = part.trim();
+        if (p.includes('-')) {
+          const [startStr, endStr] = p.split('-');
+          const start = parseInt(startStr.trim(), 10);
+          const end = parseInt(endStr.trim(), 10);
+          if (!isNaN(start) && !isNaN(end)) {
+            const s = Math.max(1, start) - 1;
+            const e = Math.min(totalPages, end) - 1;
+            for (let i = s; i <= e; i++) result.add(i);
+          }
+        } else {
+          const single = parseInt(p, 10);
+          if (!isNaN(single)) {
+            const idx = Math.max(1, Math.min(totalPages, single)) - 1;
+            result.add(idx);
+          }
+        }
+      }
+      indices = Array.from(result).sort((a, b) => a - b);
+      if (indices.length === 0) indices = [0];
     } else {
       indices = [0];
     }

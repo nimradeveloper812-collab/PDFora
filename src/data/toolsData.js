@@ -392,6 +392,16 @@ export const TOOLS = [
         type: 'text',
         default: '1-5',
         placeholder: 'e.g. 1-3, 5-8'
+      },
+      {
+        id: 'oddEvenSelect',
+        label: 'Extract Pages',
+        type: 'select',
+        default: 'odd',
+        choices: [
+          { value: 'odd', label: 'Odd Pages (1, 3, 5...)' },
+          { value: 'even', label: 'Even Pages (2, 4, 6...)' }
+        ]
       }
     ],
     features: [

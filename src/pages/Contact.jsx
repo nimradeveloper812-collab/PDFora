@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 import {
   Mail, MessageCircle, Clock, CheckCircle2, Sparkles,
   Send, ChevronDown, MapPin
@@ -46,6 +47,7 @@ const inputStyle = (hasError) => ({
 });
 
 export default function Contact() {
+  const location = useLocation();
   const [form, setForm]         = useState({ name: '', email: '', topic: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors]     = useState({});
@@ -100,6 +102,7 @@ export default function Contact() {
       <Helmet>
         <title>Contact Support — PDFora | Free Online PDF Tools Pakistan</title>
         <meta name="description" content="Contact PDFora support team in Lahore, Pakistan. Send us your feedback, questions, or bug reports." />
+        <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
       </Helmet>
 
       {/* ── Hero ──────────────────────────────────────────── */}

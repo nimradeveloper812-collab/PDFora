@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Award, Sparkles, CheckCircle2, ShieldCheck,
   Zap, Globe, ArrowRight, Lock, Clock
@@ -48,11 +48,13 @@ const values = [
 ];
 
 export default function About() {
+  const location = useLocation();
   return (
     <div className="pt-16 pb-20 min-h-screen">
       <Helmet>
         <title>About Us — PDFora | Pakistan's Free Online PDF Platform</title>
         <meta name="description" content="Learn about PDFora, Pakistan's premier free online PDF platform built for students, professionals, and businesses." />
+        <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
       </Helmet>
 
       {/* ── Hero ──────────────────────────────────────────── */}

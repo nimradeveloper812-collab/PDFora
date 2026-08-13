@@ -114,12 +114,21 @@ public class PdfManipulationService : IPdfManipulationService
                 var subParts = p.Split('-');
                 if (subParts.Length == 2 && int.TryParse(subParts[0], out int start) && int.TryParse(subParts[1], out int end))
                 {
-                    for (int i = start; i <= end; i++) result.Add(i);
+                    int clampedStart = Math.Max(1, Math.Min(start, maxPages));
+                    int clampedEnd = Math.Max(1, Math.Min(end, maxPages));
+                    if (clampedStart <= clampedEnd)
+                    {
+                        for (int i = clampedStart; i <= clampedEnd; i++)
+                        {
+                            result.Add(i);
+                        }
+                    }
                 }
             }
             else if (int.TryParse(p, out int single))
             {
-                result.Add(single);
+                int clampedSingle = Math.Max(1, Math.Min(single, maxPages));
+                result.Add(clampedSingle);
             }
         }
         return result.OrderBy(x => x).ToList();

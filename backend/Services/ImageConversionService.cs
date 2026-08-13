@@ -38,6 +38,11 @@ public class ImageConversionService : IImageConversionService
             using var docReader = DocLib.Instance.GetDocReader(bytes, new PageDimensions(1.5d)); // 1.5x scale for high resolution
             int pageCount = docReader.GetPageCount();
 
+            if (pageCount > 100)
+            {
+                throw new InvalidOperationException("The PDF contains too many pages. The maximum limit for conversion is 100 pages.");
+            }
+
             for (int i = 0; i < pageCount; i++)
             {
                 using var pageReader = docReader.GetPageReader(i);

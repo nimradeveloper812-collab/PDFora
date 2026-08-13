@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Dropzone from './Dropzone';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
@@ -16,6 +16,7 @@ const iconMap = {
 };
 
 export default function ToolLayout({ tool }) {
+  const location = useLocation();
   const [openFaq, setOpenFaq] = useState(null);
 
   useEffect(() => {
@@ -30,6 +31,7 @@ export default function ToolLayout({ tool }) {
       <Helmet>
         <title>{tool.name} — Free Online PDF Tool | PDFora Pakistan</title>
         <meta name="description" content={`${tool.description} Fast, private, and 100% free online PDF tool in Pakistan.`} />
+        <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
       </Helmet>
 
       {/* ── Breadcrumb ─────────────────────────────────────── */}

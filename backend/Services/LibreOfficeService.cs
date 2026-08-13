@@ -20,12 +20,16 @@ public class LibreOfficeService : ILibreOfficeService
     {
         var libreOfficePath = GetLibreOfficePath();
         
+        var profilePath = Path.Combine(outputDir, "profile");
+        Directory.CreateDirectory(profilePath);
+        var profileUri = new Uri(profilePath).AbsoluteUri;
+
         var process = new Process
         {
             StartInfo = new ProcessStartInfo
             {
                 FileName = libreOfficePath,
-                Arguments = $"--headless --convert-to pdf --outdir \"{outputDir}\" \"{inputFilePath}\"",
+                Arguments = $"-env:UserInstallation=\"{profileUri}\" --headless --convert-to pdf --outdir \"{outputDir}\" \"{inputFilePath}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,

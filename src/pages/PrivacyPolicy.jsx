@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ShieldCheck } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 const SECTIONS = [
   {
@@ -55,7 +56,7 @@ You can configure or disable optional cookies via your browser settings at any t
 • Access controls limiting staff access to production systems
 • Regular third-party security audits
 
-No system is 100% secure. If you believe you have discovered a security vulnerability, please report it responsibly to security@pdfora.com.`,
+No system is 100% secure. If you believe you have discovered a security vulnerability, please report it responsibly to security@nimradev.site.`,
   },
   {
     title: '6. Third-Party Services',
@@ -80,7 +81,7 @@ We do not use third-party advertising networks, social login providers, or track
 • **Objection:** Object to certain types of data processing
 • **Complaints:** Lodge a complaint with your local data protection authority
 
-To exercise any of these rights, contact us at privacy@pdfora.com. We will respond within 30 days.`,
+To exercise any of these rights, contact us at privacy@nimradev.site. We will respond within 30 days.`,
   },
   {
     title: '9. Changes to This Policy',
@@ -90,18 +91,20 @@ To exercise any of these rights, contact us at privacy@pdfora.com. We will respo
     title: '10. Contact Us',
     content: `If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact our team:
 
-• **Email:** privacy@pdfora.com
+• **Email:** privacy@nimradev.site
 • **Location:** Lahore, Punjab, Pakistan 🇵🇰
 • **Response Time:** Within 24-48 hours`,
   },
 ];
 
 export default function PrivacyPolicy() {
+  const location = useLocation();
   return (
     <div className="pt-24 pb-20 min-h-screen">
       <Helmet>
         <title>Privacy Policy — PDFora | Free Online PDF Tools Pakistan</title>
         <meta name="description" content="Privacy Policy for PDFora. Learn how your files are encrypted and automatically deleted within 60 minutes." />
+        <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
       </Helmet>
 
       {/* Hero */}

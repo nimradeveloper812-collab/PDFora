@@ -44,15 +44,20 @@ public class ContactController : ControllerBase
 
             var toEmail = _configuration["TO_EMAIL"] ?? "contact@nimradev.site";
 
+            var safeName = System.Net.WebUtility.HtmlEncode(request.Name);
+            var safeEmail = System.Net.WebUtility.HtmlEncode(request.Email);
+            var safeTopic = System.Net.WebUtility.HtmlEncode(request.Topic);
+            var safeMessage = System.Net.WebUtility.HtmlEncode(request.Message);
+
             var emailHtml = $@"
                 <table style='font-family:sans-serif;font-size:14px;color:#18181B;max-width:560px;width:100%;border-collapse:collapse'>
                   <tr><td style='padding:24px'>
-                    <p style='margin:0 0 8px'><strong>Name:</strong> {request.Name}</p>
-                    <p style='margin:0 0 8px'><strong>Email:</strong> {request.Email}</p>
-                    <p style='margin:0 0 8px'><strong>Topic:</strong> {request.Topic}</p>
+                    <p style='margin:0 0 8px'><strong>Name:</strong> {safeName}</p>
+                    <p style='margin:0 0 8px'><strong>Email:</strong> {safeEmail}</p>
+                    <p style='margin:0 0 8px'><strong>Topic:</strong> {safeTopic}</p>
                     <hr style='border:none;border-top:1px solid #F1D5E3;margin:16px 0'/>
                     <p style='margin:0 0 8px'><strong>Message:</strong></p>
-                    <p style='margin:0;white-space:pre-wrap;line-height:1.6'>{request.Message}</p>
+                    <p style='margin:0;white-space:pre-wrap;line-height:1.6'>{safeMessage}</p>
                   </td></tr>
                 </table>";
 

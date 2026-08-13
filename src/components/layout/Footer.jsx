@@ -110,10 +110,7 @@ export default function Footer() {
                 <li key={tool.id}>
                   <Link
                     to={tool.path}
-                    className="text-xs font-medium transition-colors hover:underline"
-                    style={{ color: '#71717A', textDecoration: 'none' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = '#3B82F6')}
-                    onMouseLeave={e => (e.currentTarget.style.color = '#71717A')}
+                    className="text-xs font-medium text-zinc-500 hover:text-blue-500 hover:underline transition-all duration-150"
                   >
                     {tool.name}
                   </Link>
@@ -135,10 +132,7 @@ export default function Footer() {
                 <li key={tool.id}>
                   <Link
                     to={tool.path}
-                    className="text-xs font-medium transition-colors"
-                    style={{ color: '#71717A', textDecoration: 'none' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = '#3B82F6')}
-                    onMouseLeave={e => (e.currentTarget.style.color = '#71717A')}
+                    className="text-xs font-medium text-zinc-500 hover:text-blue-500 hover:underline transition-all duration-150"
                   >
                     {tool.name}
                   </Link>
@@ -147,8 +141,7 @@ export default function Footer() {
               <li>
                 <Link
                   to="/tools"
-                  className="inline-flex items-center gap-1 text-xs font-bold mt-1 group/more"
-                  style={{ color: '#3B82F6', textDecoration: 'none' }}
+                  className="inline-flex items-center gap-1 text-xs font-bold mt-1 group/more text-blue-500 hover:text-blue-600 hover:underline transition-all duration-150"
                 >
                   All Tools
                   <ArrowRight
@@ -178,10 +171,7 @@ export default function Footer() {
                 <li key={to}>
                   <Link
                     to={to}
-                    className="text-xs font-medium"
-                    style={{ color: '#71717A', textDecoration: 'none' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = '#3B82F6')}
-                    onMouseLeave={e => (e.currentTarget.style.color = '#71717A')}
+                    className="text-xs font-medium text-zinc-500 hover:text-blue-500 hover:underline transition-all duration-150"
                   >
                     {label}
                   </Link>
@@ -209,10 +199,7 @@ export default function Footer() {
             <Link
               key={to}
               to={to}
-              className="text-xs font-medium"
-              style={{ color: '#A1A1AA', textDecoration: 'none' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#3B82F6')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#A1A1AA')}
+              className="text-xs font-medium text-zinc-400 hover:text-blue-500 hover:underline transition-all duration-150"
             >
               {label}
             </Link>

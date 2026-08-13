@@ -55,11 +55,23 @@ export default function Dropzone({ tool }) {
     const acceptedMimeTypes = acceptedTokens
       .filter(t => t.includes('/'));
 
+    let incomingTotalSize = 0;
     for (const f of incoming) {
       if (f.size > 50 * 1024 * 1024) {
         setErrorMsg(`"${f.name}" exceeds the 50 MB limit.`);
         return;
       }
+      incomingTotalSize += f.size;
+    }
+
+    const totalAllowedSize = 100 * 1024 * 1024; // 100MB
+    const existingSize = tool.maxFiles === 1 ? 0 : files.reduce((a, f) => a + (f.size || 0), 0);
+    if (existingSize + incomingTotalSize > totalAllowedSize) {
+      setErrorMsg('Total size of selected files exceeds the 100 MB limit.');
+      return;
+    }
+
+    for (const f of incoming) {
 
       const ext = f.name.includes('.') ? f.name.split('.').pop().toLowerCase() : '';
       const mime = (f.type || '').toLowerCase();
@@ -291,7 +303,12 @@ export default function Dropzone({ tool }) {
                 onClick={() => fileInputRef.current?.click()}
                 role="button"
                 tabIndex={0}
-                onKeyDown={e => e.key === 'Enter' && fileInputRef.current?.click()}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    fileInputRef.current?.click();
+                  }
+                }}
                 aria-label={`Upload ${tool.acceptedFileLabel} file — click or drag to upload`}
                 className="relative cursor-pointer text-center flex flex-col items-center justify-center transition-all duration-200"
                 style={{
@@ -457,8 +474,16 @@ export default function Dropzone({ tool }) {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {tool.options.map(opt => (
-                        <div key={opt.id} className="space-y-1.5">
+                      {tool.options.map(opt => {
+                        // Conditional rendering based on splitMode to hide irrelevant fields
+                        if (tool.id === 'split-pdf') {
+                          const currentMode = optionValues['splitMode'] || 'range';
+                          if (opt.id === 'customRanges' && currentMode !== 'range') return null;
+                          if (opt.id === 'oddEvenSelect' && currentMode !== 'odd-even') return null;
+                        }
+
+                        return (
+                          <div key={opt.id} className="space-y-1.5">
                           <label
                             htmlFor={`opt-${opt.id}`}
                             className="block text-xs font-semibold"
@@ -551,7 +576,8 @@ export default function Dropzone({ tool }) {
                             </div>
                           )}
                         </div>
-                      ))}
+                      );
+                      })}
                     </div>
                   </div>
                 )}
