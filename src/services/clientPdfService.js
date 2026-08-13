@@ -1,4 +1,5 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import fontkit from '@pdf-lib/fontkit';
 import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
 import mammoth from 'mammoth';
@@ -10,10 +11,38 @@ if (typeof window !== 'undefined' && pdfjsLib) {
   pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 }
 
-// Helper to remove characters not supported by standard WinAnsi encoding
-const sanitizeForWinAnsi = (str) => {
+// Helper to remove characters if we are using the fallback WinAnsi encoding
+const sanitizeText = (str, usingCustomFont) => {
   if (!str) return '';
+  if (usingCustomFont) return str;
   return str.replace(/[^\x00-\xFF]/g, '');
+};
+
+// Helper to init PDFDocument with custom Unicode font
+const createPdfDocWithCustomFont = async () => {
+  const pdfDoc = await PDFDocument.create();
+  pdfDoc.registerFontkit(fontkit);
+  let customFont = null;
+  let font = null;
+  let fontBold = null;
+
+  try {
+    const fontRes = await fetch('/fonts/NotoSans-Regular.ttf');
+    if (fontRes.ok) {
+      const fontBytes = await fontRes.arrayBuffer();
+      customFont = await pdfDoc.embedFont(fontBytes);
+      font = customFont;
+      fontBold = customFont;
+    } else {
+      throw new Error('Font file not found');
+    }
+  } catch (err) {
+    console.warn("Failed to load NotoSans font, using standard Helvetica fallback:", err);
+    font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  }
+
+  return { pdfDoc, font, fontBold, hasCustomFont: !!customFont };
 };
 
 /**
@@ -27,9 +56,7 @@ export const clientPdfService = {
     const arrayBuffer = await file.arrayBuffer();
     const workbook = XLSX.read(arrayBuffer, { type: 'array' });
     
-    const pdfDoc = await PDFDocument.create();
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const { pdfDoc, font, fontBold, hasCustomFont } = await createPdfDocWithCustomFont();
 
     // Process each worksheet
     for (const sheetName of workbook.SheetNames) {
@@ -103,7 +130,7 @@ export const clientPdfService = {
 
           // Cell Text (truncated if long)
           if (val) {
-            const safeVal = sanitizeForWinAnsi(val);
+            const safeVal = sanitizeText(val, hasCustomFont);
             const maxChars = Math.floor(colWidth / 7);
             const truncated = safeVal.length > maxChars ? safeVal.substring(0, maxChars - 3) + '...' : safeVal;
             page.drawText(truncated, {
@@ -142,9 +169,7 @@ export const clientPdfService = {
 
     const lines = docText.split('\n').map(l => l.trim()).filter(Boolean);
 
-    const pdfDoc = await PDFDocument.create();
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const { pdfDoc, font, fontBold, hasCustomFont } = await createPdfDocWithCustomFont();
 
     const pageWidth = 595.28;
     const pageHeight = 841.89;
@@ -169,7 +194,7 @@ export const clientPdfService = {
 
     for (const rawLine of lines) {
       // Word wrap long lines
-      const safeLine = sanitizeForWinAnsi(rawLine);
+      const safeLine = sanitizeText(rawLine, hasCustomFont);
       const words = safeLine.split(' ');
       let currentLine = '';
 
@@ -230,9 +255,7 @@ export const clientPdfService = {
         return numA - numB;
       });
 
-    const pdfDoc = await PDFDocument.create();
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const { pdfDoc, font, fontBold, hasCustomFont } = await createPdfDocWithCustomFont();
 
     const pageWidth = 841.89; // Landscape A4
     const pageHeight = 595.28;
@@ -273,7 +296,7 @@ export const clientPdfService = {
 
         let currentY = pageHeight - margin - 60;
         for (const rawLine of slideTexts) {
-          const line = sanitizeForWinAnsi(rawLine);
+          const line = sanitizeText(rawLine, hasCustomFont);
           if (currentY < margin) break;
           page.drawText(`• ${line}`, {
             x: margin + 15,
