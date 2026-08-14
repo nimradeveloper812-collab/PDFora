@@ -3,13 +3,27 @@ import { clientPdfService } from './clientPdfService';
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
 const safeRequest = async (fetchCall) => {
+  // If no external backend API URL is configured or if running client-only, fall back directly
+  if (!API_BASE) {
+    return null;
+  }
+
   let isClientError = false;
   let clientErrorMessage = '';
   try {
     const res = await fetchCall();
-    if (res.ok) {
+    const contentType = (res.headers.get('content-type') || '').toLowerCase();
+
+    // Verify response is genuinely a binary PDF / ZIP / Image from backend (not an HTML SPA fallback)
+    const isBinary = contentType.includes('application/pdf') ||
+                     contentType.includes('application/zip') ||
+                     contentType.includes('image/') ||
+                     contentType.includes('application/octet-stream');
+
+    if (res.ok && isBinary) {
       return res;
     }
+
     if (res.status === 400 || res.status === 422) {
       isClientError = true;
       try {
@@ -19,7 +33,7 @@ const safeRequest = async (fetchCall) => {
         clientErrorMessage = 'Invalid request.';
       }
     } else {
-      console.info(`Server returned status ${res.status}. Falling back to client-side PDF processing.`);
+      console.info(`Server returned status ${res.status} with non-binary content-type (${contentType}). Falling back to client-side PDF processing.`);
     }
   } catch (err) {
     console.info('Server unavailable. Processing client-side:', err);
