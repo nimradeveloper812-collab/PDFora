@@ -8,10 +8,25 @@ import {
   Globe, Upload, CheckCircle2
 } from 'lucide-react';
 import { TOOLS, FAQS } from '../data/toolsData';
+import AdBanner from '../components/common/AdBanner';
 
 const iconMap = {
   FileText, Table, Presentation,
   Image: ImageIcon, FileImage, Layers, Minimize2, Scissors
+};
+
+const prefetchTool = (id) => {
+  switch (id) {
+    case 'word-to-pdf': import('./tools/WordToPdf'); break;
+    case 'excel-to-pdf': import('./tools/ExcelToPdf'); break;
+    case 'powerpoint-to-pdf': import('./tools/PowerPointToPdf'); break;
+    case 'jpg-to-pdf': import('./tools/JpgToPdf'); break;
+    case 'pdf-to-jpg': import('./tools/PdfToJpg'); break;
+    case 'merge-pdf': import('./tools/MergePdf'); break;
+    case 'compress-pdf': import('./tools/CompressPdf'); break;
+    case 'split-pdf': import('./tools/SplitPdf'); break;
+    default: break;
+  }
 };
 
 // ── Reusable Tool Card ────────────────────────────────────────────────────────
@@ -28,10 +43,13 @@ function ToolCard({ tool }) {
         textDecoration: 'none',
       }}
       onMouseEnter={e => {
+        prefetchTool(tool.id);
         e.currentTarget.style.borderColor = '#3B82F6';
         e.currentTarget.style.boxShadow = '0 8px 24px rgba(59, 130, 246,0.10), 0 2px 8px rgba(0,0,0,0.04)';
         e.currentTarget.style.transform = 'translateY(-2px)';
       }}
+      onFocus={() => prefetchTool(tool.id)}
+      onTouchStart={() => prefetchTool(tool.id)}
       onMouseLeave={e => {
         e.currentTarget.style.borderColor = '#BFDBFE';
         e.currentTarget.style.boxShadow = '0 1px 4px rgba(59, 130, 246,0.04)';
@@ -645,6 +663,11 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* ── Home In-Feed Ad Banner ── */}
+        <div className="max-w-4xl mx-auto px-4 mt-8">
+          <AdBanner slot="2345678901" className="my-2" />
         </div>
       </section>
 

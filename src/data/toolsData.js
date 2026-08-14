@@ -13,12 +13,12 @@ export const TOOLS = [
     slug: 'word-to-pdf',
     path: '/tools/word-to-pdf',
     category: 'convert-to',
-    shortDesc: 'Convert DOC and DOCX files to PDF online with high accuracy.',
-    description: 'Easily turn Microsoft Word documents into clean, professional PDF files. Preserves layout, formatting, images, and fonts.',
+    shortDesc: 'Convert DOCX and DOC files to PDF online with high accuracy and privacy.',
+    description: 'Easily turn Microsoft Word documents (.docx, .doc) into clean, professional PDF files. Preserves layout, formatting, images, and tables.',
     iconName: 'FileText',
     badge: 'Popular',
-    acceptedTypes: '.doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    acceptedFileLabel: 'DOC, DOCX files',
+    acceptedTypes: '.docx, .doc, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/msword',
+    acceptedFileLabel: 'DOCX, DOC files',
     maxFiles: 10,
     options: [
       {
@@ -45,24 +45,28 @@ export const TOOLS = [
       }
     ],
     features: [
-      'Original formatting & fonts retained',
-      'Supports DOC and DOCX formats',
+      'Original formatting & typography retained',
+      'Supports modern DOCX and legacy DOC formats',
       'Batch conversion up to 10 files',
-      'Instant cloud processing'
+      'Private in-browser or cloud conversion'
     ],
     steps: [
-      'Upload your Word document (.doc or .docx)',
+      'Upload your Word document (.docx recommended or .doc)',
       'Adjust orientation or page margins if needed',
       'Click "Convert to PDF" and download your file'
     ],
     faqs: [
       {
         q: 'Will my document formatting be preserved?',
-        a: 'Yes! PDFora preserves your original text layout, fonts, tables, and images accurately.'
+        a: 'Yes! PDFora preserves your original text layout, typography, tables, and images accurately.'
+      },
+      {
+        q: 'Which Word formats are supported?',
+        a: 'We support modern .docx files directly in your browser with zero data sharing, as well as legacy .doc formats.'
       },
       {
         q: 'Is my Word document safe during conversion?',
-        a: 'Absolutely. Files are transferred via encrypted HTTPS connections and deleted automatically within 1 hour.'
+        a: 'Absolutely. Files are processed privately in your browser session or transferred via encrypted TLS connections and auto-deleted within 1 hour.'
       }
     ]
   },
@@ -159,8 +163,12 @@ export const TOOLS = [
     ],
     faqs: [
       {
-        q: 'Are custom fonts in slides preserved?',
-        a: 'Yes, PDFora embeds standard and uploaded typography into the converted PDF.'
+        q: 'Which PowerPoint formats are supported?',
+        a: 'We support modern .pptx presentations directly in your browser with full text and embedded media extraction, as well as .ppt files.'
+      },
+      {
+        q: 'Are custom fonts and graphics in slides preserved?',
+        a: 'Yes, PDFora extracts typography, layout structures, and embedded high-resolution graphics into your PDF document.'
       }
     ]
   },

@@ -5,6 +5,7 @@ import {
   Sliders, AlertCircle, Clock
 } from 'lucide-react';
 import { pdfApi } from '../../services/pdfApi';
+import AdBanner from './AdBanner';
 
 export default function Dropzone({ tool }) {
   const [files, setFiles]           = useState([]);
@@ -129,8 +130,13 @@ export default function Dropzone({ tool }) {
   const startProcessing = async () => {
     if (!files.length) return;
     setStatus('processing');
-    setProgress(20);
-    setProgressText('Uploading & processing… (this may take a moment)');
+    setProgress(10);
+    setProgressText('Preparing file for processing…');
+
+    const handleProgress = (pct, msg) => {
+      setProgress(pct);
+      if (msg) setProgressText(msg);
+    };
 
     try {
       let result;
@@ -139,33 +145,33 @@ export default function Dropzone({ tool }) {
 
       switch (tool.id) {
         case 'word-to-pdf':
-          result = await pdfApi.convertWordToPdf(files[0]);
+          result = await pdfApi.convertWordToPdf(files[0], handleProgress);
           filename = `${firstFileName}.pdf`;
           break;
         case 'excel-to-pdf':
-          result = await pdfApi.convertExcelToPdf(files[0]);
+          result = await pdfApi.convertExcelToPdf(files[0], handleProgress);
           filename = `${firstFileName}.pdf`;
           break;
         case 'powerpoint-to-pdf':
-          result = await pdfApi.convertPowerPointToPdf(files[0]);
+          result = await pdfApi.convertPowerPointToPdf(files[0], handleProgress);
           filename = `${firstFileName}.pdf`;
           break;
         case 'jpg-to-pdf':
-          result = await pdfApi.convertJpgToPdf(files);
+          result = await pdfApi.convertJpgToPdf(files, handleProgress);
           filename = 'images.pdf';
           break;
         case 'pdf-to-jpg': {
-          const res = await pdfApi.convertPdfToJpg(files[0]);
+          const res = await pdfApi.convertPdfToJpg(files[0], handleProgress);
           result = res.blob;
           filename = res.isZip ? 'pages.zip' : 'page_1.jpg';
           break;
         }
         case 'merge-pdf':
-          result = await pdfApi.mergePdf(files);
+          result = await pdfApi.mergePdf(files, handleProgress);
           filename = 'merged.pdf';
           break;
         case 'compress-pdf':
-          result = await pdfApi.compressPdf(files[0], optionValues['compressionLevel'] || 'recommended');
+          result = await pdfApi.compressPdf(files[0], optionValues['compressionLevel'] || 'recommended', handleProgress);
           filename = `${firstFileName}_compressed.pdf`;
           break;
         case 'split-pdf': {
@@ -178,7 +184,7 @@ export default function Dropzone({ tool }) {
           } else {
             ranges = 'all';
           }
-          const res = await pdfApi.splitPdf(files[0], ranges);
+          const res = await pdfApi.splitPdf(files[0], ranges, handleProgress);
           result = res.blob;
           filename = res.isZip ? 'split_pages.zip' : `${firstFileName}_split.pdf`;
           break;
@@ -438,7 +444,7 @@ export default function Dropzone({ tool }) {
                           <FileText className="w-4 h-4" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs sm:text-sm font-semibold truncate max-w-[180px] sm:max-w-sm" style={{ color: '#18181B' }}>
+                          <p className="text-xs sm:text-sm font-semibold truncate max-w-45 sm:max-w-sm" style={{ color: '#18181B' }}>
                             {file.name}
                           </p>
                           <p className="text-[11px] mt-0.5" style={{ color: '#A1A1AA' }}>
@@ -772,6 +778,11 @@ export default function Dropzone({ tool }) {
                 <RotateCcw className="w-4 h-4" aria-hidden="true" />
                 Start Over
               </button>
+            </div>
+
+            {/* ── High-CPM Download View Ad ── */}
+            <div className="max-w-md mx-auto pt-2">
+              <AdBanner slot="4567890123" className="my-1" />
             </div>
 
             <p className="text-[11px]" style={{ color: '#A1A1AA' }}>

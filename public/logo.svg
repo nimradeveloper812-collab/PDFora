@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+    <linearGradient id="foldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DBEAFE" />
+      <stop offset="100%" stop-color="#93C5FD" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Background Squircle -->
+  <rect x="16" y="16" width="480" height="480" rx="108" fill="url(#bgGrad)" />
+
+  <!-- Document Body -->
+  <g filter="url(#shadow)">
+    <!-- Document base with folded corner cut -->
+    <path d="M 148 116 L 292 116 L 364 188 L 364 396 C 364 407 355 416 344 416 L 148 416 C 137 416 128 407 128 396 L 128 136 C 128 125 137 116 148 116 Z" fill="#FFFFFF" />
+    
+    <!-- Folded Corner Flap -->
+    <path d="M 292 116 L 292 180 C 292 188 296 188 304 188 L 364 188 Z" fill="url(#foldGrad)" />
+  </g>
+
+  <!-- Blue Checkmark on Document -->
+  <path d="M 204 278 L 244 318 L 320 236" fill="none" stroke="#2563EB" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- "PDF" Text Badge at Bottom of Doc -->
+  <rect x="176" y="344" width="160" height="34" rx="8" fill="#DBEAFE" />
+  <text x="256" y="368" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="22" fill="#1D4ED8" text-anchor="middle" letter-spacing="1.5">PDFORA</text>
+</svg>

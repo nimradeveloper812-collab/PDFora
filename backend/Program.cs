@@ -14,15 +14,33 @@ builder.Services.Configure<FormOptions>(options =>
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 
-// Add CORS
+// Add CORS with origin restrictions for production
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? new[]
+{
+    "https://pdfora.nimradev.site",
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://localhost:5089"
+};
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .WithExposedHeaders("Content-Disposition", "Content-Type");
+        if (builder.Environment.IsDevelopment())
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .WithExposedHeaders("Content-Disposition", "Content-Type");
+        }
+        else
+        {
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .WithExposedHeaders("Content-Disposition", "Content-Type");
+        }
     });
 });
 

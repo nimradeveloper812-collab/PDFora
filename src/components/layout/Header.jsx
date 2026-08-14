@@ -12,6 +12,20 @@ const iconMap = {
   Image: ImageIcon, FileImage, Layers, Minimize2, Scissors
 };
 
+const prefetchTool = (id) => {
+  switch (id) {
+    case 'word-to-pdf': import('../../pages/tools/WordToPdf'); break;
+    case 'excel-to-pdf': import('../../pages/tools/ExcelToPdf'); break;
+    case 'powerpoint-to-pdf': import('../../pages/tools/PowerPointToPdf'); break;
+    case 'jpg-to-pdf': import('../../pages/tools/JpgToPdf'); break;
+    case 'pdf-to-jpg': import('../../pages/tools/PdfToJpg'); break;
+    case 'merge-pdf': import('../../pages/tools/MergePdf'); break;
+    case 'compress-pdf': import('../../pages/tools/CompressPdf'); break;
+    case 'split-pdf': import('../../pages/tools/SplitPdf'); break;
+    default: break;
+  }
+};
+
 // Individual nav link component
 function NavLink({ to, children, isActive }) {
   return (
@@ -219,6 +233,9 @@ export default function Header() {
                               key={tool.id}
                               to={tool.path}
                               onClick={() => setIsToolsOpen(false)}
+                              onMouseEnter={() => prefetchTool(tool.id)}
+                              onFocus={() => prefetchTool(tool.id)}
+                              onTouchStart={() => prefetchTool(tool.id)}
                               role="menuitem"
                               className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-150 group/item hover:bg-blue-50"
                               style={{ textDecoration: 'none' }}
@@ -265,6 +282,9 @@ export default function Header() {
                               key={tool.id}
                               to={tool.path}
                               onClick={() => setIsToolsOpen(false)}
+                              onMouseEnter={() => prefetchTool(tool.id)}
+                              onFocus={() => prefetchTool(tool.id)}
+                              onTouchStart={() => prefetchTool(tool.id)}
                               role="menuitem"
                               className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-150 group/item hover:bg-blue-50"
                               style={{ textDecoration: 'none' }}

@@ -15,7 +15,7 @@ const safeRequest = async (fetchCall) => {
       try {
         const errJson = await res.json();
         clientErrorMessage = errJson.error || errJson.message || 'Invalid request.';
-      } catch (e) {
+      } catch {
         clientErrorMessage = 'Invalid request.';
       }
     } else {
@@ -32,47 +32,47 @@ const safeRequest = async (fetchCall) => {
 };
 
 export const pdfApi = {
-  async convertWordToPdf(file) {
+  async convertWordToPdf(file, onProgress) {
     const formData = new FormData();
     formData.append('file', file);
 
     const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/word-to-pdf`, { method: 'POST', body: formData }));
     if (res) return await res.blob();
 
-    return await clientPdfService.convertWordToPdf(file);
+    return await clientPdfService.convertWordToPdf(file, onProgress);
   },
 
-  async convertExcelToPdf(file) {
+  async convertExcelToPdf(file, onProgress) {
     const formData = new FormData();
     formData.append('file', file);
 
     const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/excel-to-pdf`, { method: 'POST', body: formData }));
     if (res) return await res.blob();
 
-    return await clientPdfService.convertExcelToPdf(file);
+    return await clientPdfService.convertExcelToPdf(file, onProgress);
   },
 
-  async convertPowerPointToPdf(file) {
+  async convertPowerPointToPdf(file, onProgress) {
     const formData = new FormData();
     formData.append('file', file);
 
     const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/powerpoint-to-pdf`, { method: 'POST', body: formData }));
     if (res) return await res.blob();
 
-    return await clientPdfService.convertPowerPointToPdf(file);
+    return await clientPdfService.convertPowerPointToPdf(file, onProgress);
   },
 
-  async convertJpgToPdf(files) {
+  async convertJpgToPdf(files, onProgress) {
     const formData = new FormData();
     files.forEach(f => formData.append('files', f));
 
     const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/jpg-to-pdf`, { method: 'POST', body: formData }));
     if (res) return await res.blob();
 
-    return await clientPdfService.convertJpgToPdf(files);
+    return await clientPdfService.convertJpgToPdf(files, onProgress);
   },
 
-  async convertPdfToJpg(file) {
+  async convertPdfToJpg(file, onProgress) {
     const formData = new FormData();
     formData.append('file', file);
 
@@ -83,20 +83,20 @@ export const pdfApi = {
       return { blob: await res.blob(), isZip };
     }
 
-    return await clientPdfService.convertPdfToJpg(file);
+    return await clientPdfService.convertPdfToJpg(file, onProgress);
   },
 
-  async mergePdf(files) {
+  async mergePdf(files, onProgress) {
     const formData = new FormData();
     files.forEach(f => formData.append('files', f));
 
     const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/merge`, { method: 'POST', body: formData }));
     if (res) return await res.blob();
 
-    return await clientPdfService.mergePdf(files);
+    return await clientPdfService.mergePdf(files, onProgress);
   },
 
-  async compressPdf(file, level = 'recommended') {
+  async compressPdf(file, level = 'recommended', onProgress) {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('level', level);
@@ -104,10 +104,10 @@ export const pdfApi = {
     const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/compress`, { method: 'POST', body: formData }));
     if (res) return await res.blob();
 
-    return await clientPdfService.compressPdf(file, level);
+    return await clientPdfService.compressPdf(file, level, onProgress);
   },
 
-  async splitPdf(file, ranges = 'all') {
+  async splitPdf(file, ranges = 'all', onProgress) {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('ranges', ranges);
@@ -119,6 +119,6 @@ export const pdfApi = {
       return { blob: await res.blob(), isZip };
     }
 
-    return await clientPdfService.splitPdf(file, ranges);
+    return await clientPdfService.splitPdf(file, ranges, onProgress);
   }
 };

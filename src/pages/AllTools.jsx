@@ -7,10 +7,25 @@ import {
   Layers, Minimize2, Scissors, X
 } from 'lucide-react';
 import { TOOLS, TOOLS_CATEGORIES } from '../data/toolsData';
+import AdBanner from '../components/common/AdBanner';
 
 const iconMap = {
   FileText, Table, Presentation,
   Image: ImageIcon, FileImage, Layers, Minimize2, Scissors
+};
+
+const prefetchTool = (id) => {
+  switch (id) {
+    case 'word-to-pdf': import('./tools/WordToPdf'); break;
+    case 'excel-to-pdf': import('./tools/ExcelToPdf'); break;
+    case 'powerpoint-to-pdf': import('./tools/PowerPointToPdf'); break;
+    case 'jpg-to-pdf': import('./tools/JpgToPdf'); break;
+    case 'pdf-to-jpg': import('./tools/PdfToJpg'); break;
+    case 'merge-pdf': import('./tools/MergePdf'); break;
+    case 'compress-pdf': import('./tools/CompressPdf'); break;
+    case 'split-pdf': import('./tools/SplitPdf'); break;
+    default: break;
+  }
 };
 
 export default function AllTools() {
@@ -204,10 +219,13 @@ export default function AllTools() {
                       textDecoration: 'none',
                     }}
                     onMouseEnter={e => {
+                      prefetchTool(tool.id);
                       e.currentTarget.style.borderColor = '#3B82F6';
                       e.currentTarget.style.boxShadow = '0 8px 24px rgba(59, 130, 246,0.10), 0 2px 8px rgba(0,0,0,0.04)';
                       e.currentTarget.style.transform = 'translateY(-2px)';
                     }}
+                    onFocus={() => prefetchTool(tool.id)}
+                    onTouchStart={() => prefetchTool(tool.id)}
                     onMouseLeave={e => {
                       e.currentTarget.style.borderColor = '#BFDBFE';
                       e.currentTarget.style.boxShadow = '0 1px 4px rgba(59, 130, 246,0.04)';
@@ -257,6 +275,11 @@ export default function AllTools() {
                   </Link>
                 );
               })}
+            </div>
+
+            {/* ── All Tools Bottom Ad Banner ── */}
+            <div className="max-w-4xl mx-auto mt-10">
+              <AdBanner slot="3456789012" className="my-2" />
             </div>
           </>
         ) : (

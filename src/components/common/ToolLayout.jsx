@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, useLocation } from 'react-router-dom';
 import Dropzone from './Dropzone';
+import AdBanner from './AdBanner';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
@@ -141,6 +142,11 @@ export default function ToolLayout({ tool }) {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* ── Mid-page Ad Banner ── */}
+        <div className="max-w-4xl mx-auto mt-6">
+          <AdBanner slot="7890123456" className="my-2" />
         </div>
       </section>
 

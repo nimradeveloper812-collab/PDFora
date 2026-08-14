@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#3B82F6" />
 
     <!-- SEO Meta -->
     <meta name="google-site-verification" content="kr2-BeOvUXGL6hmuOji60yubfa12at2MSyVypzMLf_8" />
@@ -23,13 +24,15 @@
     <meta property="og:description" content="Pakistan's fast and secure PDF platform. Convert Word, Excel, PPT & images to PDF for free. No account or installation required." />
     <meta property="og:site_name" content="PDFora" />
     <meta property="og:locale" content="en_PK" />
-    <meta property="og:image" content="https://pdfora.nimradev.site/pdfora-logo.jpg" />
+    <meta property="og:image" content="https://pdfora.nimradev.site/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="PDFora — Free Online PDF Tools in Pakistan" />
     <meta name="twitter:description" content="Convert Word, Excel, PowerPoint & images to PDF online in Pakistan. Merge, compress, and split PDFs instantly." />
-    <meta name="twitter:image" content="https://pdfora.nimradev.site/pdfora-logo.jpg" />
+    <meta name="twitter:image" content="https://pdfora.nimradev.site/og-image.jpg" />
 
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -39,10 +42,14 @@
       rel="stylesheet"
     />
 
-    <!-- Favicon & Search Icons -->
-    <link rel="icon" type="image/jpeg" href="/pdfora-logo.jpg" />
-    <link rel="apple-touch-icon" href="/pdfora-logo.jpg" />
-    <link rel="shortcut icon" href="/pdfora-logo.jpg" />
+    <!-- Favicon & Search Icons (Google Favicon standards) -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <!-- Schema.org JSON-LD for Google Search -->
     <script type="application/ld+json">
@@ -51,6 +58,8 @@
       "@type": "WebApplication",
       "name": "PDFora",
       "url": "https://pdfora.nimradev.site",
+      "image": "https://pdfora.nimradev.site/pdfora-logo.png",
+      "logo": "https://pdfora.nimradev.site/pdfora-logo.png",
       "description": "Free online PDF tools for converting, merging, splitting, and compressing documents in Pakistan.",
       "applicationCategory": "ProductivityApplication",
       "operatingSystem": "All",
@@ -64,6 +73,7 @@
         "@type": "Organization",
         "name": "PDFora Pakistan",
         "url": "https://pdfora.nimradev.site",
+        "logo": "https://pdfora.nimradev.site/pdfora-logo.png",
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "Lahore",
@@ -79,4 +89,3 @@
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
-

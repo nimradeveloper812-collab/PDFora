@@ -8,11 +8,11 @@ const SECTIONS = [
     title: '1. Information We Collect',
     content: `PDFora is designed to minimise data collection. We collect only what is strictly necessary to operate the service.
 
-**Files You Upload:** Documents, images, and PDFs you submit for processing are temporarily stored on our encrypted cloud servers solely for the purpose of completing the requested operation. These files are permanently and automatically deleted within 60 minutes of processing, regardless of whether you download the result.
+**Files You Upload:** Documents, images, and PDFs you submit for processing are processed in isolated sessions (either client-side in your browser or on encrypted cloud servers) solely for the purpose of completing the requested operation. Any server-processed files are permanently and automatically deleted within 60 minutes of processing, regardless of whether you download the result.
 
-**Usage Analytics:** We may collect anonymised, aggregated usage statistics (page views, tool usage counts, browser type) using privacy-respecting analytics that do not track individuals, store IP addresses, or build user profiles.
+**Usage Analytics:** We may collect anonymised, aggregated usage statistics (page views, tool usage counts, browser type) using privacy-respecting analytics that do not track individuals, store personally identifiable information, or build individual user profiles.
 
-**Contact Form Data:** If you contact us via the support form, we collect your name, email address, and message content to respond to your inquiry. This data is never used for marketing.`,
+**Contact Form Data:** If you contact us via the support form, we collect your name, email address, and message content to respond to your inquiry. This data is never sold or used for unsolicited marketing.`,
   },
   {
     title: '2. How We Use Your Information',
@@ -23,77 +23,78 @@ const SECTIONS = [
 • Improve our platform performance and tool accuracy
 • Detect and prevent abuse or fraudulent usage
 
-We will never sell, rent, trade, or share your personal data or uploaded files with any third party for commercial or advertising purposes.`,
+We will never sell, rent, trade, or share your uploaded documents or private file contents with any third party for commercial or advertising purposes.`,
   },
   {
     title: '3. File Storage & Automatic Deletion',
-    content: `All files uploaded to PDFora follow a strict data lifecycle policy:
+    content: `All files handled on PDFora follow a strict data lifecycle policy:
 
-• Files are uploaded over an encrypted TLS 1.3 connection
-• Files are stored only in ephemeral, isolated processing sandboxes
-• After processing completes, the output file is made available for download
-• All input and output files are permanently wiped from our servers within 60 minutes automatically
+• Client-side operations process your documents directly inside your browser sandbox with zero network transmission where supported
+• Server-assisted conversions upload over an encrypted TLS 1.3 connection to ephemeral processing containers
+• Output files are made available for download directly to your device
+• All server-cached input and output files are permanently wiped from our systems within 60 minutes automatically
 
-We do not perform backups of user-uploaded content. Our infrastructure is designed so that no human operator has access to individual files in transit.`,
+We do not perform backups of user-uploaded document contents. Our infrastructure is engineered so that no human operator accesses your files in transit.`,
   },
   {
-    title: '4. Cookies & Local Storage',
-    content: `PDFora uses minimal cookies and local storage:
+    title: '4. Cookies & Advertising Technologies',
+    content: `PDFora uses cookies and similar storage technologies to ensure website functionality and support our free service:
 
-• **Strictly Necessary Cookies:** Session identifiers needed to complete file uploads and downloads. These expire when you close your browser.
-• **Preference Cookies (Optional):** Remember UI settings such as compression level preferences. You can clear these at any time.
-• **Analytics Cookies (Optional):** Anonymised, cookieless analytics to understand aggregate feature usage. We do not use Google Analytics or Meta Pixel.
+• **Strictly Necessary Cookies:** Session identifiers required to process file uploads, tool workflows, and download handling.
+• **Preference Cookies:** Store user settings such as compression level choices or layout preferences.
+• **Google AdSense & Third-Party Cookies:** We use Google AdSense to serve advertisements when you visit our website. Google and its advertising partners use cookies (such as the DoubleClick cookie) to serve ads based on your prior visits to PDFora and other sites across the internet.
 
-You can configure or disable optional cookies via your browser settings at any time.`,
+**Opting Out of Personalized Advertising:**
+You can opt out of personalized advertising by visiting Google's Ads Settings (www.google.com/settings/ads). Alternatively, you can opt out of third-party vendor cookies for personalized advertising by visiting www.aboutads.info or your browser cookie management preferences.`,
   },
   {
     title: '5. Data Security',
     content: `We implement industry-standard security controls including:
 
 • TLS 1.3 encryption for all data in transit
-• AES-256 encryption for files stored temporarily at rest
+• Ephemeral in-memory storage for document conversion pipelines
 • Isolated processing containers per conversion job
-• Access controls limiting staff access to production systems
-• Regular third-party security audits
+• Strict access controls preventing unauthorized access to production systems
+• Periodic vulnerability audits and dependency patching
 
-No system is 100% secure. If you believe you have discovered a security vulnerability, please report it responsibly to security@nimradev.site.`,
+If you believe you have discovered a security issue, please report it responsibly to contact@nimradev.site.`,
   },
   {
-    title: '6. Third-Party Services',
-    content: `PDFora may use the following categories of trusted third-party services:
+    title: '6. Third-Party Services & Advertising Partners',
+    content: `To provide and sustain our free platform, PDFora partners with select trusted third-party providers:
 
-• **Cloud Infrastructure Providers:** For file processing compute (subject to GDPR and SOC 2 Type II compliance)
-• **Content Delivery Networks (CDN):** To deliver the PDFora web application efficiently
+• **Google AdSense:** Provides contextual and personalized advertisements that keep PDFora 100% free for all users. Google's privacy policy governs their collection and use of advertising data.
+• **Cloud Infrastructure & Hosting Providers:** Deliver high-speed CDN assets, compute infrastructure, and serverless routing (subject to strict data protection standards).
+• **Email Service Providers (Resend):** Securely deliver support inquiries submitted through our contact form.
 
-We do not use third-party advertising networks, social login providers, or tracking pixels.`,
+We do not sell user document data to data brokers, analytics brokers, or marketing networks.`,
   },
   {
     title: '7. Children\'s Privacy',
-    content: `PDFora is not directed at children under the age of 13. We do not knowingly collect personal information from children. If you believe a child has submitted personal information to us, please contact us immediately and we will take steps to delete it.`,
+    content: `PDFora is not directed at children under the age of 13. We do not knowingly collect personal information from children. If you believe a child has submitted personal information to us, please contact us immediately and we will take immediate steps to delete it.`,
   },
   {
     title: '8. Your Rights',
     content: `Depending on your jurisdiction, you may have the following rights regarding your data:
 
-• **Access:** Request a copy of personal information we hold about you
-• **Deletion:** Request deletion of any personal data we retain
-• **Portability:** Receive your data in a machine-readable format
-• **Objection:** Object to certain types of data processing
-• **Complaints:** Lodge a complaint with your local data protection authority
+• **Access & Transparency:** Request information regarding data we process
+• **Deletion:** Request immediate deletion of any submitted contact information
+• **Objection & Opt-Out:** Manage cookie preferences and personalized advertising opt-outs at any time
+• **Inquiries:** Contact our data privacy representative with questions or concerns
 
-To exercise any of these rights, contact us at privacy@nimradev.site. We will respond within 30 days.`,
+To exercise any of these rights, contact us at contact@nimradev.site. We will respond promptly within 24-48 business hours.`,
   },
   {
     title: '9. Changes to This Policy',
-    content: `We may update this Privacy Policy periodically to reflect changes in our practices, legal requirements, or service improvements. When we make material changes, we will update the "Last Updated" date at the top of this page. We encourage you to review this policy regularly.`,
+    content: `We may update this Privacy Policy periodically to reflect changes in our legal obligations, features, or advertising partnerships. When we update this policy, we will update the "Last Updated" date at the top of this page.`,
   },
   {
     title: '10. Contact Us',
-    content: `If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact our team:
+    content: `If you have any questions, concerns, or feedback regarding this Privacy Policy, please contact our team:
 
-• **Email:** privacy@nimradev.site
+• **Email:** contact@nimradev.site
 • **Location:** Lahore, Punjab, Pakistan 🇵🇰
-• **Response Time:** Within 24-48 hours`,
+• **Response Time:** Within 24-48 business hours`,
   },
 ];
 
@@ -172,9 +173,15 @@ export default function PrivacyPolicy() {
               <span>{section.title.split('. ').slice(1).join('. ')}</span>
             </h2>
             <div className="text-sm leading-relaxed space-y-3" style={{ color: '#52525B' }}>
-              {section.content.split('\n\n').map((para, i) => (
-                <p key={i}>{para.replace(/\*\*(.*?)\*\*/g, '$1')}</p>
-              ))}
+              {section.content.split('\n\n').map((para, i) => {
+                const formatted = para.split(/(\*\*.*?\*\*)/g).map((part, pIdx) => {
+                  if (part.startsWith('**') && part.endsWith('**')) {
+                    return <strong key={pIdx} style={{ color: '#18181B' }}>{part.slice(2, -2)}</strong>;
+                  }
+                  return part;
+                });
+                return <p key={i} className="whitespace-pre-line">{formatted}</p>;
+              })}
             </div>
           </div>
         ))}

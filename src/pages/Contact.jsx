@@ -48,7 +48,8 @@ const inputStyle = (hasError) => ({
 
 export default function Contact() {
   const location = useLocation();
-  const [form, setForm]         = useState({ name: '', email: '', topic: '', message: '' });
+  const [form, setForm]         = useState({ name: '', email: '', topic: '', message: '', _hp: '' });
+  const [formLoadTime]          = useState(() => Date.now());
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors]     = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -74,7 +75,10 @@ export default function Contact() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          _ts: formLoadTime,
+        }),
       });
       if (res.ok) {
         setSubmitted(true);
@@ -292,6 +296,20 @@ export default function Contact() {
                   <p className="text-xs mt-0.5" style={{ color: '#A1A1AA' }}>
                     Fields marked <span style={{ color: '#3B82F6' }}>*</span> are required.
                   </p>
+                </div>
+
+                {/* Honeypot field to block automated spambots */}
+                <div style={{ display: 'none', visibility: 'hidden' }} aria-hidden="true">
+                  <label htmlFor="website_hp">Leave this field empty</label>
+                  <input
+                    id="website_hp"
+                    type="text"
+                    name="_hp"
+                    value={form._hp}
+                    onChange={e => handleChange('_hp', e.target.value)}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
                 </div>
 
                 {submitError && (
