@@ -82,13 +82,10 @@ export const clientPdfService = {
 
     const container = document.createElement('div');
     container.innerHTML = fullHtml;
-    
-    container.style.position = 'fixed';
+    container.style.position = 'absolute';
     container.style.top = '0';
     container.style.left = '0';
-    container.style.zIndex = '-9999';
-    container.style.opacity = '1';
-    container.style.pointerEvents = 'none';
+    container.style.zIndex = '999999';
     container.style.backgroundColor = '#ffffff';
     container.style.width = '1122px'; // Approximate A4 Landscape width
     document.body.appendChild(container);
@@ -103,7 +100,7 @@ export const clientPdfService = {
 
     try {
       onProgress?.(70, 'Rendering Excel pages to PDF...');
-      await new Promise(r => setTimeout(r, 150)); // Allow DOM to layout
+      await new Promise(r => setTimeout(r, 200)); // Allow DOM to layout
       const pdfBlob = await html2pdf().set(opt).from(container).output('blob');
       onProgress?.(100, 'Excel to PDF conversion complete!');
       return pdfBlob;
@@ -171,12 +168,10 @@ export const clientPdfService = {
     `;
     container.appendChild(styleNode);
 
-    container.style.position = 'fixed';
+    container.style.position = 'absolute';
     container.style.top = '0';
     container.style.left = '0';
-    container.style.zIndex = '-9999';
-    container.style.opacity = '1';
-    container.style.pointerEvents = 'none';
+    container.style.zIndex = '999999';
     container.style.backgroundColor = '#ffffff';
     document.body.appendChild(container);
 
@@ -190,7 +185,7 @@ export const clientPdfService = {
 
     try {
       onProgress?.(65, 'Formatting and rendering pages...');
-      await new Promise(r => setTimeout(r, 150)); // Allow styles & fonts to paint
+      await new Promise(r => setTimeout(r, 200)); // Allow styles & fonts to paint
       const pdfBlob = await html2pdf().set(opt).from(container).output('blob');
       onProgress?.(100, 'Word to PDF conversion complete!');
       return pdfBlob;
@@ -308,12 +303,10 @@ export const clientPdfService = {
       }
     }
 
-    container.style.position = 'fixed';
+    container.style.position = 'absolute';
     container.style.top = '0';
     container.style.left = '0';
-    container.style.zIndex = '-9999';
-    container.style.opacity = '1';
-    container.style.pointerEvents = 'none';
+    container.style.zIndex = '999999';
     container.style.backgroundColor = '#ffffff';
     container.style.width = '1122px';
     document.body.appendChild(container);
@@ -328,7 +321,7 @@ export const clientPdfService = {
 
     try {
       onProgress?.(75, 'Generating PDF presentation...');
-      await new Promise(r => setTimeout(r, 150));
+      await new Promise(r => setTimeout(r, 200));
       const pdfBlob = await html2pdf().set(opt).from(container).output('blob');
       onProgress?.(100, 'PowerPoint to PDF conversion complete!');
       return pdfBlob;
