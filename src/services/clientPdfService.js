@@ -83,27 +83,34 @@ export const clientPdfService = {
     const container = document.createElement('div');
     container.innerHTML = fullHtml;
     
-    container.style.position = 'absolute';
-    container.style.left = '-9999px';
+    container.style.position = 'fixed';
     container.style.top = '0';
+    container.style.left = '0';
+    container.style.zIndex = '-9999';
+    container.style.opacity = '1';
+    container.style.pointerEvents = 'none';
+    container.style.backgroundColor = '#ffffff';
     container.style.width = '1122px'; // Approximate A4 Landscape width
     document.body.appendChild(container);
 
     const opt = {
-      margin:       [15, 15, 15, 15],
+      margin:       [10, 10, 10, 10],
       filename:     file.name.replace(/\.[^/.]+$/, '') + '.pdf',
       image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, logging: false },
+      html2canvas:  { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0, windowWidth: 1122 },
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
     };
 
     try {
       onProgress?.(70, 'Rendering Excel pages to PDF...');
+      await new Promise(r => setTimeout(r, 150)); // Allow DOM to layout
       const pdfBlob = await html2pdf().set(opt).from(container).output('blob');
       onProgress?.(100, 'Excel to PDF conversion complete!');
       return pdfBlob;
     } finally {
-      document.body.removeChild(container);
+      if (document.body.contains(container)) {
+        document.body.removeChild(container);
+      }
     }
   },
 
@@ -164,26 +171,33 @@ export const clientPdfService = {
     `;
     container.appendChild(styleNode);
 
-    container.style.position = 'absolute';
-    container.style.left = '-9999px';
+    container.style.position = 'fixed';
     container.style.top = '0';
+    container.style.left = '0';
+    container.style.zIndex = '-9999';
+    container.style.opacity = '1';
+    container.style.pointerEvents = 'none';
+    container.style.backgroundColor = '#ffffff';
     document.body.appendChild(container);
 
     const opt = {
-      margin:       [15, 15, 15, 15],
+      margin:       [12, 12, 12, 12],
       filename:     file.name.replace(/\.[^/.]+$/, '') + '.pdf',
       image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, logging: false },
+      html2canvas:  { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0, windowWidth: 794 },
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
     try {
       onProgress?.(65, 'Formatting and rendering pages...');
+      await new Promise(r => setTimeout(r, 150)); // Allow styles & fonts to paint
       const pdfBlob = await html2pdf().set(opt).from(container).output('blob');
       onProgress?.(100, 'Word to PDF conversion complete!');
       return pdfBlob;
     } finally {
-      document.body.removeChild(container);
+      if (document.body.contains(container)) {
+        document.body.removeChild(container);
+      }
     }
   },
 
@@ -294,26 +308,34 @@ export const clientPdfService = {
       }
     }
 
-    container.style.position = 'absolute';
-    container.style.left = '-9999px';
+    container.style.position = 'fixed';
     container.style.top = '0';
+    container.style.left = '0';
+    container.style.zIndex = '-9999';
+    container.style.opacity = '1';
+    container.style.pointerEvents = 'none';
+    container.style.backgroundColor = '#ffffff';
+    container.style.width = '1122px';
     document.body.appendChild(container);
 
     const opt = {
-      margin:       [15, 15, 15, 15],
+      margin:       [10, 10, 10, 10],
       filename:     file.name.replace(/\.[^/.]+$/, '') + '.pdf',
       image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, logging: false },
+      html2canvas:  { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0, windowWidth: 1122 },
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
     };
 
     try {
       onProgress?.(75, 'Generating PDF presentation...');
+      await new Promise(r => setTimeout(r, 150));
       const pdfBlob = await html2pdf().set(opt).from(container).output('blob');
       onProgress?.(100, 'PowerPoint to PDF conversion complete!');
       return pdfBlob;
     } finally {
-      document.body.removeChild(container);
+      if (document.body.contains(container)) {
+        document.body.removeChild(container);
+      }
     }
   },
 
@@ -327,20 +349,27 @@ export const clientPdfService = {
       const currentPct = 15 + Math.round(((i + 1) / files.length) * 75);
       onProgress?.(currentPct, `Embedding image ${i + 1} of ${files.length}...`);
 
-      const bytes = await file.arrayBuffer();
-      let image;
+      let image = null;
       const type = file.type.toLowerCase();
 
       try {
+        const bytes = await file.arrayBuffer();
         if (type.includes('png')) {
           image = await pdfDoc.embedPng(bytes);
         } else if (type.includes('jpeg') || type.includes('jpg')) {
           image = await pdfDoc.embedJpg(bytes);
-        } else {
-          // WEBP / BMP fallback using HTML Canvas
-          const dataUrl = await new Promise((resolve) => {
+        }
+      } catch {
+        image = null; // fallback below
+      }
+
+      // Universal Canvas Decoder fallback (handles WEBP, BMP, progressive JPEGs, corrupted headers)
+      if (!image) {
+        try {
+          const dataUrl = await new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = e => resolve(e.target.result);
+            reader.onerror = reject;
             reader.readAsDataURL(file);
           });
 
@@ -355,14 +384,20 @@ export const clientPdfService = {
           canvas.width = img.width;
           canvas.height = img.height;
           const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, img.width, img.height);
           ctx.drawImage(img, 0, 0);
 
-          const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+          const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.95);
           const base64 = jpegDataUrl.split(',')[1];
           const rawBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
           image = await pdfDoc.embedJpg(rawBytes);
+        } catch (canvasErr) {
+          console.error('Failed to embed image:', file.name, canvasErr);
         }
+      }
 
+      if (image) {
         const dims = image.scale(1);
         const page = pdfDoc.addPage([dims.width, dims.height]);
         page.drawImage(image, {
@@ -371,8 +406,6 @@ export const clientPdfService = {
           width: dims.width,
           height: dims.height,
         });
-      } catch (err) {
-        console.warn('Image embedding fallback:', err);
       }
     }
 
@@ -436,6 +469,10 @@ export const clientPdfService = {
           canvas.width = Math.max(1, Math.floor(viewport.width));
           canvas.height = Math.max(1, Math.floor(viewport.height));
           const ctx = canvas.getContext('2d');
+
+          // Ensure solid white background (prevents transparent/black/blank canvas artifact)
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
 
           await page.render({ canvasContext: ctx, viewport }).promise;
 
@@ -607,6 +644,10 @@ export const clientPdfService = {
 
       canvas.width = viewport.width;
       canvas.height = viewport.height;
+
+      // Solid white background for clean JPEG export
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       await page.render({ canvasContext: ctx, viewport }).promise;
 
