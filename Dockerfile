@@ -40,7 +40,9 @@ RUN apt-get update && \
     && (sed -i 's/rights="none" pattern="PDF"/rights="read | write" pattern="PDF"/' /etc/ImageMagick-*/policy.xml 2>/dev/null || true) \
     && rm -rf /var/lib/apt/lists/*
 
-ENV DOTNET_USE_POLLING_FILE_WATCHER=true
+ENV DOTNET_USE_POLLING_FILE_WATCHER=1
+ENV DOTNET_hostBuilder__reloadConfigOnChange=false
+ENV ASPNETCORE_hostBuilder__reloadConfigOnChange=false
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV PORT=8080
 

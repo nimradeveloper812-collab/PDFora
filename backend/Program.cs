@@ -1,12 +1,28 @@
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.Configuration;
 using PDFora.Backend.Services;
 
-// Prevent inotify limit issues in containerized Linux hosts (Render/Docker)
-Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "true");
+// Completely disable Linux file watchers in containerized environments (Render/Docker)
+Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "1");
+Environment.SetEnvironmentVariable("DOTNET_hostBuilder__reloadConfigOnChange", "false");
+Environment.SetEnvironmentVariable("ASPNETCORE_hostBuilder__reloadConfigOnChange", "false");
 
-var builder = WebApplication.CreateBuilder(args);
+var builderOptions = new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = AppContext.BaseDirectory,
+    WebRootPath = Path.Combine(AppContext.BaseDirectory, "wwwroot")
+};
 
-// Configure dynamic port binding for Render / Cloud hosts
+var builder = WebApplication.CreateBuilder(builderOptions);
+
+// Prevent inotify instance allocation on configuration files
+foreach (var source in builder.Configuration.Sources.OfType<FileConfigurationSource>())
+{
+    source.ReloadOnChange = false;
+}
+
+// Configure dynamic port binding for Render
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 

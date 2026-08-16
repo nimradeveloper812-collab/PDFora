@@ -8,8 +8,14 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: DOTNET_USE_POLLING_FILE_WATCHER
+        value: "1"
+      - key: DOTNET_hostBuilder__reloadConfigOnChange
+        value: "false"
+      - key: ASPNETCORE_hostBuilder__reloadConfigOnChange
+        value: "false"
       - key: RESEND_API_KEY
         sync: false
       - key: TO_EMAIL
-        value: contact@nimradev.site
+        value: nimra.developer.8122005@gmail.com
     healthCheckPath: /api/health
