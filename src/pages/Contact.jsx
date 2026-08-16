@@ -289,7 +289,7 @@ export default function Contact() {
                 }}
                 aria-label="Contact support form"
               >
-                <div style={{ borderBottom: '1px solid #F9F0F5', paddingBottom: '1rem' }}>
+                <div style={{ borderBottom: '1px solid #DBEAFE', paddingBottom: '1rem' }}>
                   <h2 className="text-lg font-bold" style={{ color: '#18181B' }}>
                     Send a Message
                   </h2>

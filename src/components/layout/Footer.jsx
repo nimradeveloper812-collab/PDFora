@@ -185,7 +185,7 @@ export default function Footer() {
       {/* ── Bottom Bar ─────────────────────────────────────────── */}
       <div
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3"
-        style={{ borderTop: '1px solid #F9F0F5' }}
+        style={{ borderTop: '1px solid #DBEAFE' }}
       >
         <p className="text-xs" style={{ color: '#A1A1AA' }}>
           © {year} PDFora. All rights reserved.

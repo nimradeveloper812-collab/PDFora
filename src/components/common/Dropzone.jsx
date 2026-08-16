@@ -396,7 +396,7 @@ export default function Dropzone({ tool }) {
               <div className="space-y-5 animate-fade-up">
                 <div
                   className="flex items-center justify-between pb-4"
-                  style={{ borderBottom: '1px solid #F9F0F5' }}
+                  style={{ borderBottom: '1px solid #DBEAFE' }}
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold" style={{ color: '#18181B' }}>
@@ -597,7 +597,7 @@ export default function Dropzone({ tool }) {
 
                 <div
                   className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-3"
-                  style={{ borderTop: '1px solid #F9F0F5' }}
+                  style={{ borderTop: '1px solid #DBEAFE' }}
                 >
                   <button
                     onClick={resetAll}

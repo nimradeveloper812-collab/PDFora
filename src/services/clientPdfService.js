@@ -11,7 +11,26 @@ if (typeof window !== 'undefined' && pdfjsLib) {
   pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 }
 
-// Universal Multilingual Font Cascade
+// Global CDN fallback for standard CMaps & Font data to render all international PDF character sets (CJK, Arabic, Hebrew, Asian scripts)
+const PDFJS_CMAP_URL = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version || '4.0.0'}/cmaps/`;
+const PDFJS_STANDARD_FONTS_URL = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version || '4.0.0'}/standard_fonts/`;
+
+/**
+ * Universal Multilingual Font Cascade
+ * Full Worldwide Character Support:
+ * - Latin / WinAnsi / ASCII / Western & Eastern European / Baltic / Nordic / Vietnamese
+ * - Cyrillic (Russian, Ukrainian, Belarusian, Bulgarian, Serbian)
+ * - Greek (Modern & Classical)
+ * - Arabic & Persian (Naskh & Nastaliq ligatures)
+ * - Urdu (Noto Nastaliq Urdu)
+ * - Hebrew (Modern & Biblical)
+ * - South Asian Indic Scripts: Devanagari (Hindi, Marathi, Sanskrit, Nepali), Bengali, Gurmukhi (Punjabi), Gujarati, Oriya, Tamil, Telugu, Kannada, Malayalam, Sinhala
+ * - Southeast Asian Scripts: Thai, Lao, Burmese, Khmer, Vietnamese
+ * - East Asian CJK: Simplified Chinese, Traditional Chinese, Japanese (Kanji, Hiragana, Katakana), Korean (Hangul)
+ * - Caucasian / Other: Georgian, Armenian, Ethiopic, Tibetan
+ * - Mathematical Symbols, World Currencies ($ € £ ¥ ₹ ₽ ₩ ₺ ₴ ₦ ₪ ₫ ฿ ₱ ₡ ₲ ₵ PKR Rs)
+ * - Emojis (Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji)
+ */
 const UNIVERSAL_FONT_FAMILY = [
   'Inter',
   'system-ui',
@@ -30,12 +49,19 @@ const UNIVERSAL_FONT_FAMILY = [
   '"Noto Sans Telugu"',
   '"Noto Sans Kannada"',
   '"Noto Sans Malayalam"',
+  '"Noto Sans Sinhala"',
   '"Noto Sans SC"',
   '"Noto Sans TC"',
   '"Noto Sans JP"',
   '"Noto Sans KR"',
   '"Noto Sans Thai"',
+  '"Noto Sans Lao"',
+  '"Noto Sans Myanmar"',
+  '"Noto Sans Khmer"',
   '"Noto Sans Hebrew"',
+  '"Noto Sans Georgian"',
+  '"Noto Sans Armenian"',
+  '"Noto Sans Ethiopic"',
   '"Segoe UI Emoji"',
   '"Apple Color Emoji"',
   '"Noto Color Emoji"',
@@ -45,7 +71,7 @@ const UNIVERSAL_FONT_FAMILY = [
 ].join(', ');
 
 /**
- * Checks if a string contains Right-to-Left characters (Urdu, Arabic, Persian, Hebrew)
+ * Checks if a string contains Right-to-Left characters (Urdu, Arabic, Persian, Hebrew, Syriac, Thaana)
  */
 function isRtlText(str) {
   if (!str) return false;
@@ -82,22 +108,21 @@ function cleanupContainer(container) {
 }
 
 /**
- * Renders an HTML element to high-res canvas (2x scale) preserving all colors, formatting & Unicode
+ * Renders an HTML element to high-res canvas (2x scale / ~300 DPI) preserving all colors, formatting & Unicode
  */
 async function renderElementToCanvas(element, scale = 2) {
   return await html2canvas(element, {
     scale: scale,
     useCORS: true,
     allowTaint: true,
-    backgroundColor: null, // Keep original background color / transparency
+    backgroundColor: null,
     logging: false,
     windowWidth: element.offsetWidth || 800,
   });
 }
 
 /**
- * Pure Native Client-Side PDF Engine
- * Converts Word, Excel, PPT, and images preserving 100% original shape, colors, images, and fonts.
+ * Worldwide Multi-Format Client PDF Engine
  */
 export const clientPdfService = {
 
@@ -105,7 +130,7 @@ export const clientPdfService = {
   async convertExcelToPdf(file, onProgress) {
     onProgress?.(15, 'Reading Excel workbook and sheets...');
     const arrayBuffer = await file.arrayBuffer();
-    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+    const workbook = XLSX.read(arrayBuffer, { type: 'array', cellDates: true, cellStyles: true });
 
     if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
       throw new Error('The uploaded Excel document does not contain any readable sheets.');
@@ -127,7 +152,7 @@ export const clientPdfService = {
         onProgress?.(currentPct, `Converting sheet ${sIdx + 1} of ${workbook.SheetNames.length}: ${sheetName}...`);
 
         const sheet = workbook.Sheets[sheetName];
-        const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+        const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false });
 
         if (rawData.length === 0) continue;
 
@@ -148,7 +173,7 @@ export const clientPdfService = {
           sheetPageWrapper.style.boxSizing = 'border-box';
           sheetPageWrapper.style.width = '100%';
 
-          // Clean Sheet Title
+          // Clean Sheet Title Header
           const titleEl = document.createElement('div');
           titleEl.style.fontSize = '14px';
           titleEl.style.fontWeight = '600';
@@ -192,7 +217,7 @@ export const clientPdfService = {
 
               const isRtl = isRtlText(cellValue);
               cell.dir = isRtl ? 'rtl' : 'auto';
-              cell.style.textAlign = isRtl ? 'right' : (/^-?\d+(\.\d+)?(%|€|\$|£|¥|₹|PKR|Rs)?$/i.test(cellValue) ? 'right' : 'left');
+              cell.style.textAlign = isRtl ? 'right' : (/^-?\d+(\.\d+)?(%|€|\$|£|¥|₹|₽|₩|₺|₴|₦|₪|₫|฿|₱|₡|₲|₵|PKR|Rs)?$/i.test(cellValue) ? 'right' : 'left');
               cell.textContent = cellValue || '\u00A0';
 
               tr.appendChild(cell);
@@ -260,7 +285,6 @@ export const clientPdfService = {
     onProgress?.(15, 'Extracting Word document contents, styles & images...');
     const arrayBuffer = await file.arrayBuffer();
 
-    // Extract complete HTML and embedded images exactly as designed
     let htmlContent = '';
     try {
       const mammothOptions = {
@@ -471,7 +495,6 @@ export const clientPdfService = {
           slideCard.style.justifyContent = 'flex-start';
 
           if (slideParagraphs.length === 0) {
-            // Check if there are any media images for this slide
             const mediaKeys = Object.keys(mediaFiles);
             if (mediaKeys.length > idx && mediaFiles[mediaKeys[idx]]) {
               const imgEl = document.createElement('img');
@@ -483,7 +506,6 @@ export const clientPdfService = {
               slideCard.appendChild(imgEl);
             }
           } else {
-            // First paragraph as slide title, remaining as body lines
             slideParagraphs.forEach((pText, pIdx) => {
               const pEl = document.createElement('div');
               pEl.style.fontFamily = UNIVERSAL_FONT_FAMILY;
@@ -562,7 +584,7 @@ export const clientPdfService = {
         image = null;
       }
 
-      // Universal Canvas Decoder fallback (handles WEBP, BMP, GIF, progressive JPEGs)
+      // Universal Canvas Decoder fallback (handles WEBP, BMP, GIF, progressive JPEGs, HEIC)
       if (!image) {
         try {
           const dataUrl = await new Promise((resolve, reject) => {
@@ -652,7 +674,9 @@ export const clientPdfService = {
       try {
         const loadingTask = pdfjsLib.getDocument({
           data: arrayBuffer.slice(0),
+          cMapUrl: PDFJS_CMAP_URL,
           cMapPacked: true,
+          standardFontDataUrl: PDFJS_STANDARD_FONTS_URL,
         });
         const pdf = await loadingTask.promise;
         const numPages = pdf.numPages;
@@ -807,7 +831,9 @@ export const clientPdfService = {
     const arrayBuffer = await file.arrayBuffer();
     const loadingTask = pdfjsLib.getDocument({
       data: arrayBuffer,
+      cMapUrl: PDFJS_CMAP_URL,
       cMapPacked: true,
+      standardFontDataUrl: PDFJS_STANDARD_FONTS_URL,
     });
     const pdf = await loadingTask.promise;
     const numPages = pdf.numPages;

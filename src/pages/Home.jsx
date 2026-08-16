@@ -356,7 +356,7 @@ export default function Home() {
               {/* Card header */}
               <div
                 className="text-center pb-4 mb-5"
-                style={{ borderBottom: '1px solid #F9F0F5' }}
+                style={{ borderBottom: '1px solid #DBEAFE' }}
               >
                 <span
                   className="text-[10px] font-bold uppercase tracking-widest"

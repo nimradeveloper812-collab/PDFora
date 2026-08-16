@@ -193,7 +193,7 @@ export default function Header() {
                   }}
                 >
                   {/* Dropdown Header */}
-                  <div className="flex items-center justify-between pb-3 mb-3" style={{ borderBottom: '1px solid #F9F0F5' }}>
+                  <div className="flex items-center justify-between pb-3 mb-3" style={{ borderBottom: '1px solid #DBEAFE' }}>
                     <span
                       className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider"
                       style={{ color: '#3B82F6' }}
