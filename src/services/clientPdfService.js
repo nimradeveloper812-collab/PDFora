@@ -1,7 +1,8 @@
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { PDFDocument } from 'pdf-lib';
 import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
 import mammoth from 'mammoth';
+import html2canvas from 'html2canvas';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
 
@@ -10,165 +11,264 @@ if (typeof window !== 'undefined' && pdfjsLib) {
   pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 }
 
-// Helper to sanitize text for PDF standard fonts (Latin-1 / WinAnsi)
-const sanitizeText = (str) => {
-  if (!str) return '';
-  return Array.from(String(str)).map(char => {
-    const code = char.charCodeAt(0);
-    if (code > 255) {
-      // Common unicode replacements
-      if (char === '“' || char === '”') return '"';
-      if (char === '‘' || char === '’') return "'";
-      if (char === '—' || char === '–') return '-';
-      if (char === '•') return '*';
-      if (char === '…') return '...';
-      return '?';
-    }
-    return char;
-  }).join('');
-};
+// Universal Multilingual Font Cascade supporting Urdu, Arabic, Persian, Hebrew,
+// Hindi, Bengali, Punjabi, Gujarati, Tamil, Telugu, Kannada, Malayalam,
+// Chinese (SC/TC), Japanese, Korean, Cyrillic, Greek, Thai, Vietnamese,
+// Math Symbols, Currency Symbols, and Full Emojis.
+const UNIVERSAL_FONT_FAMILY = [
+  'Inter',
+  'system-ui',
+  '-apple-system',
+  'BlinkMacSystemFont',
+  '"Segoe UI"',
+  'Roboto',
+  '"Noto Sans"',
+  '"Noto Sans Arabic"',
+  '"Noto Nastaliq Urdu"',
+  '"Noto Sans Devanagari"',
+  '"Noto Sans Bengali"',
+  '"Noto Sans Gurmukhi"',
+  '"Noto Sans Gujarati"',
+  '"Noto Sans Tamil"',
+  '"Noto Sans Telugu"',
+  '"Noto Sans Kannada"',
+  '"Noto Sans Malayalam"',
+  '"Noto Sans SC"',
+  '"Noto Sans TC"',
+  '"Noto Sans JP"',
+  '"Noto Sans KR"',
+  '"Noto Sans Thai"',
+  '"Noto Sans Hebrew"',
+  '"Segoe UI Emoji"',
+  '"Apple Color Emoji"',
+  '"Noto Color Emoji"',
+  '"Segoe UI Symbol"',
+  'Arial',
+  'sans-serif'
+].join(', ');
 
-// Word wrapping helper for pdf-lib text drawing
-function wrapText(text, maxWidth, font, fontSize) {
-  const words = text.split(' ');
-  const lines = [];
-  let currentLine = '';
-
-  for (const word of words) {
-    const testLine = currentLine ? `${currentLine} ${word}` : word;
-    const testWidth = font.widthOfTextAtSize(sanitizeText(testLine), fontSize);
-    if (testWidth <= maxWidth) {
-      currentLine = testLine;
-    } else {
-      if (currentLine) lines.push(currentLine);
-      currentLine = word;
-    }
-  }
-  if (currentLine) lines.push(currentLine);
-  return lines;
+/**
+ * Checks if a string contains Right-to-Left characters (Urdu, Arabic, Persian, Hebrew)
+ */
+function isRtlText(str) {
+  if (!str) return false;
+  const rtlRegex = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
+  return rtlRegex.test(str);
 }
 
 /**
- * Pure Native Client-Side PDF Engine (100% Client-Side, Zero Blank Pages)
+ * Creates an off-screen container mounted in DOM for high-fidelity HTML/CSS rendering
+ */
+function createRenderContainer(widthPx = 800) {
+  const container = document.createElement('div');
+  container.style.position = 'fixed';
+  container.style.top = '-99999px';
+  container.style.left = '-99999px';
+  container.style.width = `${widthPx}px`;
+  container.style.minHeight = '100px';
+  container.style.backgroundColor = '#ffffff';
+  container.style.color = '#1e293b';
+  container.style.fontFamily = UNIVERSAL_FONT_FAMILY;
+  container.style.fontSize = '14px';
+  container.style.lineHeight = '1.6';
+  container.style.boxSizing = 'border-box';
+  container.style.zIndex = '-1000';
+  document.body.appendChild(container);
+  return container;
+}
+
+/**
+ * Destroys off-screen container safely
+ */
+function cleanupContainer(container) {
+  if (container && container.parentNode) {
+    container.parentNode.removeChild(container);
+  }
+}
+
+/**
+ * Renders an HTML element to high-res canvas (2x scale) preserving all Unicode, RTL, emojis
+ */
+async function renderElementToCanvas(element, scale = 2) {
+  return await html2canvas(element, {
+    scale: scale,
+    useCORS: true,
+    allowTaint: true,
+    backgroundColor: '#ffffff',
+    logging: false,
+    windowWidth: element.offsetWidth || 800,
+  });
+}
+
+/**
+ * Pure Native Client-Side PDF Engine with Full Unicode & Multilingual Support
  */
 export const clientPdfService = {
 
   /* ── 1. Excel to PDF ───────────────────────────────────────────── */
   async convertExcelToPdf(file, onProgress) {
-    onProgress?.(15, 'Reading Excel workbook...');
+    onProgress?.(15, 'Reading Excel workbook and sheets...');
     const arrayBuffer = await file.arrayBuffer();
     const workbook = XLSX.read(arrayBuffer, { type: 'array' });
 
-    onProgress?.(40, 'Generating PDF spreadsheet tables...');
+    if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+      throw new Error('The uploaded Excel document does not contain any readable sheets.');
+    }
+
+    onProgress?.(35, 'Formatting multilingual spreadsheet tables...');
     const pdfDoc = await PDFDocument.create();
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
     // A4 Landscape: 841.89 x 595.28 pt
-    const pageWidth = 841.89;
-    const pageHeight = 595.28;
-    const margin = 36;
-    const printableWidth = pageWidth - margin * 2;
+    const a4LandscapeWidth = 841.89;
+    const a4LandscapeHeight = 595.28;
 
-    for (let sIdx = 0; sIdx < workbook.SheetNames.length; sIdx++) {
-      const sheetName = workbook.SheetNames[sIdx];
-      const sheet = workbook.Sheets[sheetName];
-      const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+    const renderContainer = createRenderContainer(1100);
 
-      if (rawData.length === 0) continue;
+    try {
+      for (let sIdx = 0; sIdx < workbook.SheetNames.length; sIdx++) {
+        const sheetName = workbook.SheetNames[sIdx];
+        const currentPct = 40 + Math.round(((sIdx + 1) / workbook.SheetNames.length) * 45);
+        onProgress?.(currentPct, `Rendering sheet ${sIdx + 1} of ${workbook.SheetNames.length}: ${sheetName}...`);
 
-      let page = pdfDoc.addPage([pageWidth, pageHeight]);
-      let currentY = pageHeight - margin;
+        const sheet = workbook.Sheets[sheetName];
+        const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
 
-      // Sheet Header Title
-      page.drawText(sanitizeText(`Sheet: ${sheetName}`), {
-        x: margin,
-        y: currentY - 14,
-        size: 14,
-        font: fontBold,
-        color: rgb(0.1, 0.25, 0.65),
-      });
-      currentY -= 36;
+        if (rawData.length === 0) continue;
 
-      // Determine columns and widths
-      const colCount = Math.max(...rawData.map(r => r.length), 1);
-      const colWidth = Math.max(50, Math.min(180, printableWidth / colCount));
-      const rowHeight = 22;
+        // Paginate rows for clean multi-page Excel tables (35 rows per page)
+        const rowsPerPage = 32;
+        const totalPages = Math.ceil(rawData.length / rowsPerPage);
+        const colCount = Math.max(...rawData.map(r => r.length), 1);
 
-      for (let rIdx = 0; rIdx < rawData.length; rIdx++) {
-        const row = rawData[rIdx];
-        const isHeader = rIdx === 0;
+        for (let p = 0; p < totalPages; p++) {
+          const sliceStart = p * rowsPerPage;
+          const sliceEnd = Math.min(rawData.length, sliceStart + rowsPerPage);
+          const pageRows = rawData.slice(sliceStart, sliceEnd);
 
-        // Auto Page Break
-        if (currentY - rowHeight < margin) {
-          page = pdfDoc.addPage([pageWidth, pageHeight]);
-          currentY = pageHeight - margin - 20;
-        }
+          renderContainer.innerHTML = '';
+          const sheetPageWrapper = document.createElement('div');
+          sheetPageWrapper.style.padding = '36px 40px';
+          sheetPageWrapper.style.backgroundColor = '#ffffff';
+          sheetPageWrapper.style.boxSizing = 'border-box';
 
-        // Draw Row Background
-        const totalRowWidth = Math.min(printableWidth, colCount * colWidth);
-        if (isHeader) {
-          page.drawRectangle({
-            x: margin,
-            y: currentY - 4,
-            width: totalRowWidth,
-            height: rowHeight,
-            color: rgb(0.88, 0.93, 0.99),
-          });
-        } else if (rIdx % 2 === 1) {
-          page.drawRectangle({
-            x: margin,
-            y: currentY - 4,
-            width: totalRowWidth,
-            height: rowHeight,
-            color: rgb(0.97, 0.98, 1.0),
-          });
-        }
+          // Sheet Header Banner
+          const headerDiv = document.createElement('div');
+          headerDiv.style.display = 'flex';
+          headerDiv.style.justifyContent = 'space-between';
+          headerDiv.style.alignItems = 'center';
+          headerDiv.style.borderBottom = '2px solid #2563eb';
+          headerDiv.style.paddingBottom = '10px';
+          headerDiv.style.marginBottom = '18px';
 
-        // Draw Cells & Borders
-        for (let cIdx = 0; cIdx < colCount; cIdx++) {
-          const cellValue = String(row[cIdx] !== undefined ? row[cIdx] : '').trim();
-          const cellX = margin + cIdx * colWidth;
+          const titleEl = document.createElement('h2');
+          titleEl.style.margin = '0';
+          titleEl.style.fontSize = '18px';
+          titleEl.style.fontWeight = '700';
+          titleEl.style.color = '#1e3a8a';
+          titleEl.style.fontFamily = UNIVERSAL_FONT_FAMILY;
+          titleEl.dir = isRtlText(sheetName) ? 'rtl' : 'ltr';
+          titleEl.textContent = `Sheet: ${sheetName}`;
 
-          // Cell Border
-          page.drawRectangle({
-            x: cellX,
-            y: currentY - 4,
-            width: colWidth,
-            height: rowHeight,
-            borderWidth: 0.5,
-            borderColor: rgb(0.75, 0.82, 0.92),
-            color: undefined,
-          });
+          const pageNumEl = document.createElement('span');
+          pageNumEl.style.fontSize = '12px';
+          pageNumEl.style.color = '#64748b';
+          pageNumEl.textContent = `Page ${p + 1} of ${totalPages}`;
 
-          // Cell Text (truncated if needed)
-          if (cellValue) {
-            let safeVal = sanitizeText(cellValue);
-            while (safeVal && font.widthOfTextAtSize(safeVal, 9) > colWidth - 8) {
-              safeVal = safeVal.slice(0, -1);
+          headerDiv.appendChild(titleEl);
+          headerDiv.appendChild(pageNumEl);
+          sheetPageWrapper.appendChild(headerDiv);
+
+          // Table Element
+          const table = document.createElement('table');
+          table.style.width = '100%';
+          table.style.borderCollapse = 'collapse';
+          table.style.fontSize = '12px';
+          table.style.fontFamily = UNIVERSAL_FONT_FAMILY;
+          table.style.tableLayout = 'auto';
+
+          for (let rIdx = 0; rIdx < pageRows.length; rIdx++) {
+            const actualRowIdx = sliceStart + rIdx;
+            const isHeader = actualRowIdx === 0;
+            const rowData = pageRows[rIdx];
+
+            const tr = document.createElement('tr');
+            tr.style.backgroundColor = isHeader ? '#f1f5f9' : (actualRowIdx % 2 === 1 ? '#f8fafc' : '#ffffff');
+
+            for (let cIdx = 0; cIdx < colCount; cIdx++) {
+              const cellValue = String(rowData[cIdx] !== undefined ? rowData[cIdx] : '').trim();
+              const cell = document.createElement(isHeader ? 'th' : 'td');
+
+              cell.style.border = '1px solid #cbd5e1';
+              cell.style.padding = '7px 10px';
+              cell.style.color = isHeader ? '#0f172a' : '#1e293b';
+              cell.style.fontWeight = isHeader ? '700' : '400';
+              cell.style.verticalAlign = 'top';
+              cell.style.wordBreak = 'break-word';
+              cell.style.fontFamily = UNIVERSAL_FONT_FAMILY;
+
+              const isRtl = isRtlText(cellValue);
+              cell.dir = isRtl ? 'rtl' : 'auto';
+              cell.style.textAlign = isRtl ? 'right' : (/^-?\d+(\.\d+)?(%|€|\$|£|¥|₹|PKR|Rs)?$/i.test(cellValue) ? 'right' : 'left');
+              cell.textContent = cellValue || '\u00A0';
+
+              tr.appendChild(cell);
             }
-
-            page.drawText(safeVal, {
-              x: cellX + 4,
-              y: currentY + 3,
-              size: isHeader ? 9.5 : 8.5,
-              font: isHeader ? fontBold : font,
-              color: isHeader ? rgb(0.1, 0.2, 0.55) : rgb(0.15, 0.15, 0.15),
-            });
+            table.appendChild(tr);
           }
+
+          sheetPageWrapper.appendChild(table);
+          renderContainer.appendChild(sheetPageWrapper);
+
+          // Render DOM to Canvas
+          const canvas = await renderElementToCanvas(sheetPageWrapper, 2);
+          const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+          const base64 = jpegDataUrl.split(',')[1];
+          const rawBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+
+          const embeddedImage = await pdfDoc.embedJpg(rawBytes);
+          const page = pdfDoc.addPage([a4LandscapeWidth, a4LandscapeHeight]);
+
+          // Scale image to fit page margins
+          const margin = 20;
+          const targetWidth = a4LandscapeWidth - margin * 2;
+          const targetHeight = a4LandscapeHeight - margin * 2;
+          const imgAspect = canvas.width / canvas.height;
+          const pageAspect = targetWidth / targetHeight;
+
+          let renderW = targetWidth;
+          let renderH = targetHeight;
+          if (imgAspect > pageAspect) {
+            renderH = targetWidth / imgAspect;
+          } else {
+            renderW = targetHeight * imgAspect;
+          }
+
+          const posX = margin + (targetWidth - renderW) / 2;
+          const posY = a4LandscapeHeight - margin - renderH - (targetHeight - renderH) / 2;
+
+          page.drawImage(embeddedImage, {
+            x: posX,
+            y: posY,
+            width: renderW,
+            height: renderH,
+          });
         }
-
-        currentY -= rowHeight;
       }
+    } finally {
+      cleanupContainer(renderContainer);
     }
 
-    // Fallback page if empty workbook
     if (pdfDoc.getPageCount() === 0) {
-      const page = pdfDoc.addPage([pageWidth, pageHeight]);
-      page.drawText('Empty Excel Document', { x: margin, y: pageHeight - margin - 20, size: 14, font: fontBold, color: rgb(0.5, 0.5, 0.5) });
+      const page = pdfDoc.addPage([a4LandscapeWidth, a4LandscapeHeight]);
+      const emptyContainer = createRenderContainer(800);
+      emptyContainer.innerHTML = '<div style="padding:40px;text-align:center;font-size:16px;color:#64748b;">Empty Excel Document</div>';
+      const c = await renderElementToCanvas(emptyContainer, 2);
+      const img = await pdfDoc.embedJpg(Uint8Array.from(atob(c.toDataURL('image/jpeg', 0.9).split(',')[1]), ch => ch.charCodeAt(0)));
+      page.drawImage(img, { x: 50, y: 200, width: 700, height: 200 });
+      cleanupContainer(emptyContainer);
     }
 
-    onProgress?.(95, 'Compiling PDF...');
+    onProgress?.(95, 'Compiling PDF document...');
     const pdfBytes = await pdfDoc.save();
     onProgress?.(100, 'Excel to PDF conversion complete!');
     return new Blob([pdfBytes], { type: 'application/pdf' });
@@ -178,96 +278,159 @@ export const clientPdfService = {
   async convertWordToPdf(file, onProgress) {
     const ext = file.name.split('.').pop().toLowerCase();
     if (ext === 'doc') {
-      throw new Error('Older .doc binary format cannot be parsed in-browser. Please save your file as .docx or use a modern Word format.');
+      throw new Error('Older .doc binary format cannot be parsed in-browser. Please save your file as .docx or use modern Word format.');
     }
 
-    onProgress?.(15, 'Extracting Word document structure...');
+    onProgress?.(15, 'Extracting Word document contents & structure...');
     const arrayBuffer = await file.arrayBuffer();
 
-    let extractedText = '';
+    let htmlContent = '';
     try {
-      const rawResult = await mammoth.extractRawText({ arrayBuffer });
-      extractedText = rawResult.value || '';
+      const result = await mammoth.convertToHtml({ arrayBuffer });
+      htmlContent = result.value || '';
     } catch {
-      extractedText = '';
+      htmlContent = '';
     }
 
-    onProgress?.(50, 'Formatting vector pages & typography...');
+    if (!htmlContent.trim()) {
+      try {
+        const rawResult = await mammoth.extractRawText({ arrayBuffer });
+        const rawText = rawResult.value || '';
+        htmlContent = rawText
+          .split('\n')
+          .filter(Boolean)
+          .map(line => `<p dir="auto">${line}</p>`)
+          .join('');
+      } catch {
+        htmlContent = '<p>Word document converted successfully.</p>';
+      }
+    }
+
+    onProgress?.(45, 'Rendering high-fidelity multilingual typography...');
     const pdfDoc = await PDFDocument.create();
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
     // A4 Portrait: 595.28 x 841.89 pt
-    const pageWidth = 595.28;
-    const pageHeight = 841.89;
-    const margin = 50;
-    const contentWidth = pageWidth - margin * 2;
+    const a4Width = 595.28;
+    const a4Height = 841.89;
 
-    let page = pdfDoc.addPage([pageWidth, pageHeight]);
-    let currentY = pageHeight - margin;
+    const renderContainer = createRenderContainer(794);
 
-    // Document Title Header
-    const docTitle = file.name.replace(/\.[^/.]+$/, '');
-    page.drawText(sanitizeText(docTitle), {
-      x: margin,
-      y: currentY - 10,
-      size: 16,
-      font: fontBold,
-      color: rgb(0.1, 0.25, 0.65),
-    });
-    currentY -= 35;
+    try {
+      const docWrapper = document.createElement('div');
+      docWrapper.style.padding = '48px 54px';
+      docWrapper.style.backgroundColor = '#ffffff';
+      docWrapper.style.fontFamily = UNIVERSAL_FONT_FAMILY;
+      docWrapper.style.color = '#0f172a';
+      docWrapper.style.fontSize = '14px';
+      docWrapper.style.lineHeight = '1.7';
 
-    // Header divider rule
-    page.drawLine({
-      start: { x: margin, y: currentY },
-      end: { x: pageWidth - margin, y: currentY },
-      thickness: 1,
-      color: rgb(0.8, 0.86, 0.95),
-    });
-    currentY -= 20;
+      // Doc Title Header
+      const docTitle = file.name.replace(/\.[^/.]+$/, '');
+      const titleBanner = document.createElement('div');
+      titleBanner.style.borderBottom = '2px solid #3b82f6';
+      titleBanner.style.paddingBottom = '12px';
+      titleBanner.style.marginBottom = '24px';
 
-    const paragraphs = extractedText.split('\n');
+      const titleEl = document.createElement('h1');
+      titleEl.style.margin = '0';
+      titleEl.style.fontSize = '22px';
+      titleEl.style.fontWeight = '700';
+      titleEl.style.color = '#1e3a8a';
+      titleEl.style.fontFamily = UNIVERSAL_FONT_FAMILY;
+      titleEl.dir = isRtlText(docTitle) ? 'rtl' : 'auto';
+      titleEl.textContent = docTitle;
+      titleBanner.appendChild(titleEl);
+      docWrapper.appendChild(titleBanner);
 
-    for (const paragraph of paragraphs) {
-      const trimmed = paragraph.trim();
-      if (!trimmed) {
-        currentY -= 10;
-        continue;
-      }
+      // Body Content Container with auto-direction for all text
+      const contentEl = document.createElement('div');
+      contentEl.innerHTML = htmlContent;
+      contentEl.style.fontFamily = UNIVERSAL_FONT_FAMILY;
 
-      const isHeading = trimmed.length < 80 && (trimmed.toUpperCase() === trimmed || !trimmed.endsWith('.'));
-      const fontSize = isHeading ? 12 : 10.5;
-      const lineHeight = isHeading ? 18 : 15;
-      const activeFont = isHeading ? fontBold : font;
-      const textColor = isHeading ? rgb(0.1, 0.2, 0.5) : rgb(0.15, 0.15, 0.15);
-
-      const lines = wrapText(trimmed, contentWidth, activeFont, fontSize);
-
-      for (const line of lines) {
-        if (currentY - lineHeight < margin) {
-          page = pdfDoc.addPage([pageWidth, pageHeight]);
-          currentY = pageHeight - margin;
+      // Ensure all elements have auto direction and clean typography
+      const allEls = contentEl.querySelectorAll('*');
+      allEls.forEach(el => {
+        el.style.fontFamily = UNIVERSAL_FONT_FAMILY;
+        if (!el.getAttribute('dir')) {
+          el.setAttribute('dir', 'auto');
         }
+        if (el.tagName === 'TABLE') {
+          el.style.width = '100%';
+          el.style.borderCollapse = 'collapse';
+          el.style.margin = '16px 0';
+        }
+        if (el.tagName === 'TD' || el.tagName === 'TH') {
+          el.style.border = '1px solid #cbd5e1';
+          el.style.padding = '8px 12px';
+          el.style.verticalAlign = 'top';
+        }
+        if (el.tagName === 'TH') {
+          el.style.backgroundColor = '#f1f5f9';
+          el.style.fontWeight = '600';
+        }
+        if (el.tagName === 'IMG') {
+          el.style.maxWidth = '100%';
+          el.style.height = 'auto';
+          el.style.margin = '12px 0';
+        }
+        if (el.tagName === 'P') {
+          el.style.margin = '10px 0';
+        }
+        if (/^H[1-6]$/.test(el.tagName)) {
+          el.style.color = '#1e3a8a';
+          el.style.marginTop = '18px';
+          el.style.marginBottom = '8px';
+        }
+      });
 
-        page.drawText(sanitizeText(line), {
-          x: margin,
-          y: currentY,
-          size: fontSize,
-          font: activeFont,
-          color: textColor,
+      docWrapper.appendChild(contentEl);
+      renderContainer.appendChild(docWrapper);
+
+      onProgress?.(70, 'Generating vector PDF pages...');
+      const fullCanvas = await renderElementToCanvas(docWrapper, 2);
+
+      // Slice the tall canvas into standard A4 portrait pages
+      const pxPerPage = Math.floor(fullCanvas.width * (a4Height / a4Width));
+      const totalPages = Math.max(1, Math.ceil(fullCanvas.height / pxPerPage));
+
+      for (let p = 0; p < totalPages; p++) {
+        const sourceY = p * pxPerPage;
+        const sliceH = Math.min(pxPerPage, fullCanvas.height - sourceY);
+
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = fullCanvas.width;
+        pageCanvas.height = pxPerPage;
+        const pctx = pageCanvas.getContext('2d');
+
+        // Fill clean white background
+        pctx.fillStyle = '#ffffff';
+        pctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+
+        // Draw page slice
+        pctx.drawImage(
+          fullCanvas,
+          0, sourceY, fullCanvas.width, sliceH,
+          0, 0, fullCanvas.width, sliceH
+        );
+
+        const pageJpeg = pageCanvas.toDataURL('image/jpeg', 0.96);
+        const base64 = pageJpeg.split(',')[1];
+        const rawBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+
+        const embeddedImage = await pdfDoc.embedJpg(rawBytes);
+        const page = pdfDoc.addPage([a4Width, a4Height]);
+        page.drawImage(embeddedImage, {
+          x: 0,
+          y: 0,
+          width: a4Width,
+          height: a4Height,
         });
-
-        currentY -= lineHeight;
       }
-      currentY -= 6;
+    } finally {
+      cleanupContainer(renderContainer);
     }
 
-    // Fallback if blank
-    if (pdfDoc.getPageCount() === 0 || (!extractedText.trim())) {
-      page.drawText('Word document converted successfully.', { x: margin, y: currentY, size: 12, font, color: rgb(0.4, 0.4, 0.4) });
-    }
-
-    onProgress?.(95, 'Building PDF...');
+    onProgress?.(95, 'Building PDF document...');
     const pdfBytes = await pdfDoc.save();
     onProgress?.(100, 'Word to PDF conversion complete!');
     return new Blob([pdfBytes], { type: 'application/pdf' });
@@ -275,7 +438,7 @@ export const clientPdfService = {
 
   /* ── 3. PowerPoint to PDF ──────────────────────────────────────── */
   async convertPowerPointToPdf(file, onProgress) {
-    onProgress?.(15, 'Unpacking PowerPoint presentation...');
+    onProgress?.(15, 'Unpacking PowerPoint presentation slides...');
     const arrayBuffer = await file.arrayBuffer();
     const zip = await JSZip.loadAsync(arrayBuffer);
 
@@ -289,81 +452,130 @@ export const clientPdfService = {
       });
 
     const pdfDoc = await PDFDocument.create();
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
     // A4 Landscape: 841.89 x 595.28 pt
-    const pageWidth = 841.89;
-    const pageHeight = 595.28;
-    const margin = 40;
-    const contentWidth = pageWidth - margin * 2;
+    const a4LandscapeWidth = 841.89;
+    const a4LandscapeHeight = 595.28;
 
-    if (slideFiles.length === 0) {
-      const page = pdfDoc.addPage([pageWidth, pageHeight]);
-      page.drawText(sanitizeText(`Presentation: ${file.name}`), { x: margin, y: pageHeight - margin - 20, size: 18, font: fontBold, color: rgb(0.1, 0.2, 0.6) });
-      page.drawText('No slide content found.', { x: margin, y: pageHeight - margin - 60, size: 12, font, color: rgb(0.4, 0.4, 0.4) });
-    } else {
-      for (let idx = 0; idx < slideFiles.length; idx++) {
-        const currentPct = 20 + Math.round(((idx + 1) / slideFiles.length) * 70);
-        onProgress?.(currentPct, `Rendering Slide ${idx + 1} of ${slideFiles.length}...`);
+    const renderContainer = createRenderContainer(1000);
 
-        const slideFileName = slideFiles[idx];
-        const xmlText = await zip.files[slideFileName].async('text');
+    try {
+      if (slideFiles.length === 0) {
+        const page = pdfDoc.addPage([a4LandscapeWidth, a4LandscapeHeight]);
+        renderContainer.innerHTML = `
+          <div style="padding:60px;text-align:center;font-family:${UNIVERSAL_FONT_FAMILY};">
+            <h2 style="color:#1e3a8a;">Presentation: ${file.name}</h2>
+            <p style="color:#64748b;">No slides found in this presentation.</p>
+          </div>
+        `;
+        const c = await renderElementToCanvas(renderContainer, 2);
+        const img = await pdfDoc.embedJpg(Uint8Array.from(atob(c.toDataURL('image/jpeg', 0.9).split(',')[1]), ch => ch.charCodeAt(0)));
+        page.drawImage(img, { x: 50, y: 150, width: 740, height: 300 });
+      } else {
+        for (let idx = 0; idx < slideFiles.length; idx++) {
+          const currentPct = 20 + Math.round(((idx + 1) / slideFiles.length) * 70);
+          onProgress?.(currentPct, `Rendering Slide ${idx + 1} of ${slideFiles.length}...`);
 
-        // Extract Text
-        const matches = xmlText.match(/<a:t[^>]*>(.*?)<\/a:t>/gi) || [];
-        const slideTexts = matches.map(m => m.replace(/<[^>]+>/g, '').trim()).filter(Boolean);
+          const slideFileName = slideFiles[idx];
+          const xmlText = await zip.files[slideFileName].async('text');
 
-        const page = pdfDoc.addPage([pageWidth, pageHeight]);
+          // Extract text runs and paragraphs with full unicode preservation
+          const matches = xmlText.match(/<a:t[^>]*>(.*?)<\/a:t>/gi) || [];
+          const slideTexts = matches
+            .map(m => m.replace(/<[^>]+>/g, '').trim())
+            .filter(Boolean);
 
-        // Slide Card Background
-        page.drawRectangle({
-          x: margin,
-          y: margin,
-          width: contentWidth,
-          height: pageHeight - margin * 2,
-          borderWidth: 1.5,
-          borderColor: rgb(0.8, 0.87, 0.97),
-          color: rgb(0.98, 0.99, 1.0),
-        });
+          renderContainer.innerHTML = '';
+          const slideCard = document.createElement('div');
+          slideCard.style.width = '1000px';
+          slideCard.style.height = '625px'; // 16:10 / 16:9 aspect
+          slideCard.style.padding = '36px 44px';
+          slideCard.style.backgroundColor = '#f8fafc';
+          slideCard.style.border = '2px solid #e2e8f0';
+          slideCard.style.borderRadius = '12px';
+          slideCard.style.boxSizing = 'border-box';
+          slideCard.style.fontFamily = UNIVERSAL_FONT_FAMILY;
+          slideCard.style.display = 'flex';
+          slideCard.style.flexDirection = 'column';
 
-        // Slide Header Banner
-        page.drawRectangle({
-          x: margin,
-          y: pageHeight - margin - 45,
-          width: contentWidth,
-          height: 45,
-          color: rgb(0.2, 0.45, 0.9),
-        });
+          // Slide Header
+          const header = document.createElement('div');
+          header.style.backgroundColor = '#1d4ed8';
+          header.style.color = '#ffffff';
+          header.style.padding = '14px 24px';
+          header.style.borderRadius = '8px';
+          header.style.display = 'flex';
+          header.style.justifyContent = 'space-between';
+          header.style.alignItems = 'center';
+          header.style.marginBottom = '24px';
 
-        page.drawText(sanitizeText(`Slide ${idx + 1}`), {
-          x: margin + 15,
-          y: pageHeight - margin - 30,
-          size: 15,
-          font: fontBold,
-          color: rgb(1, 1, 1),
-        });
+          const title = document.createElement('div');
+          title.style.fontSize = '18px';
+          title.style.fontWeight = '700';
+          title.textContent = `Slide ${idx + 1}`;
 
-        let currentY = pageHeight - margin - 75;
+          const sub = document.createElement('div');
+          sub.style.fontSize = '12px';
+          sub.style.opacity = '0.9';
+          sub.textContent = file.name.replace(/\.[^/.]+$/, '');
 
-        // Render Slide Text Bullet Points
-        for (const t of slideTexts) {
-          const lines = wrapText(t, contentWidth - 40, font, 12);
-          for (const line of lines) {
-            if (currentY < margin + 30) break;
+          header.appendChild(title);
+          header.appendChild(sub);
+          slideCard.appendChild(header);
 
-            page.drawText(sanitizeText(`• ${line}`), {
-              x: margin + 20,
-              y: currentY,
-              size: 12,
-              font: font,
-              color: rgb(0.15, 0.15, 0.15),
+          // Content List
+          const contentList = document.createElement('div');
+          contentList.style.flex = '1';
+          contentList.style.display = 'flex';
+          contentList.style.flexDirection = 'column';
+          contentList.style.gap = '14px';
+          contentList.style.overflow = 'hidden';
+
+          if (slideTexts.length === 0) {
+            const emptyP = document.createElement('p');
+            emptyP.style.color = '#94a3b8';
+            emptyP.style.fontStyle = 'italic';
+            emptyP.textContent = '(Slide contains graphical shapes or media)';
+            contentList.appendChild(emptyP);
+          } else {
+            slideTexts.slice(0, 15).forEach((text, tIdx) => {
+              const item = document.createElement('div');
+              item.style.fontSize = tIdx === 0 ? '16px' : '14px';
+              item.style.fontWeight = tIdx === 0 ? '600' : '400';
+              item.style.color = tIdx === 0 ? '#1e3a8a' : '#1e293b';
+              item.style.backgroundColor = '#ffffff';
+              item.style.padding = '10px 16px';
+              item.style.borderRadius = '6px';
+              item.style.border = '1px solid #e2e8f0';
+              item.style.fontFamily = UNIVERSAL_FONT_FAMILY;
+              item.dir = isRtlText(text) ? 'rtl' : 'auto';
+              item.textContent = `${tIdx === 0 ? '📌 ' : '• '}${text}`;
+              contentList.appendChild(item);
             });
-            currentY -= 20;
           }
-          currentY -= 6;
+
+          slideCard.appendChild(contentList);
+          renderContainer.appendChild(slideCard);
+
+          const canvas = await renderElementToCanvas(slideCard, 2);
+          const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+          const base64 = jpegDataUrl.split(',')[1];
+          const rawBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+
+          const embeddedImage = await pdfDoc.embedJpg(rawBytes);
+          const page = pdfDoc.addPage([a4LandscapeWidth, a4LandscapeHeight]);
+
+          const margin = 24;
+          page.drawImage(embeddedImage, {
+            x: margin,
+            y: margin,
+            width: a4LandscapeWidth - margin * 2,
+            height: a4LandscapeHeight - margin * 2,
+          });
         }
       }
+    } finally {
+      cleanupContainer(renderContainer);
     }
 
     onProgress?.(95, 'Building PDF presentation...');
@@ -396,7 +608,7 @@ export const clientPdfService = {
         image = null;
       }
 
-      // Universal Canvas Decoder fallback (handles WEBP, BMP, progressive JPEGs)
+      // Universal Canvas Decoder fallback (handles WEBP, BMP, GIF, progressive JPEGs)
       if (!image) {
         try {
           const dataUrl = await new Promise((resolve, reject) => {
@@ -476,8 +688,8 @@ export const clientPdfService = {
     const arrayBuffer = await file.arrayBuffer();
     const originalSize = arrayBuffer.byteLength;
 
-    let renderScale = level === 'extreme' ? 0.70 : level === 'less' ? 1.0 : 0.85;
-    let jpegQuality = level === 'extreme' ? 0.40 : level === 'less' ? 0.75 : 0.55;
+    const renderScale = level === 'extreme' ? 0.70 : level === 'less' ? 1.0 : 0.85;
+    const jpegQuality = level === 'extreme' ? 0.40 : level === 'less' ? 0.75 : 0.55;
 
     let bestResult = null;
     let bestSize = Infinity;
@@ -485,7 +697,10 @@ export const clientPdfService = {
     // Helper to render PDF pages to downsampled JPEGs
     const tryCanvasCompress = async (s, q, stageLabel) => {
       try {
-        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer.slice(0) });
+        const loadingTask = pdfjsLib.getDocument({
+          data: arrayBuffer.slice(0),
+          cMapPacked: true,
+        });
         const pdf = await loadingTask.promise;
         const numPages = pdf.numPages;
 
@@ -532,7 +747,7 @@ export const clientPdfService = {
     };
 
     // Attempt 1: Standard preset canvas compression
-    let resBytes = await tryCanvasCompress(renderScale, jpegQuality, 'Optimizing pages');
+    const resBytes = await tryCanvasCompress(renderScale, jpegQuality, 'Optimizing pages');
     if (resBytes && resBytes.byteLength < originalSize) {
       bestResult = resBytes;
       bestSize = resBytes.byteLength;
@@ -642,7 +857,10 @@ export const clientPdfService = {
   async convertPdfToJpg(file, onProgress) {
     onProgress?.(15, 'Loading PDF document...');
     const arrayBuffer = await file.arrayBuffer();
-    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+    const loadingTask = pdfjsLib.getDocument({
+      data: arrayBuffer,
+      cMapPacked: true,
+    });
     const pdf = await loadingTask.promise;
     const numPages = pdf.numPages;
 
