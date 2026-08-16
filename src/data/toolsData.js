@@ -385,31 +385,33 @@ export const TOOLS = [
     options: [
       {
         id: 'splitMode',
-        label: 'Split Method',
+        label: 'Split Mode',
         type: 'select',
         default: 'range',
         choices: [
-          { value: 'range', label: 'Custom Page Ranges (e.g. 1-3, 5, 8-10)' },
-          { value: 'all', label: 'Extract Every Page into Individual PDFs' },
-          { value: 'odd-even', label: 'Separate Odd and Even Pages' }
+          { value: 'range', label: 'Extract Specific Pages (e.g. 1, 3, 5-8)' },
+          { value: 'all', label: 'Extract All Pages as Individual PDFs' },
+          { value: 'odd-even', label: 'Separate Odd / Even Pages' }
         ]
       },
       {
         id: 'customRanges',
-        label: 'Page Range Syntax',
+        label: 'Enter Exact Page Numbers (e.g. 1, 3, 5-8 or 2)',
         type: 'text',
-        default: '1-5',
-        placeholder: 'e.g. 1-3, 5-8'
+        default: '',
+        placeholder: 'e.g. 1, 3, 5-8 or 2',
+        dependsOn: { id: 'splitMode', value: 'range' }
       },
       {
         id: 'oddEvenSelect',
-        label: 'Extract Pages',
+        label: 'Select Which Pages to Extract',
         type: 'select',
         default: 'odd',
         choices: [
-          { value: 'odd', label: 'Odd Pages (1, 3, 5...)' },
-          { value: 'even', label: 'Even Pages (2, 4, 6...)' }
-        ]
+          { value: 'odd', label: 'Odd Pages Only (1, 3, 5...)' },
+          { value: 'even', label: 'Even Pages Only (2, 4, 6...)' }
+        ],
+        dependsOn: { id: 'splitMode', value: 'odd-even' }
       }
     ],
     features: [

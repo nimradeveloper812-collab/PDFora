@@ -177,16 +177,21 @@ export default function Dropzone({ tool }) {
         case 'split-pdf': {
           const mode = optionValues['splitMode'] || 'range';
           let ranges = 'all';
+          let customTag = 'split';
           if (mode === 'range') {
-            ranges = optionValues['customRanges'] || '1-5';
+            const raw = (optionValues['customRanges'] || '').trim();
+            ranges = raw || '1';
+            customTag = `pages_${ranges.replace(/[^a-zA-Z0-9_-]+/g, '_')}`;
           } else if (mode === 'odd-even') {
             ranges = optionValues['oddEvenSelect'] || 'odd';
+            customTag = `${ranges}_pages`;
           } else {
             ranges = 'all';
+            customTag = 'all_pages';
           }
           const res = await pdfApi.splitPdf(files[0], ranges, handleProgress);
           result = res.blob;
-          filename = res.isZip ? 'split_pages.zip' : `${firstFileName}_split.pdf`;
+          filename = res.isZip ? `${firstFileName}_split_pages.zip` : `${firstFileName}_${customTag}.pdf`;
           break;
         }
         default:

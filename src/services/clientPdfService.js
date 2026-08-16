@@ -763,6 +763,10 @@ export const clientPdfService = {
     const pdfDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
     const totalPages = pdfDoc.getPageCount();
 
+    if (totalPages === 0) {
+      throw new Error('The uploaded PDF document does not contain any pages.');
+    }
+
     if (ranges === 'all' && totalPages > 1) {
       const zip = new JSZip();
       for (let i = 0; i < totalPages; i++) {
@@ -786,37 +790,46 @@ export const clientPdfService = {
       indices = Array.from({ length: totalPages }, (_, i) => i).filter(i => (i + 1) % 2 !== 0);
     } else if (ranges === 'even') {
       indices = Array.from({ length: totalPages }, (_, i) => i).filter(i => (i + 1) % 2 === 0);
-    } else if (typeof ranges === 'string') {
-      const result = new Set();
-      const parts = ranges.split(',');
+    } else if (typeof ranges === 'string' && ranges.trim()) {
+      const parts = ranges.split(/[,;\s]+/);
+      const selected = new Set();
+
       for (const part of parts) {
         const p = part.trim();
+        if (!p) continue;
+
         if (p.includes('-')) {
           const [startStr, endStr] = p.split('-');
           const start = parseInt(startStr.trim(), 10);
           const end = parseInt(endStr.trim(), 10);
           if (!isNaN(start) && !isNaN(end)) {
-            const s = Math.max(1, start) - 1;
-            const e = Math.min(totalPages, end) - 1;
-            for (let i = s; i <= e; i++) result.add(i);
+            const min = Math.min(start, end);
+            const max = Math.max(start, end);
+            for (let pageNum = min; pageNum <= max; pageNum++) {
+              if (pageNum >= 1 && pageNum <= totalPages) {
+                selected.add(pageNum - 1);
+              }
+            }
           }
         } else {
-          const single = parseInt(p, 10);
-          if (!isNaN(single)) {
-            const idx = Math.max(1, Math.min(totalPages, single)) - 1;
-            result.add(idx);
+          const pageNum = parseInt(p, 10);
+          if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= totalPages) {
+            selected.add(pageNum - 1);
           }
         }
       }
-      indices = Array.from(result).sort((a, b) => a - b);
-      if (indices.length === 0) indices = [0];
-    } else {
+
+      indices = Array.from(selected).sort((a, b) => a - b);
+    }
+
+    // If no valid page was entered or all were out of range, extract page 1
+    if (indices.length === 0) {
       indices = [0];
     }
 
-    onProgress?.(60, `Extracting ${indices.length} selected pages...`);
+    onProgress?.(60, `Extracting ${indices.length} selected page${indices.length > 1 ? 's' : ''}...`);
     const subDoc = await PDFDocument.create();
-    const copiedPages = await subDoc.copyPages(pdfDoc, indices.length ? indices : [0]);
+    const copiedPages = await subDoc.copyPages(pdfDoc, indices);
     copiedPages.forEach(p => subDoc.addPage(p));
 
     onProgress?.(95, 'Building PDF document...');
