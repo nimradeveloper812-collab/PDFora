@@ -2,31 +2,26 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using PDFora.Backend.Services;
 
-// Completely disable Linux file watchers in containerized environments (Render/Docker)
-Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "1");
-Environment.SetEnvironmentVariable("DOTNET_hostBuilder__reloadConfigOnChange", "false");
-Environment.SetEnvironmentVariable("ASPNETCORE_hostBuilder__reloadConfigOnChange", "false");
-
-var builderOptions = new WebApplicationOptions
+// Use CreateEmptyBuilder to prevent default FileSystemWatcher / inotify allocations in Linux containers
+var builder = WebApplication.CreateEmptyBuilder(new WebApplicationOptions
 {
     Args = args,
     ContentRootPath = AppContext.BaseDirectory,
     WebRootPath = Path.Combine(AppContext.BaseDirectory, "wwwroot")
-};
+});
 
-var builder = WebApplication.CreateBuilder(builderOptions);
+// Add configuration without any file watchers (reloadOnChange: false)
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+    .AddEnvironmentVariables();
 
-// Prevent inotify instance allocation on configuration files
-foreach (var source in builder.Configuration.Sources.OfType<FileConfigurationSource>())
-{
-    source.ReloadOnChange = false;
-}
-
-// Configure dynamic port binding for Render
+// Configure Kestrel web server with dynamic port binding for Render
+builder.WebHost.UseKestrel();
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
-// Configure large file uploads
+// Core services
+builder.Services.AddRouting();
 builder.Services.Configure<FormOptions>(options =>
 {
     options.ValueLengthLimit = int.MaxValue;
@@ -37,7 +32,6 @@ builder.Services.Configure<FormOptions>(options =>
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 
-// Add CORS with origin restrictions
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -56,6 +50,7 @@ builder.Services.AddSingleton<IPdfManipulationService, PdfManipulationService>()
 
 var app = builder.Build();
 
+app.UseRouting();
 app.UseCors();
 
 // Serve the React frontend from wwwroot
