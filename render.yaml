@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: pdfora
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: RESEND_API_KEY
+        sync: false
+      - key: TO_EMAIL
+        value: contact@nimradev.site
+    healthCheckPath: /api/health

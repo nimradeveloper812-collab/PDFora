@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import {
   UploadCloud, File, X, Plus, CheckCircle2, Download,
   RotateCcw, Sparkles, ArrowRight, ShieldCheck, FileText,
-  Sliders, AlertCircle, Clock
+  Sliders, AlertCircle, Clock, Eye
 } from 'lucide-react';
 import { pdfApi } from '../../services/pdfApi';
 import AdBanner from './AdBanner';
@@ -218,6 +218,13 @@ export default function Dropzone({ tool }) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handlePreview = (e) => {
+    if (e) e.preventDefault();
+    if (resultBlobUrl) {
+      window.open(resultBlobUrl, '_blank');
+    }
   };
 
   const resetAll = () => {
@@ -747,12 +754,12 @@ export default function Dropzone({ tool }) {
               )}
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-sm mx-auto">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 max-w-md mx-auto">
               <a
                 href={resultBlobUrl || '#'}
                 download={resultFilename || `PDFora_${tool.slug}_output.pdf`}
                 onClick={handleDownload}
-                className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold text-white transition-all active:scale-95 cursor-pointer"
+                className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-sm font-bold text-white transition-all active:scale-95 cursor-pointer"
                 style={{
                   background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
                   boxShadow: '0 4px 14px rgba(59, 130, 246,0.28)',
@@ -763,9 +770,28 @@ export default function Dropzone({ tool }) {
                 <Download className="w-4 h-4" aria-hidden="true" />
                 {resultFilename?.endsWith('.zip') ? 'Download ZIP' : resultFilename?.endsWith('.jpg') ? 'Download JPG' : 'Download PDF'}
               </a>
+
+              {resultBlobUrl && !resultFilename?.endsWith('.zip') && (
+                <button
+                  onClick={handlePreview}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all"
+                  style={{
+                    color: '#2563EB',
+                    border: '1.5px solid #BFDBFE',
+                    background: '#EFF6FF',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#DBEAFE')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#EFF6FF')}
+                  aria-label="Preview converted document"
+                >
+                  <Eye className="w-4 h-4" aria-hidden="true" />
+                  Preview
+                </button>
+              )}
+
               <button
                 onClick={resetAll}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl text-sm font-semibold transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all"
                 style={{
                   color: '#71717A',
                   border: '1.5px solid #E4E4E7',
@@ -773,10 +799,10 @@ export default function Dropzone({ tool }) {
                 }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#FAFAFA')}
                 onMouseLeave={e => (e.currentTarget.style.background = '#FFFFFF')}
-                aria-label="Start over with a new file"
+                aria-label="Convert another file"
               >
                 <RotateCcw className="w-4 h-4" aria-hidden="true" />
-                Start Over
+                Convert Another
               </button>
             </div>
 
