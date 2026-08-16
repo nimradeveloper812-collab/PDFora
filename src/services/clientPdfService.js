@@ -827,15 +827,35 @@ export const clientPdfService = {
       indices = [0];
     }
 
-    onProgress?.(60, `Extracting ${indices.length} selected page${indices.length > 1 ? 's' : ''}...`);
-    const subDoc = await PDFDocument.create();
-    const copiedPages = await subDoc.copyPages(pdfDoc, indices);
-    copiedPages.forEach(p => subDoc.addPage(p));
+    // Single page → return as a standalone PDF
+    if (indices.length === 1) {
+      onProgress?.(60, `Extracting page ${indices[0] + 1}...`);
+      const subDoc = await PDFDocument.create();
+      const [copiedPage] = await subDoc.copyPages(pdfDoc, [indices[0]]);
+      subDoc.addPage(copiedPage);
+      onProgress?.(95, 'Building PDF document...');
+      const pdfBytes = await subDoc.save();
+      onProgress?.(100, 'Split complete!');
+      return { blob: new Blob([pdfBytes], { type: 'application/pdf' }), isZip: false };
+    }
 
-    onProgress?.(95, 'Building PDF document...');
-    const pdfBytes = await subDoc.save();
+    // Multiple pages → each page becomes its own PDF inside a ZIP
+    const zip = new JSZip();
+    for (let i = 0; i < indices.length; i++) {
+      const pageIdx = indices[i];
+      const currentPct = 20 + Math.round(((i + 1) / indices.length) * 70);
+      onProgress?.(currentPct, `Extracting page ${pageIdx + 1} (${i + 1} of ${indices.length})...`);
+
+      const subDoc = await PDFDocument.create();
+      const [copiedPage] = await subDoc.copyPages(pdfDoc, [pageIdx]);
+      subDoc.addPage(copiedPage);
+      const subBytes = await subDoc.save();
+      zip.file(`page_${pageIdx + 1}.pdf`, subBytes);
+    }
+    onProgress?.(95, 'Packaging ZIP archive...');
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
     onProgress?.(100, 'Split complete!');
-    return { blob: new Blob([pdfBytes], { type: 'application/pdf' }), isZip: false };
+    return { blob: zipBlob, isZip: true };
   },
 
   /* ── 8. PDF to JPG ─────────────────────────────────────────────── */

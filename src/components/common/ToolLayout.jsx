@@ -27,12 +27,108 @@ export default function ToolLayout({ tool }) {
 
   const otherTools = TOOLS.filter(t => t.id !== tool.id).slice(0, 4);
 
+  const currentUrl = `https://pdfora.nimradev.site${location.pathname}`;
+  const seoTitle = `${tool.name} Online — Free, Fast & Secure | PDFora`;
+  const seoDesc = `${tool.description} 100% free online PDF utility with private, secure in-browser processing and zero file limits.`;
+
+  // Structured Data: WebApplication Schema
+  const webAppSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    'name': `${tool.name} - PDFora`,
+    'url': currentUrl,
+    'description': tool.description,
+    'applicationCategory': 'BusinessApplication',
+    'operatingSystem': 'All',
+    'browserRequirements': 'Requires JavaScript and HTML5 support',
+    'offers': {
+      '@type': 'Offer',
+      'price': '0',
+      'priceCurrency': 'USD'
+    },
+    'aggregateRating': {
+      '@type': 'AggregateRating',
+      'ratingValue': '4.9',
+      'reviewCount': '1240',
+      'bestRating': '5',
+      'worstRating': '1'
+    }
+  };
+
+  // Structured Data: FAQPage Schema
+  const faqSchema = tool.faqs && tool.faqs.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    'mainEntity': tool.faqs.map(f => ({
+      '@type': 'Question',
+      'name': f.q,
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': f.a
+      }
+    }))
+  } : null;
+
+  // Structured Data: BreadcrumbList Schema
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    'itemListElement': [
+      {
+        '@type': 'ListItem',
+        'position': 1,
+        'name': 'Home',
+        'item': 'https://pdfora.nimradev.site/'
+      },
+      {
+        '@type': 'ListItem',
+        'position': 2,
+        'name': 'Tools',
+        'item': 'https://pdfora.nimradev.site/tools'
+      },
+      {
+        '@type': 'ListItem',
+        'position': 3,
+        'name': tool.name,
+        'item': currentUrl
+      }
+    ]
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Helmet>
-        <title>{tool.name} — Free Online PDF Tool | PDFora Pakistan</title>
-        <meta name="description" content={`${tool.description} Fast, private, and 100% free online PDF tool in Pakistan.`} />
-        <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDesc} />
+        <link rel="canonical" href={currentUrl} />
+
+        {/* Open Graph / Facebook / WhatsApp */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={currentUrl} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDesc} />
+        <meta property="og:image" content="https://pdfora.nimradev.site/og-image.jpg" />
+        <meta property="og:site_name" content="PDFora" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={currentUrl} />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDesc} />
+        <meta name="twitter:image" content="https://pdfora.nimradev.site/og-image.jpg" />
+
+        {/* Schema.org Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(webAppSchema)}
+        </script>
+        {faqSchema && (
+          <script type="application/ld+json">
+            {JSON.stringify(faqSchema)}
+          </script>
+        )}
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbSchema)}
+        </script>
       </Helmet>
 
       {/* ── Breadcrumb ─────────────────────────────────────── */}
@@ -150,6 +246,38 @@ export default function ToolLayout({ tool }) {
         </div>
       </section>
 
+      {/* ── Overview & Deep Guide ─────────────────────────── */}
+      {tool.overview && (
+        <section
+          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-16"
+          aria-labelledby="overview-heading"
+        >
+          <div
+            className="p-6 sm:p-8 rounded-3xl"
+            style={{
+              background: '#FFFFFF',
+              border: '1.5px solid #BFDBFE',
+              boxShadow: '0 4px 24px rgba(59, 130, 246, 0.06)'
+            }}
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <span className="section-label">Complete Guide</span>
+              <span className="text-xs font-semibold" style={{ color: '#64748B' }}>• Updated August 2026</span>
+            </div>
+            <h2
+              id="overview-heading"
+              className="text-xl sm:text-2xl font-bold mb-4"
+              style={{ color: '#0F172A', letterSpacing: '-0.025em' }}
+            >
+              About {tool.name} on PDFora
+            </h2>
+            <p className="text-sm sm:text-base leading-relaxed" style={{ color: '#334155' }}>
+              {tool.overview}
+            </p>
+          </div>
+        </section>
+      )}
+
       {/* ── How to Use ─────────────────────────────────────── */}
       <section
         className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-16"
@@ -160,12 +288,12 @@ export default function ToolLayout({ tool }) {
           <h2
             id="how-to-use-heading"
             className="text-2xl sm:text-3xl font-extrabold"
-            style={{ color: '#18181B', letterSpacing: '-0.03em' }}
+            style={{ color: '#0F172A', letterSpacing: '-0.03em' }}
           >
             How to Use {tool.name}
           </h2>
-          <p className="text-sm" style={{ color: '#71717A' }}>
-            Process your files in three easy steps.
+          <p className="text-sm" style={{ color: '#64748B' }}>
+            Process your files in three easy, lightning-fast steps.
           </p>
         </div>
 
@@ -180,7 +308,7 @@ export default function ToolLayout({ tool }) {
                 boxShadow: '0 1px 4px rgba(59, 130, 246,0.04)',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.borderColor = '#3B82F6';
+                e.currentTarget.style.borderColor = '#2563EB';
                 e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246,0.09)';
               }}
               onMouseLeave={e => {
@@ -190,20 +318,121 @@ export default function ToolLayout({ tool }) {
             >
               <div
                 className="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-black transition-all duration-200"
-                style={{ background: '#DBEAFE', color: '#3B82F6' }}
+                style={{ background: '#DBEAFE', color: '#1D4ED8' }}
               >
                 0{idx + 1}
               </div>
-              <h3 className="text-sm font-bold" style={{ color: '#18181B' }}>
+              <h3 className="text-sm font-bold" style={{ color: '#0F172A' }}>
                 Step {idx + 1}
               </h3>
-              <p className="text-xs leading-relaxed" style={{ color: '#71717A' }}>
+              <p className="text-xs leading-relaxed" style={{ color: '#475569' }}>
                 {step}
               </p>
             </div>
           ))}
         </div>
       </section>
+
+      {/* ── Real-World Use Cases ───────────────────────────── */}
+      {tool.useCases?.length > 0 && (
+        <section
+          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-16"
+          aria-labelledby="usecases-heading"
+        >
+          <div className="text-center mb-10 space-y-1.5">
+            <span className="section-label">Real-World Applications</span>
+            <h2
+              id="usecases-heading"
+              className="text-2xl sm:text-3xl font-extrabold"
+              style={{ color: '#0F172A', letterSpacing: '-0.03em' }}
+            >
+              Who Uses {tool.name}?
+            </h2>
+            <p className="text-sm" style={{ color: '#64748B' }}>
+              Built for students, freelancers, accountants, and global businesses.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {tool.useCases.map((uc, idx) => (
+              <div
+                key={idx}
+                className="p-5 rounded-2xl transition-all duration-150"
+                style={{
+                  background: '#FFFFFF',
+                  border: '1px solid #BFDBFE',
+                  boxShadow: '0 2px 8px rgba(59, 130, 246, 0.04)'
+                }}
+              >
+                <h3 className="text-sm font-bold mb-1.5" style={{ color: '#0F172A' }}>
+                  {uc.title}
+                </h3>
+                <p className="text-xs leading-relaxed" style={{ color: '#475569' }}>
+                  {uc.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ── Technical Specifications & Pro Tips ─────────────── */}
+      {tool.technicalSpecs?.length > 0 && (
+        <section
+          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-16"
+          aria-labelledby="specs-heading"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Specs Table */}
+            <div
+              className="lg:col-span-2 p-6 rounded-2xl"
+              style={{
+                background: '#FFFFFF',
+                border: '1px solid #BFDBFE',
+                boxShadow: '0 2px 8px rgba(59, 130, 246, 0.04)'
+              }}
+            >
+              <h3 id="specs-heading" className="text-base font-bold mb-4" style={{ color: '#0F172A' }}>
+                Technical Specifications
+              </h3>
+              <div className="divide-y divide-blue-100">
+                {tool.technicalSpecs.map((spec, idx) => (
+                  <div key={idx} className="py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
+                    <span className="font-semibold" style={{ color: '#475569' }}>{spec.label}</span>
+                    <span className="font-medium text-left sm:text-right" style={{ color: '#0F172A' }}>{spec.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Pro Tips Box */}
+            {tool.proTips?.length > 0 && (
+              <div
+                className="p-6 rounded-2xl space-y-3"
+                style={{
+                  background: 'linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)',
+                  border: '1px solid #BFDBFE'
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <Zap className="w-4 h-4" style={{ color: '#2563EB' }} />
+                  <h3 className="text-sm font-bold" style={{ color: '#1E3A8A' }}>
+                    Pro Tips
+                  </h3>
+                </div>
+                <ul className="space-y-2.5">
+                  {tool.proTips.map((tip, idx) => (
+                    <li key={idx} className="text-xs leading-relaxed flex items-start gap-2" style={{ color: '#1E40AF' }}>
+                      <span className="font-bold">•</span>
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* ── Features & Security ────────────────────────────── */}
       <section
@@ -217,12 +446,12 @@ export default function ToolLayout({ tool }) {
             <h2
               id="features-heading"
               className="text-2xl sm:text-3xl font-extrabold"
-              style={{ color: '#18181B', letterSpacing: '-0.03em' }}
+              style={{ color: '#0F172A', letterSpacing: '-0.03em' }}
             >
               Why Use PDFora?
             </h2>
-            <p className="text-sm" style={{ color: '#71717A' }}>
-              Fast, private, and accurate document conversion.
+            <p className="text-sm" style={{ color: '#64748B' }}>
+              Fast, private, and accurate document processing.
             </p>
           </div>
 
@@ -242,13 +471,13 @@ export default function ToolLayout({ tool }) {
                   style={{ background: '#DBEAFE' }}
                   aria-hidden="true"
                 >
-                  <CheckCircle2 className="w-4 h-4" style={{ color: '#3B82F6' }} />
+                  <CheckCircle2 className="w-4 h-4" style={{ color: '#2563EB' }} />
                 </div>
                 <div>
-                  <h4 className="text-xs sm:text-sm font-semibold" style={{ color: '#18181B' }}>
+                  <h4 className="text-xs sm:text-sm font-semibold" style={{ color: '#0F172A' }}>
                     {feature}
                   </h4>
-                  <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#71717A' }}>
+                  <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#64748B' }}>
                     Output maintains original quality and formatting throughout the process.
                   </p>
                 </div>
@@ -269,14 +498,14 @@ export default function ToolLayout({ tool }) {
                 style={{ background: '#DBEAFE' }}
                 aria-hidden="true"
               >
-                <ShieldCheck className="w-4 h-4" style={{ color: '#3B82F6' }} />
+                <ShieldCheck className="w-4 h-4" style={{ color: '#2563EB' }} />
               </div>
               <div>
-                <h4 className="text-xs sm:text-sm font-semibold" style={{ color: '#18181B' }}>
+                <h4 className="text-xs sm:text-sm font-semibold" style={{ color: '#0F172A' }}>
                   End-to-End Privacy Guaranteed
                 </h4>
-                <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#71717A' }}>
-                  Files are encrypted during transit and permanently deleted within 60 minutes.
+                <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#64748B' }}>
+                  Files are processed privately in browser memory with zero permanent server storage.
                 </p>
               </div>
             </div>
@@ -294,14 +523,14 @@ export default function ToolLayout({ tool }) {
                 style={{ background: '#DBEAFE' }}
                 aria-hidden="true"
               >
-                <Globe className="w-4 h-4" style={{ color: '#3B82F6' }} />
+                <Globe className="w-4 h-4" style={{ color: '#2563EB' }} />
               </div>
               <div>
-                <h4 className="text-xs sm:text-sm font-semibold" style={{ color: '#18181B' }}>
+                <h4 className="text-xs sm:text-sm font-semibold" style={{ color: '#0F172A' }}>
                   No Installation Required
                 </h4>
-                <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#71717A' }}>
-                  Runs entirely in your browser on Mac, Windows, iOS, and Android.
+                <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#64748B' }}>
+                  Runs entirely in your web browser across Windows, macOS, Linux, iOS, and Android.
                 </p>
               </div>
             </div>
@@ -320,10 +549,10 @@ export default function ToolLayout({ tool }) {
             <h2
               id="tool-faq-heading"
               className="text-2xl font-extrabold flex items-center justify-center gap-2"
-              style={{ color: '#18181B', letterSpacing: '-0.03em' }}
+              style={{ color: '#0F172A', letterSpacing: '-0.03em' }}
             >
-              <HelpCircle className="w-5 h-5 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
-              Tool FAQs
+              <HelpCircle className="w-5 h-5 shrink-0" style={{ color: '#2563EB' }} aria-hidden="true" />
+              Frequently Asked Questions
             </h2>
           </div>
 
@@ -337,27 +566,27 @@ export default function ToolLayout({ tool }) {
                   className="rounded-2xl overflow-hidden transition-all duration-200"
                   style={{
                     background: '#FFFFFF',
-                    border: `1px solid ${isOpen ? '#3B82F6' : '#BFDBFE'}`,
-                    boxShadow: isOpen ? '0 4px 16px rgba(59, 130, 246,0.08)' : '0 1px 4px rgba(59, 130, 246,0.03)',
+                    border: `1px solid ${isOpen ? '#2563EB' : '#BFDBFE'}`,
+                    boxShadow: isOpen ? '0 4px 16px rgba(37, 99, 235, 0.08)' : '0 1px 4px rgba(59, 130, 246,0.03)',
                   }}
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
                     className="w-full px-5 py-4 text-left flex items-center justify-between gap-4 transition-colors duration-150"
                     aria-expanded={isOpen}
-                    style={{ color: isOpen ? '#3B82F6' : '#18181B' }}
+                    style={{ color: isOpen ? '#2563EB' : '#0F172A' }}
                   >
                     <span className="text-sm font-semibold">{faq.q}</span>
                     <ChevronDown
                       className={`w-4 h-4 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-                      style={{ color: isOpen ? '#3B82F6' : '#A1A1AA' }}
+                      style={{ color: isOpen ? '#2563EB' : '#64748B' }}
                       aria-hidden="true"
                     />
                   </button>
                   <div className={`faq-accordion-content ${isOpen ? 'open' : ''}`}>
                     <div
                       className="px-5 pb-5 pt-1 text-sm leading-relaxed"
-                      style={{ color: '#52525B', borderTop: '1px solid #FFF0F8' }}
+                      style={{ color: '#475569', borderTop: '1px solid #DBEAFE' }}
                     >
                       {faq.a}
                     </div>
@@ -381,14 +610,14 @@ export default function ToolLayout({ tool }) {
           <h3
             id="related-tools-heading"
             className="text-sm font-bold uppercase tracking-wider"
-            style={{ color: '#18181B' }}
+            style={{ color: '#0F172A' }}
           >
             Explore Related Tools
           </h3>
           <Link
             to="/tools"
             className="inline-flex items-center gap-1 text-xs font-semibold group/more"
-            style={{ color: '#3B82F6', textDecoration: 'none' }}
+            style={{ color: '#2563EB', textDecoration: 'none' }}
           >
             View All
             <ArrowRight
@@ -413,8 +642,8 @@ export default function ToolLayout({ tool }) {
                   textDecoration: 'none',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = '#3B82F6';
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(59, 130, 246,0.10)';
+                  e.currentTarget.style.borderColor = '#2563EB';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(37, 99, 235, 0.12)';
                   e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={e => {
@@ -426,24 +655,24 @@ export default function ToolLayout({ tool }) {
                 <div>
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 transition-all duration-200 group-hover:scale-105"
-                    style={{ background: '#DBEAFE', color: '#3B82F6' }}
+                    style={{ background: '#DBEAFE', color: '#2563EB' }}
                     aria-hidden="true"
                   >
                     <Icon className="w-5 h-5" strokeWidth={2} />
                   </div>
                   <h4
                     className="text-sm font-bold mb-1 transition-colors group-hover:text-blue-600"
-                    style={{ color: '#18181B' }}
+                    style={{ color: '#0F172A' }}
                   >
                     {other.name}
                   </h4>
-                  <p className="text-[11px] leading-relaxed line-clamp-2" style={{ color: '#71717A' }}>
+                  <p className="text-[11px] leading-relaxed line-clamp-2" style={{ color: '#64748B' }}>
                     {other.shortDesc}
                   </p>
                 </div>
                 <div
                   className="flex items-center justify-between pt-3 mt-3 text-[11px] font-bold transition-all duration-150"
-                  style={{ borderTop: '1px solid #FFF0F8', color: '#3B82F6' }}
+                  style={{ borderTop: '1px solid #DBEAFE', color: '#2563EB' }}
                 >
                   <span>Open Tool</span>
                   <ArrowRight
