@@ -1,7 +1,14 @@
 using Microsoft.AspNetCore.Http.Features;
 using PDFora.Backend.Services;
 
+// Prevent inotify limit issues in containerized Linux hosts (Render/Docker)
+Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "true");
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure dynamic port binding for Render / Cloud hosts
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 // Configure large file uploads
 builder.Services.Configure<FormOptions>(options =>
@@ -14,33 +21,15 @@ builder.Services.Configure<FormOptions>(options =>
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 
-// Add CORS with origin restrictions for production
-var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? new[]
-{
-    "https://pdfora.nimradev.site",
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "http://localhost:5089"
-};
-
+// Add CORS with origin restrictions
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        if (builder.Environment.IsDevelopment())
-        {
-            policy.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .WithExposedHeaders("Content-Disposition", "Content-Type");
-        }
-        else
-        {
-            policy.WithOrigins(allowedOrigins)
-                  .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .WithExposedHeaders("Content-Disposition", "Content-Type");
-        }
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .WithExposedHeaders("Content-Disposition", "Content-Type");
     });
 });
 
@@ -49,19 +38,7 @@ builder.Services.AddSingleton<ILibreOfficeService, LibreOfficeService>();
 builder.Services.AddSingleton<IImageConversionService, ImageConversionService>();
 builder.Services.AddSingleton<IPdfManipulationService, PdfManipulationService>();
 
-builder.Services.AddOpenApi();
-
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
 
 app.UseCors();
 

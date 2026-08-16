@@ -40,12 +40,11 @@ RUN apt-get update && \
     && (sed -i 's/rights="none" pattern="PDF"/rights="read | write" pattern="PDF"/' /etc/ImageMagick-*/policy.xml 2>/dev/null || true) \
     && rm -rf /var/lib/apt/lists/*
 
-ENV ASPNETCORE_URLS=http://+:80;http://+:8080;http://+:10000
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
 ENV ASPNETCORE_ENVIRONMENT=Production
+ENV PORT=8080
 
-EXPOSE 80
 EXPOSE 8080
-EXPOSE 10000
 
 # Copy the published .NET backend
 COPY --from=backend-build /app/publish .
