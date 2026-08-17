@@ -31,11 +31,10 @@ export default function Footer() {
             </div>
             <div>
               <h4 className="text-sm font-bold" style={{ color: '#18181B' }}>
-                Private by Design
+                Private &amp; In-Browser
               </h4>
               <p className="text-xs mt-0.5 leading-relaxed max-w-lg" style={{ color: '#71717A' }}>
-                All files are processed in isolated sessions over TLS encryption and permanently deleted
-                from our servers within 60 minutes. We never read, store, or share your documents.
+                All document processing runs client-side inside your browser sandbox with zero server file persistence. Your sensitive files never leave your device.
               </p>
             </div>
           </div>
@@ -43,11 +42,11 @@ export default function Footer() {
           <div className="flex items-center gap-5 shrink-0 sm:pl-4" style={{ borderLeft: '1px solid #BFDBFE' }}>
             <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: '#3F3F46' }}>
               <Lock className="w-3.5 h-3.5 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
-              TLS Encrypted
+              100% In-Browser
             </span>
             <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: '#3F3F46' }}>
               <Zap className="w-3.5 h-3.5 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
-              Auto-deleted
+              Zero Server Storage
             </span>
           </div>
         </div>
@@ -82,18 +81,18 @@ export default function Footer() {
             </Link>
 
             <p className="text-sm leading-relaxed max-w-xs" style={{ color: '#71717A' }}>
-              Pakistan&apos;s premier free online PDF platform. Convert, merge, split, and compress
-              documents with complete privacy — no registration required.
+              Fast, private, and 100% free online PDF platform. Convert, merge, split, and compress
+              documents with zero server file persistence — no account required.
             </p>
 
             <div className="flex items-center gap-1.5 text-xs" style={{ color: '#A1A1AA' }}>
-              <span>Made with</span>
+              <span>Engineered with</span>
               <Heart
                 className="w-3 h-3"
                 style={{ color: '#3B82F6', fill: '#3B82F6' }}
                 aria-hidden="true"
               />
-              <span>in Pakistan 🇵🇰 for students, freelancers &amp; businesses</span>
+              <span>for students, freelancers &amp; professionals worldwide</span>
             </div>
           </div>
 

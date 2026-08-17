@@ -3,47 +3,47 @@ import { Helmet } from 'react-helmet-async';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Award, Sparkles, CheckCircle2, ShieldCheck,
-  Zap, Globe, ArrowRight, Lock, Clock
+  Zap, Globe, ArrowRight, Lock, Cpu
 } from 'lucide-react';
 
 const commitments = [
   {
     icon: ShieldCheck,
-    title: 'Zero Data Monetization',
-    desc: 'We never inspect, store, or share your uploaded documents or their contents with any third party.',
+    title: 'Zero Server Storage',
+    desc: 'Your documents are processed locally inside your web browser sandbox. Files never upload to or persist on remote servers.',
   },
   {
-    icon: Clock,
-    title: 'Automated 1-Hour Deletion',
-    desc: 'Every uploaded file is permanently and automatically deleted from our servers after 60 minutes.',
+    icon: Cpu,
+    title: 'Client-Side In-Browser Engine',
+    desc: 'Using modern WebAssembly and JavaScript pipelines, conversions happen directly on your device with zero transfer latency.',
   },
   {
     icon: Lock,
     title: 'No Account Required',
-    desc: 'Convert, merge, and compress files instantly without creating an account or providing an email.',
+    desc: 'Convert, merge, split, and compress files instantly without creating an account, subscription, or providing personal details.',
   },
   {
     icon: Globe,
     title: 'Works on Any Device',
-    desc: 'PDFora is fully responsive and runs in your browser on desktop, tablet, iPhone, and Android.',
+    desc: 'PDFora is fully responsive and runs seamlessly in any modern web browser across desktop, tablet, iPhone, and Android.',
   },
 ];
 
 const values = [
   {
     icon: Zap,
-    title: 'Speed',
-    desc: 'Built on high-performance servers. Most files finish converting in under five seconds.',
+    title: 'Instant Speed',
+    desc: 'Direct in-browser execution delivers instantaneous document rendering and conversion with zero upload wait times.',
   },
   {
     icon: CheckCircle2,
     title: 'Simplicity',
-    desc: 'A clean interface with no clutter, no confusing settings, and no mandatory steps.',
+    desc: 'A clean, distraction-free interface with no complex setups, artificial daily caps, or hidden paywalls.',
   },
   {
     icon: ShieldCheck,
-    title: 'Privacy',
-    desc: 'Your documents are yours alone. We process files in isolated sessions with TLS 1.3 encryption.',
+    title: 'Complete Privacy',
+    desc: 'Your confidential contracts, tax forms, and personal files stay securely in your device memory at all times.',
   },
 ];
 
@@ -52,8 +52,8 @@ export default function About() {
   return (
     <div className="pt-16 pb-20 min-h-screen">
       <Helmet>
-        <title>About Us — PDFora | Pakistan's Free Online PDF Platform</title>
-        <meta name="description" content="Learn about PDFora, Pakistan's premier free online PDF platform built for students, professionals, and businesses." />
+        <title>About Us — PDFora | Free, Private & Secure Online PDF Tools</title>
+        <meta name="description" content="Learn about PDFora, a fast, private, in-browser online PDF suite built for students, professionals, and businesses worldwide." />
         <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
       </Helmet>
 
@@ -77,7 +77,7 @@ export default function About() {
             }}
           >
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>🇵🇰 Proudly Made in Pakistan</span>
+            <span>Privacy-First PDF Suite</span>
           </div>
           <h1
             id="about-heading"
@@ -87,8 +87,8 @@ export default function About() {
             About PDFora
           </h1>
           <p className="text-sm sm:text-base leading-relaxed max-w-xl mx-auto" style={{ color: '#52525B' }}>
-            PDFora was built in Pakistan with one clear goal: online document tools should be instant,
-            100% free, and strictly private for everyone.
+            PDFora was built with one clear mission: document tools should be instant,
+            100% free, and strictly private for everyone worldwide.
           </p>
         </div>
       </section>
@@ -100,29 +100,29 @@ export default function About() {
           {/* Left — Story */}
           <div className="space-y-6">
             <div>
-              <span className="section-label">Our Story</span>
+              <span className="section-label">Our Mission</span>
               <h2
                 className="text-2xl sm:text-3xl font-extrabold mt-2"
                 style={{ color: '#18181B', letterSpacing: '-0.03em' }}
               >
-                Built for Students, Freelancers &amp; Businesses
+                Built for Students, Freelancers &amp; Professionals Worldwide
               </h2>
             </div>
 
             <p className="text-sm leading-relaxed" style={{ color: '#52525B' }}>
-              Students, university researchers, freelancers, and office workers across Pakistan often faced paywalls, restrictive daily upload caps, or unreliable tools when trying to convert or merge PDFs.
+              Every day, millions of students, university researchers, freelancers, and businesses need to convert, combine, or compress PDF documents. Traditional online converters upload your sensitive contracts, resumes, and personal documents to distant third-party servers.
             </p>
             <p className="text-sm leading-relaxed" style={{ color: '#52525B' }}>
-              PDFora changes that. We built a fast, clean, and reliable tool suite right here in Pakistan that respects your privacy. Every conversion runs securely in an isolated session and files are wiped completely within 1 hour — no exceptions.
+              PDFora revolutionizes this experience by executing text formatting, layout structuring, and image processing directly inside your modern browser sandbox. Your confidential files never leave your device, ensuring maximum security and zero transfer latency.
             </p>
 
             {/* Stats */}
             <div className="grid grid-cols-2 gap-4 pt-2">
               {[
-                { value: '100%',   label: 'Free Platform' },
-                { value: 'TLS 1.3', label: 'Encryption Standard' },
-                { value: '60 min', label: 'Auto-delete Window' },
-                { value: '0',      label: 'Accounts Needed' },
+                { value: '100%',   label: 'Free & Open Tools' },
+                { value: '0 Bytes', label: 'Server File Storage' },
+                { value: 'Client', label: 'In-Browser Engine' },
+                { value: '0',      label: 'Accounts Required' },
               ].map(({ value, label }) => (
                 <div
                   key={label}

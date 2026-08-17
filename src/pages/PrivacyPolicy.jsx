@@ -5,96 +5,94 @@ import { useLocation } from 'react-router-dom';
 
 const SECTIONS = [
   {
-    title: '1. Information We Collect',
-    content: `PDFora is designed to minimise data collection. We collect only what is strictly necessary to operate the service.
+    title: '1. Information We Collect & In-Browser Processing',
+    content: `PDFora is built with a privacy-by-design architecture that prioritises user anonymity and data minimisation.
 
-**Files You Upload:** Documents, images, and PDFs you submit for processing are processed in isolated sessions (either client-side in your browser or on encrypted cloud servers) solely for the purpose of completing the requested operation. Any server-processed files are permanently and automatically deleted within 60 minutes of processing, regardless of whether you download the result.
+**Zero Server Document Storage:** Your documents, spreadsheets, images, and PDF files are processed directly inside your web browser memory sandbox using client-side WebAssembly and JavaScript engines. Your private document contents are not uploaded to, inspected by, or stored on our servers.
 
-**Usage Analytics:** We may collect anonymised, aggregated usage statistics (page views, tool usage counts, browser type) using privacy-respecting analytics that do not track individuals, store personally identifiable information, or build individual user profiles.
+**Zero Account Footprint:** You can use all PDF conversion, compression, merging, and splitting utilities without registering, creating a profile, or submitting an email address.
 
-**Contact Form Data:** If you contact us via the support form, we collect your name, email address, and message content to respond to your inquiry. This data is never sold or used for unsolicited marketing.`,
+**Anonymous Usage Analytics:** We may collect aggregate, privacy-respecting technical signals (such as browser type, tool usage frequency, and anonymised page views) to maintain platform stability and improve tool speed. No individual profiling or persistent tracking is performed.
+
+**Support Inquiries:** If you contact our team via the contact form, we collect your name, email address, and message solely to resolve your support inquiry. We never sell or share contact details with marketers.`,
   },
   {
-    title: '2. How We Use Your Information',
-    content: `We use collected data exclusively to:
+    title: '2. How We Use Information',
+    content: `Any technical data collected is used strictly to:
 
-• Perform the PDF conversion, compression, merge, split, or editing operation you requested
-• Respond to support tickets or questions you send us
-• Improve our platform performance and tool accuracy
-• Detect and prevent abuse or fraudulent usage
+• Provide and maintain free in-browser PDF utilities
+• Detect, prevent, and mitigate security threats or abuse
+• Respond to technical questions, bug reports, and user feedback
+• Ensure optimal rendering performance across devices and operating systems
 
-We will never sell, rent, trade, or share your uploaded documents or private file contents with any third party for commercial or advertising purposes.`,
+We will never monetize, sell, lease, or license user files, metadata, or contact information to third parties or advertising brokers.`,
   },
   {
-    title: '3. File Storage & Automatic Deletion',
-    content: `All files handled on PDFora follow a strict data lifecycle policy:
+    title: '3. Data Lifecycle & Zero File Persistence',
+    content: `Because PDFora operates natively in your browser sandbox:
 
-• Client-side operations process your documents directly inside your browser sandbox with zero network transmission where supported
-• Server-assisted conversions upload over an encrypted TLS 1.3 connection to ephemeral processing containers
-• Output files are made available for download directly to your device
-• All server-cached input and output files are permanently wiped from our systems within 60 minutes automatically
+• File transformations happen locally in temporary browser memory
+• When you close the browser tab or refresh the page, local memory is instantly cleared by your operating system
+• No human operator or automated scraper can view or access your file contents
+• We do not keep, archive, or back up user documents
 
-We do not perform backups of user-uploaded document contents. Our infrastructure is engineered so that no human operator accesses your files in transit.`,
+You retain 100% control, ownership, and privacy over your files at all times.`,
   },
   {
     title: '4. Cookies & Advertising Technologies',
-    content: `PDFora uses cookies and similar storage technologies to ensure website functionality and support our free service:
+    content: `PDFora uses standard cookies and browser storage technologies to maintain platform features and sustain our free service:
 
-• **Strictly Necessary Cookies:** Session identifiers required to process file uploads, tool workflows, and download handling.
-• **Preference Cookies:** Store user settings such as compression level choices or layout preferences.
-• **Google AdSense & Third-Party Cookies:** We use Google AdSense to serve advertisements when you visit our website. Google and its advertising partners use cookies (such as the DoubleClick cookie) to serve ads based on your prior visits to PDFora and other sites across the internet.
+• **Strictly Necessary Storage:** Local browser storage to remember interface preferences (such as selected conversion settings or theme preferences).
+• **Google AdSense & Third-Party Cookies:** We display advertisements served by Google AdSense to keep PDFora 100% free. Google and its certified advertising partners use cookies (including the DoubleClick cookie) to serve relevant ads based on prior visits to this and other websites.
 
-**Opting Out of Personalized Advertising:**
-You can opt out of personalized advertising by visiting Google's Ads Settings (www.google.com/settings/ads). Alternatively, you can opt out of third-party vendor cookies for personalized advertising by visiting www.aboutads.info or your browser cookie management preferences.`,
+**Managing Your Ad Preferences & Opting Out:**
+You can manage or disable personalized advertising by visiting Google Ad Settings (www.google.com/settings/ads) or through the Digital Advertising Alliance opt-out portal (www.aboutads.info/choices). You can also configure your browser to block third-party cookies at any time.`,
   },
   {
-    title: '5. Data Security',
-    content: `We implement industry-standard security controls including:
+    title: '5. Security Standards',
+    content: `We protect your session using industry-standard protocols:
 
-• TLS 1.3 encryption for all data in transit
-• Ephemeral in-memory storage for document conversion pipelines
-• Isolated processing containers per conversion job
-• Strict access controls preventing unauthorized access to production systems
-• Periodic vulnerability audits and dependency patching
+• TLS 1.3 encryption across all website assets
+• Hardened Content Security and HTTP response headers
+• Sandboxed client-side memory execution isolating processing from external network requests
+• Strict sanitization of contact submissions
 
-If you believe you have discovered a security issue, please report it responsibly to contact@nimradev.site.`,
+If you discover a vulnerability or security concern, please report it to our engineering team at contact@nimradev.site.`,
   },
   {
-    title: '6. Third-Party Services & Advertising Partners',
-    content: `To provide and sustain our free platform, PDFora partners with select trusted third-party providers:
+    title: '6. Third-Party Service Providers',
+    content: `PDFora partners with trusted technology providers to support our free platform:
 
-• **Google AdSense:** Provides contextual and personalized advertisements that keep PDFora 100% free for all users. Google's privacy policy governs their collection and use of advertising data.
-• **Cloud Infrastructure & Hosting Providers:** Deliver high-speed CDN assets, compute infrastructure, and serverless routing (subject to strict data protection standards).
-• **Email Service Providers (Resend):** Securely deliver support inquiries submitted through our contact form.
-
-We do not sell user document data to data brokers, analytics brokers, or marketing networks.`,
+• **Google AdSense:** Provides advertising inventory subject to Google's strict Privacy Policy and Publisher Policies.
+• **Cloud Infrastructure:** High-performance static content delivery network (CDN) ensuring fast asset caching worldwide.
+• **Resend Email API:** Securely routes customer support messages without storing user files.`,
   },
   {
     title: '7. Children\'s Privacy',
-    content: `PDFora is not directed at children under the age of 13. We do not knowingly collect personal information from children. If you believe a child has submitted personal information to us, please contact us immediately and we will take immediate steps to delete it.`,
+    content: `PDFora does not knowingly collect or solicit personal data from children under the age of 13. If you believe a child has provided us with personal information, please contact us immediately so we can remove it.`,
   },
   {
-    title: '8. Your Rights',
-    content: `Depending on your jurisdiction, you may have the following rights regarding your data:
+    title: '8. Global Privacy Rights (GDPR & CCPA/CPRA)',
+    content: `Regardless of your location, we afford all users maximum privacy rights:
 
-• **Access & Transparency:** Request information regarding data we process
-• **Deletion:** Request immediate deletion of any submitted contact information
-• **Objection & Opt-Out:** Manage cookie preferences and personalized advertising opt-outs at any time
-• **Inquiries:** Contact our data privacy representative with questions or concerns
+• **Right to Access:** Inquire about any data handled during support communications
+• **Right to Erasure:** Request immediate removal of support correspondence
+• **Right to Opt-Out:** Reject non-essential cookies and personalized ad targeting
+• **Non-Discrimination:** Equal access to all free PDF tools regardless of privacy choices
 
-To exercise any of these rights, contact us at contact@nimradev.site. We will respond promptly within 24-48 business hours.`,
+To exercise any privacy rights, email contact@nimradev.site. We respond within 24 to 48 business hours.`,
   },
   {
-    title: '9. Changes to This Policy',
-    content: `We may update this Privacy Policy periodically to reflect changes in our legal obligations, features, or advertising partnerships. When we update this policy, we will update the "Last Updated" date at the top of this page.`,
+    title: '9. Updates to This Policy',
+    content: `We may update this Privacy Policy periodically to reflect technological enhancements or regulatory requirements. Material updates will be reflected in the "Last Updated" timestamp at the top of this document.`,
   },
   {
     title: '10. Contact Us',
-    content: `If you have any questions, concerns, or feedback regarding this Privacy Policy, please contact our team:
+    content: `For inquiries regarding this Privacy Policy or data protection practices, contact us at:
 
 • **Email:** contact@nimradev.site
-• **Location:** Lahore, Punjab, Pakistan 🇵🇰
-• **Response Time:** Within 24-48 business hours`,
+• **Platform:** PDFora Global Operations
+• **Support SLA:** 24–48 hours`,
   },
 ];
 
@@ -103,8 +101,8 @@ export default function PrivacyPolicy() {
   return (
     <div className="pt-24 pb-20 min-h-screen">
       <Helmet>
-        <title>Privacy Policy — PDFora | Free Online PDF Tools Pakistan</title>
-        <meta name="description" content="Privacy Policy for PDFora. Learn how your files are encrypted and automatically deleted within 60 minutes." />
+        <title>Privacy Policy — PDFora | Secure & In-Browser PDF Suite</title>
+        <meta name="description" content="Read the PDFora Privacy Policy. Learn how our in-browser client-side engine ensures 100% private file processing with zero server file storage." />
         <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
       </Helmet>
 
@@ -123,7 +121,7 @@ export default function PrivacyPolicy() {
             style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
           >
             <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Your Privacy Matters</span>
+            <span>Privacy-First Architecture</span>
           </div>
           <h1
             id="privacy-heading"
@@ -133,11 +131,11 @@ export default function PrivacyPolicy() {
             Privacy Policy
           </h1>
           <p className="text-sm" style={{ color: '#71717A' }}>
-            Last Updated: <strong style={{ color: '#3F3F46' }}>July 31, 2026</strong>
+            Last Updated: <strong style={{ color: '#3F3F46' }}>August 17, 2026</strong>
           </p>
           <p className="text-sm leading-relaxed max-w-xl mx-auto" style={{ color: '#52525B' }}>
-            At PDFora, your privacy is foundational — not an afterthought. This policy explains
-            exactly what data we handle and how we protect it.
+            At PDFora, your privacy is foundational. We process your documents locally in your browser
+            so your confidential files never touch our servers.
           </p>
         </div>
       </section>
@@ -148,7 +146,7 @@ export default function PrivacyPolicy() {
           className="rounded-2xl p-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center"
           style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}
         >
-          {[{ val: '60 min', lbl: 'Auto file deletion' }, { val: 'TLS 1.3', lbl: 'Encrypted in transit' }, { val: 'Zero', lbl: 'Data sold or shared' }].map(({ val, lbl }) => (
+          {[{ val: '0 Bytes', lbl: 'Server file storage' }, { val: 'In-Browser', lbl: 'Client-side processing' }, { val: '100% Free', lbl: 'No account required' }].map(({ val, lbl }) => (
             <div key={lbl} className="space-y-1">
               <div className="text-2xl font-black" style={{ color: '#3B82F6' }}>{val}</div>
               <div className="text-xs font-medium" style={{ color: '#52525B' }}>{lbl}</div>

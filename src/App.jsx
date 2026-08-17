@@ -5,6 +5,7 @@ import { HelmetProvider } from 'react-helmet-async';
 
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import CookieConsent from './components/common/CookieConsent';
 
 const Home = lazy(() => import('./pages/Home'));
 const AllTools = lazy(() => import('./pages/AllTools'));
@@ -68,6 +69,7 @@ function AppLayout() {
         </Suspense>
       </main>
       <Footer />
+      <CookieConsent />
     </div>
   );
 }

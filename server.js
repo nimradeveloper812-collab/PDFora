@@ -18,8 +18,11 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Security & CORS Headers
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   next();
 });
 
@@ -95,12 +98,25 @@ ${cleanMsg}
   }
 });
 
-// Serve static frontend assets from dist folder
+// Serve static frontend assets from dist folder with high-performance caching
 const distPath = path.join(__dirname, 'dist');
-app.use(express.static(distPath, { maxAge: '1d' }));
+app.use(
+  express.static(distPath, {
+    setHeaders: (res, filePath) => {
+      if (filePath.includes(path.sep + 'assets' + path.sep)) {
+        // Vite content-hashed JS & CSS chunks are immutable
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      } else {
+        // Standard static files (favicons, manifest, robots, sitemap)
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+      }
+    },
+  })
+);
 
-// Fallback to index.html for React Router SPA
+// Fallback to index.html for React Router SPA (never aggressively cache HTML so users always receive fresh builds)
 app.get('*', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.sendFile(path.join(distPath, 'index.html'));
 });
 

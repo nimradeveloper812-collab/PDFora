@@ -28,8 +28,8 @@ export default function ToolLayout({ tool }) {
   const otherTools = TOOLS.filter(t => t.id !== tool.id).slice(0, 4);
 
   const currentUrl = `https://pdfora.nimradev.site${location.pathname}`;
-  const seoTitle = `${tool.name} Online — Free, Fast & Secure | PDFora`;
-  const seoDesc = `${tool.description} 100% free online PDF utility with private, secure in-browser processing and zero file limits.`;
+  const seoTitle = `${tool.name} Online — Free, Fast & Private | PDFora`;
+  const seoDesc = `${tool.description} 100% free online PDF utility with private in-browser WebAssembly processing, zero file limits, and zero server file persistence.`;
 
   // Structured Data: WebApplication Schema
   const webAppSchema = {
@@ -46,14 +46,27 @@ export default function ToolLayout({ tool }) {
       'price': '0',
       'priceCurrency': 'USD'
     },
-    'aggregateRating': {
-      '@type': 'AggregateRating',
-      'ratingValue': '4.9',
-      'reviewCount': '1240',
-      'bestRating': '5',
-      'worstRating': '1'
+    'creator': {
+      '@type': 'Organization',
+      'name': 'PDFora',
+      'url': 'https://pdfora.nimradev.site'
     }
   };
+
+  // Structured Data: HowTo Schema for Step-by-Step Instructions
+  const howToSchema = tool.steps && tool.steps.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    'name': `How to use ${tool.name} online with PDFora`,
+    'description': `Follow these simple steps to use ${tool.name} for free in your browser with complete privacy.`,
+    'step': tool.steps.map((stepText, idx) => ({
+      '@type': 'HowToStep',
+      'position': idx + 1,
+      'name': `Step ${idx + 1}`,
+      'text': stepText,
+      'url': `${currentUrl}#step-${idx + 1}`
+    }))
+  } : null;
 
   // Structured Data: FAQPage Schema
   const faqSchema = tool.faqs && tool.faqs.length > 0 ? {
@@ -121,6 +134,11 @@ export default function ToolLayout({ tool }) {
         <script type="application/ld+json">
           {JSON.stringify(webAppSchema)}
         </script>
+        {howToSchema && (
+          <script type="application/ld+json">
+            {JSON.stringify(howToSchema)}
+          </script>
+        )}
         {faqSchema && (
           <script type="application/ld+json">
             {JSON.stringify(faqSchema)}

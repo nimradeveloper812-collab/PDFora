@@ -337,7 +337,7 @@ export const TOOLS = [
     useCases: [
       {
         title: 'ID & Passport Document Submissions',
-        desc: 'Combine scanned CNIC/ID cards, driver licenses, and passport photos into single verified PDF files for visa and banking applications.'
+        desc: 'Combine scanned government ID cards, driver licenses, and passport photos into single verified PDF files for visa, employment, and banking applications.'
       },
       {
         title: 'Expense Receipts & Invoicing',
