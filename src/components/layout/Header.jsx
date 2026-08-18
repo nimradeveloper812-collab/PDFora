@@ -140,10 +140,9 @@ export default function Header() {
             <span
               className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold"
               style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
-              aria-label="Pakistan's free tool"
+              aria-label="100% Private PDF Suite"
             >
-              <span>🇵🇰</span>
-              <span>PAKISTAN</span>
+              <span>100% PRIVATE</span>
             </span>
           </Link>
 

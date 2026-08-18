@@ -43,7 +43,7 @@ export default function AllTools() {
   return (
     <div className="pt-16 pb-20 min-h-screen">
       <Helmet>
-        <title>All Free PDF Tools — PDFora | Pakistan's PDF Converter Suite</title>
+        <title>All Free PDF Tools — PDFora | Online PDF Converter &amp; Editor</title>
         <meta name="description" content="Explore all free PDF tools on PDFora. Convert Word, Excel, PPT, images to PDF, merge, compress, and split PDFs instantly." />
         <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
       </Helmet>
@@ -68,7 +68,7 @@ export default function AllTools() {
             }}
           >
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>🇵🇰 Pakistan's Complete PDF Suite</span>
+            <span>Complete Free Online PDF Suite</span>
           </div>
 
           <h1

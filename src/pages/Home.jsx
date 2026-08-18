@@ -139,8 +139,8 @@ export default function Home() {
   return (
     <div className="pt-16 min-h-screen">
       <Helmet>
-        <title>PDFora — Free Online PDF Tools in Pakistan | Convert, Compress &amp; Merge</title>
-        <meta name="description" content="Pakistan's premier free PDF platform. Convert Word, Excel, PPT &amp; images to PDF. Merge, compress, and split PDFs instantly — fast, private, and 100% free." />
+        <title>PDFora — Free Online PDF Tools | Convert, Merge, Compress &amp; Split</title>
+        <meta name="description" content="Free, private, and in-browser online PDF tools suite. Convert Word, Excel, PowerPoint &amp; images to PDF. Merge, compress, and split documents instantly with 100% privacy." />
         <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
       </Helmet>
 
@@ -182,7 +182,7 @@ export default function Home() {
               }}
             >
               <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>🇵🇰 Pakistan's #1 Free Online PDF Platform</span>
+              <span>100% Free &amp; Private In-Browser Suite</span>
             </div>
 
             {/* H1 */}
@@ -200,7 +200,7 @@ export default function Home() {
               className="text-base sm:text-lg leading-relaxed max-w-xl"
               style={{ color: '#52525B' }}
             >
-              Simple, fast, and private PDF tools for students, freelancers, and businesses across Pakistan.
+              Fast, private, and secure online PDF tools for students, freelancers, and businesses worldwide.
               Convert Word, Excel, PowerPoint, and images to PDF — or merge, split, and compress PDFs instantly.
             </p>
 
@@ -439,8 +439,8 @@ export default function Home() {
               {/* Trust pills */}
               <div className="flex items-center justify-center gap-3 flex-wrap">
                 {[
-                  { icon: Lock, text: 'TLS Encrypted' },
-                  { icon: ShieldCheck, text: 'Auto-deleted' },
+                  { icon: Lock, text: 'Client Sandbox' },
+                  { icon: ShieldCheck, text: 'Zero Server Storage' },
                   { icon: Globe, text: 'Works on mobile' },
                 ].map(({ icon: Icon, text }) => (
                   <span

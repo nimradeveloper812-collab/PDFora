@@ -104,8 +104,8 @@ export default function Contact() {
   return (
     <div className="pt-16 pb-20 min-h-screen">
       <Helmet>
-        <title>Contact Support — PDFora | Free Online PDF Tools Pakistan</title>
-        <meta name="description" content="Contact PDFora support team in Lahore, Pakistan. Send us your feedback, questions, or bug reports." />
+        <title>Contact Support — PDFora | Free Online PDF Platform Help</title>
+        <meta name="description" content="Contact PDFora support team. Send us your feedback, feature requests, questions, or bug reports." />
         <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
       </Helmet>
 
