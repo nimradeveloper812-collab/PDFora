@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 
@@ -52,6 +52,7 @@ function AppLayout() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/tools" element={<AllTools />} />
+            <Route path="/all-tools" element={<Navigate to="/tools" replace />} />
             <Route path="/tools/word-to-pdf" element={<WordToPdf />} />
             <Route path="/tools/excel-to-pdf" element={<ExcelToPdf />} />
             <Route path="/tools/powerpoint-to-pdf" element={<PowerPointToPdf />} />

@@ -5,6 +5,7 @@ import {
   Sliders, AlertCircle, Clock, Eye
 } from 'lucide-react';
 import { pdfApi } from '../../services/pdfApi';
+import { analytics } from '../../services/analytics';
 import AdBanner from './AdBanner';
 
 export default function Dropzone({ tool }) {
@@ -104,6 +105,9 @@ export default function Dropzone({ tool }) {
     }
 
     if (!valid.length) return;
+    const totalBytes = valid.reduce((a, f) => a + (f.size || 0), 0);
+    analytics.trackFileUpload(tool.id, valid.length, totalBytes);
+
     if (tool.maxFiles === 1) {
       setFiles([valid[0]]);
     } else {
@@ -129,9 +133,11 @@ export default function Dropzone({ tool }) {
   /* ── real processing ────────────────────────────── */
   const startProcessing = async () => {
     if (!files.length) return;
+    const startTime = performance.now();
     setStatus('processing');
     setProgress(10);
     setProgressText('Preparing file for processing…');
+    analytics.trackConversionStart(tool.id, optionValues);
 
     const handleProgress = (pct, msg) => {
       setProgress(pct);
@@ -198,6 +204,9 @@ export default function Dropzone({ tool }) {
           throw new Error('Unknown tool');
       }
 
+      const durationMs = performance.now() - startTime;
+      analytics.trackConversionSuccess(tool.id, durationMs, result.size || 0);
+
       setProgress(100);
       setProgressText('Done');
       
@@ -207,6 +216,7 @@ export default function Dropzone({ tool }) {
       setActualResultSize(result.size || 0);
       setStatus('completed');
     } catch (err) {
+      analytics.trackError(tool.id, err.message || 'Processing failed');
       setErrorMsg(err.message || 'Processing failed.');
       setStatus('idle');
       setProgress(0);
@@ -216,6 +226,8 @@ export default function Dropzone({ tool }) {
   const handleDownload = (e) => {
     if (e) e.preventDefault();
     if (!resultBlobUrl) return;
+
+    analytics.trackDownload(tool.id, resultFilename || `PDFora_${tool.slug}_output.pdf`);
 
     const link = document.createElement('a');
     link.href = resultBlobUrl;
