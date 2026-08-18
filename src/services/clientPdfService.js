@@ -756,9 +756,9 @@ export const clientPdfService = {
     return new Blob([bestResult], { type: 'application/pdf' });
   },
 
-  /* ── 7. Split PDF ──────────────────────────────────────────────── */
-  async splitPdf(file, ranges = 'all', onProgress) {
-    onProgress?.(15, 'Loading PDF document...');
+  /* ── 7. Split PDF (iLovePDF-grade Multi-Mode Engine) ────────── */
+  async splitPdf(file, config = 'all', onProgress) {
+    onProgress?.(10, 'Loading PDF document...');
     const bytes = await file.arrayBuffer();
     const pdfDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
     const totalPages = pdfDoc.getPageCount();
@@ -767,37 +767,13 @@ export const clientPdfService = {
       throw new Error('The uploaded PDF document does not contain any pages.');
     }
 
-    if (ranges === 'all' && totalPages > 1) {
-      const zip = new JSZip();
-      for (let i = 0; i < totalPages; i++) {
-        const currentPct = 20 + Math.round(((i + 1) / totalPages) * 70);
-        onProgress?.(currentPct, `Extracting page ${i + 1} of ${totalPages}...`);
-
-        const subDoc = await PDFDocument.create();
-        const [copiedPage] = await subDoc.copyPages(pdfDoc, [i]);
-        subDoc.addPage(copiedPage);
-        const subBytes = await subDoc.save();
-        zip.file(`page_${i + 1}.pdf`, subBytes);
-      }
-      onProgress?.(95, 'Packaging ZIP archive...');
-      const zipBlob = await zip.generateAsync({ type: 'blob' });
-      onProgress?.(100, 'Split complete!');
-      return { blob: zipBlob, isZip: true };
-    }
-
-    let indices = [];
-    if (ranges === 'odd') {
-      indices = Array.from({ length: totalPages }, (_, i) => i).filter(i => (i + 1) % 2 !== 0);
-    } else if (ranges === 'even') {
-      indices = Array.from({ length: totalPages }, (_, i) => i).filter(i => (i + 1) % 2 === 0);
-    } else if (typeof ranges === 'string' && ranges.trim()) {
-      const parts = ranges.split(/[,;\s]+/);
+    // Helper: Parse string like "1, 3, 5-8" into 0-based indices array
+    const parsePageString = (str) => {
+      const parts = String(str || '').split(/[,;\s]+/);
       const selected = new Set();
-
       for (const part of parts) {
         const p = part.trim();
         if (!p) continue;
-
         if (p.includes('-')) {
           const [startStr, endStr] = p.split('-');
           const start = parseInt(startStr.trim(), 10);
@@ -806,9 +782,7 @@ export const clientPdfService = {
             const min = Math.min(start, end);
             const max = Math.max(start, end);
             for (let pageNum = min; pageNum <= max; pageNum++) {
-              if (pageNum >= 1 && pageNum <= totalPages) {
-                selected.add(pageNum - 1);
-              }
+              if (pageNum >= 1 && pageNum <= totalPages) selected.add(pageNum - 1);
             }
           }
         } else {
@@ -818,43 +792,189 @@ export const clientPdfService = {
           }
         }
       }
+      return Array.from(selected).sort((a, b) => a - b);
+    };
 
-      indices = Array.from(selected).sort((a, b) => a - b);
-    }
-
-    // If no valid page was entered or all were out of range, extract page 1
-    if (indices.length === 0) {
-      indices = [0];
-    }
-
-    // Single page → return as a standalone PDF
-    if (indices.length === 1) {
-      onProgress?.(60, `Extracting page ${indices[0] + 1}...`);
+    // Helper: Build a single PDF document from an array of 0-based page indices
+    const buildSubDoc = async (pageIndices) => {
       const subDoc = await PDFDocument.create();
-      const [copiedPage] = await subDoc.copyPages(pdfDoc, [indices[0]]);
-      subDoc.addPage(copiedPage);
-      onProgress?.(95, 'Building PDF document...');
-      const pdfBytes = await subDoc.save();
-      onProgress?.(100, 'Split complete!');
-      return { blob: new Blob([pdfBytes], { type: 'application/pdf' }), isZip: false };
+      if (pageIndices.length > 0) {
+        const copied = await subDoc.copyPages(pdfDoc, pageIndices);
+        copied.forEach(cp => subDoc.addPage(cp));
+      }
+      return await subDoc.save();
+    };
+
+    // Normalize config
+    let mode = 'range'; // 'range' or 'extract'
+    let rangeType = 'custom'; // 'custom' or 'fixed'
+    let rangesList = [{ from: 1, to: totalPages }];
+    let fixedPages = 1;
+    let mergeAll = false;
+    let extractMode = 'all'; // 'all' or 'select'
+    let extractPagesStr = '1';
+
+    if (typeof config === 'object' && config !== null) {
+      mode = config.mode || (config.splitMode === 'extract' ? 'extract' : 'range');
+      rangeType = config.rangeType || 'custom';
+      rangesList = Array.isArray(config.ranges) && config.ranges.length > 0 ? config.ranges : [{ from: 1, to: totalPages }];
+      fixedPages = Math.max(1, parseInt(config.fixedPages, 10) || 1);
+      mergeAll = Boolean(config.merge);
+      extractMode = config.extractMode || (config.splitMode === 'all' ? 'all' : 'select');
+      extractPagesStr = config.extractPages || config.customRanges || '1';
+    } else if (typeof config === 'string') {
+      if (config === 'all') {
+        mode = 'extract';
+        extractMode = 'all';
+      } else if (config === 'odd' || config === 'even') {
+        mode = 'extract';
+        extractMode = 'select';
+        const indices = Array.from({ length: totalPages }, (_, i) => i + 1).filter(p => config === 'odd' ? p % 2 !== 0 : p % 2 === 0);
+        extractPagesStr = indices.join(', ');
+      } else {
+        mode = 'extract';
+        extractMode = 'select';
+        extractPagesStr = config;
+      }
     }
 
-    // Multiple pages → each page becomes its own PDF inside a ZIP
+    /* ════════════════════════════════════════════════════════════════
+       MODE A: EXTRACT PAGES
+       ════════════════════════════════════════════════════════════════ */
+    if (mode === 'extract') {
+      if (extractMode === 'all') {
+        if (totalPages === 1) {
+          const subBytes = await buildSubDoc([0]);
+          onProgress?.(100, 'Done');
+          return { blob: new Blob([subBytes], { type: 'application/pdf' }), isZip: false };
+        }
+
+        const zip = new JSZip();
+        for (let i = 0; i < totalPages; i++) {
+          const pct = 15 + Math.round(((i + 1) / totalPages) * 75);
+          onProgress?.(pct, `Extracting page ${i + 1} of ${totalPages}...`);
+          const subBytes = await buildSubDoc([i]);
+          zip.file(`page_${i + 1}.pdf`, subBytes);
+        }
+        onProgress?.(95, 'Packaging ZIP archive...');
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        onProgress?.(100, 'Done');
+        return { blob: zipBlob, isZip: true };
+      }
+
+      // Extract Select
+      const selectedIndices = parsePageString(extractPagesStr);
+      const indicesToUse = selectedIndices.length > 0 ? selectedIndices : [0];
+
+      if (mergeAll || indicesToUse.length === 1) {
+        onProgress?.(60, `Merging ${indicesToUse.length} extracted pages into 1 PDF...`);
+        const subBytes = await buildSubDoc(indicesToUse);
+        onProgress?.(100, 'Done');
+        return { blob: new Blob([subBytes], { type: 'application/pdf' }), isZip: false };
+      }
+
+      // Multiple pages separate -> ZIP
+      const zip = new JSZip();
+      for (let i = 0; i < indicesToUse.length; i++) {
+        const pageIdx = indicesToUse[i];
+        const pct = 15 + Math.round(((i + 1) / indicesToUse.length) * 75);
+        onProgress?.(pct, `Extracting page ${pageIdx + 1} (${i + 1}/${indicesToUse.length})...`);
+        const subBytes = await buildSubDoc([pageIdx]);
+        zip.file(`page_${pageIdx + 1}.pdf`, subBytes);
+      }
+      onProgress?.(95, 'Packaging ZIP archive...');
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      onProgress?.(100, 'Done');
+      return { blob: zipBlob, isZip: true };
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       MODE B: SPLIT BY RANGE
+       ════════════════════════════════════════════════════════════════ */
+    if (rangeType === 'fixed') {
+      // Split into chunks of fixedPages
+      const chunks = [];
+      for (let i = 0; i < totalPages; i += fixedPages) {
+        const end = Math.min(i + fixedPages, totalPages);
+        const chunkIndices = [];
+        for (let p = i; p < end; p++) chunkIndices.push(p);
+        chunks.push({ startPage: i + 1, endPage: end, indices: chunkIndices });
+      }
+
+      if (chunks.length === 1) {
+        const subBytes = await buildSubDoc(chunks[0].indices);
+        onProgress?.(100, 'Done');
+        return { blob: new Blob([subBytes], { type: 'application/pdf' }), isZip: false };
+      }
+
+      const zip = new JSZip();
+      for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i];
+        const pct = 15 + Math.round(((i + 1) / chunks.length) * 75);
+        onProgress?.(pct, `Creating part ${i + 1} (pages ${chunk.startPage}-${chunk.endPage})...`);
+        const subBytes = await buildSubDoc(chunk.indices);
+        zip.file(`part_${i + 1}_pages_${chunk.startPage}-${chunk.endPage}.pdf`, subBytes);
+      }
+      onProgress?.(95, 'Packaging ZIP archive...');
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      onProgress?.(100, 'Done');
+      return { blob: zipBlob, isZip: true };
+    }
+
+    // Custom Ranges
+    // Clean and validate ranges
+    const validRanges = [];
+    for (let idx = 0; idx < rangesList.length; idx++) {
+      const r = rangesList[idx];
+      let from = parseInt(r.from, 10);
+      let to = parseInt(r.to, 10);
+      if (isNaN(from)) from = 1;
+      if (isNaN(to)) to = from;
+      from = Math.max(1, Math.min(from, totalPages));
+      to = Math.max(1, Math.min(to, totalPages));
+      const min = Math.min(from, to);
+      const max = Math.max(from, to);
+      const indices = [];
+      for (let p = min; p <= max; p++) indices.push(p - 1);
+      validRanges.push({ rangeIndex: idx + 1, from: min, to: max, indices });
+    }
+
+    if (validRanges.length === 0) {
+      validRanges.push({ rangeIndex: 1, from: 1, to: totalPages, indices: Array.from({ length: totalPages }, (_, i) => i) });
+    }
+
+    // If mergeAll is true: combine all ranges into 1 PDF
+    if (mergeAll) {
+      onProgress?.(40, 'Merging all specified ranges into one PDF...');
+      const combinedIndices = [];
+      for (const r of validRanges) {
+        combinedIndices.push(...r.indices);
+      }
+      const subBytes = await buildSubDoc(combinedIndices);
+      onProgress?.(100, 'Done');
+      return { blob: new Blob([subBytes], { type: 'application/pdf' }), isZip: false };
+    }
+
+    // If only 1 range and mergeAll is false: return single PDF
+    if (validRanges.length === 1) {
+      onProgress?.(60, `Extracting pages ${validRanges[0].from} to ${validRanges[0].to}...`);
+      const subBytes = await buildSubDoc(validRanges[0].indices);
+      onProgress?.(100, 'Done');
+      return { blob: new Blob([subBytes], { type: 'application/pdf' }), isZip: false };
+    }
+
+    // Multiple ranges -> export each range as a standalone PDF inside a ZIP
     const zip = new JSZip();
-    for (let i = 0; i < indices.length; i++) {
-      const pageIdx = indices[i];
-      const currentPct = 20 + Math.round(((i + 1) / indices.length) * 70);
-      onProgress?.(currentPct, `Extracting page ${pageIdx + 1} (${i + 1} of ${indices.length})...`);
-
-      const subDoc = await PDFDocument.create();
-      const [copiedPage] = await subDoc.copyPages(pdfDoc, [pageIdx]);
-      subDoc.addPage(copiedPage);
-      const subBytes = await subDoc.save();
-      zip.file(`page_${pageIdx + 1}.pdf`, subBytes);
+    for (let i = 0; i < validRanges.length; i++) {
+      const r = validRanges[i];
+      const pct = 15 + Math.round(((i + 1) / validRanges.length) * 75);
+      onProgress?.(pct, `Extracting Range ${r.rangeIndex} (pages ${r.from}-${r.to})...`);
+      const subBytes = await buildSubDoc(r.indices);
+      zip.file(`range_${r.rangeIndex}_pages_${r.from}-${r.to}.pdf`, subBytes);
     }
     onProgress?.(95, 'Packaging ZIP archive...');
     const zipBlob = await zip.generateAsync({ type: 'blob' });
-    onProgress?.(100, 'Split complete!');
+    onProgress?.(100, 'Done');
     return { blob: zipBlob, isZip: true };
   },
 

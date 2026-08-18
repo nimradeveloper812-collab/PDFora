@@ -7,6 +7,7 @@ import {
 import { pdfApi } from '../../services/pdfApi';
 import { analytics } from '../../services/analytics';
 import AdBanner from './AdBanner';
+import SplitPdfControls from './SplitPdfControls';
 
 export default function Dropzone({ tool }) {
   const [files, setFiles]           = useState([]);
@@ -16,6 +17,16 @@ export default function Dropzone({ tool }) {
     const init = {};
     tool.options?.forEach(o => { init[o.id] = o.default; });
     return init;
+  });
+  const [splitTotalPages, setSplitTotalPages] = useState(1);
+  const [splitConfig, setSplitConfig] = useState({
+    mode: 'range',
+    rangeType: 'custom',
+    ranges: [{ from: 1, to: 1 }],
+    fixedPages: 2,
+    merge: false,
+    extractMode: 'all',
+    extractPages: '',
   });
   const [status, setStatus]         = useState('idle');      // idle | processing | completed
   const [progress, setProgress]     = useState(0);
@@ -108,6 +119,25 @@ export default function Dropzone({ tool }) {
     const totalBytes = valid.reduce((a, f) => a + (f.size || 0), 0);
     analytics.trackFileUpload(tool.id, valid.length, totalBytes);
 
+    if (tool.id === 'split-pdf' && valid[0]) {
+      (async () => {
+        try {
+          const { PDFDocument } = await import('pdf-lib');
+          const bytes = await valid[0].arrayBuffer();
+          const doc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+          const count = doc.getPageCount();
+          setSplitTotalPages(count);
+          setSplitConfig(prev => ({
+            ...prev,
+            ranges: [{ from: 1, to: count }],
+            extractPages: `1-${count}`,
+          }));
+        } catch (err) {
+          console.debug('Failed to count PDF pages:', err);
+        }
+      })();
+    }
+
     if (tool.maxFiles === 1) {
       setFiles([valid[0]]);
     } else {
@@ -137,7 +167,7 @@ export default function Dropzone({ tool }) {
     setStatus('processing');
     setProgress(10);
     setProgressText('Preparing file for processing…');
-    analytics.trackConversionStart(tool.id, optionValues);
+    analytics.trackConversionStart(tool.id, tool.id === 'split-pdf' ? splitConfig : optionValues);
 
     const handleProgress = (pct, msg) => {
       setProgress(pct);
@@ -181,23 +211,19 @@ export default function Dropzone({ tool }) {
           filename = `${firstFileName}_compressed.pdf`;
           break;
         case 'split-pdf': {
-          const mode = optionValues['splitMode'] || 'range';
-          let ranges = 'all';
-          let customTag = 'split';
-          if (mode === 'range') {
-            const raw = (optionValues['customRanges'] || '').trim();
-            ranges = raw || '1';
-            customTag = `pages_${ranges.replace(/[^a-zA-Z0-9_-]+/g, '_')}`;
-          } else if (mode === 'odd-even') {
-            ranges = optionValues['oddEvenSelect'] || 'odd';
-            customTag = `${ranges}_pages`;
-          } else {
-            ranges = 'all';
-            customTag = 'all_pages';
-          }
-          const res = await pdfApi.splitPdf(files[0], ranges, handleProgress);
+          const res = await pdfApi.splitPdf(files[0], splitConfig, handleProgress);
           result = res.blob;
-          filename = res.isZip ? `${firstFileName}_split_pages.zip` : `${firstFileName}_${customTag}.pdf`;
+          if (res.isZip) {
+            filename = `${firstFileName}_split_pages.zip`;
+          } else {
+            if (splitConfig.mode === 'range') {
+              filename = splitConfig.merge
+                ? `${firstFileName}_merged_ranges.pdf`
+                : `${firstFileName}_pages_${splitConfig.ranges?.[0]?.from || 1}-${splitConfig.ranges?.[0]?.to || 1}.pdf`;
+            } else {
+              filename = `${firstFileName}_extracted.pdf`;
+            }
+          }
           break;
         }
         default:
@@ -490,7 +516,13 @@ export default function Dropzone({ tool }) {
                   ))}
                 </div>
 
-                {tool.options?.length > 0 && (
+                {tool.id === 'split-pdf' ? (
+                  <SplitPdfControls
+                    totalPages={splitTotalPages}
+                    config={splitConfig}
+                    onChange={setSplitConfig}
+                  />
+                ) : tool.options?.length > 0 && (
                   <div
                     className="p-5 rounded-2xl space-y-4"
                     style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}
@@ -504,16 +536,8 @@ export default function Dropzone({ tool }) {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {tool.options.map(opt => {
-                        // Conditional rendering based on splitMode to hide irrelevant fields
-                        if (tool.id === 'split-pdf') {
-                          const currentMode = optionValues['splitMode'] || 'range';
-                          if (opt.id === 'customRanges' && currentMode !== 'range') return null;
-                          if (opt.id === 'oddEvenSelect' && currentMode !== 'odd-even') return null;
-                        }
-
-                        return (
-                          <div key={opt.id} className="space-y-1.5">
+                      {tool.options.map(opt => (
+                        <div key={opt.id} className="space-y-1.5">
                           <label
                             htmlFor={`opt-${opt.id}`}
                             className="block text-xs font-semibold"
@@ -606,8 +630,7 @@ export default function Dropzone({ tool }) {
                             </div>
                           )}
                         </div>
-                      );
-                      })}
+                      ))}
                     </div>
                   </div>
                 )}
