@@ -1,5 +1,8 @@
 export const TOOLS_CATEGORIES = [
   { id: 'all', name: 'All Tools' },
+  { id: 'image', name: 'Image Tools' },
+  { id: 'video', name: 'Video Tools' },
+  { id: 'audio', name: 'Audio Tools' },
   { id: 'convert-to', name: 'Convert to PDF' },
   { id: 'convert-from', name: 'Convert from PDF' },
   { id: 'organize', name: 'Edit & Organize' },
@@ -725,6 +728,792 @@ export const TOOLS = [
       {
         q: 'Will splitting damage the quality of text or embedded images?',
         a: 'No. PDFora extracts the raw page objects directly from the PDF stream without re-compression, preserving 100% of the original quality.'
+      }
+    ]
+  },
+  {
+    id: 'image-background-remover',
+    name: 'Image Background Remover',
+    slug: 'image-background-remover',
+    path: '/image-background-remover',
+    category: 'image',
+    shortDesc: 'Remove backgrounds from JPG, PNG, and WebP images automatically with AI.',
+    description: 'Instantly cut out background from photos using advanced deep learning segmentation directly in your browser. Download high-resolution PNGs with transparent backgrounds.',
+    iconName: 'Sparkles',
+    badge: 'New AI',
+    acceptedTypes: '.jpg, .jpeg, .png, .webp, image/jpeg, image/png, image/webp',
+    acceptedFileLabel: 'JPG, PNG, WebP images',
+    maxFiles: 1,
+    options: [],
+    features: [
+      'Automatic AI foreground segmentation with fine edge detection',
+      'Supports portraits, products, animals, logos, and graphics',
+      '100% private in-browser WebAssembly neural network processing',
+      'Instant interactive before/after split comparison slider',
+      'Download crystal-clear PNG with alpha transparency'
+    ],
+    steps: [
+      'Upload or drag & drop your photo (JPG, PNG, or WebP).',
+      'Watch the in-browser AI engine detect the subject and extract the background.',
+      'Compare original vs processed results and download your transparent PNG.'
+    ],
+    overview: 'Removing photo backgrounds traditionally required expensive desktop software and tedious manual clipping path masking. PDFora Image Background Remover leverages state-of-the-art WebAssembly deep neural networks to segment subjects automatically in your browser. Hair strands, intricate borders, and product outlines are separated with surgical precision—completely free, without watermarks, and with 100% client-side privacy.',
+    useCases: [
+      {
+        title: 'E-Commerce Product Listings',
+        desc: 'Clean up product photos for Amazon, eBay, Shopify, and Etsy stores by placing items on transparent or pure white backgrounds.'
+      },
+      {
+        title: 'Portraits, Headshots & Avatars',
+        desc: 'Isolate headshots for LinkedIn resumes, company team rosters, ID badges, and social media profile pictures.'
+      },
+      {
+        title: 'Graphic Design & Marketing Creatives',
+        desc: 'Extract logos, icons, and hero subjects for promotional flyers, banners, YouTube thumbnails, and presentation slides.'
+      },
+      {
+        title: 'Signatures & Stamp Extraction',
+        desc: 'Extract clean transparent signatures and authorization stamps to place onto digital agreements and PDF documents.'
+      }
+    ],
+    technicalSpecs: [
+      { label: 'Supported Input Formats', value: 'JPG, JPEG, PNG, WEBP (up to 35 MB)' },
+      { label: 'Output Format', value: 'Lossless 32-bit RGBA PNG with 8-bit Alpha Transparency' },
+      { label: 'AI Segmentation Engine', value: 'In-Browser ONNX Neural Network (ISNet Deep Learning Architecture)' },
+      { label: 'Resolution Retention', value: 'Preserves full native input pixel dimensions' },
+      { label: 'Data Security', value: '100% Client-Side In-Memory Execution (Zero server upload)' }
+    ],
+    proTips: [
+      'Photos with high contrast between the subject and the background produce the crispest cutouts.',
+      'For product photography, ensure even lighting across all edges to eliminate dark perimeter shadows.',
+      'After removing the background, you can insert the transparent PNG into any PDF or slide deck using our PDF tools.'
+    ],
+    faqs: [
+      {
+        q: 'Does PDFora upload my photos to any remote server to remove backgrounds?',
+        a: 'No. Unlike other online tools that send your personal photos to third-party cloud servers, PDFora executes neural network AI segmentation directly in your browser memory using WebAssembly. Your photos never leave your device.'
+      },
+      {
+        q: 'Is there any watermark or resolution cap on downloaded images?',
+        a: 'None! Your output PNG retains its original high-resolution dimensions without any watermark or subscription fee.'
+      },
+      {
+        q: 'What image formats are supported?',
+        a: 'You can upload JPG, JPEG, PNG, and WebP images up to 35 MB.'
+      },
+      {
+        q: 'Can I remove backgrounds from multiple photos in sequence?',
+        a: 'Yes. Once your image is processed, simply click "Process Another Image" or "Reset" to immediately upload another photo.'
+      }
+    ]
+  },
+  {
+    id: 'image-compressor',
+    name: 'Image Compressor',
+    slug: 'image-compressor',
+    path: '/image-compressor',
+    category: 'image',
+    shortDesc: 'Compress JPG, PNG, and WebP images with custom quality and size controls.',
+    description: 'Reduce image file sizes by up to 90% without visible quality degradation. Choose presets, adjust compression quality sliders, or convert formats on the fly.',
+    iconName: 'Minimize2',
+    badge: 'Fast',
+    acceptedTypes: '.jpg, .jpeg, .png, .webp, image/jpeg, image/png, image/webp',
+    acceptedFileLabel: 'JPG, PNG, WebP images',
+    maxFiles: 1,
+    options: [],
+    features: [
+      'Shrink image sizes by up to 90% with smart quantization & resampling',
+      'Presets for High Quality (88%), Balanced (72%), and Max Compression (42%)',
+      'Custom quality slider (10% - 100%) and optional resolution downscaling',
+      'Convert between JPG, PNG, and next-gen WebP formats seamlessly',
+      'Live before/after comparison slider and accurate space-saved calculation'
+    ],
+    steps: [
+      'Upload your JPG, PNG, or WebP photo.',
+      'Choose your preferred compression preset or fine-tune quality and format.',
+      'Preview real calculated size savings and download your optimized image.'
+    ],
+    overview: 'Unoptimized images slow down websites, waste cloud storage, and exceed email attachment limits. PDFora Image Compressor provides fine-grained image optimization directly in your browser. Using advanced color space quantization, discrete cosine transform (DCT) deflating, and high-efficiency WebP/JPEG encoding, you can drastically reduce file sizes while retaining crisp visual quality.',
+    useCases: [
+      {
+        title: 'Website Performance & SEO Optimization',
+        desc: 'Compress blog images and homepage banners to improve Google Core Web Vitals, page speed scores, and user engagement.'
+      },
+      {
+        title: 'Email & Messaging Attachments',
+        desc: 'Reduce large multi-megabyte photos down to lightweight files that send instantly on WhatsApp, Gmail, and Outlook.'
+      },
+      {
+        title: 'Online Portal & Government Form Uploads',
+        desc: 'Satisfy strict 500 KB or 1 MB file upload requirements for visa portals, university applications, and government submissions.'
+      },
+      {
+        title: 'Mobile Storage & Cloud Backup Savings',
+        desc: 'Compress high-resolution smartphone galleries to reclaim gigabytes of phone and Google Drive storage.'
+      }
+    ],
+    technicalSpecs: [
+      { label: 'Supported Input Formats', value: 'JPG, JPEG, PNG, WEBP (up to 50 MB)' },
+      { label: 'Output Formats', value: 'WebP (Next-Gen), JPEG, PNG, or Original Format' },
+      { label: 'Compression Presets', value: 'High Quality (~88%), Balanced (~72%), Max Compression (~42%), Custom' },
+      { label: 'Resolution Scaling', value: 'Keep Native, 4K (3840px), Full HD (1920px), HD (1280px), Web (800px)' },
+      { label: 'Processing Speed', value: 'Near-instantaneous in-memory canvas & WebCodecs pipeline' }
+    ],
+    proTips: [
+      'Converting PNG images to WebP can reduce file size by up to 80% with virtually zero perceptible loss in visual detail.',
+      'Use the "Balanced" preset for general website images, blog posts, and email attachments.',
+      'Use the Before/After split slider to verify that text and sharp edges remain crisp before downloading.'
+    ],
+    faqs: [
+      {
+        q: 'How much can I reduce my image file size?',
+        a: 'Typical file size savings range between 50% and 90% depending on the original image dimensions, format, and chosen compression preset.'
+      },
+      {
+        q: 'Will my image lose visible quality after compression?',
+        a: 'PDFora uses perceptual compression algorithms designed to remove imperceptible high-frequency noise while preserving sharp edges and color vibrancy.'
+      },
+      {
+        q: 'Can I convert my image to WebP format?',
+        a: 'Yes! You can choose "WebP" in the Output Format dropdown to convert JPG or PNG files into modern lightweight WebP images.'
+      },
+      {
+        q: 'Are my private photos uploaded to a server?',
+        a: 'No. PDFora compresses images directly in your web browser memory using client-side canvas and WebAssembly, guaranteeing 100% privacy.'
+      }
+    ]
+  },
+  {
+    id: 'pdf-to-word',
+    name: 'PDF to Word',
+    slug: 'pdf-to-word',
+    path: '/pdf-to-word',
+    category: 'convert-from',
+    shortDesc: 'Convert PDF documents to editable Microsoft Word (DOCX) files.',
+    description: 'Transform PDF documents into fully editable Microsoft Word (.docx) documents. Preserves headings, paragraphs, bullet lists, formatting, and tables.',
+    iconName: 'FileText',
+    badge: 'Popular',
+    acceptedTypes: '.pdf, application/pdf',
+    acceptedFileLabel: 'PDF document',
+    maxFiles: 1,
+    options: [],
+    features: [
+      'Extracts text, headings, and formatting into real editable DOCX format',
+      'Detects tabular data and reconstructs structured Word tables',
+      'Supports multi-page documents with automatic page break preservation',
+      '100% private in-browser client-side execution'
+    ],
+    steps: [
+      'Upload your PDF document via drag & drop or file selector.',
+      'Our engine analyzes text hierarchy, font styles, and columnar data.',
+      'Download your genuine, fully editable Microsoft Word (.docx) document.'
+    ],
+    overview: 'Converting read-only PDF files into editable Word documents is essential for revising agreements, updating CVs, and extracting research text. PDFora PDF to Word converter parses text coordinates, detects font weights and headers, reconstructs table columns, and compiles a clean, standardized Office OpenXML (.docx) file directly in your browser.',
+    useCases: [
+      {
+        title: 'Contract & Agreement Amendments',
+        desc: 'Edit contract terms, adjust clauses, and update agreement dates in Word without retyping from scratch.'
+      },
+      {
+        title: 'CV & Resume Customization',
+        desc: 'Update employment history, contact info, and skills in existing PDF resumes for new job applications.'
+      },
+      {
+        title: 'Academic Research & Literature',
+        desc: 'Extract quotations, bibliography citations, and journal excerpts into Word documents for thesis drafting.'
+      },
+      {
+        title: 'Business Reports & Proposals',
+        desc: 'Repurpose existing marketing analyses and executive summaries into newly formatted slide decks or briefs.'
+      }
+    ],
+    technicalSpecs: [
+      { label: 'Input Standard', value: 'ISO 32000-1 PDF (Text-based & Vector PDFs)' },
+      { label: 'Output Format', value: 'Microsoft Word Document (.docx - Office OpenXML Standard)' },
+      { label: 'Table Extraction', value: 'Automatic multi-column baseline clustering & cell grid generation' },
+      { label: 'Security Standard', value: '100% Client-Side In-Memory Execution (Zero server file persistence)' },
+      { label: 'Max File Batch', value: '1 file per conversion session' }
+    ],
+    proTips: [
+      'Standard digital PDFs with selectable text yield the highest conversion fidelity.',
+      'Tables with clear horizontal alignment will automatically convert into formatted Word tables.',
+      'Headings and larger titles are mapped to Word Heading 1 and Heading 2 styles for easy navigation.'
+    ],
+    faqs: [
+      {
+        q: 'Will the generated file be an actual editable Word (.docx) document?',
+        a: 'Yes. PDFora generates a genuine Microsoft Word Office OpenXML (.docx) file compatible with Microsoft Word, Google Docs, Apple Pages, and LibreOffice.'
+      },
+      {
+        q: 'Does it support scanned PDFs or image-only documents?',
+        a: 'PDFora requires text-based PDFs for vector extraction. If an image-only scanned PDF is uploaded without selectable text, the converter will notify you.'
+      },
+      {
+        q: 'Are my confidential documents uploaded to third-party servers?',
+        a: 'No. The conversion pipeline executes entirely inside your browser memory using WebAssembly. Your files are never stored or transmitted to external servers.'
+      }
+    ]
+  },
+  {
+    id: 'pdf-to-excel',
+    name: 'PDF to Excel',
+    slug: 'pdf-to-excel',
+    path: '/pdf-to-excel',
+    category: 'convert-from',
+    shortDesc: 'Extract tabular data from PDF files into Microsoft Excel spreadsheets.',
+    description: 'Pull tables, financial figures, transaction rows, and data grids from PDF documents directly into clean Microsoft Excel (.xlsx) workbooks.',
+    iconName: 'Table',
+    badge: 'Popular',
+    acceptedTypes: '.pdf, application/pdf',
+    acceptedFileLabel: 'PDF document',
+    maxFiles: 1,
+    options: [],
+    features: [
+      'Intelligent table detection and column boundary clustering',
+      'Automatic data type casting for numbers, currencies, dates, and text',
+      'Creates structured worksheets for multi-page document tables',
+      'Auto-sized column widths for immediate readability'
+    ],
+    steps: [
+      'Upload your PDF containing data tables or financial sheets.',
+      'The engine scans coordinates and constructs structured 2D cell grids.',
+      'Download your genuine Microsoft Excel (.xlsx) spreadsheet.'
+    ],
+    overview: 'Re-entering data from PDF invoices, bank statements, financial ledgers, and academic tables into spreadsheets by hand is slow and prone to human error. PDFora PDF to Excel converter analyzes spatial positioning across rows and columns to reconstruct clean, typed spreadsheets ready for formulas and data analysis.',
+    useCases: [
+      {
+        title: 'Bank & Credit Card Statements',
+        desc: 'Extract financial transactions, debit/credit amounts, and date columns for accounting reconciliation and tax prep.'
+      },
+      {
+        title: 'Vendor Invoices & Purchase Orders',
+        desc: 'Import itemized pricing, quantity tables, and VAT calculations into Excel for ERP and inventory updates.'
+      },
+      {
+        title: 'Scientific Data & Survey Tables',
+        desc: 'Extract research figures, laboratory metrics, and polling tables into Excel for graphing and statistical modeling.'
+      },
+      {
+        title: 'Corporate Financial Statements',
+        desc: 'Convert balance sheets, P&L tables, and budget projections into malleable Excel workbooks.'
+      }
+    ],
+    technicalSpecs: [
+      { label: 'Supported Input', value: 'PDF Documents (.pdf) containing data tables' },
+      { label: 'Output Standard', value: 'Microsoft Excel OpenXML Spreadsheet (.xlsx)' },
+      { label: 'Data Type Detection', value: 'Numeric casting, currency stripping, date inference, UTF-8 strings' },
+      { label: 'Multi-Page Handling', value: 'Individual page worksheets or combined table compilation' },
+      { label: 'Privacy', value: '100% In-Browser Client Computation' }
+    ],
+    proTips: [
+      'Ensure table columns in the PDF have consistent vertical alignment for optimal column separation.',
+      'Numbers with commas or currency symbols are intelligently converted into native numeric cells.',
+      'Multi-page PDFs will generate organized "Page 1", "Page 2" tabs within the same Excel workbook.'
+    ],
+    faqs: [
+      {
+        q: 'Will numbers be formatted as actual numbers in Excel?',
+        a: 'Yes. PDFora detects numeric values and formats them as real spreadsheet numbers so you can immediately perform sums, averages, and formulas.'
+      },
+      {
+        q: 'How does it handle multi-page tables?',
+        a: 'Each page of data is compiled into organized worksheet tabs within a single downloadable .xlsx workbook.'
+      },
+      {
+        q: 'Are my financial spreadsheets private?',
+        a: 'Completely. Files are parsed 100% locally in your web browser session without transmitting sensitive numbers to remote disks.'
+      }
+    ]
+  },
+  {
+    id: 'excel-to-word',
+    name: 'Excel to Word',
+    slug: 'excel-to-word',
+    path: '/excel-to-word',
+    category: 'organize',
+    shortDesc: 'Convert Excel spreadsheets into styled Microsoft Word document tables.',
+    description: 'Transform Microsoft Excel workbooks (.xlsx, .xls, .csv) into beautifully formatted Word (.docx) documents with clean table grids and sheet sections.',
+    iconName: 'Table',
+    badge: 'New',
+    acceptedTypes: '.xlsx, .xls, .csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/csv',
+    acceptedFileLabel: 'XLSX, XLS, CSV spreadsheets',
+    maxFiles: 1,
+    options: [],
+    features: [
+      'Converts spreadsheet grids into styled, professional Word tables',
+      'Distinct headings and sections for multi-sheet workbooks',
+      'Preserves formatted numbers, currencies, dates, and text alignments',
+      'Generates native Office OpenXML (.docx) files'
+    ],
+    steps: [
+      'Upload your Excel spreadsheet (.xlsx, .xls, or .csv).',
+      'Our engine reads worksheets, headers, rows, and cell alignments.',
+      'Download your formatted Microsoft Word (.docx) document.'
+    ],
+    overview: 'Sharing raw spreadsheets in formal reports, executive memos, or client proposals often looks unpolished. PDFora Excel to Word converter transforms tabular spreadsheet data into styled Microsoft Word tables with shaded header rows, proper cell borders, right-aligned numbers, and distinct sections for each worksheet in your workbook.',
+    useCases: [
+      {
+        title: 'Executive Financial Summaries',
+        desc: 'Embed quarterly revenue tables and balance sheet overviews directly into Word board meeting documents.'
+      },
+      {
+        title: 'Project Milestones & Task Deliverables',
+        desc: 'Convert project management tracking sheets into readable Word status reports for stakeholders.'
+      },
+      {
+        title: 'Client Invoicing & Billing Schedules',
+        desc: 'Transform pricing estimates and hourly breakdown sheets into professional Word invoices.'
+      },
+      {
+        title: 'Audit & Compliance Reports',
+        desc: 'Compile internal control checklists and inventory counts into formatted Word documentation.'
+      }
+    ],
+    technicalSpecs: [
+      { label: 'Supported Inputs', value: '.xlsx, .xls (Excel 97-2024), .csv files' },
+      { label: 'Output Standard', value: 'Microsoft Word Document (.docx - ISO/IEC 29500)' },
+      { label: 'Table Styling', value: 'Accent header shading, alternating row fills, custom cell padding' },
+      { label: 'Multi-Sheet Structure', value: 'Sequential Word sections labeled by worksheet name' },
+      { label: 'Execution', value: '100% In-Browser Client-Side Processing' }
+    ],
+    proTips: [
+      'Ensure the first row of your Excel sheet contains clear column headers for the cleanest table appearance in Word.',
+      'Multi-sheet workbooks will automatically generate separate labeled tables for each tab in your Word file.',
+      'Numbers are aligned to the right and text to the left to maintain professional typographic standards.'
+    ],
+    faqs: [
+      {
+        q: 'Does it support workbooks with multiple sheet tabs?',
+        a: 'Yes! Every worksheet in your Excel file is converted into its own labeled table inside the resulting Word document.'
+      },
+      {
+        q: 'Will cell formulas be visible?',
+        a: 'The converter outputs the final calculated values and formatted text from the spreadsheet into the Word table cells.'
+      },
+      {
+        q: 'Is my data secure?',
+        a: 'Yes. All parsing and Word generation occurs client-side in your browser memory.'
+      }
+    ]
+  },
+  {
+    id: 'word-to-excel',
+    name: 'Word to Excel',
+    slug: 'word-to-excel',
+    path: '/word-to-excel',
+    category: 'organize',
+    shortDesc: 'Extract tables and structured data from Word documents into Excel.',
+    description: 'Extract tables, data rows, key-value pairs, and structured lists from Microsoft Word (.docx) files into clean Microsoft Excel (.xlsx) spreadsheets.',
+    iconName: 'FileText',
+    badge: 'New',
+    acceptedTypes: '.docx, .doc, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/msword',
+    acceptedFileLabel: 'DOCX, DOC files',
+    maxFiles: 1,
+    options: [],
+    features: [
+      'Extracts XML tables (<w:tbl>) into separate Excel worksheet tabs',
+      'Intelligently structures key-value pairs and tabular lists into columns',
+      'Automatic numeric and currency data type parsing',
+      '100% private in-browser client execution'
+    ],
+    steps: [
+      'Upload your Word document (.docx) containing tables or lists.',
+      'The engine parses XML structures and extracts tabular rows and cells.',
+      'Download your organized Microsoft Excel (.xlsx) spreadsheet.'
+    ],
+    overview: 'When data is trapped inside Word tables, copying and pasting multiple rows into Excel often results in scrambled columns and broken cell boundaries. PDFora Word to Excel converter parses the underlying document XML structure to extract every table with 100% cell accuracy, placing each table into organized worksheet tabs in a genuine .xlsx workbook.',
+    useCases: [
+      {
+        title: 'Word Table Data Extraction',
+        desc: 'Extract complex product specs, pricing matrices, and employee lists from Word files into Excel for analysis.'
+      },
+      {
+        title: 'Contract Pricing & Line-Item Audits',
+        desc: 'Pull fee structures and milestone payment tables from Word agreements into spreadsheets for accounting.'
+      },
+      {
+        title: 'Survey & Questionnaires Responses',
+        desc: 'Convert filled Word feedback forms and assessment rubrics into structured spreadsheet rows.'
+      },
+      {
+        title: 'Inventory & Asset Lists',
+        desc: 'Transfer hardware logs and catalog tables from Word manuals into active Excel inventory trackers.'
+      }
+    ],
+    technicalSpecs: [
+      { label: 'Supported Inputs', value: '.docx (Microsoft Word 2007-2024, Google Docs export)' },
+      { label: 'Output Standard', value: 'Microsoft Excel OpenXML Spreadsheet (.xlsx)' },
+      { label: 'XML Parser', value: 'DOM-level <w:tbl>, <w:tr>, <w:tc> table structure extraction' },
+      { label: 'Fallback Mode', value: 'Structured key-value & delimited paragraph row mapping' },
+      { label: 'Privacy', value: '100% In-Browser Client Execution' }
+    ],
+    proTips: [
+      'Word documents containing standard tables (<w:tbl>) will convert with 100% column precision.',
+      'If your document has multiple tables, each table is placed into its own dedicated sheet tab in Excel.',
+      'Numbers inside cells are automatically parsed into numeric format for immediate spreadsheet calculations.'
+    ],
+    faqs: [
+      {
+        q: 'What happens if my Word document has multiple tables?',
+        a: 'Each table is extracted into its own worksheet tab (e.g. Table 1, Table 2) within the generated Excel workbook.'
+      },
+      {
+        q: 'What if my Word document does not have formal tables?',
+        a: 'Our smart parser will analyze structured key-value lines and tab-separated text to organize the content into spreadsheet rows.'
+      },
+      {
+        q: 'Are my confidential documents private?',
+        a: 'Yes. The Word document is unpacked and parsed directly in your browser memory without server persistence.'
+      }
+    ]
+  },
+  {
+    id: 'video-to-audio',
+    name: 'Video to Audio',
+    slug: 'video-to-audio',
+    path: '/video-to-audio',
+    category: 'audio',
+    shortDesc: 'Extract MP3, WAV, AAC, M4A, OGG, or FLAC audio from any video.',
+    description: 'Extract high-fidelity audio tracks from video files including MP4, WebM, MKV, AVI, MOV, WMV, FLV, and TS without video re-encoding artifacts.',
+    iconName: 'Music',
+    badge: 'Popular',
+    acceptedTypes: 'video/*,.mp4,.webm,.mkv,.avi,.mov,.flv,.wmv,.mpeg,.mpg,.m4v,.3gp,.ogv,.ts',
+    acceptedFileLabel: 'Video files (MP4, WebM, MKV, MOV, AVI, etc.)',
+    maxFiles: 1,
+    options: [],
+    features: [
+      'Extracts genuine audio streams directly with FFmpeg transcoding',
+      'Supports MP3, WAV, AAC, M4A, OGG, and FLAC output formats',
+      'Custom bitrate selection from 96 kbps up to 320 kbps studio quality',
+      'Integrated in-browser audio player preview and instant download'
+    ],
+    steps: [
+      'Upload your video file (MP4, WebM, MKV, MOV, AVI, etc.).',
+      'Select your desired audio format (MP3, WAV, M4A, etc.) and bitrate.',
+      'Download your pristine, extracted audio file immediately.'
+    ],
+    overview: 'Whether you want to extract a lecture from a webinar recording, create a podcast audio track from a video interview, or pull background music from a clip, PDFora Video to Audio tool provides studio-grade audio extraction powered by FFmpeg.',
+    useCases: [
+      {
+        title: 'Podcasts & Webinar Audio',
+        desc: 'Strip video streams from Zoom, Teams, or YouTube recordings to distribute lightweight audio-only episodes.'
+      },
+      {
+        title: 'Music & Sound Effects',
+        desc: 'Extract sample clips, dialogue lines, and background music tracks for video editing and remixing.'
+      },
+      {
+        title: 'Voice Memos & Interviews',
+        desc: 'Convert video interviews into compact MP3 or AAC files for automated transcription and audio notes.'
+      },
+      {
+        title: 'Lossless Studio Audio Extraction',
+        desc: 'Export 24-bit/16-bit uncompressed WAV or FLAC audio tracks for music production and DAWs.'
+      }
+    ],
+    technicalSpecs: [
+      { label: 'Input Formats', value: 'MP4, WebM, MKV, AVI, MOV, FLV, WMV, MPEG, MPG, M4V, 3GP, OGV, TS (up to 200 MB)' },
+      { label: 'Output Formats', value: 'MP3 (LAME), WAV (PCM 16-bit), AAC, M4A (AAC-LC), OGG (Vorbis), FLAC (Lossless)' },
+      { label: 'Audio Bitrates', value: '320 kbps (Ultra), 256 kbps (High), 192 kbps (Standard), 128 kbps (Balanced), 96 kbps' },
+      { label: 'Engine', value: 'Server-side FFmpeg transcode pipeline with automated temp-file cleanup' }
+    ],
+    proTips: [
+      'Choose MP3 for universal playback on smartphones, car stereos, and portable media players.',
+      'Select WAV or FLAC if you plan on editing the audio track in Audacity, Premiere, or Final Cut.',
+      'Use the 192 kbps bitrate for the optimal balance of acoustic clarity and compact file size.'
+    ],
+    faqs: [
+      {
+        q: 'Does this produce a real MP3/WAV file or just rename the extension?',
+        a: 'PDFora executes actual FFmpeg audio demuxing and encoding. The resulting file contains genuine decoded audio headers and bitstreams.'
+      },
+      {
+        q: 'What if my video does not have an audio track?',
+        a: 'The engine will detect that no audio stream exists in the video container and inform you with a clear notice.'
+      },
+      {
+        q: 'Are my uploaded videos stored permanently?',
+        a: 'No. Uploaded files and temporary audio outputs are strictly deleted immediately following conversion completion.'
+      }
+    ]
+  },
+  {
+    id: 'audio-compressor',
+    name: 'Audio Compressor',
+    slug: 'audio-compressor',
+    path: '/audio-compressor',
+    category: 'audio',
+    shortDesc: 'Reduce audio file size with quality presets and bitrate controls.',
+    description: 'Compress MP3, WAV, AAC, M4A, OGG, and FLAC audio files to reduce file size for email attachments, podcasts, and mobile storage.',
+    iconName: 'Minimize2',
+    badge: 'New',
+    acceptedTypes: 'audio/*,.mp3,.wav,.aac,.m4a,.ogg,.flac,.wma,.aiff,.opus',
+    acceptedFileLabel: 'Audio files (MP3, WAV, M4A, OGG, FLAC, etc.)',
+    maxFiles: 1,
+    options: [],
+    features: [
+      'Reduces audio file size by up to 80% while retaining clear vocal and acoustic fidelity',
+      'Presets for High Quality (192k), Balanced (128k), and Maximum Compression (64k)',
+      'Accurate real-time file size comparison and space savings calculation',
+      'Supports MP3, M4A, OGG, and OPUS output containers'
+    ],
+    steps: [
+      'Upload your audio file (MP3, WAV, M4A, FLAC, etc.).',
+      'Choose your compression preset or target output container.',
+      'Download your compact, optimized audio file.'
+    ],
+    overview: 'Uncompressed audio recordings and high-bitrate tracks consume substantial disk space and frequently fail to send over email or messaging apps. PDFora Audio Compressor applies psychoacoustic compression algorithms to shrink audio files without introducing harsh audio distortion.',
+    useCases: [
+      {
+        title: 'Email & WhatsApp Attachments',
+        desc: 'Reduce 30 MB voice recordings and music tracks down to lightweight files that send instantly.'
+      },
+      {
+        title: 'Podcast Distribution',
+        desc: 'Compress podcast episodes to standard 128 kbps or 96 kbps bitrates to minimize streaming bandwidth.'
+      },
+      {
+        title: 'Mobile Phone & Cloud Storage Savings',
+        desc: 'Compress large WAV studio sessions into high-quality MP3s to free up valuable storage space.'
+      },
+      {
+        title: 'Website & App Sound Effects',
+        desc: 'Optimize UI audio assets and game sound effects for rapid web loading and low memory usage.'
+      }
+    ],
+    technicalSpecs: [
+      { label: 'Supported Inputs', value: 'MP3, WAV, AAC, M4A, OGG, FLAC, WMA, AIFF, OPUS (up to 200 MB)' },
+      { label: 'Output Containers', value: 'MP3 (MPEG Audio), M4A (AAC), OGG (Vorbis), OPUS' },
+      { label: 'Bitrate Profiles', value: '192 kbps (High Quality), 128 kbps (Balanced), 64 kbps (Max Compression)' },
+      { label: 'Processing Engine', value: 'FFmpeg psychoacoustic compression with perceptual rate allocation' }
+    ],
+    proTips: [
+      'Converting uncompressed WAV files to 192 kbps MP3 reduces file size by over 85% with no audible difference to the human ear.',
+      'For spoken-word audio, speech recordings, and audiobooks, the "Maximum Savings" (64 kbps) preset produces tiny file sizes with clear vocal clarity.',
+      'Use the integrated audio player to audition the compressed file before downloading.'
+    ],
+    faqs: [
+      {
+        q: 'Will my audio lose noticeable sound quality?',
+        a: 'Our compression presets are tuned using psychoacoustic models that remove imperceptible frequencies, maintaining crisp dialogue and music.'
+      },
+      {
+        q: 'What if the audio is already heavily compressed?',
+        a: 'If a file is already encoded at a low bitrate (e.g. 64 kbps), compressing it further may yield modest size savings. PDFora accurately reports exact bytes saved.'
+      },
+      {
+        q: 'Are my audio recordings kept private?',
+        a: 'Yes. Files are processed in temporary memory sessions and automatically deleted upon completion.'
+      }
+    ]
+  },
+  {
+    id: 'image-converter',
+    name: 'Image Converter',
+    slug: 'image-converter',
+    path: '/image-converter',
+    category: 'image',
+    shortDesc: 'Convert images between JPG, PNG, WebP, AVIF, TIFF, and GIF.',
+    description: 'Transform images between formats with full transparency preservation, custom compression quality sliders, and lossless encoding options.',
+    iconName: 'RefreshCw',
+    badge: 'Popular',
+    acceptedTypes: 'image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp,.tiff,.tif,.avif,.svg,.ico',
+    acceptedFileLabel: 'Image files (JPG, PNG, WebP, AVIF, TIFF, GIF, BMP, etc.)',
+    maxFiles: 1,
+    options: [],
+    features: [
+      'Converts between JPG, PNG, WebP, AVIF, TIFF, and GIF formats',
+      'Preserves alpha transparency channels across compatible formats',
+      'Custom quality sliders and bit-for-bit lossless compression modes',
+      'Instant image preview with accurate size comparison'
+    ],
+    steps: [
+      'Upload your image (JPG, PNG, WebP, GIF, BMP, TIFF, AVIF).',
+      'Select your target format and adjust quality or lossless settings.',
+      'Download your converted, high-resolution image.'
+    ],
+    overview: 'Different platforms and publishing workflows require different image formats: WebP for modern web performance, PNG for transparent graphics, JPG for photo compatibility, and AVIF for next-generation compression. PDFora Image Converter delivers instant, high-fidelity conversions with granular quality controls.',
+    useCases: [
+      {
+        title: 'Web & App Performance Optimization',
+        desc: 'Convert heavy PNG and JPG photos into lightweight WebP or AVIF images to boost website page load speed.'
+      },
+      {
+        title: 'Transparent Logo & Graphic Conversion',
+        desc: 'Convert transparent PNG logos into WebP for modern websites or TIFF for high-resolution print design.'
+      },
+      {
+        title: 'Universal Device Compatibility',
+        desc: 'Convert modern HEIF/AVIF/WebP images into universal JPG format for older software and office suites.'
+      },
+      {
+        title: 'Print & Desktop Publishing',
+        desc: 'Export images to high-depth TIFF format for commercial printing and raster publishing.'
+      }
+    ],
+    technicalSpecs: [
+      { label: 'Supported Inputs', value: 'JPG, JPEG, PNG, WebP, GIF, BMP, TIFF, TIF, AVIF, SVG, ICO (up to 50 MB)' },
+      { label: 'Target Outputs', value: 'WebP (Next-Gen), PNG (Lossless), JPG (Universal), AVIF (High Efficiency), TIFF, GIF' },
+      { label: 'Quality Control', value: '20% to 100% lossy slider + Bit-for-Bit Lossless toggle' },
+      { label: 'Engine', value: 'High-performance Libvips / Sharp image processing engine' }
+    ],
+    proTips: [
+      'Converting PNG graphics with flat colors and transparent backgrounds to WebP can reduce file size by 70% while keeping transparency.',
+      'When converting PNG to JPG, remember that JPG does not support transparency and will place transparent pixels over a clean white background.',
+      'For maximum web performance and Core Web Vitals scores, AVIF and WebP are the recommended modern formats.'
+    ],
+    faqs: [
+      {
+        q: 'Is image transparency preserved?',
+        a: 'Yes! When converting between formats that support transparency (PNG, WebP, AVIF, TIFF), full alpha channel transparency is preserved.'
+      },
+      {
+        q: 'Can I choose the output quality?',
+        a: 'Yes. For lossy formats (JPG, WebP, AVIF), you can set the exact quality from 20% to 100%, or toggle Lossless mode for WebP and AVIF.'
+      },
+      {
+        q: 'Are my private photos uploaded to external servers?',
+        a: 'No. Conversions occur in transient memory sessions and all data is cleaned up immediately upon download.'
+      }
+    ]
+  },
+  {
+    id: 'video-converter',
+    name: 'Video Converter',
+    slug: 'video-converter',
+    path: '/video-converter',
+    category: 'video',
+    shortDesc: 'Convert videos between MP4, WebM, MKV, AVI, MOV, WMV, and OGV.',
+    description: 'Transcode video files into different containers and codecs with resolution scaling (1080p, 720p, 480p) and balanced encoding presets.',
+    iconName: 'FileVideo',
+    badge: 'Popular',
+    acceptedTypes: 'video/*,.mp4,.webm,.mkv,.avi,.mov,.flv,.wmv,.mpeg,.mpg,.m4v,.3gp,.ogv,.ts',
+    acceptedFileLabel: 'Video files (MP4, WebM, MKV, MOV, AVI, etc.)',
+    maxFiles: 1,
+    options: [],
+    features: [
+      'Transcodes between MP4, WebM, MKV, MOV, AVI, WMV, FLV, and OGV',
+      'Resolution scaling options: Keep Native, 1080p FHD, 720p HD, 480p SD, 360p Web',
+      'Encoding quality profiles for High Fidelity, Balanced, and Fast transcode',
+      'Automatic audio track synchronization and video preview player'
+    ],
+    steps: [
+      'Upload your video file (MP4, WebM, MKV, MOV, AVI, etc.).',
+      'Choose your target video container and optional resolution downscale.',
+      'Download your converted, playable video file.'
+    ],
+    overview: 'Compatibility problems frequently prevent videos from playing across different operating systems, media players, smart TVs, and web browsers. PDFora Video Converter transcodes videos into universally compatible MP4 (H.264/AAC), web-ready WebM (VP9/Opus), Apple-friendly QuickTime MOV, or high-capacity MKV containers with guaranteed playback.',
+    useCases: [
+      {
+        title: 'Universal MP4 Transcoding',
+        desc: 'Convert incompatible MKV, AVI, and WMV video downloads into standard MP4 files playable on any device.'
+      },
+      {
+        title: 'HTML5 Web Video Embedding',
+        desc: 'Convert videos to WebP/WebM format for royalty-free, hardware-accelerated playback on web browsers.'
+      },
+      {
+        title: 'Video Editing & Production',
+        desc: 'Transcode recorded footage into QuickTime MOV or MP4 for editing in DaVinci Resolve and Adobe Premiere.'
+      },
+      {
+        title: 'Resolution Rescaling',
+        desc: 'Downscale 4K and 1080p phone recordings to 720p or 480p for instant sharing over messaging apps.'
+      }
+    ],
+    technicalSpecs: [
+      { label: 'Supported Inputs', value: 'MP4, WebM, MKV, AVI, MOV, FLV, WMV, MPEG, MPG, M4V, 3GP, OGV, TS (up to 200 MB)' },
+      { label: 'Output Containers', value: 'MP4 (H.264/AAC), WebM (VP9/Opus), MKV, MOV (QuickTime), AVI (MPEG-4), WMV, OGV' },
+      { label: 'Resolution Options', value: 'Native (Keep Source), 1080p (1920x1080), 720p (1280x720), 480p, 360p' },
+      { label: 'Transcode Engine', value: 'FFmpeg multi-threaded video encoding with web-optimized faststart metadata' }
+    ],
+    proTips: [
+      'MP4 with H.264 video and AAC audio is the world standard for 100% universal playback across smartphones, computers, and TVs.',
+      'If embedding a video on a website, WebM format offers higher visual quality at lower bitrates.',
+      'Downscaling a 1080p video to 720p reduces file size substantially while remaining crisp on mobile screens.'
+    ],
+    faqs: [
+      {
+        q: 'Does this perform actual video transcoding?',
+        a: 'Yes. PDFora uses FFmpeg to decode the source video bitstream and re-encode it with target codecs (such as libx264 or libvpx-vp9).'
+      },
+      {
+        q: 'Will the audio stay synchronized?',
+        a: 'Yes. The transcode pipeline preserves precise timecode timestamps, ensuring synchronized audio and video.'
+      },
+      {
+        q: 'Are uploaded videos private?',
+        a: 'Completely. Files are processed in isolated temporary workspaces and permanently removed immediately after encoding.'
+      }
+    ]
+  },
+  {
+    id: 'video-compressor',
+    name: 'Video Compressor',
+    slug: 'video-compressor',
+    path: '/video-compressor',
+    category: 'video',
+    shortDesc: 'Compress MP4, WebM, and MOV videos to reduce file size.',
+    description: 'Compress video files with smart Constant Rate Factor (CRF) presets and resolution scaling to shrink file size by up to 85% for email and sharing.',
+    iconName: 'Minimize2',
+    badge: 'New',
+    acceptedTypes: 'video/*,.mp4,.webm,.mkv,.avi,.mov,.flv,.wmv,.mpeg,.mpg,.m4v,.3gp,.ogv,.ts',
+    acceptedFileLabel: 'Video files (MP4, WebM, MKV, MOV, AVI, etc.)',
+    maxFiles: 1,
+    options: [],
+    features: [
+      'Compresses video file size by up to 85% using perceptual H.264 & AAC encoding',
+      'Presets for High Quality, Balanced, and Maximum Compression',
+      'Optional resolution downscaling to 1080p, 720p, or 480p',
+      'Displays real calculated size metrics, saved space %, and playable preview'
+    ],
+    steps: [
+      'Upload your video file (MP4, WebM, MKV, MOV, AVI, etc.).',
+      'Select your compression profile and optional resolution downscale.',
+      'Download your compact, optimized MP4 video.'
+    ],
+    overview: 'High-definition smartphone videos and screen captures often exceed email limits (25 MB) or discord upload caps. PDFora Video Compressor uses Constant Rate Factor (CRF) rate control to remove redundant visual information and compress video files into lightweight, easily shareable MP4 files without pixelation.',
+    useCases: [
+      {
+        title: 'Email & Messaging Uploads',
+        desc: 'Compress 100 MB smartphone recordings down under 25 MB to send seamlessly on Gmail, Outlook, and WhatsApp.'
+      },
+      {
+        title: 'Discord & Social Media Sharing',
+        desc: 'Fit gaming highlights and clips within free Discord (25 MB) and social upload limits.'
+      },
+      {
+        title: 'Mobile Phone & Cloud Drive Savings',
+        desc: 'Compress bulky video folders to free up storage space on Google Drive, Dropbox, and iPhone storage.'
+      },
+      {
+        title: 'Online Portals & Learning Submissions',
+        desc: 'Satisfy strict video file size upload caps for university submissions, job applications, and certification portals.'
+      }
+    ],
+    technicalSpecs: [
+      { label: 'Supported Inputs', value: 'MP4, WebM, MKV, AVI, MOV, FLV, WMV, MPEG, MPG, M4V, 3GP, TS (up to 200 MB)' },
+      { label: 'Output Standard', value: 'Universal MP4 (H.264 Video + AAC Audio + FastStart Web Streaming)' },
+      { label: 'Compression Profiles', value: 'High Quality (CRF 23), Balanced (CRF 28), Maximum Compression (CRF 33)' },
+      { label: 'Resolution Scaling', value: 'Keep Native, 1080p FHD, 720p HD, 480p SD' }
+    ],
+    proTips: [
+      'Use the "Balanced" preset for general video sharing on WhatsApp, Slack, and email.',
+      'Combining the "Maximum Compression" preset with 720p resolution scaling can shrink file size by over 80%.',
+      'All compressed outputs include faststart metadata, meaning videos begin playing instantly when streamed.'
+    ],
+    faqs: [
+      {
+        q: 'How much can I reduce my video file size?',
+        a: 'Depending on the chosen preset and original resolution, size savings typically range between 40% and 85%.'
+      },
+      {
+        q: 'Will the compressed video play on iPhone and Android?',
+        a: 'Yes. Outputs are encoded in universal H.264 / AAC MP4 format with yuv420p pixel format for 100% universal mobile and desktop playback.'
+      },
+      {
+        q: 'Are my private videos uploaded to remote servers?',
+        a: 'Files are processed in isolated transient memory containers and automatically deleted following compression.'
       }
     ]
   }

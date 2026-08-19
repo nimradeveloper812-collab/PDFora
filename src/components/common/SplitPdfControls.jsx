@@ -156,7 +156,7 @@ export default function SplitPdfControls({ totalPages = 1, config, onChange }) {
                         max={totalPages}
                         value={r.from}
                         onChange={(e) => handleRangeChange(idx, 'from', e.target.value)}
-                        className="w-14 sm:w-16 px-2 py-1.5 rounded-lg border border-blue-300 bg-white text-center font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-20 sm:w-24 px-2.5 py-1.5 rounded-lg border border-blue-300 bg-white text-center font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                       <span>to</span>
                       <input
@@ -165,7 +165,7 @@ export default function SplitPdfControls({ totalPages = 1, config, onChange }) {
                         max={totalPages}
                         value={r.to}
                         onChange={(e) => handleRangeChange(idx, 'to', e.target.value)}
-                        className="w-14 sm:w-16 px-2 py-1.5 rounded-lg border border-blue-300 bg-white text-center font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-20 sm:w-24 px-2.5 py-1.5 rounded-lg border border-blue-300 bg-white text-center font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
 
@@ -230,7 +230,7 @@ export default function SplitPdfControls({ totalPages = 1, config, onChange }) {
                     max={totalPages}
                     value={fixedPages}
                     onChange={(e) => update({ fixedPages: Math.max(1, parseInt(e.target.value, 10) || 1) })}
-                    className="w-16 px-2.5 py-1.5 rounded-lg border border-blue-300 bg-white text-center font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-20 sm:w-24 px-2.5 py-1.5 rounded-lg border border-blue-300 bg-white text-center font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <span className="text-xs sm:text-sm font-medium text-slate-600">pages each</span>
                 </div>

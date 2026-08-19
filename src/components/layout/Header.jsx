@@ -3,13 +3,15 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   FileText, ChevronDown, Menu, X, Sparkles, ArrowRight,
   FileCheck, Table, Presentation, Image as ImageIcon,
-  FileImage, Layers, Minimize2, Scissors, Grid3x3
+  FileImage, Layers, Minimize2, Scissors, Grid3x3,
+  Music, FileVideo, RefreshCw, Video, FileAudio
 } from 'lucide-react';
 import { TOOLS } from '../../data/toolsData';
 
 const iconMap = {
   FileText, Table, Presentation,
-  Image: ImageIcon, FileImage, Layers, Minimize2, Scissors
+  Image: ImageIcon, FileImage, Layers, Minimize2, Scissors, Sparkles,
+  Music, FileVideo, RefreshCw, Video, FileAudio
 };
 
 const prefetchTool = (id) => {
@@ -22,6 +24,17 @@ const prefetchTool = (id) => {
     case 'merge-pdf': import('../../pages/tools/MergePdf'); break;
     case 'compress-pdf': import('../../pages/tools/CompressPdf'); break;
     case 'split-pdf': import('../../pages/tools/SplitPdf'); break;
+    case 'image-background-remover': import('../../pages/tools/ImageBackgroundRemover'); break;
+    case 'image-compressor': import('../../pages/tools/ImageCompressor'); break;
+    case 'pdf-to-word': import('../../pages/tools/PdfToWord'); break;
+    case 'pdf-to-excel': import('../../pages/tools/PdfToExcel'); break;
+    case 'excel-to-word': import('../../pages/tools/ExcelToWord'); break;
+    case 'word-to-excel': import('../../pages/tools/WordToExcel'); break;
+    case 'video-to-audio': import('../../pages/tools/VideoToAudio'); break;
+    case 'audio-compressor': import('../../pages/tools/AudioCompressor'); break;
+    case 'image-converter': import('../../pages/tools/ImageConverter'); break;
+    case 'video-converter': import('../../pages/tools/VideoConverter'); break;
+    case 'video-compressor': import('../../pages/tools/VideoCompressor'); break;
     default: break;
   }
 };

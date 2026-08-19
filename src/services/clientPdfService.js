@@ -1025,5 +1025,505 @@ export const clientPdfService = {
       onProgress?.(100, 'Conversion complete!');
       return { blob: zipBlob, isZip: true };
     }
+  },
+
+  /* ── 9. PDF to Word (DOCX) ───────────────────────────────────────── */
+  async convertPdfToWord(file, onProgress) {
+    onProgress?.(10, 'Loading PDF document...');
+    const arrayBuffer = await file.arrayBuffer();
+    const loadingTask = pdfjsLib.getDocument({
+      data: arrayBuffer,
+      cMapUrl: PDFJS_CMAP_URL,
+      cMapPacked: true,
+      standardFontDataUrl: PDFJS_STANDARD_FONTS_URL,
+    });
+    const pdf = await loadingTask.promise;
+    const numPages = pdf.numPages;
+    if (numPages === 0) {
+      throw new Error('The uploaded PDF is empty.');
+    }
+
+    const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType } = await import('docx');
+
+    const docChildren = [];
+    let totalExtractedTokens = 0;
+
+    for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+      const pct = 15 + Math.round((pageNum / numPages) * 70);
+      onProgress?.(pct, `Analyzing page ${pageNum} of ${numPages}...`);
+
+      const page = await pdf.getPage(pageNum);
+      const textContent = await page.getTextContent();
+      const items = textContent.items || [];
+
+      if (items.length === 0) continue;
+      totalExtractedTokens += items.length;
+
+      const parsedItems = items
+        .filter(it => it.str && it.str.trim().length > 0)
+        .map(it => {
+          const x = it.transform ? it.transform[4] : 0;
+          const y = it.transform ? it.transform[5] : 0;
+          const fontSize = Math.hypot(it.transform?.[0] || 12, it.transform?.[1] || 0);
+          const fontName = (it.fontName || '').toLowerCase();
+          const isBold = fontName.includes('bold') || fontName.includes('black') || fontName.includes('heavy') || fontName.includes('b');
+          const isItalic = fontName.includes('italic') || fontName.includes('oblique');
+          return {
+            text: it.str,
+            x,
+            y,
+            width: it.width || 0,
+            height: it.height || fontSize,
+            fontSize: Math.round(fontSize),
+            isBold,
+            isItalic
+          };
+        });
+
+      if (parsedItems.length === 0) continue;
+
+      parsedItems.sort((a, b) => {
+        if (Math.abs(b.y - a.y) > 4) {
+          return b.y - a.y;
+        }
+        return a.x - b.x;
+      });
+
+      const lines = [];
+      let currentLine = [parsedItems[0]];
+      let currentY = parsedItems[0].y;
+
+      for (let i = 1; i < parsedItems.length; i++) {
+        const item = parsedItems[i];
+        if (Math.abs(item.y - currentY) <= 4) {
+          currentLine.push(item);
+        } else {
+          lines.push(currentLine);
+          currentLine = [item];
+          currentY = item.y;
+        }
+      }
+      if (currentLine.length > 0) lines.push(currentLine);
+
+      let lineIdx = 0;
+      while (lineIdx < lines.length) {
+        const isMultiColumnLine = (line) => {
+          if (line.length < 2) return false;
+          let gaps = 0;
+          for (let k = 1; k < line.length; k++) {
+            if (line[k].x - (line[k - 1].x + line[k - 1].width) > 15) gaps++;
+          }
+          return gaps >= 1;
+        };
+
+        if (isMultiColumnLine(lines[lineIdx]) && lineIdx + 1 < lines.length && isMultiColumnLine(lines[lineIdx + 1])) {
+          const tableLines = [];
+          while (lineIdx < lines.length && isMultiColumnLine(lines[lineIdx])) {
+            tableLines.push(lines[lineIdx]);
+            lineIdx++;
+          }
+
+          const tableRows = tableLines.map((rowItems, rIdx) => {
+            return new TableRow({
+              children: rowItems.map(cellItem => new TableCell({
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: cellItem.text,
+                        bold: cellItem.isBold || rIdx === 0,
+                        italics: cellItem.isItalic,
+                        size: Math.max(16, Math.min(32, cellItem.fontSize * 2)),
+                      })
+                    ]
+                  })
+                ],
+                shading: rIdx === 0 ? { fill: 'F1F5F9' } : undefined,
+                margins: { top: 120, bottom: 120, left: 150, right: 150 },
+              }))
+            });
+          });
+
+          docChildren.push(
+            new Table({
+              rows: tableRows,
+              width: { size: 100, type: WidthType.PERCENTAGE },
+            })
+          );
+          docChildren.push(new Paragraph({ text: '' }));
+        } else {
+          const line = lines[lineIdx];
+          line.sort((a, b) => a.x - b.x);
+
+          const avgFontSize = line.reduce((acc, it) => acc + it.fontSize, 0) / line.length;
+          const isHeading = avgFontSize >= 16 || (avgFontSize >= 14 && line.some(it => it.isBold));
+
+          const runs = line.map(it => new TextRun({
+            text: it.text + ' ',
+            bold: it.isBold,
+            italics: it.isItalic,
+            size: Math.max(18, Math.min(48, Math.round(it.fontSize * 2))),
+          }));
+
+          docChildren.push(
+            new Paragraph({
+              children: runs,
+              heading: isHeading ? (avgFontSize >= 20 ? HeadingLevel.HEADING_1 : HeadingLevel.HEADING_2) : undefined,
+              spacing: { after: isHeading ? 180 : 100 },
+            })
+          );
+          lineIdx++;
+        }
+      }
+
+      if (pageNum < numPages) {
+        docChildren.push(new Paragraph({ children: [new TextRun({ text: '', break: 1 })] }));
+      }
+    }
+
+    if (totalExtractedTokens === 0) {
+      throw new Error('This PDF appears to be a scanned image without selectable text. Please upload a standard text PDF.');
+    }
+
+    onProgress?.(90, 'Assembling Word document (.docx)...');
+
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: docChildren.length > 0 ? docChildren : [new Paragraph({ text: 'Converted Document' })]
+        }
+      ]
+    });
+
+    const blob = await Packer.toBlob(doc);
+    onProgress?.(100, 'Word document created successfully!');
+    return blob;
+  },
+
+  /* ── 10. PDF to Excel (XLSX) ─────────────────────────────────────── */
+  async convertPdfToExcel(file, onProgress) {
+    onProgress?.(10, 'Loading PDF document...');
+    const arrayBuffer = await file.arrayBuffer();
+    const loadingTask = pdfjsLib.getDocument({
+      data: arrayBuffer,
+      cMapUrl: PDFJS_CMAP_URL,
+      cMapPacked: true,
+      standardFontDataUrl: PDFJS_STANDARD_FONTS_URL,
+    });
+    const pdf = await loadingTask.promise;
+    const numPages = pdf.numPages;
+    if (numPages === 0) throw new Error('The uploaded PDF is empty.');
+
+    const workbook = XLSX.utils.book_new();
+    let totalTablesFound = 0;
+
+    for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+      const pct = 15 + Math.round((pageNum / numPages) * 70);
+      onProgress?.(pct, `Extracting table data from page ${pageNum} of ${numPages}...`);
+
+      const page = await pdf.getPage(pageNum);
+      const textContent = await page.getTextContent();
+      const items = textContent.items || [];
+
+      const validItems = items
+        .filter(it => it.str && it.str.trim().length > 0)
+        .map(it => ({
+          text: it.str.trim(),
+          x: it.transform ? it.transform[4] : 0,
+          y: it.transform ? it.transform[5] : 0,
+          width: it.width || 0,
+          height: it.height || 10,
+        }));
+
+      if (validItems.length === 0) continue;
+
+      validItems.sort((a, b) => {
+        if (Math.abs(b.y - a.y) > 4) return b.y - a.y;
+        return a.x - b.x;
+      });
+
+      const rows = [];
+      let currentRow = [validItems[0]];
+      let currentY = validItems[0].y;
+
+      for (let i = 1; i < validItems.length; i++) {
+        const item = validItems[i];
+        if (Math.abs(item.y - currentY) <= 5) {
+          currentRow.push(item);
+        } else {
+          rows.push(currentRow);
+          currentRow = [item];
+          currentY = item.y;
+        }
+      }
+      if (currentRow.length > 0) rows.push(currentRow);
+
+      const allX = validItems.map(it => it.x).sort((a, b) => a - b);
+      const colBuckets = [];
+      for (const x of allX) {
+        const existing = colBuckets.find(b => Math.abs(b - x) <= 20);
+        if (!existing) colBuckets.push(x);
+      }
+      colBuckets.sort((a, b) => a - b);
+
+      const sheetData = rows.map(rItems => {
+        const rowArr = new Array(colBuckets.length).fill('');
+        rItems.forEach(it => {
+          let bestCol = 0;
+          let minDiff = Infinity;
+          colBuckets.forEach((bx, idx) => {
+            const diff = Math.abs(bx - it.x);
+            if (diff < minDiff) {
+              minDiff = diff;
+              bestCol = idx;
+            }
+          });
+
+          let cellVal = it.text;
+          const cleanNum = it.text.replace(/[$,€£]/g, '').trim();
+          if (/^-?\d+(\.\d+)?$/.test(cleanNum) && !isNaN(Number(cleanNum))) {
+            cellVal = Number(cleanNum);
+          }
+
+          if (rowArr[bestCol] !== '') {
+            rowArr[bestCol] = `${rowArr[bestCol]} ${cellVal}`;
+          } else {
+            rowArr[bestCol] = cellVal;
+          }
+        });
+
+        while (rowArr.length > 0 && rowArr[rowArr.length - 1] === '') {
+          rowArr.pop();
+        }
+        return rowArr;
+      }).filter(r => r.length > 0);
+
+      if (sheetData.length > 0) {
+        totalTablesFound++;
+        const sheetName = numPages === 1 ? 'Sheet1' : `Page ${pageNum}`;
+        const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+
+        const colWidths = colBuckets.map(() => ({ wch: 18 }));
+        worksheet['!cols'] = colWidths;
+
+        XLSX.utils.book_append_sheet(workbook, worksheet, sheetName.slice(0, 31));
+      }
+    }
+
+    if (totalTablesFound === 0) {
+      throw new Error('No structured table data or text found in this PDF. It may be a scanned document.');
+    }
+
+    onProgress?.(90, 'Generating Excel spreadsheet (.xlsx)...');
+    const xlsxArray = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([xlsxArray], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    onProgress?.(100, 'Excel spreadsheet created successfully!');
+    return blob;
+  },
+
+  /* ── 11. Excel to Word (DOCX) ─────────────────────────────────────── */
+  async convertExcelToWord(file, onProgress) {
+    onProgress?.(15, 'Reading Excel workbook...');
+    const arrayBuffer = await file.arrayBuffer();
+    const workbook = XLSX.read(arrayBuffer, { type: 'array', cellDates: true });
+    
+    if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+      throw new Error('The uploaded Excel workbook contains no sheets.');
+    }
+
+    const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType } = await import('docx');
+
+    const docChildren = [];
+    const totalSheets = workbook.SheetNames.length;
+
+    for (let sIdx = 0; sIdx < totalSheets; sIdx++) {
+      const sheetName = workbook.SheetNames[sIdx];
+      const pct = 20 + Math.round((sIdx / totalSheets) * 65);
+      onProgress?.(pct, `Converting sheet "${sheetName}" to Word table...`);
+
+      const worksheet = workbook.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+
+      docChildren.push(
+        new Paragraph({
+          text: `Sheet: ${sheetName}`,
+          heading: HeadingLevel.HEADING_2,
+          spacing: { before: sIdx > 0 ? 360 : 120, after: 180 },
+        })
+      );
+
+      if (!rows || rows.length === 0) {
+        docChildren.push(new Paragraph({ children: [new TextRun({ text: '(Empty sheet)', italics: true, color: '64748B' })] }));
+        continue;
+      }
+
+      const nonEmptyRows = rows.filter(r => Array.isArray(r) && r.some(c => c !== null && c !== undefined && String(c).trim() !== ''));
+
+      if (nonEmptyRows.length === 0) {
+        docChildren.push(new Paragraph({ children: [new TextRun({ text: '(No data in sheet)', italics: true, color: '64748B' })] }));
+        continue;
+      }
+
+      const tableRows = nonEmptyRows.map((row, rIdx) => {
+        const isHeader = rIdx === 0;
+        return new TableRow({
+          children: row.map(cellVal => {
+            let formattedVal = '';
+            if (cellVal instanceof Date) {
+              formattedVal = cellVal.toLocaleDateString();
+            } else if (cellVal !== null && cellVal !== undefined) {
+              formattedVal = String(cellVal);
+            }
+
+            const isNum = typeof cellVal === 'number' || (!isNaN(Number(formattedVal)) && formattedVal.trim() !== '');
+
+            return new TableCell({
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: formattedVal,
+                      bold: isHeader,
+                      size: isHeader ? 20 : 18,
+                      color: isHeader ? '0F172A' : '334155',
+                    })
+                  ],
+                  alignment: isNum && !isHeader ? AlignmentType.RIGHT : AlignmentType.LEFT,
+                })
+              ],
+              shading: isHeader ? { fill: 'DBEAFE' } : (rIdx % 2 === 1 ? { fill: 'F8FAFC' } : undefined),
+              margins: { top: 120, bottom: 120, left: 140, right: 140 },
+            });
+          })
+        });
+      });
+
+      docChildren.push(
+        new Table({
+          rows: tableRows,
+          width: { size: 100, type: WidthType.PERCENTAGE },
+        })
+      );
+      docChildren.push(new Paragraph({ text: '' }));
+    }
+
+    onProgress?.(90, 'Generating Word document (.docx)...');
+
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: docChildren
+        }
+      ]
+    });
+
+    const blob = await Packer.toBlob(doc);
+    onProgress?.(100, 'Word document generated successfully!');
+    return blob;
+  },
+
+  /* ── 12. Word to Excel (XLSX) ─────────────────────────────────────── */
+  async convertWordToExcel(file, onProgress) {
+    onProgress?.(15, 'Reading Word document (.docx)...');
+    const arrayBuffer = await file.arrayBuffer();
+
+    const zip = await JSZip.loadAsync(arrayBuffer);
+    const docXmlFile = zip.file('word/document.xml');
+    if (!docXmlFile) {
+      throw new Error('Invalid Word document structure. Please upload a valid .docx file.');
+    }
+
+    const docXmlText = await docXmlFile.async('text');
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(docXmlText, 'application/xml');
+
+    onProgress?.(40, 'Detecting Word tables and structured content...');
+
+    const workbook = XLSX.utils.book_new();
+    const tables = xmlDoc.getElementsByTagName('w:tbl');
+    let tableCount = 0;
+
+    if (tables.length > 0) {
+      for (let tIdx = 0; tIdx < tables.length; tIdx++) {
+        const tbl = tables[tIdx];
+        const rows = tbl.getElementsByTagName('w:tr');
+        const tableData = [];
+
+        for (let rIdx = 0; rIdx < rows.length; rIdx++) {
+          const row = rows[rIdx];
+          const cells = row.getElementsByTagName('w:tc');
+          const rowData = [];
+
+          for (let cIdx = 0; cIdx < cells.length; cIdx++) {
+            const cell = cells[cIdx];
+            const textNodes = cell.getElementsByTagName('w:t');
+            let cellText = '';
+            for (let n = 0; n < textNodes.length; n++) {
+              cellText += textNodes[n].textContent;
+            }
+            cellText = cellText.trim();
+
+            const cleanNum = cellText.replace(/[$,€£]/g, '').trim();
+            if (/^-?\d+(\.\d+)?$/.test(cleanNum) && !isNaN(Number(cleanNum))) {
+              rowData.push(Number(cleanNum));
+            } else {
+              rowData.push(cellText);
+            }
+          }
+          if (rowData.some(c => c !== '')) {
+            tableData.push(rowData);
+          }
+        }
+
+        if (tableData.length > 0) {
+          tableCount++;
+          const sheetName = `Table ${tableCount}`;
+          const worksheet = XLSX.utils.aoa_to_sheet(tableData);
+          XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+        }
+      }
+    }
+
+    if (tableCount === 0) {
+      onProgress?.(60, 'Extracting structured document content...');
+      const paragraphs = xmlDoc.getElementsByTagName('w:p');
+      const extractedData = [];
+
+      for (let pIdx = 0; pIdx < paragraphs.length; pIdx++) {
+        const p = paragraphs[pIdx];
+        const textNodes = p.getElementsByTagName('w:t');
+        let pText = '';
+        for (let n = 0; n < textNodes.length; n++) {
+          pText += textNodes[n].textContent;
+        }
+        pText = pText.trim();
+        if (!pText) continue;
+
+        if (pText.includes(':') && pText.split(':').length === 2) {
+          const parts = pText.split(':').map(s => s.trim());
+          extractedData.push(parts);
+        } else if (pText.includes('\t')) {
+          const parts = pText.split('\t').map(s => s.trim());
+          extractedData.push(parts);
+        } else {
+          extractedData.push([pText]);
+        }
+      }
+
+      if (extractedData.length === 0) {
+        throw new Error('The Word document is empty or contains no readable text.');
+      }
+
+      const worksheet = XLSX.utils.aoa_to_sheet(extractedData);
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Document Content');
+    }
+
+    onProgress?.(90, 'Generating Excel spreadsheet (.xlsx)...');
+    const xlsxArray = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([xlsxArray], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    onProgress?.(100, 'Excel spreadsheet created successfully!');
+    return blob;
   }
 };

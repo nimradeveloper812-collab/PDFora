@@ -202,6 +202,22 @@ export default function Dropzone({ tool }) {
           filename = res.isZip ? 'pages.zip' : 'page_1.jpg';
           break;
         }
+        case 'pdf-to-word':
+          result = await pdfApi.convertPdfToWord(files[0], handleProgress);
+          filename = `${firstFileName}.docx`;
+          break;
+        case 'pdf-to-excel':
+          result = await pdfApi.convertPdfToExcel(files[0], handleProgress);
+          filename = `${firstFileName}.xlsx`;
+          break;
+        case 'excel-to-word':
+          result = await pdfApi.convertExcelToWord(files[0], handleProgress);
+          filename = `${firstFileName}.docx`;
+          break;
+        case 'word-to-excel':
+          result = await pdfApi.convertWordToExcel(files[0], handleProgress);
+          filename = `${firstFileName}.xlsx`;
+          break;
         case 'merge-pdf':
           result = await pdfApi.mergePdf(files, handleProgress);
           filename = 'merged.pdf';

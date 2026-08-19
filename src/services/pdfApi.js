@@ -134,5 +134,45 @@ export const pdfApi = {
     }
 
     return await clientPdfService.splitPdf(file, ranges, onProgress);
+  },
+
+  async convertPdfToWord(file, onProgress) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/pdf-to-word`, { method: 'POST', body: formData }));
+    if (res) return await res.blob();
+
+    return await clientPdfService.convertPdfToWord(file, onProgress);
+  },
+
+  async convertPdfToExcel(file, onProgress) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/pdf-to-excel`, { method: 'POST', body: formData }));
+    if (res) return await res.blob();
+
+    return await clientPdfService.convertPdfToExcel(file, onProgress);
+  },
+
+  async convertExcelToWord(file, onProgress) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/excel-to-word`, { method: 'POST', body: formData }));
+    if (res) return await res.blob();
+
+    return await clientPdfService.convertExcelToWord(file, onProgress);
+  },
+
+  async convertWordToExcel(file, onProgress) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/word-to-excel`, { method: 'POST', body: formData }));
+    if (res) return await res.blob();
+
+    return await clientPdfService.convertWordToExcel(file, onProgress);
   }
 };

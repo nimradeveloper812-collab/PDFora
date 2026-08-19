@@ -3,17 +3,25 @@ import { Helmet } from 'react-helmet-async';
 import { Link, useLocation } from 'react-router-dom';
 import Dropzone from './Dropzone';
 import AdBanner from './AdBanner';
+import BackgroundRemoverTool from '../image/BackgroundRemoverTool';
+import ImageCompressorTool from '../image/ImageCompressorTool';
+import VideoToAudioTool from '../media/VideoToAudioTool';
+import AudioCompressorTool from '../media/AudioCompressorTool';
+import ImageConverterTool from '../media/ImageConverterTool';
+import VideoConverterTool from '../media/VideoConverterTool';
+import VideoCompressorTool from '../media/VideoCompressorTool';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
   Image as ImageIcon, FileImage, Layers, Minimize2,
-  Scissors, ChevronDown, Smartphone, Globe
+  Scissors, ChevronDown, Smartphone, Globe, Video, Music, FileAudio, FileVideo, RefreshCw
 } from 'lucide-react';
 import { TOOLS } from '../../data/toolsData';
 
 const iconMap = {
   FileText, Table, Presentation,
-  Image: ImageIcon, FileImage, Layers, Minimize2, Scissors
+  Image: ImageIcon, FileImage, Layers, Minimize2, Scissors, Sparkles,
+  Video, Music, FileAudio, FileVideo, RefreshCw
 };
 
 export default function ToolLayout({ tool }) {
@@ -219,12 +227,28 @@ export default function ToolLayout({ tool }) {
         </div>
       </section>
 
-      {/* ── Upload Dropzone ────────────────────────────────── */}
+      {/* ── Tool Interactive Area ─────────────────────────── */}
       <section
         className="px-4 sm:px-6 lg:px-8 mb-12"
-        aria-label={`${tool.name} upload area`}
+        aria-label={`${tool.name} interactive area`}
       >
-        <Dropzone tool={tool} />
+        {tool.id === 'image-background-remover' ? (
+          <BackgroundRemoverTool tool={tool} />
+        ) : tool.id === 'image-compressor' ? (
+          <ImageCompressorTool tool={tool} />
+        ) : tool.id === 'video-to-audio' ? (
+          <VideoToAudioTool />
+        ) : tool.id === 'audio-compressor' ? (
+          <AudioCompressorTool />
+        ) : tool.id === 'image-converter' ? (
+          <ImageConverterTool />
+        ) : tool.id === 'video-converter' ? (
+          <VideoConverterTool />
+        ) : tool.id === 'video-compressor' ? (
+          <VideoCompressorTool />
+        ) : (
+          <Dropzone tool={tool} />
+        )}
 
         {/* Trust highlights below dropzone */}
         <div className="max-w-4xl mx-auto mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">

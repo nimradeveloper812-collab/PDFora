@@ -23,6 +23,17 @@ const PdfToJpg = lazy(() => import('./pages/tools/PdfToJpg'));
 const MergePdf = lazy(() => import('./pages/tools/MergePdf'));
 const CompressPdf = lazy(() => import('./pages/tools/CompressPdf'));
 const SplitPdf = lazy(() => import('./pages/tools/SplitPdf'));
+const ImageBackgroundRemover = lazy(() => import('./pages/tools/ImageBackgroundRemover'));
+const ImageCompressor = lazy(() => import('./pages/tools/ImageCompressor'));
+const PdfToWord = lazy(() => import('./pages/tools/PdfToWord'));
+const PdfToExcel = lazy(() => import('./pages/tools/PdfToExcel'));
+const ExcelToWord = lazy(() => import('./pages/tools/ExcelToWord'));
+const WordToExcel = lazy(() => import('./pages/tools/WordToExcel'));
+const VideoToAudio = lazy(() => import('./pages/tools/VideoToAudio'));
+const AudioCompressor = lazy(() => import('./pages/tools/AudioCompressor'));
+const ImageConverter = lazy(() => import('./pages/tools/ImageConverter'));
+const VideoConverter = lazy(() => import('./pages/tools/VideoConverter'));
+const VideoCompressor = lazy(() => import('./pages/tools/VideoCompressor'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -61,6 +72,28 @@ function AppLayout() {
             <Route path="/tools/merge-pdf" element={<MergePdf />} />
             <Route path="/tools/compress-pdf" element={<CompressPdf />} />
             <Route path="/tools/split-pdf" element={<SplitPdf />} />
+            <Route path="/pdf-to-word" element={<PdfToWord />} />
+            <Route path="/tools/pdf-to-word" element={<PdfToWord />} />
+            <Route path="/pdf-to-excel" element={<PdfToExcel />} />
+            <Route path="/tools/pdf-to-excel" element={<PdfToExcel />} />
+            <Route path="/excel-to-word" element={<ExcelToWord />} />
+            <Route path="/tools/excel-to-word" element={<ExcelToWord />} />
+            <Route path="/word-to-excel" element={<WordToExcel />} />
+            <Route path="/tools/word-to-excel" element={<WordToExcel />} />
+            <Route path="/image-background-remover" element={<ImageBackgroundRemover />} />
+            <Route path="/tools/image-background-remover" element={<ImageBackgroundRemover />} />
+            <Route path="/image-compressor" element={<ImageCompressor />} />
+            <Route path="/tools/image-compressor" element={<ImageCompressor />} />
+            <Route path="/video-to-audio" element={<VideoToAudio />} />
+            <Route path="/tools/video-to-audio" element={<VideoToAudio />} />
+            <Route path="/audio-compressor" element={<AudioCompressor />} />
+            <Route path="/tools/audio-compressor" element={<AudioCompressor />} />
+            <Route path="/image-converter" element={<ImageConverter />} />
+            <Route path="/tools/image-converter" element={<ImageConverter />} />
+            <Route path="/video-converter" element={<VideoConverter />} />
+            <Route path="/tools/video-converter" element={<VideoConverter />} />
+            <Route path="/video-compressor" element={<VideoCompressor />} />
+            <Route path="/tools/video-compressor" element={<VideoCompressor />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
