@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  FileText, ChevronDown, Menu, X, Sparkles, ArrowRight,
+  FileText, ChevronDown, Menu, X, Sparkles,
   FileCheck, Table, Presentation, Image as ImageIcon,
   FileImage, Layers, Minimize2, Scissors, Grid3x3,
-  Music, FileVideo, RefreshCw
+  Music, FileVideo, RefreshCw, Lock
 } from 'lucide-react';
 import { TOOLS } from '../../data/toolsData';
 
@@ -39,53 +39,30 @@ const prefetchTool = (id) => {
   }
 };
 
-function NavLink({ to, children, isActive }) {
-  return (
-    <Link
-      to={to}
-      className={`relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
-        isActive
-          ? 'text-blue-600 bg-blue-50 font-semibold'
-          : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
-      }`}
-    >
-      {children}
-    </Link>
-  );
-}
-
 export default function Header() {
-  const [isToolsOpen, setIsToolsOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null); // 'pdf' | 'docs' | 'media' | null
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mobileCategoryOpen, setMobileCategoryOpen] = useState(null);
   const [scrolled, setScrolled] = useState(false);
-  const dropdownRef = useRef(null);
+  const navRef = useRef(null);
   const location = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 16);
+    const handleScroll = () => setScrolled(window.scrollY > 12);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
-    setIsToolsOpen(false);
+    setActiveDropdown(null);
     setIsMobileMenuOpen(false);
     document.body.classList.remove('menu-open');
   }, [location.pathname]);
 
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.classList.add('menu-open');
-    } else {
-      document.body.classList.remove('menu-open');
-    }
-    return () => document.body.classList.remove('menu-open');
-  }, [isMobileMenuOpen]);
-
-  useEffect(() => {
     function handleClickOutside(e) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setIsToolsOpen(false);
+      if (navRef.current && !navRef.current.contains(e.target)) {
+        setActiveDropdown(null);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -95,7 +72,7 @@ export default function Header() {
   useEffect(() => {
     function handleEscape(e) {
       if (e.key === 'Escape') {
-        setIsToolsOpen(false);
+        setActiveDropdown(null);
         setIsMobileMenuOpen(false);
       }
     }
@@ -106,15 +83,30 @@ export default function Header() {
   const pdfTools = TOOLS.filter(t => t.category === 'pdf');
   const documentTools = TOOLS.filter(t => t.category === 'documents');
   const mediaTools = TOOLS.filter(t => ['images', 'video', 'audio'].includes(t.category));
-  const isToolsActive = location.pathname.startsWith('/tools');
 
   return (
     <>
+      {/* ── Top Announcement Bar ─────────────────────────────── */}
+      <aside
+        className="fixed top-0 left-0 right-0 z-50 bg-linear-to-r from-blue-700 via-blue-600 to-indigo-700 text-white text-[11px] font-semibold py-1.5 px-4 text-center tracking-tight flex items-center justify-center gap-2 shadow-xs"
+        aria-label="Platform announcement"
+      >
+        <span className="flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-blue-200" aria-hidden="true" />
+          <span><strong>100% Free Online File Tools</strong> — No signup, no software installation, private in-browser processing</span>
+        </span>
+        <span className="hidden md:inline-flex items-center gap-1 text-blue-200">
+          · <Lock className="w-3 h-3 inline" /> 100% Private Sandbox
+        </span>
+      </aside>
+
+      {/* ── Main Sticky Header ───────────────────────────────── */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        ref={navRef}
+        className={`fixed top-[28px] left-0 right-0 z-40 transition-all duration-200 ${
           scrolled
-            ? 'bg-white/95 backdrop-blur-md py-3 border-b border-zinc-200 shadow-xs'
-            : 'bg-white/85 backdrop-blur-sm py-4 border-b border-zinc-100'
+            ? 'bg-white/95 backdrop-blur-md py-2.5 border-b border-zinc-200/90 shadow-sm'
+            : 'bg-white/90 backdrop-blur-sm py-3.5 border-b border-zinc-100'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -127,192 +119,220 @@ export default function Header() {
               aria-label="PDFora — Home"
             >
               <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all duration-200 group-hover:scale-105 shadow-sm"
+                className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all duration-200 group-hover:scale-105 shadow-md shadow-blue-500/25"
                 style={{
-                  background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                  background: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
                 }}
               >
                 <FileCheck className="w-5 h-5" strokeWidth={2.3} aria-hidden="true" />
               </div>
-              <span className="text-xl font-extrabold tracking-tight text-zinc-900">
+              <span className="text-xl font-black tracking-tight text-zinc-900">
                 PDF<span className="text-blue-600">ora</span>
               </span>
-              <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-50 text-blue-700 border border-blue-200">
+              <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-50 text-blue-700 border border-blue-200">
                 100% PRIVATE
               </span>
             </Link>
 
             {/* ── Desktop Navigation ─────────────────────────────── */}
-            <nav className="hidden md:flex items-center gap-1" role="navigation" aria-label="Main navigation">
-              <NavLink to="/" isActive={location.pathname === '/'}>
+            <nav className="hidden lg:flex items-center gap-1" role="navigation" aria-label="Main navigation">
+              
+              <Link
+                to="/"
+                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+                  location.pathname === '/'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-zinc-700 hover:text-zinc-900 hover:bg-zinc-100/70'
+                }`}
+              >
                 Home
-              </NavLink>
+              </Link>
 
-              {/* Tools Dropdown */}
-              <div className="relative" ref={dropdownRef}>
+              {/* PDF Tools Dropdown */}
+              <div className="relative">
                 <button
-                  id="tools-menu-btn"
-                  onClick={() => setIsToolsOpen(!isToolsOpen)}
-                  aria-haspopup="true"
-                  aria-expanded={isToolsOpen}
-                  aria-controls="tools-dropdown"
-                  className={`px-3 py-2 rounded-lg text-sm font-medium inline-flex items-center gap-1 transition-all duration-150 ${
-                    isToolsActive || isToolsOpen
-                      ? 'font-semibold text-blue-600 bg-blue-50'
-                      : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
+                  type="button"
+                  onClick={() => setActiveDropdown(activeDropdown === 'pdf' ? null : 'pdf')}
+                  onMouseEnter={() => setActiveDropdown('pdf')}
+                  aria-expanded={activeDropdown === 'pdf'}
+                  className={`px-3 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition-all ${
+                    activeDropdown === 'pdf'
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-zinc-700 hover:text-zinc-900 hover:bg-zinc-100/70'
                   }`}
                 >
-                  <span>Tools Directory</span>
+                  <span>PDF Tools</span>
                   <ChevronDown
-                    className={`w-3.5 h-3.5 transition-transform duration-250 ${isToolsOpen ? 'rotate-180 text-blue-600' : 'text-zinc-400'}`}
-                    aria-hidden="true"
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === 'pdf' ? 'rotate-180 text-blue-600' : 'text-zinc-400'}`}
                   />
                 </button>
 
-                {/* Mega Dropdown */}
-                {isToolsOpen && (
+                {activeDropdown === 'pdf' && (
                   <div
-                    id="tools-dropdown"
-                    role="menu"
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-2.5 w-[860px] bg-white rounded-2xl p-5 z-50 border border-zinc-200 shadow-xl animate-scale-in"
+                    onMouseLeave={() => setActiveDropdown(null)}
+                    className="absolute top-full left-0 mt-1.5 w-80 bg-white rounded-2xl p-3 z-50 border border-zinc-200 shadow-xl animate-scale-in"
                   >
-                    {/* Dropdown Header */}
-                    <div className="flex items-center justify-between pb-3 mb-3 border-b border-zinc-100">
-                      <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-blue-600">
-                        <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-                        Directory of 19 Tools
-                      </span>
-                      <Link
-                        to="/tools"
-                        onClick={() => setIsToolsOpen(false)}
-                        className="flex items-center gap-1 text-xs font-semibold text-zinc-500 hover:text-blue-600 transition-colors"
-                        role="menuitem"
-                      >
-                        Browse All Tools
-                        <ArrowRight className="w-3 h-3" />
-                      </Link>
+                    <div className="text-[10px] font-extrabold uppercase tracking-wider text-zinc-400 px-2.5 py-1 mb-1 border-b border-zinc-100 flex items-center justify-between">
+                      <span>PDF Suite</span>
+                      <span className="text-blue-600 font-bold">{pdfTools.length} Tools</span>
                     </div>
-
-                    <div className="grid grid-cols-3 gap-4">
-                      {/* Column 1 — PDF Tools */}
-                      <div>
-                        <div className="px-2 mb-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-                          PDF Suite ({pdfTools.length})
-                        </div>
-                        <div className="space-y-0.5 max-h-[300px] overflow-y-auto pr-1">
-                          {pdfTools.map(tool => {
-                            const Icon = iconMap[tool.iconName] || FileText;
-                            return (
-                              <Link
-                                key={tool.id}
-                                to={tool.path}
-                                onClick={() => setIsToolsOpen(false)}
-                                onMouseEnter={() => prefetchTool(tool.id)}
-                                onFocus={() => prefetchTool(tool.id)}
-                                role="menuitem"
-                                className="flex items-center gap-2.5 p-2 rounded-xl transition-all duration-150 hover:bg-blue-50 group"
-                              >
-                                <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-blue-50 text-blue-600 border border-blue-100 group-hover:scale-105">
-                                  <Icon className="w-3.5 h-3.5" aria-hidden="true" />
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="text-xs font-semibold text-zinc-800 group-hover:text-blue-600 truncate">
-                                    {tool.name}
-                                  </div>
-                                </div>
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Column 2 — Document Tools */}
-                      <div>
-                        <div className="px-2 mb-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-                          Word &amp; Documents ({documentTools.length})
-                        </div>
-                        <div className="space-y-0.5 max-h-[300px] overflow-y-auto pr-1">
-                          {documentTools.map(tool => {
-                            const Icon = iconMap[tool.iconName] || FileText;
-                            return (
-                              <Link
-                                key={tool.id}
-                                to={tool.path}
-                                onClick={() => setIsToolsOpen(false)}
-                                onMouseEnter={() => prefetchTool(tool.id)}
-                                onFocus={() => prefetchTool(tool.id)}
-                                role="menuitem"
-                                className="flex items-center gap-2.5 p-2 rounded-xl transition-all duration-150 hover:bg-blue-50 group"
-                              >
-                                <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-blue-50 text-blue-600 border border-blue-100 group-hover:scale-105">
-                                  <Icon className="w-3.5 h-3.5" aria-hidden="true" />
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="text-xs font-semibold text-zinc-800 group-hover:text-blue-600 truncate">
-                                    {tool.name}
-                                  </div>
-                                </div>
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Column 3 — Media & Images */}
-                      <div>
-                        <div className="px-2 mb-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-                          Images, Video &amp; Audio ({mediaTools.length})
-                        </div>
-                        <div className="space-y-0.5 max-h-[300px] overflow-y-auto pr-1">
-                          {mediaTools.map(tool => {
-                            const Icon = iconMap[tool.iconName] || FileText;
-                            return (
-                              <Link
-                                key={tool.id}
-                                to={tool.path}
-                                onClick={() => setIsToolsOpen(false)}
-                                onMouseEnter={() => prefetchTool(tool.id)}
-                                onFocus={() => prefetchTool(tool.id)}
-                                role="menuitem"
-                                className="flex items-center gap-2.5 p-2 rounded-xl transition-all duration-150 hover:bg-blue-50 group"
-                              >
-                                <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-blue-50 text-blue-600 border border-blue-100 group-hover:scale-105">
-                                  <Icon className="w-3.5 h-3.5" aria-hidden="true" />
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="text-xs font-semibold text-zinc-800 group-hover:text-blue-600 truncate">
-                                    {tool.name}
-                                  </div>
-                                </div>
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      </div>
+                    <div className="space-y-0.5">
+                      {pdfTools.map(t => {
+                        const Icon = iconMap[t.iconName] || FileText;
+                        return (
+                          <Link
+                            key={t.id}
+                            to={t.path}
+                            onClick={() => setActiveDropdown(null)}
+                            onMouseEnter={() => prefetchTool(t.id)}
+                            className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-blue-50/80 transition-colors group"
+                          >
+                            <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-blue-50 text-blue-600 border border-blue-100 group-hover:scale-105">
+                              <Icon className="w-3.5 h-3.5" />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="text-xs font-bold text-zinc-800 group-hover:text-blue-600 truncate">{t.name}</div>
+                              <div className="text-[10px] text-zinc-400 truncate">{t.shortDesc}</div>
+                            </div>
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
               </div>
 
-              <NavLink to="/tools" isActive={location.pathname === '/tools'}>
-                All Tools
-              </NavLink>
-              <NavLink to="/about" isActive={location.pathname === '/about'}>
-                About
-              </NavLink>
-              <NavLink to="/contact" isActive={location.pathname === '/contact'}>
-                Contact
-              </NavLink>
+              {/* Document Tools Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setActiveDropdown(activeDropdown === 'docs' ? null : 'docs')}
+                  onMouseEnter={() => setActiveDropdown('docs')}
+                  aria-expanded={activeDropdown === 'docs'}
+                  className={`px-3 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition-all ${
+                    activeDropdown === 'docs'
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-zinc-700 hover:text-zinc-900 hover:bg-zinc-100/70'
+                  }`}
+                >
+                  <span>Word &amp; Docs</span>
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === 'docs' ? 'rotate-180 text-blue-600' : 'text-zinc-400'}`}
+                  />
+                </button>
+
+                {activeDropdown === 'docs' && (
+                  <div
+                    onMouseLeave={() => setActiveDropdown(null)}
+                    className="absolute top-full left-0 mt-1.5 w-80 bg-white rounded-2xl p-3 z-50 border border-zinc-200 shadow-xl animate-scale-in"
+                  >
+                    <div className="text-[10px] font-extrabold uppercase tracking-wider text-zinc-400 px-2.5 py-1 mb-1 border-b border-zinc-100 flex items-center justify-between">
+                      <span>Document Conversion</span>
+                      <span className="text-blue-600 font-bold">{documentTools.length} Tools</span>
+                    </div>
+                    <div className="space-y-0.5">
+                      {documentTools.map(t => {
+                        const Icon = iconMap[t.iconName] || FileText;
+                        return (
+                          <Link
+                            key={t.id}
+                            to={t.path}
+                            onClick={() => setActiveDropdown(null)}
+                            onMouseEnter={() => prefetchTool(t.id)}
+                            className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-blue-50/80 transition-colors group"
+                          >
+                            <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-blue-50 text-blue-600 border border-blue-100 group-hover:scale-105">
+                              <Icon className="w-3.5 h-3.5" />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="text-xs font-bold text-zinc-800 group-hover:text-blue-600 truncate">{t.name}</div>
+                              <div className="text-[10px] text-zinc-400 truncate">{t.shortDesc}</div>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Image & Media Tools Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setActiveDropdown(activeDropdown === 'media' ? null : 'media')}
+                  onMouseEnter={() => setActiveDropdown('media')}
+                  aria-expanded={activeDropdown === 'media'}
+                  className={`px-3 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition-all ${
+                    activeDropdown === 'media'
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-zinc-700 hover:text-zinc-900 hover:bg-zinc-100/70'
+                  }`}
+                >
+                  <span>Images &amp; Media</span>
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === 'media' ? 'rotate-180 text-blue-600' : 'text-zinc-400'}`}
+                  />
+                </button>
+
+                {activeDropdown === 'media' && (
+                  <div
+                    onMouseLeave={() => setActiveDropdown(null)}
+                    className="absolute top-full left-0 mt-1.5 w-84 bg-white rounded-2xl p-3 z-50 border border-zinc-200 shadow-xl animate-scale-in"
+                  >
+                    <div className="text-[10px] font-extrabold uppercase tracking-wider text-zinc-400 px-2.5 py-1 mb-1 border-b border-zinc-100 flex items-center justify-between">
+                      <span>Images, Video &amp; Audio</span>
+                      <span className="text-blue-600 font-bold">{mediaTools.length} Tools</span>
+                    </div>
+                    <div className="space-y-0.5">
+                      {mediaTools.map(t => {
+                        const Icon = iconMap[t.iconName] || FileText;
+                        return (
+                          <Link
+                            key={t.id}
+                            to={t.path}
+                            onClick={() => setActiveDropdown(null)}
+                            onMouseEnter={() => prefetchTool(t.id)}
+                            className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-blue-50/80 transition-colors group"
+                          >
+                            <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-blue-50 text-blue-600 border border-blue-100 group-hover:scale-105">
+                              <Icon className="w-3.5 h-3.5" />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="text-xs font-bold text-zinc-800 group-hover:text-blue-600 truncate">{t.name}</div>
+                              <div className="text-[10px] text-zinc-400 truncate">{t.shortDesc}</div>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Link
+                to="/tools"
+                className={`px-3 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 transition-all ${
+                  location.pathname === '/tools'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-zinc-700 hover:text-zinc-900 hover:bg-zinc-100/70'
+                }`}
+              >
+                <span>All Tools</span>
+                <span className="px-1.5 py-0.2 rounded-full text-[10px] font-black bg-blue-100 text-blue-700">
+                  {TOOLS.length}
+                </span>
+              </Link>
             </nav>
 
             {/* ── Desktop CTA ────────────────────────────────────── */}
-            <div className="hidden md:flex items-center gap-3 shrink-0">
+            <div className="hidden lg:flex items-center gap-3 shrink-0">
               <Link
                 to="/tools"
-                className="inline-flex items-center gap-2 text-sm font-bold text-white rounded-xl px-4 py-2.5 bg-blue-600 hover:bg-blue-700 shadow-sm transition-all active:scale-95"
+                className="inline-flex items-center gap-2 text-xs font-bold text-white rounded-xl px-4 py-2.5 bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/20 transition-all active:scale-95"
               >
-                <Grid3x3 className="w-4 h-4" aria-hidden="true" />
-                <span>Explore Tools</span>
+                <Grid3x3 className="w-4 h-4" />
+                <span>Explore All 19 Tools</span>
               </Link>
             </div>
 
@@ -320,7 +340,7 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-xl transition-colors relative z-50 text-zinc-900"
+              className="lg:hidden p-2 rounded-xl transition-colors relative z-50 text-zinc-900 hover:bg-zinc-100"
               aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
               aria-expanded={isMobileMenuOpen}
               aria-controls="mobile-nav"
@@ -340,77 +360,125 @@ export default function Header() {
           id="mobile-nav"
           role="navigation"
           aria-label="Mobile navigation"
-          className="md:hidden fixed inset-x-0 bottom-0 bg-white overflow-y-auto z-40 border-t border-zinc-200"
+          className="lg:hidden fixed inset-x-0 bottom-0 bg-white overflow-y-auto z-40 border-t border-zinc-200 shadow-2xl"
           style={{
-            top: scrolled ? '57px' : '65px',
+            top: '88px',
           }}
         >
-          <div className="px-4 pt-5 pb-8 space-y-2">
-            {[
-              { to: '/', label: 'Home' },
-              { to: '/tools', label: 'All Tools (19)' },
-              { to: '/about', label: 'About PDFora' },
-              { to: '/contact', label: 'Contact Support' },
-            ].map(({ to, label }) => (
-              <Link
-                key={to}
-                to={to}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`flex items-center px-4 py-3 rounded-xl text-base font-semibold transition-all ${
-                  location.pathname === to ? 'text-blue-600 bg-blue-50' : 'text-zinc-800'
-                }`}
-              >
-                {label}
-              </Link>
-            ))}
+          <div className="px-4 pt-4 pb-10 space-y-2">
+            <Link
+              to="/"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="flex items-center px-4 py-3 rounded-xl text-sm font-bold text-zinc-800 hover:bg-zinc-50"
+            >
+              Home
+            </Link>
 
-            {/* Quick Categories */}
-            <div className="mt-4 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-4">
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-blue-600 mb-2">
-                  PDF Tools
-                </p>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {pdfTools.slice(0, 6).map(t => (
-                    <Link
-                      key={t.id}
-                      to={t.path}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-xs font-semibold text-zinc-700 py-1 truncate hover:text-blue-600"
-                    >
-                      • {t.name}
-                    </Link>
-                  ))}
-                </div>
+            <Link
+              to="/tools"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-blue-600 bg-blue-50"
+            >
+              <span>Explore All Tools</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-200 text-blue-800">
+                19 Tools
+              </span>
+            </Link>
+
+            {/* Mobile Category Collapsible Accordions */}
+            <div className="space-y-1.5 pt-2">
+              
+              {/* PDF Category */}
+              <div className="rounded-xl border border-zinc-200 overflow-hidden">
+                <button
+                  onClick={() => setMobileCategoryOpen(mobileCategoryOpen === 'pdf' ? null : 'pdf')}
+                  className="w-full px-4 py-3 text-left font-bold text-xs text-zinc-900 flex items-center justify-between bg-zinc-50"
+                >
+                  <span>PDF Suite ({pdfTools.length})</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${mobileCategoryOpen === 'pdf' ? 'rotate-180 text-blue-600' : 'text-zinc-400'}`} />
+                </button>
+                {mobileCategoryOpen === 'pdf' && (
+                  <div className="p-2 space-y-1 bg-white">
+                    {pdfTools.map(t => (
+                      <Link
+                        key={t.id}
+                        to={t.path}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block px-3 py-2 rounded-lg text-xs font-semibold text-zinc-700 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        • {t.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              <div className="pt-2 border-t border-zinc-200">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-blue-600 mb-2">
-                  Document &amp; Media Tools
-                </p>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {[...documentTools, ...mediaTools].slice(0, 6).map(t => (
-                    <Link
-                      key={t.id}
-                      to={t.path}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-xs font-semibold text-zinc-700 py-1 truncate hover:text-blue-600"
-                    >
-                      • {t.name}
-                    </Link>
-                  ))}
-                </div>
+              {/* Documents Category */}
+              <div className="rounded-xl border border-zinc-200 overflow-hidden">
+                <button
+                  onClick={() => setMobileCategoryOpen(mobileCategoryOpen === 'docs' ? null : 'docs')}
+                  className="w-full px-4 py-3 text-left font-bold text-xs text-zinc-900 flex items-center justify-between bg-zinc-50"
+                >
+                  <span>Word &amp; Documents ({documentTools.length})</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${mobileCategoryOpen === 'docs' ? 'rotate-180 text-blue-600' : 'text-zinc-400'}`} />
+                </button>
+                {mobileCategoryOpen === 'docs' && (
+                  <div className="p-2 space-y-1 bg-white">
+                    {documentTools.map(t => (
+                      <Link
+                        key={t.id}
+                        to={t.path}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block px-3 py-2 rounded-lg text-xs font-semibold text-zinc-700 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        • {t.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Media Category */}
+              <div className="rounded-xl border border-zinc-200 overflow-hidden">
+                <button
+                  onClick={() => setMobileCategoryOpen(mobileCategoryOpen === 'media' ? null : 'media')}
+                  className="w-full px-4 py-3 text-left font-bold text-xs text-zinc-900 flex items-center justify-between bg-zinc-50"
+                >
+                  <span>Images &amp; Media ({mediaTools.length})</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${mobileCategoryOpen === 'media' ? 'rotate-180 text-blue-600' : 'text-zinc-400'}`} />
+                </button>
+                {mobileCategoryOpen === 'media' && (
+                  <div className="p-2 space-y-1 bg-white">
+                    {mediaTools.map(t => (
+                      <Link
+                        key={t.id}
+                        to={t.path}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block px-3 py-2 rounded-lg text-xs font-semibold text-zinc-700 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        • {t.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="pt-3">
+            {/* Static links */}
+            <div className="pt-3 border-t border-zinc-200 space-y-1">
               <Link
-                to="/tools"
+                to="/about"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all"
+                className="block px-4 py-2 text-xs font-semibold text-zinc-600 hover:text-blue-600"
               >
-                <Grid3x3 className="w-4 h-4" />
-                <span>Explore All 19 Tools</span>
+                About PDFora
+              </Link>
+              <Link
+                to="/contact"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block px-4 py-2 text-xs font-semibold text-zinc-600 hover:text-blue-600"
+              >
+                Contact Support
               </Link>
             </div>
           </div>
