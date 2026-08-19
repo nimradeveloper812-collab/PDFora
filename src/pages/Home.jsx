@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Search, Sparkles, ArrowRight, ShieldCheck, Zap, FileCheck,
   ChevronDown, FileText, Table, Presentation, Image as ImageIcon,
@@ -94,7 +94,6 @@ function ToolCard({ tool }) {
 }
 
 export default function Home() {
-  const location = useLocation();
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [openFaq, setOpenFaq] = useState(null);
@@ -117,12 +116,58 @@ export default function Home() {
   const totalFilteredCount = categoriesToShow.reduce((acc, cat) => acc + cat.tools.length, 0);
   const popularTools = TOOLS.filter(t => t.popular);
 
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    'name': 'PDFora',
+    'url': 'https://pdfora.nimradev.site/',
+    'description': 'Free online PDF suite for converting, merging, splitting, and compressing documents privately in your browser.',
+    'potentialAction': {
+      '@type': 'SearchAction',
+      'target': 'https://pdfora.nimradev.site/tools?q={search_term_string}',
+      'query-input': 'required name=search_term_string'
+    }
+  };
+
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    'name': 'PDFora',
+    'url': 'https://pdfora.nimradev.site',
+    'logo': 'https://pdfora.nimradev.site/pdfora-logo.png',
+    'sameAs': []
+  };
+
   return (
     <div className="pt-24 min-h-screen">
       <Helmet>
-        <title>PDFora — All 19 Free Online File Tools (PDF, Word, Excel, Images, Video &amp; Audio)</title>
-        <meta name="description" content="100% free, private online document and media suite. Convert, compress, merge, split, and edit PDFs, Word documents, images, video, and audio with zero server uploads." />
-        <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
+        <title>PDFora — Free Online PDF Tools | Convert, Merge, Compress &amp; Split PDF</title>
+        <meta name="description" content="PDFora is a fast, 100% free, and private online PDF suite. Convert Word, Excel &amp; images to PDF. Merge, compress, and split documents instantly with zero server uploads." />
+        <meta name="keywords" content="PDF tools online, free PDF converter, merge PDF, compress PDF, split PDF, Word to PDF, Excel to PDF, JPG to PDF, image compressor, video to audio" />
+        <link rel="canonical" href="https://pdfora.nimradev.site/" />
+
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://pdfora.nimradev.site/" />
+        <meta property="og:title" content="PDFora — Free Online PDF Tools | Convert, Merge, Compress & Split PDF" />
+        <meta property="og:description" content="Fast, secure, in-browser PDF suite. Convert Word, Excel & images to PDF. Merge, compress, and split documents instantly with 100% privacy." />
+        <meta property="og:image" content="https://pdfora.nimradev.site/og-image.jpg" />
+        <meta property="og:site_name" content="PDFora" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://pdfora.nimradev.site/" />
+        <meta name="twitter:title" content="PDFora — Free Online PDF Tools | Convert, Merge & Compress" />
+        <meta name="twitter:description" content="Fast, secure, in-browser PDF suite. Convert, merge, compress, and split documents with zero file limits." />
+        <meta name="twitter:image" content="https://pdfora.nimradev.site/og-image.jpg" />
+
+        {/* Schema.org Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(websiteSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(organizationSchema)}
+        </script>
       </Helmet>
 
       {/* ════════════════════════════════════════════════════

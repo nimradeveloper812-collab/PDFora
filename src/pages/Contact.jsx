@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useLocation } from 'react-router-dom';
 import {
   Mail, MessageCircle, Clock, CheckCircle2, Sparkles,
   Send, ChevronDown, MapPin
@@ -47,7 +46,6 @@ const inputStyle = (hasError) => ({
 });
 
 export default function Contact() {
-  const location = useLocation();
   const [form, setForm]         = useState({ name: '', email: '', topic: '', message: '', _hp: '' });
   const [formLoadTime]          = useState(() => Date.now());
   const [submitted, setSubmitted] = useState(false);
@@ -105,8 +103,18 @@ export default function Contact() {
     <div className="pt-16 pb-20 min-h-screen">
       <Helmet>
         <title>Contact Support — PDFora | Free Online PDF Platform Help</title>
-        <meta name="description" content="Contact PDFora support team. Send us your feedback, feature requests, questions, or bug reports." />
-        <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
+        <meta name="description" content="Contact the PDFora support team. Send us your feedback, feature requests, questions, or bug reports." />
+        <link rel="canonical" href="https://pdfora.nimradev.site/contact" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://pdfora.nimradev.site/contact" />
+        <meta property="og:title" content="Contact Support — PDFora" />
+        <meta property="og:description" content="Contact the PDFora support team. Send us your feedback, feature requests, questions, or bug reports." />
+        <meta property="og:image" content="https://pdfora.nimradev.site/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://pdfora.nimradev.site/contact" />
+        <meta name="twitter:title" content="Contact Support — PDFora" />
+        <meta name="twitter:description" content="Contact the PDFora support team. Send us your feedback, feature requests, questions, or bug reports." />
+        <meta name="twitter:image" content="https://pdfora.nimradev.site/og-image.jpg" />
       </Helmet>
 
       {/* ── Hero ──────────────────────────────────────────── */}

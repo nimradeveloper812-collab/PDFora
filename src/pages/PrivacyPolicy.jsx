@@ -1,7 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ShieldCheck } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
 
 const SECTIONS = [
   {
@@ -97,13 +96,22 @@ To exercise any privacy rights, email contact@nimradev.site. We respond within 2
 ];
 
 export default function PrivacyPolicy() {
-  const location = useLocation();
   return (
     <div className="pt-24 pb-20 min-h-screen">
       <Helmet>
-        <title>Privacy Policy — PDFora | Secure & In-Browser PDF Suite</title>
+        <title>Privacy Policy — PDFora | Secure &amp; In-Browser PDF Suite</title>
         <meta name="description" content="Read the PDFora Privacy Policy. Learn how our in-browser client-side engine ensures 100% private file processing with zero server file storage." />
-        <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
+        <link rel="canonical" href="https://pdfora.nimradev.site/privacy-policy" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://pdfora.nimradev.site/privacy-policy" />
+        <meta property="og:title" content="Privacy Policy — PDFora" />
+        <meta property="og:description" content="Read the PDFora Privacy Policy. Learn how our in-browser engine ensures 100% private file processing with zero server file storage." />
+        <meta property="og:image" content="https://pdfora.nimradev.site/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://pdfora.nimradev.site/privacy-policy" />
+        <meta name="twitter:title" content="Privacy Policy — PDFora" />
+        <meta name="twitter:description" content="Read the PDFora Privacy Policy. Learn how our in-browser engine ensures 100% private file processing." />
+        <meta name="twitter:image" content="https://pdfora.nimradev.site/og-image.jpg" />
       </Helmet>
 
       {/* Hero */}

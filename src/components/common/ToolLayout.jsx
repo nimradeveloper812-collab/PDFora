@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Dropzone from './Dropzone';
 import AdBanner from './AdBanner';
 import BackgroundRemoverTool from '../image/BackgroundRemoverTool';
@@ -16,7 +16,7 @@ import {
   Image as ImageIcon, FileImage, Layers, Minimize2,
   Scissors, ChevronDown, Smartphone, Globe, Video, Music, FileAudio, FileVideo, RefreshCw
 } from 'lucide-react';
-import { TOOLS } from '../../data/toolsData';
+import { TOOLS, TOOLS_CATEGORIES } from '../../data/toolsData';
 
 const iconMap = {
   FileText, Table, Presentation,
@@ -25,7 +25,6 @@ const iconMap = {
 };
 
 export default function ToolLayout({ tool }) {
-  const location = useLocation();
   const [openFaq, setOpenFaq] = useState(null);
 
   useEffect(() => {
@@ -33,18 +32,26 @@ export default function ToolLayout({ tool }) {
     setOpenFaq(null);
   }, [tool.id]);
 
-  const otherTools = TOOLS.filter(t => t.id !== tool.id).slice(0, 4);
+  const categoryObj = TOOLS_CATEGORIES.find(c => c.id === tool.category);
+  const categoryName = categoryObj ? categoryObj.name : 'Tools';
+  const categoryUrl = `https://pdfora.nimradev.site/tools?category=${tool.category}`;
 
-  const currentUrl = `https://pdfora.nimradev.site${location.pathname}`;
-  const seoTitle = `${tool.name} Online — Free, Fast & Private | PDFora`;
-  const seoDesc = `${tool.description} 100% free online PDF utility with private in-browser WebAssembly processing, zero file limits, and zero server file persistence.`;
+  const relatedTools = (tool.relatedToolIds && tool.relatedToolIds.length > 0)
+    ? tool.relatedToolIds.map(id => TOOLS.find(t => t.id === id)).filter(Boolean)
+    : TOOLS.filter(t => t.id !== tool.id).slice(0, 4);
+
+  const canonicalUrl = `https://pdfora.nimradev.site${tool.path}`;
+  const seoTitle = tool.metaTitle || `${tool.name} Online — Free, Fast & Private | PDFora`;
+  const seoDesc = tool.metaDescription || `${tool.description} 100% free online PDF utility with private in-browser WebAssembly processing, zero file limits, and zero server file persistence.`;
+  const h1Title = tool.h1Title || tool.name;
+  const keywordsStr = (tool.primaryKeywords || []).join(', ');
 
   // Structured Data: WebApplication Schema
   const webAppSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     'name': `${tool.name} - PDFora`,
-    'url': currentUrl,
+    'url': canonicalUrl,
     'description': tool.description,
     'applicationCategory': 'BusinessApplication',
     'operatingSystem': 'All',
@@ -72,7 +79,7 @@ export default function ToolLayout({ tool }) {
       'position': idx + 1,
       'name': `Step ${idx + 1}`,
       'text': stepText,
-      'url': `${currentUrl}#step-${idx + 1}`
+      'url': `${canonicalUrl}#step-${idx + 1}`
     }))
   } : null;
 
@@ -90,7 +97,7 @@ export default function ToolLayout({ tool }) {
     }))
   } : null;
 
-  // Structured Data: BreadcrumbList Schema
+  // Structured Data: BreadcrumbList Schema (3-tier hierarchy: Home -> Category -> Tool)
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -104,14 +111,14 @@ export default function ToolLayout({ tool }) {
       {
         '@type': 'ListItem',
         'position': 2,
-        'name': 'Tools',
-        'item': 'https://pdfora.nimradev.site/tools'
+        'name': categoryName,
+        'item': categoryUrl
       },
       {
         '@type': 'ListItem',
         'position': 3,
         'name': tool.name,
-        'item': currentUrl
+        'item': canonicalUrl
       }
     ]
   };
@@ -121,11 +128,12 @@ export default function ToolLayout({ tool }) {
       <Helmet>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDesc} />
-        <link rel="canonical" href={currentUrl} />
+        {keywordsStr && <meta name="keywords" content={keywordsStr} />}
+        <link rel="canonical" href={canonicalUrl} />
 
         {/* Open Graph / Facebook / WhatsApp */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={currentUrl} />
+        <meta property="og:url" content={canonicalUrl} />
         <meta property="og:title" content={seoTitle} />
         <meta property="og:description" content={seoDesc} />
         <meta property="og:image" content="https://pdfora.nimradev.site/og-image.jpg" />
@@ -133,7 +141,7 @@ export default function ToolLayout({ tool }) {
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content={currentUrl} />
+        <meta name="twitter:url" content={canonicalUrl} />
         <meta name="twitter:title" content={seoTitle} />
         <meta name="twitter:description" content={seoDesc} />
         <meta name="twitter:image" content="https://pdfora.nimradev.site/og-image.jpg" />
@@ -174,12 +182,12 @@ export default function ToolLayout({ tool }) {
           </Link>
           <span aria-hidden="true">/</span>
           <Link
-            to="/tools"
+            to={`/tools?category=${tool.category}`}
             style={{ color: '#71717A', textDecoration: 'none' }}
             onMouseEnter={e => (e.currentTarget.style.color = '#3B82F6')}
             onMouseLeave={e => (e.currentTarget.style.color = '#71717A')}
           >
-            Tools
+            {categoryName}
           </Link>
           <span aria-hidden="true">/</span>
           <span className="font-semibold" style={{ color: '#18181B' }} aria-current="page">
@@ -215,7 +223,7 @@ export default function ToolLayout({ tool }) {
             className="text-3xl sm:text-4xl lg:text-5xl font-black"
             style={{ color: '#18181B', letterSpacing: '-0.035em' }}
           >
-            {tool.name}
+            {h1Title}
           </h1>
 
           <p
@@ -670,7 +678,7 @@ export default function ToolLayout({ tool }) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {otherTools.map(other => {
+          {relatedTools.map(other => {
             const Icon = iconMap[other.iconName] || FileText;
             return (
               <Link

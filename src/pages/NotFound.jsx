@@ -5,9 +5,9 @@ import { Home, Grid, FileText, Minimize2, Layers } from 'lucide-react';
 
 export default function NotFound() {
   const topTools = [
-    { to: '/tools/word-to-pdf', label: 'Word to PDF', icon: FileText, desc: 'Convert DOCX files to PDF' },
-    { to: '/tools/compress-pdf', label: 'Compress PDF', icon: Minimize2, desc: 'Reduce PDF file size' },
-    { to: '/tools/merge-pdf', label: 'Merge PDF', icon: Layers, desc: 'Combine multiple PDFs' }
+    { to: '/word-to-pdf', label: 'Word to PDF', icon: FileText, desc: 'Convert DOCX files to PDF' },
+    { to: '/compress-pdf', label: 'Compress PDF', icon: Minimize2, desc: 'Reduce PDF file size' },
+    { to: '/merge-pdf', label: 'Merge PDF', icon: Layers, desc: 'Combine multiple PDFs' }
   ];
 
   return (

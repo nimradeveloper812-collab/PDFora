@@ -117,8 +117,18 @@ function ToolCard({ tool }) {
 
 export default function AllTools() {
   const location = useLocation();
-  const [activeCategory, setActiveCategory] = useState('all');
+  const searchParams = new URLSearchParams(location.search);
+  const initialCategory = searchParams.get('category');
+  const [activeCategory, setActiveCategory] = useState(initialCategory || 'all');
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const cat = params.get('category');
+    if (cat && TOOLS_CATEGORIES.some(c => c.id === cat)) {
+      setActiveCategory(cat);
+    }
+  }, [location.search]);
 
   const filteredCategories = TOOLS_CATEGORIES.filter(cat => cat.id !== 'all').map(cat => {
     const catTools = TOOLS.filter(t => {
@@ -140,9 +150,19 @@ export default function AllTools() {
   return (
     <div className="pt-16 pb-20 min-h-screen">
       <Helmet>
-        <title>All 19 Free Document, Image &amp; Media Tools — PDFora</title>
-        <meta name="description" content="Browse all 19 free online tools on PDFora. Convert Word, Excel, PPT, images, video, and audio. Merge, split, compress, and edit files instantly with 100% privacy." />
-        <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
+        <title>All 19 Free Online PDF &amp; Media Tools — PDFora</title>
+        <meta name="description" content="Explore PDFora's complete suite of 19 free online tools. Convert Word, Excel, PPT to PDF. Compress, merge, split PDFs, edit images, and convert video and audio files privately." />
+        <link rel="canonical" href="https://pdfora.nimradev.site/tools" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://pdfora.nimradev.site/tools" />
+        <meta property="og:title" content="All 19 Free Online PDF & Media Tools — PDFora" />
+        <meta property="og:description" content="Explore PDFora's complete suite of 19 free online tools. Convert, compress, merge, and edit files privately in your browser." />
+        <meta property="og:image" content="https://pdfora.nimradev.site/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://pdfora.nimradev.site/tools" />
+        <meta name="twitter:title" content="All 19 Free Online PDF & Media Tools — PDFora" />
+        <meta name="twitter:description" content="Explore PDFora's complete suite of 19 free online tools. Convert, compress, merge, and edit files privately in your browser." />
+        <meta name="twitter:image" content="https://pdfora.nimradev.site/og-image.jpg" />
       </Helmet>
 
       {/* ── Hero ──────────────────────────────────────────── */}

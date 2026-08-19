@@ -61,53 +61,66 @@ function AppLayout() {
       <main className="flex-1">
         <Suspense fallback={<LoadingFallback />}>
           <Routes>
+            {/* Core Pages */}
             <Route path="/" element={<Home />} />
             <Route path="/tools" element={<AllTools />} />
             <Route path="/all-tools" element={<Navigate to="/tools" replace />} />
+            
+            {/* 19 Primary Tool Routes (Clean Canonical URLs) */}
             <Route path="/word-to-pdf" element={<WordToPdf />} />
-            <Route path="/tools/word-to-pdf" element={<WordToPdf />} />
             <Route path="/excel-to-pdf" element={<ExcelToPdf />} />
-            <Route path="/tools/excel-to-pdf" element={<ExcelToPdf />} />
             <Route path="/powerpoint-to-pdf" element={<PowerPointToPdf />} />
-            <Route path="/tools/powerpoint-to-pdf" element={<PowerPointToPdf />} />
             <Route path="/jpg-to-pdf" element={<JpgToPdf />} />
-            <Route path="/tools/jpg-to-pdf" element={<JpgToPdf />} />
             <Route path="/pdf-to-jpg" element={<PdfToJpg />} />
-            <Route path="/tools/pdf-to-jpg" element={<PdfToJpg />} />
             <Route path="/merge-pdf" element={<MergePdf />} />
-            <Route path="/tools/merge-pdf" element={<MergePdf />} />
             <Route path="/compress-pdf" element={<CompressPdf />} />
-            <Route path="/tools/compress-pdf" element={<CompressPdf />} />
             <Route path="/split-pdf" element={<SplitPdf />} />
-            <Route path="/tools/split-pdf" element={<SplitPdf />} />
-            <Route path="/pdf-to-word" element={<PdfToWord />} />
-            <Route path="/tools/pdf-to-word" element={<PdfToWord />} />
-            <Route path="/pdf-to-excel" element={<PdfToExcel />} />
-            <Route path="/tools/pdf-to-excel" element={<PdfToExcel />} />
-            <Route path="/excel-to-word" element={<ExcelToWord />} />
-            <Route path="/tools/excel-to-word" element={<ExcelToWord />} />
-            <Route path="/word-to-excel" element={<WordToExcel />} />
-            <Route path="/tools/word-to-excel" element={<WordToExcel />} />
             <Route path="/image-background-remover" element={<ImageBackgroundRemover />} />
-            <Route path="/tools/image-background-remover" element={<ImageBackgroundRemover />} />
             <Route path="/image-compressor" element={<ImageCompressor />} />
-            <Route path="/tools/image-compressor" element={<ImageCompressor />} />
+            <Route path="/pdf-to-word" element={<PdfToWord />} />
+            <Route path="/pdf-to-excel" element={<PdfToExcel />} />
+            <Route path="/excel-to-word" element={<ExcelToWord />} />
+            <Route path="/word-to-excel" element={<WordToExcel />} />
             <Route path="/video-to-audio" element={<VideoToAudio />} />
-            <Route path="/tools/video-to-audio" element={<VideoToAudio />} />
             <Route path="/audio-compressor" element={<AudioCompressor />} />
-            <Route path="/tools/audio-compressor" element={<AudioCompressor />} />
             <Route path="/image-converter" element={<ImageConverter />} />
-            <Route path="/tools/image-converter" element={<ImageConverter />} />
             <Route path="/video-converter" element={<VideoConverter />} />
-            <Route path="/tools/video-converter" element={<VideoConverter />} />
             <Route path="/video-compressor" element={<VideoCompressor />} />
-            <Route path="/tools/video-compressor" element={<VideoCompressor />} />
+
+            {/* Permanent Redirects for legacy /tools/:slug routes to prevent duplicate indexation */}
+            <Route path="/tools/word-to-pdf" element={<Navigate to="/word-to-pdf" replace />} />
+            <Route path="/tools/excel-to-pdf" element={<Navigate to="/excel-to-pdf" replace />} />
+            <Route path="/tools/powerpoint-to-pdf" element={<Navigate to="/powerpoint-to-pdf" replace />} />
+            <Route path="/tools/jpg-to-pdf" element={<Navigate to="/jpg-to-pdf" replace />} />
+            <Route path="/tools/pdf-to-jpg" element={<Navigate to="/pdf-to-jpg" replace />} />
+            <Route path="/tools/merge-pdf" element={<Navigate to="/merge-pdf" replace />} />
+            <Route path="/tools/compress-pdf" element={<Navigate to="/compress-pdf" replace />} />
+            <Route path="/tools/split-pdf" element={<Navigate to="/split-pdf" replace />} />
+            <Route path="/tools/image-background-remover" element={<Navigate to="/image-background-remover" replace />} />
+            <Route path="/tools/image-compressor" element={<Navigate to="/image-compressor" replace />} />
+            <Route path="/tools/pdf-to-word" element={<Navigate to="/pdf-to-word" replace />} />
+            <Route path="/tools/pdf-to-excel" element={<Navigate to="/pdf-to-excel" replace />} />
+            <Route path="/tools/excel-to-word" element={<Navigate to="/excel-to-word" replace />} />
+            <Route path="/tools/word-to-excel" element={<Navigate to="/word-to-excel" replace />} />
+            <Route path="/tools/video-to-audio" element={<Navigate to="/video-to-audio" replace />} />
+            <Route path="/tools/audio-compressor" element={<Navigate to="/audio-compressor" replace />} />
+            <Route path="/tools/image-converter" element={<Navigate to="/image-converter" replace />} />
+            <Route path="/tools/video-converter" element={<Navigate to="/video-converter" replace />} />
+            <Route path="/tools/video-compressor" element={<Navigate to="/video-compressor" replace />} />
+
+            {/* Common Alias Redirects */}
+            <Route path="/compress-image" element={<Navigate to="/image-compressor" replace />} />
+            <Route path="/remove-bg" element={<Navigate to="/image-background-remover" replace />} />
+            <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
+            <Route path="/terms" element={<Navigate to="/terms-of-service" replace />} />
+
+            {/* Informational Pages */}
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
-            <Route path="/terms" element={<TermsOfService />} />
+
+            {/* 404 Fallback */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

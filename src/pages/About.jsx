@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Award, Sparkles, CheckCircle2, ShieldCheck,
   Zap, Globe, ArrowRight, Lock, Cpu
@@ -48,13 +48,22 @@ const values = [
 ];
 
 export default function About() {
-  const location = useLocation();
   return (
     <div className="pt-16 pb-20 min-h-screen">
       <Helmet>
-        <title>About Us — PDFora | Free, Private & Secure Online PDF Tools</title>
+        <title>About Us — PDFora | Free, Private &amp; Secure Online PDF Tools</title>
         <meta name="description" content="Learn about PDFora, a fast, private, in-browser online PDF suite built for students, professionals, and businesses worldwide." />
-        <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
+        <link rel="canonical" href="https://pdfora.nimradev.site/about" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://pdfora.nimradev.site/about" />
+        <meta property="og:title" content="About Us — PDFora | Free, Private & Secure Online PDF Tools" />
+        <meta property="og:description" content="Learn about PDFora, a fast, private, in-browser online PDF suite built for students, professionals, and businesses worldwide." />
+        <meta property="og:image" content="https://pdfora.nimradev.site/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://pdfora.nimradev.site/about" />
+        <meta name="twitter:title" content="About Us — PDFora" />
+        <meta name="twitter:description" content="Learn about PDFora, a fast, private, in-browser online PDF suite built for students, professionals, and businesses worldwide." />
+        <meta name="twitter:image" content="https://pdfora.nimradev.site/og-image.jpg" />
       </Helmet>
 
       {/* ── Hero ──────────────────────────────────────────── */}

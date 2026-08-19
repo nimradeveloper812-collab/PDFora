@@ -60,30 +60,49 @@
     <link rel="shortcut icon" href="/favicon.ico?v=blue2" />
     <link rel="manifest" href="/site.webmanifest?v=blue2" />
 
+    <link rel="canonical" href="https://pdfora.nimradev.site/" />
+
     <!-- Schema.org JSON-LD for Google Search & International WebApplication Indexing -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "PDFora",
-      "url": "https://pdfora.nimradev.site",
-      "image": "https://pdfora.nimradev.site/pdfora-logo.png",
-      "logo": "https://pdfora.nimradev.site/pdfora-logo.png",
-      "description": "Free online PDF suite for converting, merging, splitting, and compressing documents privately in your browser.",
-      "applicationCategory": "ProductivityApplication",
-      "operatingSystem": "All",
-      "browserRequirements": "Requires JavaScript. Requires HTML5.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "provider": {
-        "@type": "Organization",
-        "name": "PDFora",
-        "url": "https://pdfora.nimradev.site",
-        "logo": "https://pdfora.nimradev.site/pdfora-logo.png"
-      }
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://pdfora.nimradev.site/#website",
+          "name": "PDFora",
+          "url": "https://pdfora.nimradev.site",
+          "description": "Free online PDF suite for converting, merging, splitting, and compressing documents privately in your browser.",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://pdfora.nimradev.site/tools?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://pdfora.nimradev.site/#webapp",
+          "name": "PDFora",
+          "url": "https://pdfora.nimradev.site",
+          "image": "https://pdfora.nimradev.site/pdfora-logo.png",
+          "logo": "https://pdfora.nimradev.site/pdfora-logo.png",
+          "description": "Free online PDF suite for converting, merging, splitting, and compressing documents privately in your browser.",
+          "applicationCategory": "ProductivityApplication",
+          "operatingSystem": "All",
+          "browserRequirements": "Requires JavaScript. Requires HTML5.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "provider": {
+            "@type": "Organization",
+            "name": "PDFora",
+            "url": "https://pdfora.nimradev.site",
+            "logo": "https://pdfora.nimradev.site/pdfora-logo.png"
+          }
+        }
+      ]
     }
     </script>
   </head>

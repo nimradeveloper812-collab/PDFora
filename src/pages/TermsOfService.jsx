@@ -1,7 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { FileText, Sparkles } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
 
 const SECTIONS = [
   {
@@ -85,13 +84,22 @@ Our aggregate liability for any dispute shall not exceed $50.00 USD.`,
 ];
 
 export default function TermsOfService() {
-  const location = useLocation();
   return (
     <div className="pt-24 pb-20 min-h-screen">
       <Helmet>
         <title>Terms of Service — PDFora | Free Online PDF Suite</title>
         <meta name="description" content="Review the Terms of Service for PDFora. Free, secure, and in-browser online PDF conversion and management utilities." />
-        <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
+        <link rel="canonical" href="https://pdfora.nimradev.site/terms-of-service" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://pdfora.nimradev.site/terms-of-service" />
+        <meta property="og:title" content="Terms of Service — PDFora" />
+        <meta property="og:description" content="Review the Terms of Service for PDFora. Free, secure, and in-browser online PDF conversion and management utilities." />
+        <meta property="og:image" content="https://pdfora.nimradev.site/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://pdfora.nimradev.site/terms-of-service" />
+        <meta name="twitter:title" content="Terms of Service — PDFora" />
+        <meta name="twitter:description" content="Review the Terms of Service for PDFora." />
+        <meta name="twitter:image" content="https://pdfora.nimradev.site/og-image.jpg" />
       </Helmet>
 
       {/* Hero */}

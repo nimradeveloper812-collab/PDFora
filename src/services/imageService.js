@@ -104,6 +104,8 @@ export async function validateImageFile(file, maxMb = 35) {
   });
 }
 
+export const getImageMetadata = validateImageFile;
+
 /**
  * Background Removal Service
  * Uses @imgly/background-removal WebAssembly AI segmentation model in-browser.
@@ -113,7 +115,8 @@ export async function removeImageBackground(fileOrBlob, onProgress) {
     if (onProgress) onProgress(10, 'Initializing AI neural network engine...');
 
     // Dynamically import the background removal library
-    const { default: imglyRemoveBackground } = await import('@imgly/background-removal');
+    const imglyModule = await import('@imgly/background-removal');
+    const imglyRemoveBackground = imglyModule.removeBackground || imglyModule.default || imglyModule;
 
     if (onProgress) onProgress(25, 'Loading segmentation model...');
 

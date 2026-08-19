@@ -4,6 +4,7 @@ import {
   CheckCircle2, ShieldCheck, FileImage, ArrowRight
 } from 'lucide-react';
 import {
+  validateImageFile,
   removeImageBackground,
   createManagedObjectURL,
   revokeManagedObjectURL,
@@ -39,28 +40,24 @@ export default function BackgroundRemoverTool() {
     setErrorMsg('');
     setStatus('idle');
 
-    // Validate type
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!validTypes.includes(incomingFile.type) && !/\.(jpe?g|png|webp)$/i.test(incomingFile.name)) {
-      setErrorMsg('Invalid file format. Please upload a JPG, JPEG, PNG, or WebP image.');
-      return;
-    }
-
-    // Validate size (35 MB max)
-    if (incomingFile.size > 35 * 1024 * 1024) {
-      setErrorMsg('File exceeds 35 MB limit. Please upload a smaller image.');
-      return;
-    }
+    if (previewUrl) revokeManagedObjectURL(previewUrl);
+    if (resultUrl) revokeManagedObjectURL(resultUrl);
+    setPreviewUrl(null);
+    setResultUrl(null);
+    setResultBlob(null);
 
     try {
-      const meta = await getImageMetadata(incomingFile);
+      const meta = await validateImageFile(incomingFile, 35);
       setImageMeta(meta);
       setFile(incomingFile);
       const url = createManagedObjectURL(incomingFile);
       setPreviewUrl(url);
       setStatus('ready');
-    } catch {
-      setErrorMsg('Could not read image file. Please try another image.');
+    } catch (err) {
+      setErrorMsg(err.message || 'Could not read image file. Please try another image.');
+      setFile(null);
+      setImageMeta(null);
+      setStatus('idle');
     }
   };
 

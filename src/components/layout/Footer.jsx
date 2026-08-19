@@ -166,10 +166,10 @@ export default function Footer() {
           <p>© {year} PDFora. All rights reserved.</p>
 
           <div className="flex items-center gap-6">
-            <Link to="/privacy" className="hover:text-blue-600 transition-colors">
+            <Link to="/privacy-policy" className="hover:text-blue-600 transition-colors">
               Privacy Policy
             </Link>
-            <Link to="/terms" className="hover:text-blue-600 transition-colors">
+            <Link to="/terms-of-service" className="hover:text-blue-600 transition-colors">
               Terms of Service
             </Link>
             <Link to="/about" className="hover:text-blue-600 transition-colors">
