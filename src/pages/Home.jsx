@@ -144,9 +144,12 @@ export default function Home() {
       t.shortDesc.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const convertTools  = TOOLS.filter(t => t.category.startsWith('convert'));
-  const organizeTools = TOOLS.filter(t => t.category === 'organize');
-  const optimizeTools = TOOLS.filter(t => t.category === 'optimize');
+  const pdfConvertTools = TOOLS.filter(t => t.category.startsWith('convert'));
+  const documentTools   = TOOLS.filter(t => t.category === 'organize');
+  const imageTools      = TOOLS.filter(t => t.category === 'image');
+  const videoTools      = TOOLS.filter(t => t.category === 'video');
+  const audioTools      = TOOLS.filter(t => t.category === 'audio');
+  const optimizeTools   = TOOLS.filter(t => t.category === 'optimize');
 
   return (
     <div className="pt-16 min-h-screen">
@@ -527,32 +530,52 @@ export default function Home() {
 
           <div className="space-y-14">
 
-            {/* Category: Convert */}
-            {convertTools.length > 0 && (
+            {/* Category 1: PDF Conversion */}
+            {pdfConvertTools.length > 0 && (
               <div>
                 <CategoryHeader number="1" title="Convert to &amp; from PDF" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {convertTools.map(tool => <ToolCard key={tool.id} tool={tool} />)}
+                  {pdfConvertTools.map(tool => <ToolCard key={tool.id} tool={tool} />)}
                 </div>
               </div>
             )}
 
-            {/* Category: Organize */}
-            {organizeTools.length > 0 && (
+            {/* Category 2: Image Tools */}
+            {imageTools.length > 0 && (
               <div>
-                <CategoryHeader number="2" title="Organize &amp; Edit PDF" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {organizeTools.map(tool => <ToolCard key={tool.id} tool={tool} />)}
+                <CategoryHeader number="2" title="Image Tools &amp; Background Remover" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {imageTools.map(tool => <ToolCard key={tool.id} tool={tool} />)}
                 </div>
               </div>
             )}
 
-            {/* Category: Optimize */}
-            {optimizeTools.length > 0 && (
+            {/* Category 3: Video Tools */}
+            {videoTools.length > 0 && (
               <div>
-                <CategoryHeader number="3" title="Optimize &amp; Compress" />
+                <CategoryHeader number="3" title="Video Conversion &amp; Compression" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {videoTools.map(tool => <ToolCard key={tool.id} tool={tool} />)}
+                </div>
+              </div>
+            )}
+
+            {/* Category 4: Audio Tools */}
+            {audioTools.length > 0 && (
+              <div>
+                <CategoryHeader number="4" title="Audio Extraction &amp; Compression" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {audioTools.map(tool => <ToolCard key={tool.id} tool={tool} />)}
+                </div>
+              </div>
+            )}
+
+            {/* Category 5: Organize & Optimize */}
+            {(documentTools.length > 0 || optimizeTools.length > 0) && (
+              <div>
+                <CategoryHeader number="5" title="Organize, Edit &amp; Optimize" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {optimizeTools.map(tool => <ToolCard key={tool.id} tool={tool} />)}
+                  {[...documentTools, ...optimizeTools].map(tool => <ToolCard key={tool.id} tool={tool} />)}
                 </div>
               </div>
             )}
