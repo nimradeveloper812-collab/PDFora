@@ -8,16 +8,14 @@ import dotenv from 'dotenv';
 import multer from 'multer';
 import sharp from 'sharp';
 import ffmpeg from 'fluent-ffmpeg';
-import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
-import ffprobeInstaller from '@ffprobe-installer/ffprobe';
+import ffmpegStatic from 'ffmpeg-static';
 
 dotenv.config();
 
-if (ffmpegInstaller && ffmpegInstaller.path) {
-  ffmpeg.setFfmpegPath(ffmpegInstaller.path);
-}
-if (ffprobeInstaller && ffprobeInstaller.path) {
-  ffmpeg.setFfprobePath(ffprobeInstaller.path);
+if (process.env.FFMPEG_PATH) {
+  ffmpeg.setFfmpegPath(process.env.FFMPEG_PATH);
+} else if (ffmpegStatic) {
+  ffmpeg.setFfmpegPath(ffmpegStatic);
 }
 
 // Media temporary directory
