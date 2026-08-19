@@ -110,8 +110,9 @@ export default function Header() {
     return () => document.removeEventListener('keydown', handleEscape);
   }, []);
 
-  const convertTools = TOOLS.filter(t => t.category.startsWith('convert'));
-  const otherTools  = TOOLS.filter(t => !t.category.startsWith('convert'));
+  const pdfTools = TOOLS.filter(t => t.category.startsWith('convert'));
+  const docTools = TOOLS.filter(t => t.category === 'organize' || t.category === 'optimize');
+  const mediaTools = TOOLS.filter(t => ['image', 'video', 'audio'].includes(t.category));
   const isToolsActive = location.pathname.startsWith('/tools');
 
   return (
@@ -185,7 +186,7 @@ export default function Header() {
                     : {}
                 }
               >
-                <span>PDF Tools</span>
+                <span>Tools Directory</span>
                 <ChevronDown
                   className={`w-3.5 h-3.5 transition-transform duration-250 ${isToolsOpen ? 'rotate-180' : ''}`}
                   style={{ color: isToolsOpen ? '#3B82F6' : '#A1A1AA' }}
@@ -198,7 +199,7 @@ export default function Header() {
                 <div
                   id="tools-dropdown"
                   role="menu"
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2.5 w-[660px] bg-white rounded-2xl p-5 z-50 animate-slide-in-top"
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2.5 w-[840px] bg-white rounded-2xl p-5 z-50 animate-slide-in-top"
                   style={{
                     border: '1px solid #BFDBFE',
                     boxShadow: '0 20px 48px rgba(59, 130, 246, 0.12), 0 4px 16px rgba(0,0,0,0.06)',
@@ -211,7 +212,7 @@ export default function Header() {
                       style={{ color: '#3B82F6' }}
                     >
                       <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-                      PDF Tool Suite
+                      Complete Tools Directory
                     </span>
                     <Link
                       to="/tools"
@@ -228,17 +229,17 @@ export default function Header() {
                     </Link>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Left — Convert */}
+                  <div className="grid grid-cols-3 gap-4">
+                    {/* Column 1 — PDF Tools */}
                     <div>
                       <div
                         className="px-2 mb-2 text-[10px] font-bold uppercase tracking-wider"
                         style={{ color: '#A1A1AA' }}
                       >
-                        Convert PDF
+                        PDF Converters
                       </div>
-                      <div className="space-y-0.5">
-                        {convertTools.slice(0, 4).map(tool => {
+                      <div className="space-y-0.5 max-h-[320px] overflow-y-auto pr-1">
+                        {pdfTools.map(tool => {
                           const Icon = iconMap[tool.iconName] || FileText;
                           return (
                             <Link
@@ -249,14 +250,14 @@ export default function Header() {
                               onFocus={() => prefetchTool(tool.id)}
                               onTouchStart={() => prefetchTool(tool.id)}
                               role="menuitem"
-                              className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-150 group/item hover:bg-blue-50"
+                              className="flex items-center gap-2.5 p-2 rounded-xl transition-all duration-150 group/item hover:bg-blue-50"
                               style={{ textDecoration: 'none' }}
                             >
                               <div
-                                className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 group-hover/item:scale-105"
+                                className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 group-hover/item:scale-105"
                                 style={{ background: '#DBEAFE', color: '#3B82F6' }}
                               >
-                                <Icon className="w-4 h-4" aria-hidden="true" />
+                                <Icon className="w-3.5 h-3.5" aria-hidden="true" />
                               </div>
                               <div className="min-w-0">
                                 <div
@@ -265,12 +266,6 @@ export default function Header() {
                                 >
                                   {tool.name}
                                 </div>
-                                <p
-                                  className="text-[11px] truncate mt-0.5"
-                                  style={{ color: '#A1A1AA' }}
-                                >
-                                  {tool.shortDesc}
-                                </p>
                               </div>
                             </Link>
                           );
@@ -278,16 +273,16 @@ export default function Header() {
                       </div>
                     </div>
 
-                    {/* Right — Organize & Optimize */}
+                    {/* Column 2 — Document & Organize */}
                     <div>
                       <div
                         className="px-2 mb-2 text-[10px] font-bold uppercase tracking-wider"
                         style={{ color: '#A1A1AA' }}
                       >
-                        Edit &amp; Optimize
+                        Edit &amp; Organize
                       </div>
-                      <div className="space-y-0.5">
-                        {[...otherTools, ...convertTools.slice(4)].map(tool => {
+                      <div className="space-y-0.5 max-h-[320px] overflow-y-auto pr-1">
+                        {docTools.map(tool => {
                           const Icon = iconMap[tool.iconName] || FileText;
                           return (
                             <Link
@@ -298,14 +293,14 @@ export default function Header() {
                               onFocus={() => prefetchTool(tool.id)}
                               onTouchStart={() => prefetchTool(tool.id)}
                               role="menuitem"
-                              className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-150 group/item hover:bg-blue-50"
+                              className="flex items-center gap-2.5 p-2 rounded-xl transition-all duration-150 group/item hover:bg-blue-50"
                               style={{ textDecoration: 'none' }}
                             >
                               <div
-                                className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 group-hover/item:scale-105"
+                                className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 group-hover/item:scale-105"
                                 style={{ background: '#DBEAFE', color: '#3B82F6' }}
                               >
-                                <Icon className="w-4 h-4" aria-hidden="true" />
+                                <Icon className="w-3.5 h-3.5" aria-hidden="true" />
                               </div>
                               <div className="min-w-0">
                                 <div
@@ -314,12 +309,49 @@ export default function Header() {
                                 >
                                   {tool.name}
                                 </div>
-                                <p
-                                  className="text-[11px] truncate mt-0.5"
-                                  style={{ color: '#A1A1AA' }}
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Column 3 — Media & Images */}
+                    <div>
+                      <div
+                        className="px-2 mb-2 text-[10px] font-bold uppercase tracking-wider"
+                        style={{ color: '#A1A1AA' }}
+                      >
+                        Media &amp; Images
+                      </div>
+                      <div className="space-y-0.5 max-h-[320px] overflow-y-auto pr-1">
+                        {mediaTools.map(tool => {
+                          const Icon = iconMap[tool.iconName] || FileText;
+                          return (
+                            <Link
+                              key={tool.id}
+                              to={tool.path}
+                              onClick={() => setIsToolsOpen(false)}
+                              onMouseEnter={() => prefetchTool(tool.id)}
+                              onFocus={() => prefetchTool(tool.id)}
+                              onTouchStart={() => prefetchTool(tool.id)}
+                              role="menuitem"
+                              className="flex items-center gap-2.5 p-2 rounded-xl transition-all duration-150 group/item hover:bg-blue-50"
+                              style={{ textDecoration: 'none' }}
+                            >
+                              <div
+                                className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 group-hover/item:scale-105"
+                                style={{ background: '#DBEAFE', color: '#3B82F6' }}
+                              >
+                                <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+                              </div>
+                              <div className="min-w-0">
+                                <div
+                                  className="text-xs font-semibold transition-colors group-hover/item:text-blue-600 truncate"
+                                  style={{ color: '#18181B' }}
                                 >
-                                  {tool.shortDesc}
-                                </p>
+                                  {tool.name}
+                                </div>
                               </div>
                             </Link>
                           );
@@ -447,10 +479,10 @@ export default function Header() {
                   className="text-[10px] font-bold uppercase tracking-widest mb-2.5"
                   style={{ color: '#3B82F6' }}
                 >
-                  Popular Converters
+                  PDF Converters
                 </p>
                 <div className="grid grid-cols-2 gap-1">
-                  {convertTools.slice(0, 4).map(t => (
+                  {pdfTools.slice(0, 6).map(t => (
                     <Link
                       key={t.id}
                       to={t.path}
@@ -474,10 +506,10 @@ export default function Header() {
                   className="text-[10px] font-bold uppercase tracking-widest mb-2.5"
                   style={{ color: '#3B82F6' }}
                 >
-                  Edit &amp; Organize
+                  Media &amp; Image Tools
                 </p>
                 <div className="grid grid-cols-2 gap-1">
-                  {otherTools.map(t => (
+                  {mediaTools.map(t => (
                     <Link
                       key={t.id}
                       to={t.path}

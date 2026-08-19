@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { FileCheck, ShieldCheck, Lock, Zap, Heart, ArrowRight } from 'lucide-react';
 import { TOOLS } from '../../data/toolsData';
 
-const convertTools = TOOLS.filter(t => t.category.startsWith('convert'));
-const organizeTools = TOOLS.filter(t => !t.category.startsWith('convert'));
+const pdfTools = TOOLS.filter(t => t.category.startsWith('convert'));
+const docTools = TOOLS.filter(t => t.category === 'organize' || t.category === 'optimize');
+const mediaTools = TOOLS.filter(t => ['image', 'video', 'audio'].includes(t.category));
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -31,10 +32,10 @@ export default function Footer() {
             </div>
             <div>
               <h4 className="text-sm font-bold" style={{ color: '#18181B' }}>
-                Private &amp; In-Browser
+                Private &amp; Secure Processing
               </h4>
               <p className="text-xs mt-0.5 leading-relaxed max-w-lg" style={{ color: '#71717A' }}>
-                All document processing runs client-side inside your browser sandbox with zero server file persistence. Your sensitive files never leave your device.
+                All document and media processing executes in secure memory sandboxes with zero server file persistence. Your sensitive files never persist on server storage.
               </p>
             </div>
           </div>
@@ -42,11 +43,11 @@ export default function Footer() {
           <div className="flex items-center gap-5 shrink-0 sm:pl-4" style={{ borderLeft: '1px solid #BFDBFE' }}>
             <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: '#3F3F46' }}>
               <Lock className="w-3.5 h-3.5 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
-              100% In-Browser
+              100% Private
             </span>
             <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: '#3F3F46' }}>
               <Zap className="w-3.5 h-3.5 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
-              Zero Server Storage
+              Zero Storage Leaks
             </span>
           </div>
         </div>
@@ -54,7 +55,7 @@ export default function Footer() {
 
       {/* ── Main Link Grid ─────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-8">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
 
           {/* Brand Column */}
           <div className="col-span-2 space-y-4">
@@ -81,8 +82,8 @@ export default function Footer() {
             </Link>
 
             <p className="text-sm leading-relaxed max-w-xs" style={{ color: '#71717A' }}>
-              Fast, private, and 100% free online PDF platform. Convert, merge, split, and compress
-              documents with zero server file persistence — no account required.
+              Fast, private, and 100% free online PDF and media conversion platform. Convert, merge, split, and compress
+              documents, images, videos, and audio with zero server file persistence.
             </p>
 
             <div className="flex items-center gap-1.5 text-xs" style={{ color: '#A1A1AA' }}>
@@ -92,20 +93,20 @@ export default function Footer() {
                 style={{ color: '#3B82F6', fill: '#3B82F6' }}
                 aria-hidden="true"
               />
-              <span>for students, freelancers &amp; professionals worldwide</span>
+              <span>for students, creators &amp; professionals worldwide</span>
             </div>
           </div>
 
-          {/* Convert Tools Column */}
+          {/* PDF Tools Column */}
           <div>
             <h5
               className="text-[10px] font-bold uppercase tracking-widest mb-4"
               style={{ color: '#18181B' }}
             >
-              Convert PDF
+              PDF Tools
             </h5>
             <ul className="space-y-2.5">
-              {convertTools.map(tool => (
+              {pdfTools.map(tool => (
                 <li key={tool.id}>
                   <Link
                     to={tool.path}
@@ -118,16 +119,16 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Organize / Optimize Column */}
+          {/* Organize / Document Tools Column */}
           <div>
             <h5
               className="text-[10px] font-bold uppercase tracking-widest mb-4"
               style={{ color: '#18181B' }}
             >
-              Edit &amp; Organize
+              Edit &amp; Docs
             </h5>
             <ul className="space-y-2.5">
-              {organizeTools.map(tool => (
+              {docTools.map(tool => (
                 <li key={tool.id}>
                   <Link
                     to={tool.path}
@@ -137,18 +138,28 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link
-                  to="/tools"
-                  className="inline-flex items-center gap-1 text-xs font-bold mt-1 group/more text-blue-500 hover:text-blue-600 hover:underline transition-all duration-150"
-                >
-                  All Tools
-                  <ArrowRight
-                    className="w-3 h-3 transition-transform group-hover/more:translate-x-0.5"
-                    aria-hidden="true"
-                  />
-                </Link>
-              </li>
+            </ul>
+          </div>
+
+          {/* Media & Image Tools Column */}
+          <div>
+            <h5
+              className="text-[10px] font-bold uppercase tracking-widest mb-4"
+              style={{ color: '#18181B' }}
+            >
+              Media &amp; Images
+            </h5>
+            <ul className="space-y-2.5">
+              {mediaTools.map(tool => (
+                <li key={tool.id}>
+                  <Link
+                    to={tool.path}
+                    className="text-xs font-medium text-zinc-500 hover:text-blue-500 hover:underline transition-all duration-150"
+                  >
+                    {tool.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
