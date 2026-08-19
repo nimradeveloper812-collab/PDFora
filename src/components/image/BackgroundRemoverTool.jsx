@@ -18,6 +18,8 @@ export default function BackgroundRemoverTool() {
   const [imageMeta, setImageMeta] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [resultUrl, setResultUrl] = useState(null);
+  const [resultBlob, setResultBlob] = useState(null);
+  const [outputFormat, setOutputFormat] = useState('png'); // 'png' | 'webp' | 'jpg'
   const [status, setStatus] = useState('idle'); // 'idle' | 'ready' | 'processing' | 'completed'
   const [progress, setProgress] = useState(0);
   const [progressText, setProgressText] = useState('');
@@ -38,23 +40,28 @@ export default function BackgroundRemoverTool() {
     setErrorMsg('');
     setStatus('idle');
 
-    if (previewUrl) revokeManagedObjectURL(previewUrl);
-    if (resultUrl) revokeManagedObjectURL(resultUrl);
-    setPreviewUrl(null);
-    setResultUrl(null);
+    // Validate type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(incomingFile.type) && !/\.(jpe?g|png|webp)$/i.test(incomingFile.name)) {
+      setErrorMsg('Invalid file format. Please upload a JPG, JPEG, PNG, or WebP image.');
+      return;
+    }
+
+    // Validate size (35 MB max)
+    if (incomingFile.size > 35 * 1024 * 1024) {
+      setErrorMsg('File exceeds 35 MB limit. Please upload a smaller image.');
+      return;
+    }
 
     try {
-      const meta = await validateImageFile(incomingFile, 35);
-      const url = createManagedObjectURL(incomingFile);
-      setFile(incomingFile);
+      const meta = await getImageMetadata(incomingFile);
       setImageMeta(meta);
+      setFile(incomingFile);
+      const url = createManagedObjectURL(incomingFile);
       setPreviewUrl(url);
       setStatus('ready');
     } catch (err) {
-      setErrorMsg(err.message || 'Please upload a valid JPG, PNG, or WebP image.');
-      setFile(null);
-      setImageMeta(null);
-      setStatus('idle');
+      setErrorMsg('Could not read image file. Please try another image.');
     }
   };
 
@@ -89,6 +96,7 @@ export default function BackgroundRemoverTool() {
         if (text) setProgressText(text);
       });
 
+      setResultBlob(blob);
       const url = createManagedObjectURL(blob);
       setResultUrl(url);
       setStatus('completed');
@@ -100,17 +108,53 @@ export default function BackgroundRemoverTool() {
     }
   };
 
-  const handleDownload = () => {
-    if (!resultUrl) return;
+  const handleDownload = async () => {
+    if (!resultBlob && !resultUrl) return;
     const baseName = (file?.name || 'image').replace(/\.[^/.]+$/, '');
-    const filename = `${baseName}_transparent_pdfora.png`;
+    
+    let finalBlob = resultBlob;
+    let ext = outputFormat;
+    let mime = 'image/png';
+
+    if (outputFormat === 'jpg') {
+      mime = 'image/jpeg';
+      ext = 'jpg';
+      // Flatten onto white canvas
+      const img = new Image();
+      img.src = resultUrl;
+      await new Promise(r => { img.onload = r; });
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || img.width;
+      canvas.height = img.naturalHeight || img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      finalBlob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.92));
+    } else if (outputFormat === 'webp') {
+      mime = 'image/webp';
+      ext = 'webp';
+      const img = new Image();
+      img.src = resultUrl;
+      await new Promise(r => { img.onload = r; });
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || img.width;
+      canvas.height = img.naturalHeight || img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      finalBlob = await new Promise(r => canvas.toBlob(r, 'image/webp', 0.92));
+    }
+
+    const downloadUrl = URL.createObjectURL(finalBlob);
+    const filename = `${baseName}_bg_removed_pdfora.${ext}`;
 
     const a = document.createElement('a');
-    a.href = resultUrl;
+    a.href = downloadUrl;
     a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    URL.revokeObjectURL(downloadUrl);
   };
 
   const handleReset = () => {
@@ -120,6 +164,8 @@ export default function BackgroundRemoverTool() {
     setImageMeta(null);
     setPreviewUrl(null);
     setResultUrl(null);
+    setResultBlob(null);
+    setOutputFormat('png');
     setStatus('idle');
     setProgress(0);
     setProgressText('');
@@ -187,12 +233,23 @@ export default function BackgroundRemoverTool() {
                 <span>Choose Image</span>
               </div>
 
-              <div className="flex items-center gap-2 text-xs text-zinc-400 mt-2 font-medium">
-                <span>Supports JPG, PNG, WebP up to 35 MB</span>
-                <span>•</span>
-                <span className="flex items-center gap-1 text-emerald-600">
-                  <ShieldCheck className="w-3.5 h-3.5" /> 100% In-Browser & Private
-                </span>
+              <div className="flex flex-col items-center gap-2 mt-2">
+                <div className="flex flex-wrap items-center justify-center gap-1.5">
+                  <span className="text-xs font-semibold text-zinc-500 mr-1">Supported Formats:</span>
+                  {['JPG', 'JPEG', 'PNG', 'WEBP'].map((fmt) => (
+                    <span
+                      key={fmt}
+                      className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200/70 shadow-xs"
+                    >
+                      {fmt}
+                    </span>
+                  ))}
+                  <span className="text-xs font-medium text-zinc-400 ml-1">(Up to 35 MB)</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>100% In-Browser &amp; Private AI Processing</span>
+                </div>
               </div>
             </div>
           </div>
@@ -226,6 +283,62 @@ export default function BackgroundRemoverTool() {
               </button>
             </div>
 
+            {/* Select Output Format Points */}
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200/80 space-y-2.5">
+              <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider">
+                1. Select Desired Output Format
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setOutputFormat('png')}
+                  className={`p-3 rounded-xl border text-left transition-all ${
+                    outputFormat === 'png'
+                      ? 'border-blue-600 bg-blue-50 text-blue-900 ring-2 ring-blue-500/20 shadow-xs'
+                      : 'border-zinc-200 bg-white hover:border-zinc-300 text-zinc-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-bold">PNG</span>
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">Transparent</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-500 leading-snug">Full alpha transparency, loss-free detail</p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setOutputFormat('webp')}
+                  className={`p-3 rounded-xl border text-left transition-all ${
+                    outputFormat === 'webp'
+                      ? 'border-blue-600 bg-blue-50 text-blue-900 ring-2 ring-blue-500/20 shadow-xs'
+                      : 'border-zinc-200 bg-white hover:border-zinc-300 text-zinc-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-bold">WebP</span>
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">Ultra-Light</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-500 leading-snug">Transparent &amp; 70% smaller file size</p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setOutputFormat('jpg')}
+                  className={`p-3 rounded-xl border text-left transition-all ${
+                    outputFormat === 'jpg'
+                      ? 'border-blue-600 bg-blue-50 text-blue-900 ring-2 ring-blue-500/20 shadow-xs'
+                      : 'border-zinc-200 bg-white hover:border-zinc-300 text-zinc-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-bold">JPG</span>
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">Solid White</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-500 leading-snug">Solid white background for shop catalogs</p>
+                </button>
+              </div>
+            </div>
+
             {/* Image Preview Box */}
             <div className="relative rounded-2xl border border-zinc-200 bg-zinc-900/5 flex items-center justify-center p-4 min-h-[260px] max-h-[420px] overflow-hidden">
               <img
@@ -242,7 +355,7 @@ export default function BackgroundRemoverTool() {
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-98 text-white font-bold text-base shadow-lg shadow-blue-600/25 transition-all"
               >
                 <Sparkles className="w-5 h-5" />
-                <span>Remove Background</span>
+                <span>Remove Background ({outputFormat.toUpperCase()})</span>
                 <ArrowRight className="w-4 h-4 ml-1" />
               </button>
             </div>
@@ -290,7 +403,7 @@ export default function BackgroundRemoverTool() {
             <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-zinc-100">
               <div className="flex items-center gap-2 text-emerald-600 font-bold text-sm">
                 <CheckCircle2 className="w-5 h-5" />
-                <span>Background Removed Successfully!</span>
+                <span>Background Removed Successfully ({outputFormat.toUpperCase()})!</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -309,15 +422,15 @@ export default function BackgroundRemoverTool() {
               originalUrl={previewUrl}
               processedUrl={resultUrl}
               originalLabel="Original Photo"
-              processedLabel="Transparent PNG"
-              isTransparent={true}
+              processedLabel={`Processed ${outputFormat.toUpperCase()}`}
+              isTransparent={outputFormat !== 'jpg'}
             />
 
             {/* Download CTA Bar */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-zinc-100">
               <div className="text-xs text-zinc-500 text-center sm:text-left">
-                <p className="font-semibold text-zinc-800">High-Resolution Transparent PNG</p>
-                <p>Saved with full alpha transparency at original resolution</p>
+                <p className="font-semibold text-zinc-800">Export Format: {outputFormat.toUpperCase()}</p>
+                <p>{outputFormat === 'jpg' ? 'Saved with clean white solid background' : 'Saved with full alpha transparency at original resolution'}</p>
               </div>
 
               <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -334,7 +447,7 @@ export default function BackgroundRemoverTool() {
                   className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-98 text-white font-bold text-base shadow-lg shadow-blue-600/25 transition-all"
                 >
                   <Download className="w-5 h-5" />
-                  <span>Download Transparent PNG</span>
+                  <span>Download {outputFormat.toUpperCase()}</span>
                 </button>
               </div>
             </div>

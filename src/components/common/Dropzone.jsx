@@ -416,10 +416,18 @@ export default function Dropzone({ tool }) {
                       </>
                   }
                 </h3>
-                <p className="text-sm mb-6 max-w-sm" style={{ color: '#71717A' }}>
-                  Supports <strong style={{ color: '#3F3F46' }}>{tool.acceptedFileLabel}</strong>.
-                  Maximum file size: 50 MB.
-                </p>
+                <div className="flex flex-wrap items-center justify-center gap-1.5 mb-6 max-w-md">
+                  <span className="text-xs font-semibold text-zinc-500 mr-1">Supported Formats:</span>
+                  {(tool.acceptedFileLabel || '').split(/,\s*/).map((fmt, idx) => (
+                    <span
+                      key={idx}
+                      className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200/70 shadow-xs"
+                    >
+                      {fmt.replace(/\s*files?/i, '').trim()}
+                    </span>
+                  ))}
+                  <span className="text-xs text-zinc-400 font-medium ml-1">· Up to 50 MB</span>
+                </div>
 
                 <button
                   type="button"
