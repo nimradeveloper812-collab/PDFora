@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 import { fileURLToPath } from 'url';
+import { execFile } from 'child_process';
 import { Resend } from 'resend';
 import dotenv from 'dotenv';
 import multer from 'multer';
@@ -223,9 +224,96 @@ app.post('/api/media/video-to-audio', (req, res) => {
   });
 });
 
+// Helper: Probe audio stream metadata using ffmpeg
+function probeAudioMetadata(filePath) {
+  return new Promise((resolve) => {
+    const ffmpegBin = process.env.FFMPEG_PATH || ffmpegStatic || 'ffmpeg';
+    execFile(ffmpegBin, ['-i', filePath], (err, stdout, stderr) => {
+      const output = (stderr || '') + (stdout || '');
+      let durationSec = null;
+      let bitrateKbps = null;
+      let sampleRate = null;
+      let channels = null;
+
+      // Extract duration: "Duration: 00:00:26.00"
+      const durMatch = output.match(/Duration:\s*(\d+):(\d+):(\d+(\.\d+)?)/i);
+      if (durMatch) {
+        const hours = parseFloat(durMatch[1]);
+        const minutes = parseFloat(durMatch[2]);
+        const seconds = parseFloat(durMatch[3]);
+        durationSec = hours * 3600 + minutes * 60 + seconds;
+      }
+
+      // Extract bitrate: "bitrate: 128 kb/s"
+      const bitMatch = output.match(/bitrate:\s*(\d+)\s*kb\/s/i);
+      if (bitMatch) {
+        bitrateKbps = parseInt(bitMatch[1], 10);
+      }
+
+      // Extract audio stream details: "Audio: mp3, 44100 Hz, stereo/mono"
+      const audioMatch = output.match(/Audio:\s*([^,]+),\s*(\d+)\s*Hz,\s*([^,]+)/i);
+      if (audioMatch) {
+        sampleRate = parseInt(audioMatch[2], 10);
+        channels = audioMatch[3].trim().toLowerCase().includes('mono') ? 1 : 2;
+      }
+
+      // If bitrate wasn't in header, calculate accurately from file size and duration
+      if ((!bitrateKbps || bitrateKbps <= 0) && durationSec && durationSec > 0) {
+        try {
+          const stats = fs.statSync(filePath);
+          bitrateKbps = Math.max(8, Math.round((stats.size * 8) / (durationSec * 1000)));
+        } catch {}
+      }
+
+      resolve({
+        durationSec,
+        bitrateKbps: bitrateKbps || 128,
+        sampleRate: sampleRate || 44100,
+        channels: channels || 2
+      });
+    });
+  });
+}
+
+// Helper: Run audio encoder pass
+function runAudioEncode(inputPath, outputPath, targetExt, targetBitrate, channels, sampleRate) {
+  return new Promise((resolve, reject) => {
+    let cmd = ffmpeg(inputPath).noVideo();
+
+    if (channels && channels === 1) {
+      cmd = cmd.audioChannels(1);
+    }
+    if (sampleRate && sampleRate < 44100) {
+      cmd = cmd.audioFrequency(sampleRate);
+    }
+
+    if (targetExt === 'm4a') {
+      cmd = cmd.audioCodec('aac').audioBitrate(`${targetBitrate}k`).toFormat('ipod');
+    } else if (targetExt === 'ogg') {
+      cmd = cmd.audioCodec('libvorbis').audioBitrate(`${targetBitrate}k`).toFormat('ogg');
+    } else if (targetExt === 'opus') {
+      cmd = cmd.audioCodec('libopus').audioBitrate(`${targetBitrate}k`).toFormat('ogg');
+    } else {
+      cmd = cmd.audioCodec('libmp3lame').audioBitrate(`${targetBitrate}k`).toFormat('mp3');
+    }
+
+    cmd
+      .on('error', reject)
+      .on('end', () => {
+        try {
+          const stats = fs.statSync(outputPath);
+          resolve(stats.size);
+        } catch (e) {
+          reject(e);
+        }
+      })
+      .save(outputPath);
+  });
+}
+
 // ── 2. Audio Compression API ──────────────────────────────────────────
 app.post('/api/media/compress-audio', (req, res) => {
-  mediaUpload.single('file')(req, res, (err) => {
+  mediaUpload.single('file')(req, res, async (err) => {
     if (err) return res.status(400).json({ error: err.message || 'File upload failed.' });
     if (!req.file) return res.status(400).json({ error: 'No audio file uploaded.' });
 
@@ -233,67 +321,72 @@ app.post('/api/media/compress-audio', (req, res) => {
     const originalSize = req.file.size;
     const { preset = 'balanced', bitrate, format = 'mp3' } = req.body;
 
-    let targetBitrate = '128k';
-    if (bitrate) {
-      targetBitrate = bitrate.endsWith('k') ? bitrate : `${bitrate}k`;
-    } else if (preset === 'high') {
-      targetBitrate = '192k';
-    } else if (preset === 'balanced') {
-      targetBitrate = '128k';
-    } else if (preset === 'max') {
-      targetBitrate = '64k';
-    }
-
     const targetExt = ['mp3', 'm4a', 'ogg', 'opus'].includes(format.toLowerCase()) ? format.toLowerCase() : 'mp3';
     const outFilename = `${(req.file.originalname || 'audio').replace(/\.[^/.]+$/, '')}_compressed.${targetExt}`;
     const outputPath = path.join(mediaTempDir, `out_audio_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${targetExt}`);
 
-    let cmd = ffmpeg(inputPath).noVideo();
+    try {
+      const meta = await probeAudioMetadata(inputPath);
+      const originalBitrate = meta.bitrateKbps || 128;
 
-    if (targetExt === 'm4a') {
-      cmd = cmd.audioCodec('aac').audioBitrate(targetBitrate).toFormat('ipod');
-    } else if (targetExt === 'ogg') {
-      cmd = cmd.audioCodec('libvorbis').audioBitrate(targetBitrate).toFormat('ogg');
-    } else if (targetExt === 'opus') {
-      cmd = cmd.audioCodec('libopus').audioBitrate(targetBitrate).toFormat('ogg');
-    } else {
-      cmd = cmd.audioCodec('libmp3lame').audioBitrate(targetBitrate).toFormat('mp3');
-    }
+      let targetBitrate;
+      let channels = meta.channels;
+      let sampleRate = meta.sampleRate;
 
-    cmd
-      .on('error', (ffmpegErr) => {
-        console.error('Audio compression error:', ffmpegErr);
+      if (bitrate) {
+        targetBitrate = parseInt(bitrate, 10) || 64;
+      } else if (preset === 'high') {
+        // ~25% reduction relative to source
+        targetBitrate = Math.max(16, Math.min(192, Math.round(originalBitrate * 0.75)));
+        if (targetBitrate >= originalBitrate) {
+          targetBitrate = Math.max(12, Math.round(originalBitrate * 0.70));
+        }
+      } else if (preset === 'max') {
+        // ~65-75% reduction: aggressive mono + downsample
+        targetBitrate = Math.max(12, Math.min(48, Math.round(originalBitrate * 0.35)));
+        channels = 1;
+        sampleRate = Math.min(sampleRate, 24000);
+      } else {
+        // Balanced (~50% reduction):
+        targetBitrate = Math.max(16, Math.min(112, Math.round(originalBitrate * 0.50)));
+        if (targetBitrate >= originalBitrate) {
+          targetBitrate = Math.max(12, Math.round(originalBitrate * 0.60));
+        }
+        if (targetBitrate <= 48) {
+          channels = 1;
+        }
+      }
+
+      let compressedSize = await runAudioEncode(inputPath, outputPath, targetExt, targetBitrate, channels, sampleRate);
+
+      // GUARANTEE: If compressed output is not smaller than original, trigger aggressive pass
+      if (compressedSize >= originalSize) {
+        try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
+        const aggressiveBitrate = Math.max(8, Math.round(targetBitrate * 0.40));
+        compressedSize = await runAudioEncode(inputPath, outputPath, targetExt, aggressiveBitrate, 1, 22050);
+      }
+
+      const savedBytes = Math.max(0, originalSize - compressedSize);
+      const savedPercent = originalSize > 0 ? ((savedBytes / originalSize) * 100).toFixed(1) : '0.0';
+
+      res.setHeader('Content-Type', targetExt === 'm4a' ? 'audio/mp4' : (targetExt === 'ogg' ? 'audio/ogg' : 'audio/mpeg'));
+      res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(outFilename)}"`);
+      res.setHeader('X-Original-Size', originalSize);
+      res.setHeader('X-Compressed-Size', compressedSize);
+      res.setHeader('X-Saved-Percent', savedPercent);
+
+      const readStream = fs.createReadStream(outputPath);
+      readStream.pipe(res);
+      readStream.on('close', () => {
         try { if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath); } catch {}
         try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
-        return res.status(500).json({ error: 'Failed to compress audio file.' });
-      })
-      .on('end', () => {
-        try {
-          const stats = fs.statSync(outputPath);
-          const compressedSize = stats.size;
-          const savedBytes = Math.max(0, originalSize - compressedSize);
-          const savedPercent = originalSize > 0 ? ((savedBytes / originalSize) * 100).toFixed(1) : '0.0';
-
-          res.setHeader('Content-Type', targetExt === 'm4a' ? 'audio/mp4' : (targetExt === 'ogg' ? 'audio/ogg' : 'audio/mpeg'));
-          res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(outFilename)}"`);
-          res.setHeader('X-Original-Size', originalSize);
-          res.setHeader('X-Compressed-Size', compressedSize);
-          res.setHeader('X-Saved-Percent', savedPercent);
-
-          const readStream = fs.createReadStream(outputPath);
-          readStream.pipe(res);
-          readStream.on('close', () => {
-            try { if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath); } catch {}
-            try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
-          });
-        } catch (readErr) {
-          console.error('Audio stream read error:', readErr);
-          try { if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath); } catch {}
-          try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
-          return res.status(500).json({ error: 'Failed to read compressed audio stream.' });
-        }
-      })
-      .save(outputPath);
+      });
+    } catch (compressErr) {
+      console.error('Audio compression failure:', compressErr);
+      try { if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath); } catch {}
+      try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
+      return res.status(500).json({ error: 'Failed to compress audio file. File may be corrupted.' });
+    }
   });
 });
 

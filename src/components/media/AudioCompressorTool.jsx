@@ -215,9 +215,9 @@ export default function AudioCompressorTool() {
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
-                  { id: 'high', label: 'High Quality', bitrate: '192 kbps', desc: 'Minimal quality loss, best for music.' },
-                  { id: 'balanced', label: 'Balanced', bitrate: '128 kbps', desc: 'Recommended balance of size & sound.' },
-                  { id: 'max', label: 'Maximum Size Savings', bitrate: '64 kbps', desc: 'Smallest file size, ideal for voice.' },
+                  { id: 'high', label: 'High Quality', savings: '~25% Reduction', desc: 'Minimal quality loss, best for music & stereo.' },
+                  { id: 'balanced', label: 'Balanced', savings: '~50% Reduction', desc: 'Recommended balance of size & audio clarity.' },
+                  { id: 'max', label: 'Max Compression', savings: '~70% Reduction', desc: 'Smallest file size, optimized mono stream.' },
                 ].map((p) => (
                   <button
                     key={p.id}
@@ -232,7 +232,7 @@ export default function AudioCompressorTool() {
                   >
                     <div className="flex items-center justify-between mb-1">
                       <p className={`font-bold text-sm ${preset === p.id ? 'text-blue-700' : 'text-zinc-900'}`}>{p.label}</p>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-600">{p.bitrate}</span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100/70 text-blue-700">{p.savings}</span>
                     </div>
                     <p className="text-xs text-zinc-500">{p.desc}</p>
                   </button>
