@@ -148,7 +148,7 @@ export default function AllTools() {
   const totalResults = filteredCategories.reduce((acc, cat) => acc + cat.tools.length, 0);
 
   return (
-    <div className="pt-16 pb-20 min-h-screen">
+    <div className="pt-[88px] sm:pt-[96px] pb-20 min-h-screen">
       <Helmet>
         <title>All 19 Free Online PDF &amp; Media Tools — PDFora</title>
         <meta name="description" content="Explore PDFora's complete suite of 19 free online tools. Convert Word, Excel, PPT to PDF. Compress, merge, split PDFs, edit images, and convert video and audio files privately." />

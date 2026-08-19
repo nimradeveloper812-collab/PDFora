@@ -100,7 +100,7 @@ export default function Contact() {
   const blurStyle   = e => { e.currentTarget.style.borderColor = errors[e.currentTarget.name] ? '#FCA5A5' : '#BFDBFE'; e.currentTarget.style.boxShadow = 'none'; };
 
   return (
-    <div className="pt-16 pb-20 min-h-screen">
+    <div className="pt-[88px] sm:pt-[96px] pb-20 min-h-screen">
       <Helmet>
         <title>Contact Support — PDFora | Free Online PDF Platform Help</title>
         <meta name="description" content="Contact the PDFora support team. Send us your feedback, feature requests, questions, or bug reports." />

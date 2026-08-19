@@ -124,7 +124,7 @@ export default function ToolLayout({ tool }) {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50 pt-[88px] sm:pt-[96px]">
       <Helmet>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDesc} />
