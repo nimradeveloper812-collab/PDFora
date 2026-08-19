@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { Home, Grid, FileText, Minimize2, Layers, ArrowRight } from 'lucide-react';
+import { Home, Grid, FileText, Minimize2, Layers } from 'lucide-react';
 
 export default function NotFound() {
   const topTools = [

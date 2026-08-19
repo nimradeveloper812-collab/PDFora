@@ -4,7 +4,6 @@ import {
   CheckCircle2, ShieldCheck, FileImage, ArrowRight
 } from 'lucide-react';
 import {
-  validateImageFile,
   removeImageBackground,
   createManagedObjectURL,
   revokeManagedObjectURL,
@@ -60,7 +59,7 @@ export default function BackgroundRemoverTool() {
       const url = createManagedObjectURL(incomingFile);
       setPreviewUrl(url);
       setStatus('ready');
-    } catch (err) {
+    } catch {
       setErrorMsg('Could not read image file. Please try another image.');
     }
   };
@@ -114,10 +113,8 @@ export default function BackgroundRemoverTool() {
     
     let finalBlob = resultBlob;
     let ext = outputFormat;
-    let mime = 'image/png';
 
     if (outputFormat === 'jpg') {
-      mime = 'image/jpeg';
       ext = 'jpg';
       // Flatten onto white canvas
       const img = new Image();
@@ -132,7 +129,6 @@ export default function BackgroundRemoverTool() {
       ctx.drawImage(img, 0, 0);
       finalBlob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.92));
     } else if (outputFormat === 'webp') {
-      mime = 'image/webp';
       ext = 'webp';
       const img = new Image();
       img.src = resultUrl;

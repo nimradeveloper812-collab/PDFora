@@ -5,7 +5,7 @@ import {
   Search, ArrowRight, Sparkles, FileText, Table,
   Presentation, Image as ImageIcon, FileImage,
   Layers, Minimize2, Scissors, X,
-  Music, FileVideo, RefreshCw, Video, FileAudio
+  Music, FileVideo, RefreshCw
 } from 'lucide-react';
 import { TOOLS, TOOLS_CATEGORIES } from '../data/toolsData';
 import AdBanner from '../components/common/AdBanner';
@@ -13,7 +13,7 @@ import AdBanner from '../components/common/AdBanner';
 const iconMap = {
   FileText, Table, Presentation,
   Image: ImageIcon, FileImage, Layers, Minimize2, Scissors, Sparkles,
-  Music, FileVideo, RefreshCw, Video, FileAudio
+  Music, FileVideo, RefreshCw
 };
 
 const prefetchTool = (id) => {
@@ -41,23 +41,107 @@ const prefetchTool = (id) => {
   }
 };
 
+function ToolCard({ tool }) {
+  const Icon = iconMap[tool.iconName] || FileText;
+  return (
+    <Link
+      to={tool.path}
+      className="group flex flex-col justify-between p-5 rounded-2xl transition-all duration-200"
+      style={{
+        background: '#FFFFFF',
+        border: '1px solid #E2E8F0',
+        boxShadow: '0 1px 4px rgba(0, 0, 0, 0.03)',
+        textDecoration: 'none',
+      }}
+      onMouseEnter={e => {
+        prefetchTool(tool.id);
+        e.currentTarget.style.borderColor = '#3B82F6';
+        e.currentTarget.style.boxShadow = '0 10px 28px rgba(59, 130, 246, 0.12), 0 2px 8px rgba(0,0,0,0.04)';
+        e.currentTarget.style.transform = 'translateY(-2px)';
+      }}
+      onFocus={() => prefetchTool(tool.id)}
+      onTouchStart={() => prefetchTool(tool.id)}
+      onMouseLeave={e => {
+        e.currentTarget.style.borderColor = '#E2E8F0';
+        e.currentTarget.style.boxShadow = '0 1px 4px rgba(0, 0, 0, 0.03)';
+        e.currentTarget.style.transform = 'translateY(0)';
+      }}
+    >
+      <div>
+        <div className="flex items-start justify-between mb-3.5">
+          <div
+            className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 group-hover:scale-105"
+            style={{ background: '#EFF6FF', color: '#2563EB', border: '1px solid #DBEAFE' }}
+            aria-hidden="true"
+          >
+            <Icon className="w-5 h-5" strokeWidth={2} />
+          </div>
+          {tool.badge && (
+            <span
+              className="text-[10px] font-bold px-2.5 py-0.5 rounded-full"
+              style={{
+                background: tool.badge === 'New AI' ? '#ECFDF5' : '#EFF6FF',
+                color: tool.badge === 'New AI' ? '#059669' : '#1D4ED8',
+                border: `1px solid ${tool.badge === 'New AI' ? '#A7F3D0' : '#BFDBFE'}`
+              }}
+            >
+              {tool.badge}
+            </span>
+          )}
+        </div>
+
+        <h3
+          className="text-base font-bold mb-1.5 transition-colors group-hover:text-blue-600"
+          style={{ color: '#0F172A' }}
+        >
+          {tool.name}
+        </h3>
+        <p className="text-xs leading-relaxed line-clamp-2" style={{ color: '#64748B' }}>
+          {tool.shortDesc}
+        </p>
+      </div>
+
+      <div
+        className="flex items-center justify-between pt-3.5 mt-4 text-xs font-bold transition-all duration-150"
+        style={{ borderTop: '1px solid #F1F5F9', color: '#2563EB' }}
+      >
+        <span>Open Tool</span>
+        <ArrowRight
+          className="w-3.5 h-3.5 transition-transform duration-150 group-hover:translate-x-1"
+          aria-hidden="true"
+        />
+      </div>
+    </Link>
+  );
+}
+
 export default function AllTools() {
   const location = useLocation();
   const [activeCategory, setActiveCategory] = useState('all');
-  const [searchQuery, setSearchQuery]       = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredTools = TOOLS.filter(tool => {
-    const matchCat    = activeCategory === 'all' || tool.category === activeCategory;
-    const matchSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase())
-                     || tool.shortDesc.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCat && matchSearch;
-  });
+  const filteredCategories = TOOLS_CATEGORIES.filter(cat => cat.id !== 'all').map(cat => {
+    const catTools = TOOLS.filter(t => {
+      const matchCat = cat.id === t.category;
+      const matchSearch = !searchQuery ||
+        t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        t.shortDesc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        t.category.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchCat && matchSearch;
+    });
+    return {
+      ...cat,
+      tools: catTools
+    };
+  }).filter(cat => activeCategory === 'all' || activeCategory === cat.id);
+
+  const totalResults = filteredCategories.reduce((acc, cat) => acc + cat.tools.length, 0);
 
   return (
     <div className="pt-16 pb-20 min-h-screen">
       <Helmet>
-        <title>All Free PDF Tools — PDFora | Online PDF Converter &amp; Editor</title>
-        <meta name="description" content="Explore all free PDF tools on PDFora. Convert Word, Excel, PPT, images to PDF, merge, compress, and split PDFs instantly." />
+        <title>All 19 Free Document, Image &amp; Media Tools — PDFora</title>
+        <meta name="description" content="Browse all 19 free online tools on PDFora. Convert Word, Excel, PPT, images, video, and audio. Merge, split, compress, and edit files instantly with 100% privacy." />
         <link rel="canonical" href={`https://pdfora.nimradev.site${location.pathname}`} />
       </Helmet>
 
@@ -70,7 +154,7 @@ export default function AllTools() {
         }}
         aria-labelledby="all-tools-heading"
       >
-        <div className="max-w-3xl mx-auto space-y-5">
+        <div className="max-w-3xl mx-auto space-y-4">
           <div
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold"
             style={{
@@ -81,24 +165,22 @@ export default function AllTools() {
             }}
           >
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Complete Free Online PDF Suite</span>
+            <span>Complete Free Online Suite</span>
           </div>
 
           <h1
             id="all-tools-heading"
-            className="text-3xl sm:text-5xl font-black"
-            style={{ color: '#18181B', letterSpacing: '-0.035em' }}
+            className="text-3xl sm:text-5xl font-black text-zinc-900 tracking-tight"
           >
-            All PDF Tools
+            All Document &amp; Media Tools
           </h1>
 
-          <p className="text-sm sm:text-base leading-relaxed max-w-xl mx-auto" style={{ color: '#52525B' }}>
-            {TOOLS.length} free tools to convert, edit, merge, split, and compress your PDF
-            documents — no installation, no sign-up required.
+          <p className="text-sm sm:text-base leading-relaxed max-w-xl mx-auto text-zinc-600">
+            {TOOLS.length} free online tools organized by purpose. Convert, compress, edit, merge, and optimize your files with 100% browser privacy.
           </p>
 
           {/* Search Bar */}
-          <div className="max-w-md mx-auto pt-2" role="search" aria-label="Search PDF tools">
+          <div className="max-w-md mx-auto pt-2" role="search" aria-label="Search tools">
             <div
               className="flex items-center rounded-2xl bg-white transition-all duration-200"
               style={{ border: '1.5px solid #BFDBFE', boxShadow: '0 2px 8px rgba(59, 130, 246,0.05)' }}
@@ -111,23 +193,19 @@ export default function AllTools() {
                 e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246,0.05)';
               }}
             >
-              <Search className="w-4 h-4 ml-3.5 shrink-0" style={{ color: '#A1A1AA' }} aria-hidden="true" />
+              <Search className="w-4 h-4 ml-3.5 shrink-0 text-zinc-400" aria-hidden="true" />
               <input
                 type="search"
-                placeholder="Search by tool name or description…"
+                placeholder="Search across all 19 tools (e.g. compress, mp4, word)..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="flex-1 px-3 py-3 text-sm bg-transparent focus:outline-none"
-                style={{ color: '#18181B' }}
-                aria-label="Search PDF tools"
+                className="flex-1 px-3 py-3 text-sm bg-transparent focus:outline-none text-zinc-900"
+                aria-label="Search tools"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="mr-3 text-xs font-bold px-2 py-1 rounded-lg transition-colors"
-                  style={{ color: '#A1A1AA' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#3B82F6')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#A1A1AA')}
+                  className="mr-3 text-xs font-bold px-2 py-1 rounded-lg text-zinc-400 hover:text-blue-600 transition-colors"
                   aria-label="Clear search"
                 >
                   <X className="w-3.5 h-3.5" aria-hidden="true" />
@@ -138,8 +216,8 @@ export default function AllTools() {
         </div>
       </section>
 
-      {/* ── Category Tabs ─────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* ── Category Filter Tabs ──────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div
           className="flex items-center gap-2 overflow-x-auto pb-1 sm:justify-center sm:flex-wrap"
           role="tablist"
@@ -148,7 +226,7 @@ export default function AllTools() {
         >
           {TOOLS_CATEGORIES.map(cat => {
             const isActive = activeCategory === cat.id;
-            const count    = cat.id === 'all'
+            const count = cat.id === 'all'
               ? TOOLS.length
               : TOOLS.filter(t => t.category === cat.id).length;
             return (
@@ -157,44 +235,19 @@ export default function AllTools() {
                 onClick={() => setActiveCategory(cat.id)}
                 role="tab"
                 aria-selected={isActive}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-150 shrink-0 whitespace-nowrap"
-                style={
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-150 shrink-0 whitespace-nowrap ${
                   isActive
-                    ? {
-                        background: '#3B82F6',
-                        color: '#FFFFFF',
-                        border: '1.5px solid #3B82F6',
-                        boxShadow: '0 3px 10px rgba(59, 130, 246,0.25)',
-                      }
-                    : {
-                        background: '#FFFFFF',
-                        color: '#52525B',
-                        border: '1.5px solid #BFDBFE',
-                      }
-                }
-                onMouseEnter={e => {
-                  if (!isActive) {
-                    e.currentTarget.style.borderColor = '#3B82F6';
-                    e.currentTarget.style.color = '#3B82F6';
-                    e.currentTarget.style.background = '#EFF6FF';
-                  }
-                }}
-                onMouseLeave={e => {
-                  if (!isActive) {
-                    e.currentTarget.style.borderColor = '#BFDBFE';
-                    e.currentTarget.style.color = '#52525B';
-                    e.currentTarget.style.background = '#FFFFFF';
-                  }
-                }}
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                    : 'bg-white text-zinc-600 border border-zinc-200 hover:border-blue-300 hover:bg-blue-50/50 hover:text-blue-600'
+                }`}
               >
                 {cat.name}
                 <span
-                  className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                  style={
+                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
                     isActive
-                      ? { background: 'rgba(255,255,255,0.25)', color: '#FFFFFF' }
-                      : { background: '#DBEAFE', color: '#1D4ED8' }
-                  }
+                      ? 'bg-white/20 text-white'
+                      : 'bg-zinc-100 text-zinc-600'
+                  }`}
                 >
                   {count}
                 </span>
@@ -204,134 +257,66 @@ export default function AllTools() {
         </div>
       </section>
 
-      {/* ── Tools Grid ────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="PDF tools grid">
-
-        {filteredTools.length > 0 ? (
-          <>
-            {/* Result count */}
-            <p className="text-xs font-medium mb-6" style={{ color: '#A1A1AA' }}>
-              {filteredTools.length === TOOLS.length
-                ? `Showing all ${TOOLS.length} tools`
-                : `${filteredTools.length} tool${filteredTools.length !== 1 ? 's' : ''} found`}
-              {searchQuery && ` for "${searchQuery}"`}
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {filteredTools.map(tool => {
-                const Icon = iconMap[tool.iconName] || FileText;
-                return (
-                  <Link
-                    key={tool.id}
-                    to={tool.path}
-                    className="group flex flex-col justify-between p-5 rounded-2xl transition-all duration-200"
-                    style={{
-                      background: '#FFFFFF',
-                      border: '1px solid #BFDBFE',
-                      boxShadow: '0 1px 4px rgba(59, 130, 246,0.04)',
-                      textDecoration: 'none',
-                    }}
-                    onMouseEnter={e => {
-                      prefetchTool(tool.id);
-                      e.currentTarget.style.borderColor = '#3B82F6';
-                      e.currentTarget.style.boxShadow = '0 8px 24px rgba(59, 130, 246,0.10), 0 2px 8px rgba(0,0,0,0.04)';
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                    }}
-                    onFocus={() => prefetchTool(tool.id)}
-                    onTouchStart={() => prefetchTool(tool.id)}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.borderColor = '#BFDBFE';
-                      e.currentTarget.style.boxShadow = '0 1px 4px rgba(59, 130, 246,0.04)';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                    }}
-                  >
+      {/* ── Grouped Categories Grid ────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Tools directory">
+        {totalResults > 0 ? (
+          <div className="space-y-12">
+            {filteredCategories.map(cat => {
+              if (cat.tools.length === 0) return null;
+              return (
+                <div key={cat.id} className="space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 pb-3 border-b border-zinc-200/80">
                     <div>
-                      <div className="flex items-start justify-between mb-4">
-                        <div
-                          className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 group-hover:scale-105"
-                          style={{ background: '#DBEAFE', color: '#3B82F6' }}
-                          aria-hidden="true"
-                        >
-                          <Icon className="w-5 h-5" strokeWidth={2} />
-                        </div>
-                        {tool.badge && (
-                          <span
-                            className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                            style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
-                          >
-                            {tool.badge}
-                          </span>
-                        )}
-                      </div>
-
-                      <h4
-                        className="text-sm font-bold mb-1.5 transition-colors group-hover:text-blue-600"
-                        style={{ color: '#18181B' }}
-                      >
-                        {tool.name}
-                      </h4>
-                      <p className="text-xs leading-relaxed line-clamp-2" style={{ color: '#71717A' }}>
-                        {tool.shortDesc}
+                      <h2 className="text-xl font-extrabold text-zinc-900 tracking-tight flex items-center gap-2">
+                        {cat.name}
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                          {cat.tools.length}
+                        </span>
+                      </h2>
+                      <p className="text-xs text-zinc-500 font-medium mt-0.5">
+                        {cat.desc}
                       </p>
                     </div>
+                  </div>
 
-                    <div
-                      className="flex items-center justify-between pt-4 mt-4 text-xs font-bold"
-                      style={{ borderTop: '1px solid #FFF0F8', color: '#3B82F6' }}
-                    >
-                      <span>Open Tool</span>
-                      <ArrowRight
-                        className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5"
-                        aria-hidden="true"
-                      />
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {cat.tools.map(tool => (
+                      <ToolCard key={tool.id} tool={tool} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
 
-            {/* ── All Tools Bottom Ad Banner ── */}
-            <div className="max-w-4xl mx-auto mt-10">
+            {/* Bottom In-Feed Ad Banner */}
+            <div className="max-w-4xl mx-auto pt-6">
               <AdBanner slot="3456789012" className="my-2" />
             </div>
-          </>
+          </div>
         ) : (
           /* Empty State */
           <div
-            className="max-w-sm mx-auto text-center py-16 px-8 rounded-3xl animate-scale-in"
-            style={{
-              background: '#FFFFFF',
-              border: '1px solid #BFDBFE',
-              boxShadow: '0 4px 16px rgba(59, 130, 246,0.06)',
-            }}
+            className="max-w-sm mx-auto text-center py-16 px-8 rounded-3xl bg-white border border-zinc-200 shadow-xs animate-scale-in"
             role="status"
             aria-live="polite"
           >
             <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
-              style={{ background: '#DBEAFE', color: '#3B82F6' }}
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-blue-50 text-blue-600"
               aria-hidden="true"
             >
               <Search className="w-7 h-7" />
             </div>
-            <h4 className="text-base font-bold mb-2" style={{ color: '#18181B' }}>
+            <h3 className="text-base font-bold mb-2 text-zinc-900">
               No tools found
-            </h4>
-            <p className="text-sm mb-5 leading-relaxed" style={{ color: '#71717A' }}>
+            </h3>
+            <p className="text-xs text-zinc-500 mb-5 leading-relaxed font-medium">
               {searchQuery
-                ? `No results for "${searchQuery}". Try a different search term.`
-                : 'No tools match the selected category.'}
+                ? `No tools match "${searchQuery}". Try a different keyword like compress, word, or video.`
+                : 'No tools match the selected category filter.'}
             </p>
             <button
               onClick={() => { setActiveCategory('all'); setSearchQuery(''); }}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
-              style={{
-                background: '#DBEAFE',
-                color: '#3B82F6',
-                border: '1px solid #BFDBFE',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#BFDBFE')}
-              onMouseLeave={e => (e.currentTarget.style.background = '#DBEAFE')}
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-xs font-bold bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 transition-all"
             >
               <X className="w-4 h-4" aria-hidden="true" />
               Clear Filters

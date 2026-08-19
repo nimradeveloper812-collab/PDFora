@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Scissors, Plus, Trash2, CheckSquare, Square, Info, Sparkles } from 'lucide-react';
+import { Layers, Scissors, Plus, Trash2, Sparkles } from 'lucide-react';
 
 export default function SplitPdfControls({ totalPages = 1, config, onChange }) {
   const mode = config.mode || 'range'; // 'range' | 'extract'

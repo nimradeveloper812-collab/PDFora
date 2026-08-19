@@ -1043,7 +1043,7 @@ export const clientPdfService = {
       throw new Error('The uploaded PDF is empty.');
     }
 
-    const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType } = await import('docx');
+    const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, ImageRun } = await import('docx');
 
     const docChildren = [];
     let totalExtractedTokens = 0;
@@ -1055,9 +1055,6 @@ export const clientPdfService = {
       const page = await pdf.getPage(pageNum);
       const textContent = await page.getTextContent();
       const items = textContent.items || [];
-
-      if (items.length === 0) continue;
-      totalExtractedTokens += items.length;
 
       const parsedItems = items
         .filter(it => it.str && it.str.trim().length > 0)
@@ -1080,109 +1077,140 @@ export const clientPdfService = {
           };
         });
 
-      if (parsedItems.length === 0) continue;
+      if (parsedItems.length === 0) {
+        // Fallback for scanned page / graphic-only page / unsupported font encodings:
+        // Render high-resolution canvas image of the page and insert into Word
+        onProgress?.(pct, `Rendering visual layout for page ${pageNum}...`);
+        try {
+          const viewport = page.getViewport({ scale: 2.0 });
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const ctx = canvas.getContext('2d');
+          await page.render({ canvasContext: ctx, viewport }).promise;
 
-      parsedItems.sort((a, b) => {
-        if (Math.abs(b.y - a.y) > 4) {
-          return b.y - a.y;
-        }
-        return a.x - b.x;
-      });
-
-      const lines = [];
-      let currentLine = [parsedItems[0]];
-      let currentY = parsedItems[0].y;
-
-      for (let i = 1; i < parsedItems.length; i++) {
-        const item = parsedItems[i];
-        if (Math.abs(item.y - currentY) <= 4) {
-          currentLine.push(item);
-        } else {
-          lines.push(currentLine);
-          currentLine = [item];
-          currentY = item.y;
-        }
-      }
-      if (currentLine.length > 0) lines.push(currentLine);
-
-      let lineIdx = 0;
-      while (lineIdx < lines.length) {
-        const isMultiColumnLine = (line) => {
-          if (line.length < 2) return false;
-          let gaps = 0;
-          for (let k = 1; k < line.length; k++) {
-            if (line[k].x - (line[k - 1].x + line[k - 1].width) > 15) gaps++;
-          }
-          return gaps >= 1;
-        };
-
-        if (isMultiColumnLine(lines[lineIdx]) && lineIdx + 1 < lines.length && isMultiColumnLine(lines[lineIdx + 1])) {
-          const tableLines = [];
-          while (lineIdx < lines.length && isMultiColumnLine(lines[lineIdx])) {
-            tableLines.push(lines[lineIdx]);
-            lineIdx++;
-          }
-
-          const tableRows = tableLines.map((rowItems, rIdx) => {
-            return new TableRow({
-              children: rowItems.map(cellItem => new TableCell({
-                children: [
-                  new Paragraph({
-                    children: [
-                      new TextRun({
-                        text: cellItem.text,
-                        bold: cellItem.isBold || rIdx === 0,
-                        italics: cellItem.isItalic,
-                        size: Math.max(16, Math.min(32, cellItem.fontSize * 2)),
-                      })
-                    ]
-                  })
-                ],
-                shading: rIdx === 0 ? { fill: 'F1F5F9' } : undefined,
-                margins: { top: 120, bottom: 120, left: 150, right: 150 },
-              }))
-            });
-          });
-
-          docChildren.push(
-            new Table({
-              rows: tableRows,
-              width: { size: 100, type: WidthType.PERCENTAGE },
-            })
-          );
-          docChildren.push(new Paragraph({ text: '' }));
-        } else {
-          const line = lines[lineIdx];
-          line.sort((a, b) => a.x - b.x);
-
-          const avgFontSize = line.reduce((acc, it) => acc + it.fontSize, 0) / line.length;
-          const isHeading = avgFontSize >= 16 || (avgFontSize >= 14 && line.some(it => it.isBold));
-
-          const runs = line.map(it => new TextRun({
-            text: it.text + ' ',
-            bold: it.isBold,
-            italics: it.isItalic,
-            size: Math.max(18, Math.min(48, Math.round(it.fontSize * 2))),
-          }));
+          const imgBlob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+          const imgBuffer = await imgBlob.arrayBuffer();
+          const imgUint8 = new Uint8Array(imgBuffer);
 
           docChildren.push(
             new Paragraph({
-              children: runs,
-              heading: isHeading ? (avgFontSize >= 20 ? HeadingLevel.HEADING_1 : HeadingLevel.HEADING_2) : undefined,
-              spacing: { after: isHeading ? 180 : 100 },
+              children: [
+                new ImageRun({
+                  data: imgUint8,
+                  transformation: {
+                    width: 595,
+                    height: Math.round(595 * (canvas.height / canvas.width)),
+                  },
+                }),
+              ],
+              spacing: { after: 120 }
             })
           );
-          lineIdx++;
+        } catch {
+          docChildren.push(new Paragraph({ text: `[Page ${pageNum}]` }));
+        }
+      } else {
+        totalExtractedTokens += parsedItems.length;
+
+        parsedItems.sort((a, b) => {
+          if (Math.abs(b.y - a.y) > 4) {
+            return b.y - a.y;
+          }
+          return a.x - b.x;
+        });
+
+        const lines = [];
+        let currentLine = [parsedItems[0]];
+        let currentY = parsedItems[0].y;
+
+        for (let i = 1; i < parsedItems.length; i++) {
+          const item = parsedItems[i];
+          if (Math.abs(item.y - currentY) <= 4) {
+            currentLine.push(item);
+          } else {
+            lines.push(currentLine);
+            currentLine = [item];
+            currentY = item.y;
+          }
+        }
+        if (currentLine.length > 0) lines.push(currentLine);
+
+        let lineIdx = 0;
+        while (lineIdx < lines.length) {
+          const isMultiColumnLine = (line) => {
+            if (line.length < 2) return false;
+            let gaps = 0;
+            for (let k = 1; k < line.length; k++) {
+              if (line[k].x - (line[k - 1].x + line[k - 1].width) > 15) gaps++;
+            }
+            return gaps >= 1;
+          };
+
+          if (isMultiColumnLine(lines[lineIdx]) && lineIdx + 1 < lines.length && isMultiColumnLine(lines[lineIdx + 1])) {
+            const tableLines = [];
+            while (lineIdx < lines.length && isMultiColumnLine(lines[lineIdx])) {
+              tableLines.push(lines[lineIdx]);
+              lineIdx++;
+            }
+
+            const tableRows = tableLines.map((rowItems, rIdx) => {
+              return new TableRow({
+                children: rowItems.map(cellItem => new TableCell({
+                  children: [
+                    new Paragraph({
+                      children: [
+                        new TextRun({
+                          text: cellItem.text,
+                          bold: cellItem.isBold || rIdx === 0,
+                          italics: cellItem.isItalic,
+                          size: Math.max(16, Math.min(32, cellItem.fontSize * 2)),
+                        })
+                      ]
+                    })
+                  ],
+                  shading: rIdx === 0 ? { fill: 'F1F5F9' } : undefined,
+                  margins: { top: 120, bottom: 120, left: 150, right: 150 },
+                }))
+              });
+            });
+
+            docChildren.push(
+              new Table({
+                rows: tableRows,
+                width: { size: 100, type: WidthType.PERCENTAGE },
+              })
+            );
+            docChildren.push(new Paragraph({ text: '' }));
+          } else {
+            const line = lines[lineIdx];
+            line.sort((a, b) => a.x - b.x);
+
+            const avgFontSize = line.reduce((acc, it) => acc + it.fontSize, 0) / line.length;
+            const isHeading = avgFontSize >= 16 || (avgFontSize >= 14 && line.some(it => it.isBold));
+
+            const runs = line.map(it => new TextRun({
+              text: it.text + ' ',
+              bold: it.isBold,
+              italics: it.isItalic,
+              size: Math.max(18, Math.min(48, Math.round(it.fontSize * 2))),
+            }));
+
+            docChildren.push(
+              new Paragraph({
+                children: runs,
+                heading: isHeading ? (avgFontSize >= 20 ? HeadingLevel.HEADING_1 : HeadingLevel.HEADING_2) : undefined,
+                spacing: { after: isHeading ? 180 : 100 },
+              })
+            );
+            lineIdx++;
+          }
         }
       }
 
       if (pageNum < numPages) {
         docChildren.push(new Paragraph({ children: [new TextRun({ text: '', break: 1 })] }));
       }
-    }
-
-    if (totalExtractedTokens === 0) {
-      throw new Error('This PDF appears to be a scanned image without selectable text. Please upload a standard text PDF.');
     }
 
     onProgress?.(90, 'Assembling Word document (.docx)...');

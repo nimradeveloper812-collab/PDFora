@@ -832,10 +832,22 @@ export default function Dropzone({ tool }) {
                 aria-label="Download converted file"
               >
                 <Download className="w-4 h-4" aria-hidden="true" />
-                {resultFilename?.endsWith('.zip') ? 'Download ZIP' : resultFilename?.endsWith('.jpg') ? 'Download JPG' : 'Download PDF'}
+                {resultFilename?.endsWith('.docx')
+                  ? 'Download Word (.docx)'
+                  : resultFilename?.endsWith('.xlsx')
+                  ? 'Download Excel (.xlsx)'
+                  : resultFilename?.endsWith('.zip')
+                  ? 'Download ZIP Archive'
+                  : resultFilename?.endsWith('.jpg')
+                  ? 'Download JPG'
+                  : resultFilename?.endsWith('.png')
+                  ? 'Download PNG'
+                  : resultFilename?.endsWith('.webp')
+                  ? 'Download WebP'
+                  : 'Download PDF'}
               </a>
 
-              {resultBlobUrl && !resultFilename?.endsWith('.zip') && (
+              {resultBlobUrl && !resultFilename?.endsWith('.zip') && !resultFilename?.endsWith('.docx') && !resultFilename?.endsWith('.xlsx') && (
                 <button
                   onClick={handlePreview}
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all"
@@ -866,7 +878,7 @@ export default function Dropzone({ tool }) {
                 aria-label="Convert another file"
               >
                 <RotateCcw className="w-4 h-4" aria-hidden="true" />
-                Convert Another
+                Process Another
               </button>
             </div>
 
@@ -875,8 +887,8 @@ export default function Dropzone({ tool }) {
               <AdBanner slot="4567890123" className="my-1" />
             </div>
 
-            <p className="text-[11px]" style={{ color: '#A1A1AA' }}>
-              Files are permanently deleted from our servers within 60 minutes.
+            <p className="text-[11px] font-medium text-zinc-400">
+              100% Client-Side In-Memory Processing · Zero Server File Persistence
             </p>
           </div>
         )}

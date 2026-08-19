@@ -64,13 +64,21 @@ function AppLayout() {
             <Route path="/" element={<Home />} />
             <Route path="/tools" element={<AllTools />} />
             <Route path="/all-tools" element={<Navigate to="/tools" replace />} />
+            <Route path="/word-to-pdf" element={<WordToPdf />} />
             <Route path="/tools/word-to-pdf" element={<WordToPdf />} />
+            <Route path="/excel-to-pdf" element={<ExcelToPdf />} />
             <Route path="/tools/excel-to-pdf" element={<ExcelToPdf />} />
+            <Route path="/powerpoint-to-pdf" element={<PowerPointToPdf />} />
             <Route path="/tools/powerpoint-to-pdf" element={<PowerPointToPdf />} />
+            <Route path="/jpg-to-pdf" element={<JpgToPdf />} />
             <Route path="/tools/jpg-to-pdf" element={<JpgToPdf />} />
+            <Route path="/pdf-to-jpg" element={<PdfToJpg />} />
             <Route path="/tools/pdf-to-jpg" element={<PdfToJpg />} />
+            <Route path="/merge-pdf" element={<MergePdf />} />
             <Route path="/tools/merge-pdf" element={<MergePdf />} />
+            <Route path="/compress-pdf" element={<CompressPdf />} />
             <Route path="/tools/compress-pdf" element={<CompressPdf />} />
+            <Route path="/split-pdf" element={<SplitPdf />} />
             <Route path="/tools/split-pdf" element={<SplitPdf />} />
             <Route path="/pdf-to-word" element={<PdfToWord />} />
             <Route path="/tools/pdf-to-word" element={<PdfToWord />} />
@@ -97,7 +105,9 @@ function AppLayout() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/terms" element={<TermsOfService />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

@@ -1,12 +1,40 @@
 export const TOOLS_CATEGORIES = [
-  { id: 'all', name: 'All Tools' },
-  { id: 'image', name: 'Image Tools' },
-  { id: 'video', name: 'Video Tools' },
-  { id: 'audio', name: 'Audio Tools' },
-  { id: 'convert-to', name: 'Convert to PDF' },
-  { id: 'convert-from', name: 'Convert from PDF' },
-  { id: 'organize', name: 'Edit & Organize' },
-  { id: 'optimize', name: 'Optimize & Secure' },
+  { 
+    id: 'all', 
+    name: 'All Tools', 
+    shortName: 'All',
+    desc: 'Complete suite of 19 free online document, image, video, and audio tools.'
+  },
+  { 
+    id: 'pdf', 
+    name: 'PDF Tools', 
+    shortName: 'PDF',
+    desc: 'Everything you need to merge, split, compress, and organize PDF documents.'
+  },
+  { 
+    id: 'documents', 
+    name: 'Word & Document Tools', 
+    shortName: 'Documents',
+    desc: 'Convert seamlessly between Microsoft Word (.docx), Excel (.xlsx), and PDF formats.'
+  },
+  { 
+    id: 'images', 
+    name: 'Image Tools', 
+    shortName: 'Images',
+    desc: 'Remove backgrounds, compress image file sizes, and convert between raster formats.'
+  },
+  { 
+    id: 'video', 
+    name: 'Video Tools', 
+    shortName: 'Video',
+    desc: 'Transcode video containers and compress high-definition footage with zero visual quality loss.'
+  },
+  { 
+    id: 'audio', 
+    name: 'Audio Tools', 
+    shortName: 'Audio',
+    desc: 'Extract studio audio streams from video files and compress audio recordings efficiently.'
+  }
 ];
 
 export const TOOLS = [
@@ -15,7 +43,8 @@ export const TOOLS = [
     name: 'Word to PDF',
     slug: 'word-to-pdf',
     path: '/tools/word-to-pdf',
-    category: 'convert-to',
+    category: 'documents',
+    popular: true,
     shortDesc: 'Convert DOCX and DOC files to PDF online with high accuracy and privacy.',
     description: 'Easily turn Microsoft Word documents (.docx, .doc) into clean, professional PDF files. Preserves layout, formatting, images, and tables.',
     iconName: 'FileText',
@@ -113,7 +142,7 @@ export const TOOLS = [
     name: 'Excel to PDF',
     slug: 'excel-to-pdf',
     path: '/tools/excel-to-pdf',
-    category: 'convert-to',
+    category: 'documents',
     shortDesc: 'Convert Excel spreadsheets (XLS, XLSX) into readable PDF documents.',
     description: 'Transform Microsoft Excel sheets into perfectly formatted PDFs. Control table scaling, page orientation, and sheet selection.',
     iconName: 'Table',
@@ -210,7 +239,7 @@ export const TOOLS = [
     name: 'PowerPoint to PDF',
     slug: 'powerpoint-to-pdf',
     path: '/tools/powerpoint-to-pdf',
-    category: 'convert-to',
+    category: 'pdf',
     shortDesc: 'Convert PPT and PPTX presentations into PDF handouts.',
     description: 'Turn Microsoft PowerPoint slides into high-resolution PDF documents for easy sharing, viewing, and printing.',
     iconName: 'Presentation',
@@ -293,7 +322,8 @@ export const TOOLS = [
     name: 'JPG to PDF',
     slug: 'jpg-to-pdf',
     path: '/tools/jpg-to-pdf',
-    category: 'convert-to',
+    category: 'pdf',
+    popular: true,
     shortDesc: 'Convert JPG, PNG, WEBP and BMP images into a clean single PDF.',
     description: 'Combine multiple images into one ordered PDF document. Reorder images, set custom margins, and adjust page dimensions.',
     iconName: 'Image',
@@ -321,33 +351,33 @@ export const TOOLS = [
         choices: [
           { value: 'none', label: 'No Margin (Full Bleed)' },
           { value: 'small', label: 'Small Margin' },
-          { value: 'big', label: 'Big Margin' }
+          { value: 'large', label: 'Large Margin' }
         ]
       }
     ],
     features: [
       'Combine up to 30 mixed image formats (JPG, PNG, WEBP, BMP) into 1 PDF',
-      'Intuitive drag-and-drop thumbnail reordering',
-      'Auto-detects image orientation (portrait and landscape)',
-      'Zero loss in photo resolution and color fidelity'
+      'Smart page auto-orientation matching portrait and landscape photos',
+      'Custom margin settings and standard A4/Letter page scaling',
+      '100% private in-browser image assembly'
     ],
     steps: [
-      'Upload one or multiple photos/images (JPG, PNG, WEBP).',
-      'Reorder thumbnails by dragging them into your desired sequence.',
-      'Select page sizing and margins, then click "Convert to PDF".'
+      'Upload or drag & drop one or multiple images.',
+      'Reorder images and customize page size and margin settings.',
+      'Click "Convert to PDF" to generate and download your PDF document.'
     ],
-    overview: 'Scanned receipts, passport photos, smartphone document snaps, and design mockups often need to be merged into a single standardized PDF file for official submissions. PDFora JPG to PDF converter allows you to combine dozens of images seamlessly. With instant thumbnail drag-and-drop reordering and automatic paper orientation detection, creating professional multi-page photo documents takes only seconds.',
+    overview: 'Assembling photographic evidence, scanned receipts, textbook notes, and presentation graphics into a single document is easiest in PDF format. PDFora JPG to PDF converter allows you to combine up to 30 images in any sequence. You can configure page orientation, margins, and paper sizes (A4 or US Letter) to ensure your photo document prints cleanly without clipping.',
     useCases: [
       {
-        title: 'ID & Passport Document Submissions',
-        desc: 'Combine scanned government ID cards, driver licenses, and passport photos into single verified PDF files for visa, employment, and banking applications.'
+        title: 'Expense Receipts & Tax Invoices',
+        desc: 'Freelancers and business travelers snap photos of expense receipts and compile them into a monthly PDF report for expense reimbursement.'
       },
       {
-        title: 'Expense Receipts & Invoicing',
-        desc: 'Compile smartphone photos of paper receipts and bills into a chronological expense report for accounting reimbursement.'
+        title: 'Scanned IDs, Passports & Certificates',
+        desc: 'Applicants combine front and back photos of identification cards, driving licenses, and degree certificates into unified PDF submissions.'
       },
       {
-        title: 'Design Portfolios & Photography Books',
+        title: 'Photography Portfolios & Lookbooks',
         desc: 'Photographers and graphic designers assemble high-resolution portfolio books for client presentation.'
       },
       {
@@ -387,7 +417,7 @@ export const TOOLS = [
     name: 'PDF to JPG',
     slug: 'pdf-to-jpg',
     path: '/tools/pdf-to-jpg',
-    category: 'convert-from',
+    category: 'pdf',
     shortDesc: 'Extract all pages or images from a PDF into high-quality JPGs.',
     description: 'Convert every page of your PDF into high-resolution JPG images, or extract embedded images directly.',
     iconName: 'FileImage',
@@ -468,7 +498,8 @@ export const TOOLS = [
     name: 'Merge PDF',
     slug: 'merge-pdf',
     path: '/tools/merge-pdf',
-    category: 'organize',
+    category: 'pdf',
+    popular: true,
     shortDesc: 'Combine multiple PDF documents into a single organized file.',
     description: 'Merge two or more PDF files into a single, unified document. Drag and drop to reorder files and preview page counts.',
     iconName: 'Layers',
@@ -551,7 +582,8 @@ export const TOOLS = [
     name: 'Compress PDF',
     slug: 'compress-pdf',
     path: '/tools/compress-pdf',
-    category: 'optimize',
+    category: 'pdf',
+    popular: true,
     shortDesc: 'Reduce PDF file size while retaining maximum visual quality.',
     description: 'Optimize and shrink large PDF files for faster email attachment and web uploading without sacrificing readability.',
     iconName: 'Minimize2',
@@ -634,7 +666,7 @@ export const TOOLS = [
     name: 'Split PDF',
     slug: 'split-pdf',
     path: '/tools/split-pdf',
-    category: 'organize',
+    category: 'pdf',
     shortDesc: 'Separate one PDF into individual pages or specific page ranges.',
     description: 'Extract specific pages or split a long PDF into multiple smaller documents effortlessly.',
     iconName: 'Scissors',
@@ -736,7 +768,8 @@ export const TOOLS = [
     name: 'Image Background Remover',
     slug: 'image-background-remover',
     path: '/image-background-remover',
-    category: 'image',
+    category: 'images',
+    popular: true,
     shortDesc: 'Remove backgrounds from JPG, PNG, and WebP images automatically with AI.',
     description: 'Instantly cut out background from photos using advanced deep learning segmentation directly in your browser. Download high-resolution PNGs with transparent backgrounds.',
     iconName: 'Sparkles',
@@ -812,7 +845,8 @@ export const TOOLS = [
     name: 'Image Compressor',
     slug: 'image-compressor',
     path: '/image-compressor',
-    category: 'image',
+    category: 'images',
+    popular: true,
     shortDesc: 'Compress JPG, PNG, and WebP images with custom quality and size controls.',
     description: 'Reduce image file sizes by up to 90% without visible quality degradation. Choose presets, adjust compression quality sliders, or convert formats on the fly.',
     iconName: 'Minimize2',
@@ -888,7 +922,8 @@ export const TOOLS = [
     name: 'PDF to Word',
     slug: 'pdf-to-word',
     path: '/pdf-to-word',
-    category: 'convert-from',
+    category: 'documents',
+    popular: true,
     shortDesc: 'Convert PDF documents to editable Microsoft Word (DOCX) files.',
     description: 'Transform PDF documents into fully editable Microsoft Word (.docx) documents. Preserves headings, paragraphs, bullet lists, formatting, and tables.',
     iconName: 'FileText',
@@ -959,7 +994,7 @@ export const TOOLS = [
     name: 'PDF to Excel',
     slug: 'pdf-to-excel',
     path: '/pdf-to-excel',
-    category: 'convert-from',
+    category: 'documents',
     shortDesc: 'Extract tabular data from PDF files into Microsoft Excel spreadsheets.',
     description: 'Pull tables, financial figures, transaction rows, and data grids from PDF documents directly into clean Microsoft Excel (.xlsx) workbooks.',
     iconName: 'Table',
@@ -1030,7 +1065,7 @@ export const TOOLS = [
     name: 'Excel to Word',
     slug: 'excel-to-word',
     path: '/excel-to-word',
-    category: 'organize',
+    category: 'documents',
     shortDesc: 'Convert Excel spreadsheets into styled Microsoft Word document tables.',
     description: 'Transform Microsoft Excel workbooks (.xlsx, .xls, .csv) into beautifully formatted Word (.docx) documents with clean table grids and sheet sections.',
     iconName: 'Table',
@@ -1101,7 +1136,7 @@ export const TOOLS = [
     name: 'Word to Excel',
     slug: 'word-to-excel',
     path: '/word-to-excel',
-    category: 'organize',
+    category: 'documents',
     shortDesc: 'Extract tables and structured data from Word documents into Excel.',
     description: 'Extract tables, data rows, key-value pairs, and structured lists from Microsoft Word (.docx) files into clean Microsoft Excel (.xlsx) spreadsheets.',
     iconName: 'FileText',
@@ -1312,7 +1347,8 @@ export const TOOLS = [
     name: 'Image Converter',
     slug: 'image-converter',
     path: '/image-converter',
-    category: 'image',
+    category: 'images',
+    popular: true,
     shortDesc: 'Convert images between JPG, PNG, WebP, AVIF, TIFF, and GIF.',
     description: 'Transform images between formats with full transparency preservation, custom compression quality sliders, and lossless encoding options.',
     iconName: 'RefreshCw',
