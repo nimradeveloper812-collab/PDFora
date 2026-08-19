@@ -1,13 +1,8 @@
 import { clientPdfService } from './clientPdfService';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const API_BASE = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? window.location.origin : '');
 
 const safeRequest = async (fetchCall) => {
-  // If no external backend API URL is configured or if running client-only, fall back directly
-  if (!API_BASE) {
-    return null;
-  }
-
   let isClientError = false;
   let clientErrorMessage = '';
   try {

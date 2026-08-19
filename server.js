@@ -4,12 +4,16 @@ import fs from 'fs';
 import os from 'os';
 import { fileURLToPath } from 'url';
 import { execFile } from 'child_process';
+import { promisify } from 'util';
+import libre from 'libreoffice-convert';
 import { Resend } from 'resend';
 import dotenv from 'dotenv';
 import multer from 'multer';
 import sharp from 'sharp';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegStatic from 'ffmpeg-static';
+
+const convertDocxToPdfAsync = promisify(libre.convert);
 
 dotenv.config();
 
@@ -390,6 +394,43 @@ app.post('/api/media/compress-audio', (req, res) => {
   });
 });
 
+// ── Word to PDF API (LibreOffice High-Fidelity Engine) ─────────────────
+app.post('/api/pdf/word-to-pdf', (req, res) => {
+  mediaUpload.single('file')(req, res, async (err) => {
+    if (err) return res.status(400).json({ error: err.message || 'File upload failed.' });
+    if (!req.file) return res.status(400).json({ error: 'No Word document uploaded.' });
+
+    const inputPath = req.file.path;
+    const originalName = req.file.originalname || 'document.docx';
+    const baseName = originalName.replace(/\.[^/.]+$/, '');
+    const outFilename = `${baseName}.pdf`;
+    const outputPath = path.join(mediaTempDir, `out_word_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.pdf`);
+
+    try {
+      const docxBuffer = fs.readFileSync(inputPath);
+      const pdfBuffer = await convertDocxToPdfAsync(docxBuffer, '.pdf', undefined);
+
+      fs.writeFileSync(outputPath, pdfBuffer);
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(outFilename)}"`);
+      res.setHeader('X-Output-Size', pdfBuffer.length);
+
+      const readStream = fs.createReadStream(outputPath);
+      readStream.pipe(res);
+      readStream.on('close', () => {
+        try { if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath); } catch {}
+        try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
+      });
+    } catch (conversionErr) {
+      console.warn('Server Word to PDF conversion warning (LibreOffice missing or error):', conversionErr?.message);
+      try { if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath); } catch {}
+      try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
+      return res.status(503).json({ error: 'Server LibreOffice engine unavailable. Falling back to browser engine.' });
+    }
+  });
+});
+
 // ── 3. Image Conversion API (Sharp) ──────────────────────────────────
 app.post('/api/media/convert-image', (req, res) => {
   upload.single('file')(req, res, async (err) => {
@@ -460,16 +501,18 @@ app.post('/api/media/convert-video', (req, res) => {
 
     let cmd = ffmpeg(inputPath);
 
-    // Resolution scale filter
+    // Resolution scale filter with even dimensions guarantee
+    let filterString = "pad=ceil(iw/2)*2:ceil(ih/2)*2";
     if (resolution === '1080p') {
-      cmd = cmd.outputOptions(['-vf', 'scale=-2:1080']);
+      filterString = "scale='min(1920,iw)':'min(1080,ih)':force_original_aspect_ratio=decrease,pad=ceil(iw/2)*2:ceil(ih/2)*2";
     } else if (resolution === '720p') {
-      cmd = cmd.outputOptions(['-vf', 'scale=-2:720']);
+      filterString = "scale='min(1280,iw)':'min(720,ih)':force_original_aspect_ratio=decrease,pad=ceil(iw/2)*2:ceil(ih/2)*2";
     } else if (resolution === '480p') {
-      cmd = cmd.outputOptions(['-vf', 'scale=-2:480']);
+      filterString = "scale='min(854,iw)':'min(480,ih)':force_original_aspect_ratio=decrease,pad=ceil(iw/2)*2:ceil(ih/2)*2";
     } else if (resolution === '360p') {
-      cmd = cmd.outputOptions(['-vf', 'scale=-2:360']);
+      filterString = "scale='min(640,iw)':'min(360,ih)':force_original_aspect_ratio=decrease,pad=ceil(iw/2)*2:ceil(ih/2)*2";
     }
+    cmd = cmd.outputOptions(['-vf', filterString]);
 
     // Quality CRF
     let crf = '23';
@@ -565,9 +608,53 @@ app.post('/api/media/convert-video', (req, res) => {
   });
 });
 
+// Helper: Run video compression pass
+function runVideoCompressPass(inputPath, outputPath, options) {
+  return new Promise((resolve, reject) => {
+    const { crf = 28, audioBitrate = '96k', resolution = 'original' } = options;
+
+    let filterString = "pad=ceil(iw/2)*2:ceil(ih/2)*2";
+    if (resolution === '1080p') {
+      filterString = "scale='min(1920,iw)':'min(1080,ih)':force_original_aspect_ratio=decrease,pad=ceil(iw/2)*2:ceil(ih/2)*2";
+    } else if (resolution === '720p') {
+      filterString = "scale='min(1280,iw)':'min(720,ih)':force_original_aspect_ratio=decrease,pad=ceil(iw/2)*2:ceil(ih/2)*2";
+    } else if (resolution === '480p') {
+      filterString = "scale='min(854,iw)':'min(480,ih)':force_original_aspect_ratio=decrease,pad=ceil(iw/2)*2:ceil(ih/2)*2";
+    } else if (resolution === '360p') {
+      filterString = "scale='min(640,iw)':'min(360,ih)':force_original_aspect_ratio=decrease,pad=ceil(iw/2)*2:ceil(ih/2)*2";
+    }
+
+    let cmd = ffmpeg(inputPath)
+      .videoCodec('libx264')
+      .audioCodec('aac')
+      .audioChannels(2)
+      .audioBitrate(audioBitrate)
+      .outputOptions([
+        '-crf', String(crf),
+        '-preset', 'faster',
+        '-movflags', '+faststart',
+        '-pix_fmt', 'yuv420p',
+        '-vf', filterString
+      ])
+      .toFormat('mp4');
+
+    cmd
+      .on('error', reject)
+      .on('end', () => {
+        try {
+          const stats = fs.statSync(outputPath);
+          resolve(stats.size);
+        } catch (e) {
+          reject(e);
+        }
+      })
+      .save(outputPath);
+  });
+}
+
 // ── 5. Video Compression API (FFmpeg) ─────────────────────────────────
 app.post('/api/media/compress-video', (req, res) => {
-  mediaUpload.single('file')(req, res, (err) => {
+  mediaUpload.single('file')(req, res, async (err) => {
     if (err) return res.status(400).json({ error: err.message || 'File upload failed.' });
     if (!req.file) return res.status(400).json({ error: 'No video file uploaded.' });
 
@@ -575,76 +662,58 @@ app.post('/api/media/compress-video', (req, res) => {
     const originalSize = req.file.size;
     const { preset = 'balanced', resolution = 'original' } = req.body;
 
-    let crf = '28';
-    let audioBitrate = '128k';
-    let scaleOpt = [];
+    let crf = 28;
+    let audioBitrate = '96k';
 
     if (preset === 'high') {
-      crf = '23';
+      crf = 24;
       audioBitrate = '128k';
     } else if (preset === 'balanced') {
-      crf = '28';
+      crf = 28;
       audioBitrate = '96k';
     } else if (preset === 'max') {
-      crf = '33';
+      crf = 33;
       audioBitrate = '64k';
     }
-
-    if (resolution === '1080p') scaleOpt = ['-vf', 'scale=-2:1080'];
-    else if (resolution === '720p') scaleOpt = ['-vf', 'scale=-2:720'];
-    else if (resolution === '480p') scaleOpt = ['-vf', 'scale=-2:480'];
-    else if (resolution === '360p') scaleOpt = ['-vf', 'scale=-2:360'];
 
     const outFilename = `${(req.file.originalname || 'video').replace(/\.[^/.]+$/, '')}_compressed.mp4`;
     const outputPath = path.join(mediaTempDir, `out_comp_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.mp4`);
 
-    let cmd = ffmpeg(inputPath)
-      .videoCodec('libx264')
-      .audioCodec('aac')
-      .audioBitrate(audioBitrate)
-      .outputOptions([
-        '-crf', crf,
-        '-preset', 'medium',
-        '-movflags', '+faststart',
-        '-pix_fmt', 'yuv420p',
-        ...scaleOpt
-      ])
-      .toFormat('mp4');
+    try {
+      let compressedSize = await runVideoCompressPass(inputPath, outputPath, { crf, audioBitrate, resolution });
 
-    cmd
-      .on('error', (ffmpegErr) => {
-        console.error('Video compression error:', ffmpegErr);
+      // GUARANTEE: If compressed output is not smaller than original, re-run with higher CRF pass
+      if (compressedSize >= originalSize) {
+        try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
+        const fallbackCrf = crf + 6;
+        compressedSize = await runVideoCompressPass(inputPath, outputPath, {
+          crf: fallbackCrf,
+          audioBitrate: '64k',
+          resolution: resolution === 'original' ? '720p' : resolution
+        });
+      }
+
+      const savedBytes = Math.max(0, originalSize - compressedSize);
+      const savedPercent = originalSize > 0 ? ((savedBytes / originalSize) * 100).toFixed(1) : '0.0';
+
+      res.setHeader('Content-Type', 'video/mp4');
+      res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(outFilename)}"`);
+      res.setHeader('X-Original-Size', originalSize);
+      res.setHeader('X-Compressed-Size', compressedSize);
+      res.setHeader('X-Saved-Percent', savedPercent);
+
+      const readStream = fs.createReadStream(outputPath);
+      readStream.pipe(res);
+      readStream.on('close', () => {
         try { if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath); } catch {}
         try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
-        return res.status(500).json({ error: 'Failed to compress video file.' });
-      })
-      .on('end', () => {
-        try {
-          const stats = fs.statSync(outputPath);
-          const compressedSize = stats.size;
-          const savedBytes = Math.max(0, originalSize - compressedSize);
-          const savedPercent = originalSize > 0 ? ((savedBytes / originalSize) * 100).toFixed(1) : '0.0';
-
-          res.setHeader('Content-Type', 'video/mp4');
-          res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(outFilename)}"`);
-          res.setHeader('X-Original-Size', originalSize);
-          res.setHeader('X-Compressed-Size', compressedSize);
-          res.setHeader('X-Saved-Percent', savedPercent);
-
-          const readStream = fs.createReadStream(outputPath);
-          readStream.pipe(res);
-          readStream.on('close', () => {
-            try { if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath); } catch {}
-            try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
-          });
-        } catch (readErr) {
-          console.error('Video stream deliver error:', readErr);
-          try { if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath); } catch {}
-          try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
-          return res.status(500).json({ error: 'Failed to deliver compressed video stream.' });
-        }
-      })
-      .save(outputPath);
+      });
+    } catch (compressErr) {
+      console.error('Video compression error:', compressErr);
+      try { if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath); } catch {}
+      try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
+      return res.status(500).json({ error: 'Failed to compress video file. Please ensure the video file is not corrupted.' });
+    }
   });
 });
 
