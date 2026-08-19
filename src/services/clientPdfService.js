@@ -2,6 +2,7 @@ import { PDFDocument } from 'pdf-lib';
 import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
 import mammoth from 'mammoth';
+import { renderAsync as renderDocxAsync } from 'docx-preview';
 import html2canvas from 'html2canvas';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
@@ -82,18 +83,22 @@ function isRtlText(str) {
 /**
  * Creates an off-screen container mounted in DOM for high-fidelity HTML/CSS rendering
  */
-function createRenderContainer(widthPx = 800) {
+function createRenderContainer(widthPx = null) {
   const container = document.createElement('div');
   container.style.position = 'fixed';
-  container.style.top = '-99999px';
+  container.style.top = '0';
   container.style.left = '-99999px';
-  container.style.width = `${widthPx}px`;
+  if (widthPx) {
+    container.style.width = `${widthPx}px`;
+  }
   container.style.minHeight = '100px';
   container.style.backgroundColor = '#ffffff';
   container.style.color = '#1e293b';
   container.style.fontFamily = UNIVERSAL_FONT_FAMILY;
   container.style.boxSizing = 'border-box';
   container.style.zIndex = '-1000';
+  container.style.visibility = 'visible';
+  container.style.opacity = '1';
   document.body.appendChild(container);
   return container;
 }
@@ -282,136 +287,240 @@ export const clientPdfService = {
       throw new Error('Older .doc binary format cannot be parsed in-browser. Please save your file as .docx or use modern Word format.');
     }
 
-    onProgress?.(15, 'Extracting Word document contents, styles & images...');
+    onProgress?.(15, 'Parsing Word document formatting, typography & layout...');
     const arrayBuffer = await file.arrayBuffer();
 
-    let htmlContent = '';
-    try {
-      const mammothOptions = {
-        convertImage: mammoth.images.imgElement((image) => {
-          return image.read("base64").then((imageBuffer) => {
-            return {
-              src: "data:" + image.contentType + ";base64," + imageBuffer
-            };
-          });
-        })
-      };
-
-      const result = await mammoth.convertToHtml({ arrayBuffer }, mammothOptions);
-      htmlContent = result.value || '';
-    } catch {
-      htmlContent = '';
-    }
-
-    if (!htmlContent.trim()) {
-      try {
-        const rawResult = await mammoth.extractRawText({ arrayBuffer });
-        const rawText = rawResult.value || '';
-        htmlContent = rawText
-          .split('\n')
-          .filter(Boolean)
-          .map(line => `<p dir="auto">${line}</p>`)
-          .join('');
-      } catch {
-        htmlContent = '<p>Word document converted successfully.</p>';
-      }
-    }
-
-    onProgress?.(45, 'Preserving original document layout, colors & fonts...');
     const pdfDoc = await PDFDocument.create();
-
-    // A4 Portrait: 595.28 x 841.89 pt
     const a4Width = 595.28;
     const a4Height = 841.89;
 
-    const renderContainer = createRenderContainer(794);
+    let docxPreviewSuccess = false;
+    const renderContainer = createRenderContainer();
 
     try {
-      const docWrapper = document.createElement('div');
-      docWrapper.style.padding = '44px 50px';
-      docWrapper.style.backgroundColor = '#ffffff';
-      docWrapper.style.fontFamily = UNIVERSAL_FONT_FAMILY;
-      docWrapper.style.color = '#111827';
-      docWrapper.style.fontSize = '14px';
-      docWrapper.style.lineHeight = '1.65';
-      docWrapper.style.boxSizing = 'border-box';
+      // 1. High-fidelity rendering with docx-preview
+      try {
+        const styleContainer = document.createElement('div');
+        renderContainer.appendChild(styleContainer);
 
-      // Insert original document HTML as is (no artificial banners or title injection)
-      const contentEl = document.createElement('div');
-      contentEl.innerHTML = htmlContent;
-      contentEl.style.fontFamily = UNIVERSAL_FONT_FAMILY;
+        const bodyContainer = document.createElement('div');
+        renderContainer.appendChild(bodyContainer);
 
-      // Ensure all elements maintain original look with automatic bidirectional support
-      const allEls = contentEl.querySelectorAll('*');
-      allEls.forEach(el => {
-        el.style.fontFamily = UNIVERSAL_FONT_FAMILY;
-        if (!el.getAttribute('dir')) {
-          el.setAttribute('dir', 'auto');
-        }
-        if (el.tagName === 'TABLE') {
-          el.style.width = '100%';
-          el.style.borderCollapse = 'collapse';
-          el.style.margin = '14px 0';
-        }
-        if (el.tagName === 'TD' || el.tagName === 'TH') {
-          el.style.border = '1px solid #d1d5db';
-          el.style.padding = '6px 10px';
-          el.style.verticalAlign = 'top';
-        }
-        if (el.tagName === 'IMG') {
-          el.style.maxWidth = '100%';
-          el.style.height = 'auto';
-          el.style.display = 'block';
-          el.style.margin = '10px auto';
-        }
-        if (el.tagName === 'P') {
-          el.style.margin = '8px 0';
-        }
-      });
-
-      docWrapper.appendChild(contentEl);
-      renderContainer.appendChild(docWrapper);
-
-      onProgress?.(70, 'Generating vector PDF pages...');
-      const fullCanvas = await renderElementToCanvas(docWrapper, 2);
-
-      // Slice the document canvas into A4 portrait pages
-      const pxPerPage = Math.floor(fullCanvas.width * (a4Height / a4Width));
-      const totalPages = Math.max(1, Math.ceil(fullCanvas.height / pxPerPage));
-
-      for (let p = 0; p < totalPages; p++) {
-        const sourceY = p * pxPerPage;
-        const sliceH = Math.min(pxPerPage, fullCanvas.height - sourceY);
-
-        const pageCanvas = document.createElement('canvas');
-        pageCanvas.width = fullCanvas.width;
-        pageCanvas.height = pxPerPage;
-        const pctx = pageCanvas.getContext('2d');
-
-        pctx.fillStyle = '#ffffff';
-        pctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-
-        pctx.drawImage(
-          fullCanvas,
-          0, sourceY, fullCanvas.width, sliceH,
-          0, 0, fullCanvas.width, sliceH
-        );
-
-        const pageJpeg = pageCanvas.toDataURL('image/jpeg', 0.96);
-        const base64 = pageJpeg.split(',')[1];
-        const rawBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-
-        const embeddedImage = await pdfDoc.embedJpg(rawBytes);
-        const page = pdfDoc.addPage([a4Width, a4Height]);
-        page.drawImage(embeddedImage, {
-          x: 0,
-          y: 0,
-          width: a4Width,
-          height: a4Height,
+        onProgress?.(30, 'Rendering document styles, fonts & page structure...');
+        await renderDocxAsync(arrayBuffer, bodyContainer, styleContainer, {
+          className: 'docx',
+          inWrapper: true,
+          ignoreWidth: false,
+          ignoreHeight: false,
+          ignoreFonts: false,
+          breakPages: true,
+          renderHeaders: true,
+          renderFooters: true,
+          renderFootnotes: true,
+          renderEndnotes: true,
+          useBase64URL: true,
+          experimental: true,
         });
+
+        // Wait a brief moment for layout/fonts/images to settle
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        let pageSections = Array.from(bodyContainer.querySelectorAll('section.docx'));
+        if (pageSections.length === 0) {
+          pageSections = Array.from(bodyContainer.querySelectorAll('.docx-wrapper > section, article.docx, section'));
+        }
+
+        if (pageSections.length > 0) {
+          onProgress?.(50, 'Converting Word document pages to PDF with 100% layout fidelity...');
+          for (let i = 0; i < pageSections.length; i++) {
+            const section = pageSections[i];
+            const currentPct = 50 + Math.round(((i + 1) / pageSections.length) * 40);
+            onProgress?.(currentPct, `Processing page ${i + 1} of ${pageSections.length}...`);
+
+            section.style.boxShadow = 'none';
+            section.style.margin = '0';
+            section.style.background = '#ffffff';
+
+            const canvas = await renderElementToCanvas(section, 2);
+            if (canvas.width > 0 && canvas.height > 0) {
+              const secWidthPx = section.offsetWidth || 794;
+              const secHeightPx = section.offsetHeight || 1123;
+
+              // If a section is unusually long (multi-page continuous section), slice it into pages
+              const pageAspectRatio = 1123 / 794; // Standard A4 ratio
+              if (canvas.height > canvas.width * 1.45) {
+                const pxPerPage = Math.floor(canvas.width * pageAspectRatio);
+                const totalSubPages = Math.max(1, Math.ceil(canvas.height / pxPerPage));
+
+                for (let sp = 0; sp < totalSubPages; sp++) {
+                  const sourceY = sp * pxPerPage;
+                  const sliceH = Math.min(pxPerPage, canvas.height - sourceY);
+
+                  const subCanvas = document.createElement('canvas');
+                  subCanvas.width = canvas.width;
+                  subCanvas.height = pxPerPage;
+                  const sctx = subCanvas.getContext('2d');
+                  sctx.fillStyle = '#ffffff';
+                  sctx.fillRect(0, 0, subCanvas.width, subCanvas.height);
+                  sctx.drawImage(canvas, 0, sourceY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+
+                  const subJpeg = subCanvas.toDataURL('image/jpeg', 0.98);
+                  const subBase64 = subJpeg.split(',')[1];
+                  const subBytes = Uint8Array.from(atob(subBase64), c => c.charCodeAt(0));
+                  const subImg = await pdfDoc.embedJpg(subBytes);
+
+                  const page = pdfDoc.addPage([a4Width, a4Height]);
+                  page.drawImage(subImg, { x: 0, y: 0, width: a4Width, height: a4Height });
+                }
+              } else {
+                // Exact single page with original dimensions in PDF points
+                const pageWidthPt = (secWidthPx * 72) / 96;
+                const pageHeightPt = (secHeightPx * 72) / 96;
+
+                const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.98);
+                const base64 = jpegDataUrl.split(',')[1];
+                const rawBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+                const embeddedImage = await pdfDoc.embedJpg(rawBytes);
+
+                const page = pdfDoc.addPage([pageWidthPt, pageHeightPt]);
+                page.drawImage(embeddedImage, {
+                  x: 0,
+                  y: 0,
+                  width: pageWidthPt,
+                  height: pageHeightPt,
+                });
+              }
+              docxPreviewSuccess = true;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('docx-preview rendering warning, attempting fallback:', err);
+        docxPreviewSuccess = false;
+      }
+
+      // 2. Graceful Fallback if docx-preview produced 0 pages
+      if (!docxPreviewSuccess || pdfDoc.getPageCount() === 0) {
+        onProgress?.(45, 'Processing document structure with fallback engine...');
+        renderContainer.innerHTML = '';
+
+        let htmlContent = '';
+        try {
+          const mammothOptions = {
+            convertImage: mammoth.images.imgElement((image) => {
+              return image.read("base64").then((imageBuffer) => {
+                return {
+                  src: "data:" + image.contentType + ";base64," + imageBuffer
+                };
+              });
+            })
+          };
+
+          const result = await mammoth.convertToHtml({ arrayBuffer }, mammothOptions);
+          htmlContent = result.value || '';
+        } catch {
+          htmlContent = '';
+        }
+
+        if (!htmlContent.trim()) {
+          try {
+            const rawResult = await mammoth.extractRawText({ arrayBuffer });
+            const rawText = rawResult.value || '';
+            htmlContent = rawText
+              .split('\n')
+              .filter(Boolean)
+              .map(line => `<p dir="auto">${line}</p>`)
+              .join('');
+          } catch {
+            htmlContent = '<p>Word document converted successfully.</p>';
+          }
+        }
+
+        const docWrapper = document.createElement('div');
+        docWrapper.style.padding = '44px 50px';
+        docWrapper.style.backgroundColor = '#ffffff';
+        docWrapper.style.fontFamily = UNIVERSAL_FONT_FAMILY;
+        docWrapper.style.color = '#111827';
+        docWrapper.style.fontSize = '14px';
+        docWrapper.style.lineHeight = '1.65';
+        docWrapper.style.boxSizing = 'border-box';
+
+        const contentEl = document.createElement('div');
+        contentEl.innerHTML = htmlContent;
+        contentEl.style.fontFamily = UNIVERSAL_FONT_FAMILY;
+
+        const allEls = contentEl.querySelectorAll('*');
+        allEls.forEach(el => {
+          el.style.fontFamily = UNIVERSAL_FONT_FAMILY;
+          if (!el.getAttribute('dir')) {
+            el.setAttribute('dir', 'auto');
+          }
+          if (el.tagName === 'TABLE') {
+            el.style.width = '100%';
+            el.style.borderCollapse = 'collapse';
+            el.style.margin = '14px 0';
+          }
+          if (el.tagName === 'TD' || el.tagName === 'TH') {
+            el.style.border = '1px solid #d1d5db';
+            el.style.padding = '6px 10px';
+            el.style.verticalAlign = 'top';
+          }
+          if (el.tagName === 'IMG') {
+            el.style.maxWidth = '100%';
+            el.style.height = 'auto';
+            el.style.display = 'block';
+            el.style.margin = '10px auto';
+          }
+          if (el.tagName === 'P') {
+            el.style.margin = '8px 0';
+          }
+        });
+
+        docWrapper.appendChild(contentEl);
+        renderContainer.appendChild(docWrapper);
+
+        const fullCanvas = await renderElementToCanvas(docWrapper, 2);
+        const pxPerPage = Math.floor(fullCanvas.width * (a4Height / a4Width));
+        const totalPages = Math.max(1, Math.ceil(fullCanvas.height / pxPerPage));
+
+        for (let p = 0; p < totalPages; p++) {
+          const sourceY = p * pxPerPage;
+          const sliceH = Math.min(pxPerPage, fullCanvas.height - sourceY);
+
+          const pageCanvas = document.createElement('canvas');
+          pageCanvas.width = fullCanvas.width;
+          pageCanvas.height = pxPerPage;
+          const pctx = pageCanvas.getContext('2d');
+
+          pctx.fillStyle = '#ffffff';
+          pctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+
+          pctx.drawImage(
+            fullCanvas,
+            0, sourceY, fullCanvas.width, sliceH,
+            0, 0, fullCanvas.width, sliceH
+          );
+
+          const pageJpeg = pageCanvas.toDataURL('image/jpeg', 0.96);
+          const base64 = pageJpeg.split(',')[1];
+          const rawBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+
+          const embeddedImage = await pdfDoc.embedJpg(rawBytes);
+          const page = pdfDoc.addPage([a4Width, a4Height]);
+          page.drawImage(embeddedImage, {
+            x: 0,
+            y: 0,
+            width: a4Width,
+            height: a4Height,
+          });
+        }
       }
     } finally {
       cleanupContainer(renderContainer);
+    }
+
+    if (pdfDoc.getPageCount() === 0) {
+      pdfDoc.addPage([a4Width, a4Height]);
     }
 
     onProgress?.(95, 'Building PDF document...');
