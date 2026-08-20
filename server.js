@@ -800,6 +800,22 @@ app.use(
   })
 );
 
+// Explicit routes for search crawlers & ad verifiers
+app.get('/ads.txt', (req, res) => {
+  res.type('text/plain');
+  res.sendFile(path.join(distPath, 'ads.txt'));
+});
+
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain');
+  res.sendFile(path.join(distPath, 'robots.txt'));
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  res.type('application/xml');
+  res.sendFile(path.join(distPath, 'sitemap.xml'));
+});
+
 // Fallback to index.html for React Router SPA (never aggressively cache HTML so users always receive fresh builds)
 app.get('*', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
