@@ -204,57 +204,73 @@ export default function Header() {
                 </button>
               </div>
 
-              {/* PDF Tools */}
-              <Link
-                to="/tools?category=pdf"
-                className={`px-3.5 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all ${
-                  activeTab === 'pdf'
-                    ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
-                    : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <FileText className="w-3.5 h-3.5 text-purple-600" />
-                <span>{t('pdfTools')}</span>
-              </Link>
+              {/* PDF Tools Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setActiveDropdown(activeDropdown === 'pdf' ? null : 'pdf')}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+                    activeDropdown === 'pdf' || activeTab === 'pdf'
+                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
+                      : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <FileText className="w-3.5 h-3.5 text-purple-600" />
+                  <span>{t('pdfTools')}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${activeDropdown === 'pdf' ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
 
-              {/* Image Tools */}
-              <Link
-                to="/tools?category=images"
-                className={`px-3.5 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all ${
-                  activeTab === 'images'
-                    ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
-                    : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <ImageIcon className="w-3.5 h-3.5 text-purple-600" />
-                <span>{t('imageTools')}</span>
-              </Link>
+              {/* Image Tools Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setActiveDropdown(activeDropdown === 'images' ? null : 'images')}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+                    activeDropdown === 'images' || activeTab === 'images'
+                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
+                      : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <ImageIcon className="w-3.5 h-3.5 text-purple-600" />
+                  <span>{t('imageTools')}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${activeDropdown === 'images' ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
 
-              {/* Video & Audio */}
-              <Link
-                to="/tools?category=media"
-                className={`px-3.5 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all ${
-                  activeTab === 'media'
-                    ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
-                    : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <FileVideo className="w-3.5 h-3.5 text-purple-600" />
-                <span>{t('mediaTools')}</span>
-              </Link>
+              {/* Video & Audio Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setActiveDropdown(activeDropdown === 'media' ? null : 'media')}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+                    activeDropdown === 'media' || activeTab === 'media'
+                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
+                      : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <FileVideo className="w-3.5 h-3.5 text-purple-600" />
+                  <span>{t('mediaTools')}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${activeDropdown === 'media' ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
 
-              {/* Developer & AI */}
-              <Link
-                to="/tools?category=developer"
-                className={`px-3.5 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all ${
-                  activeTab === 'developer'
-                    ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
-                    : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <Code className="w-3.5 h-3.5 text-purple-600" />
-                <span>{t('developerAi')}</span>
-              </Link>
+              {/* Developer & AI Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setActiveDropdown(activeDropdown === 'developer' ? null : 'developer')}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+                    activeDropdown === 'developer' || activeTab === 'developer'
+                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
+                      : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <Code className="w-3.5 h-3.5 text-purple-600" />
+                  <span>{t('developerAi')}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${activeDropdown === 'developer' ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
 
             </nav>
 
@@ -290,47 +306,60 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Full 8-Column Mega Menu Overlay matching reference screenshot */}
-        {activeDropdown === 'mega' && (
+        {/* Dynamic Categorized Mega Menu Overlay (100% Pure White in Light Mode / Obsidian in Dark Mode) */}
+        {activeDropdown && (
           <div
             onMouseLeave={() => setActiveDropdown(null)}
-            className="absolute top-full left-0 right-0 bg-white/98 dark:bg-slate-900/98 backdrop-blur-xl border-b border-zinc-200 dark:border-slate-800 shadow-2xl p-6 z-50 animate-fade-in font-sans"
+            className="absolute top-full left-0 right-0 bg-white dark:bg-slate-900 border-b border-zinc-200 dark:border-slate-800 shadow-2xl p-6 z-50 animate-fade-in font-sans"
           >
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center justify-between pb-3 mb-4 border-b border-zinc-100 dark:border-slate-800">
                 <span className="text-xs font-extrabold uppercase tracking-wider text-purple-700 dark:text-purple-400 flex items-center gap-2">
                   <Grid className="w-4 h-4" />
-                  All PDFora Tools Directory (8 Categories • 48 Tools)
+                  {activeDropdown === 'mega' && 'All PDFora Tools Directory (8 Categories)'}
+                  {activeDropdown === 'pdf' && 'PDF Tools Suite (4 Categories)'}
+                  {activeDropdown === 'images' && 'Image Tools & Formats Suite (3 Categories)'}
+                  {activeDropdown === 'media' && 'Video & Audio Converter Suite'}
+                  {activeDropdown === 'developer' && 'Developer & AI Intelligence Suite'}
                 </span>
                 <button
                   onClick={() => setActiveDropdown(null)}
-                  className="text-xs font-bold text-zinc-400 hover:text-zinc-600"
+                  className="text-xs font-bold text-zinc-400 hover:text-zinc-600 cursor-pointer"
                 >
-                  Close
+                  Close ✕
                 </button>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 text-xs">
-                {megaColumns.map((col, idx) => (
-                  <div key={idx} className="space-y-2.5">
-                    <h5 className={`font-black text-[11px] uppercase tracking-wider ${col.color}`}>
-                      {col.title}
-                    </h5>
-                    <ul className="space-y-1.5 font-medium text-zinc-700 dark:text-zinc-300">
-                      {col.items.map((item, itemIdx) => (
-                        <li key={itemIdx}>
-                          <Link
-                            to={item.path}
-                            onClick={() => setActiveDropdown(null)}
-                            className="block hover:text-purple-600 dark:hover:text-purple-400 truncate transition-colors"
-                          >
-                            • {item.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+                {megaColumns
+                  .filter((_, idx) => {
+                    if (activeDropdown === 'mega') return true;
+                    if (activeDropdown === 'pdf') return [0, 1, 2, 3].includes(idx);
+                    if (activeDropdown === 'images') return [4, 5, 6].includes(idx);
+                    if (activeDropdown === 'media') return [7].includes(idx);
+                    if (activeDropdown === 'developer') return [7, 3].includes(idx);
+                    return true;
+                  })
+                  .map((col, idx) => (
+                    <div key={idx} className="space-y-2.5">
+                      <h5 className={`font-black text-[11px] uppercase tracking-wider ${col.color}`}>
+                        {col.title}
+                      </h5>
+                      <ul className="space-y-1.5 font-medium text-zinc-800 dark:text-zinc-200">
+                        {col.items.map((item, itemIdx) => (
+                          <li key={itemIdx}>
+                            <Link
+                              to={item.path}
+                              onClick={() => setActiveDropdown(null)}
+                              className="block hover:text-purple-600 dark:hover:text-purple-400 truncate transition-colors"
+                            >
+                              • {item.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
               </div>
             </div>
           </div>
