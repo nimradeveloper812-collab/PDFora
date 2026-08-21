@@ -16,6 +16,11 @@ import AiTableExtractorTool from '../pdf/AiTableExtractorTool';
 import PdfMetadataEditorTool from '../pdf/PdfMetadataEditorTool';
 import JsonToCsvTool from '../pdf/JsonToCsvTool';
 import Base64ToPdfTool from '../pdf/Base64ToPdfTool';
+import CompressToKbTool from '../pdf/CompressToKbTool';
+import ChangeBackgroundTool from '../image/ChangeBackgroundTool';
+import ResizeImageTool from '../image/ResizeImageTool';
+import JsonFormatterTool from '../pdf/JsonFormatterTool';
+import QrGeneratorTool from '../pdf/QrGeneratorTool';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
@@ -245,6 +250,16 @@ export default function ToolLayout({ tool }) {
           <JsonToCsvTool />
         ) : tool.id === 'base64-to-pdf' ? (
           <Base64ToPdfTool />
+        ) : tool.id === 'compress-to-kb' ? (
+          <CompressToKbTool />
+        ) : tool.id === 'change-background' ? (
+          <ChangeBackgroundTool />
+        ) : tool.id === 'resize-image' ? (
+          <ResizeImageTool />
+        ) : tool.id === 'json-formatter' ? (
+          <JsonFormatterTool />
+        ) : tool.id === 'qr-generator' ? (
+          <QrGeneratorTool />
         ) : (
           <Dropzone tool={tool} />
         )}

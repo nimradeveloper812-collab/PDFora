@@ -23,9 +23,6 @@ export default function AllTools() {
         { name: "Split PDF", path: "/split-pdf", desc: "Separate PDF into individual pages" },
         { name: "Rotate PDF", path: "/rotate-pdf", desc: "Rotate pages 90° or 180°" },
         { name: "Protect PDF", path: "/protect-pdf", desc: "Encrypt PDF with password" },
-        { name: "Remove Pages", path: "/remove-pages-pdf", desc: "Delete unwanted pages" },
-        { name: "Extract Pages", path: "/extract-pages-pdf", desc: "Pull out specific pages" },
-        { name: "Organize PDF", path: "/organize-pdf", desc: "Reorder page sequences" },
       ]
     },
     {
@@ -33,11 +30,9 @@ export default function AllTools() {
       color: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-900/50",
       items: [
         { name: "JPG to PDF", path: "/jpg-to-pdf", desc: "Convert images to PDF" },
+        { name: "PNG to PDF", path: "/png-to-pdf", desc: "Convert PNG images to PDF" },
         { name: "Word to PDF", path: "/word-to-pdf", desc: "DOCX documents to PDF" },
         { name: "PowerPoint to PDF", path: "/powerpoint-to-pdf", desc: "PPTX slides to PDF" },
-        { name: "Excel to PDF", path: "/excel-to-pdf", desc: "XLSX sheets to PDF" },
-        { name: "HTML to PDF", path: "/html-to-pdf", desc: "Web pages & HTML to PDF" },
-        { name: "Scan to PDF", path: "/scan-to-pdf", desc: "Photo scans to PDF" },
       ]
     },
     {
@@ -47,20 +42,17 @@ export default function AllTools() {
         { name: "PDF to Word", path: "/pdf-to-word", desc: "PDF to editable DOCX" },
         { name: "PDF to PowerPoint", path: "/pdf-to-powerpoint", desc: "PDF pages to PPTX slides" },
         { name: "PDF to JPG", path: "/pdf-to-jpg", desc: "Extract PDF pages as images" },
-        { name: "PDF to Excel", path: "/pdf-to-excel", desc: "PDF tables to XLSX" },
-        { name: "PDF to PDF/A", path: "/pdf-to-pdfa", desc: "ISO archival compliance" },
-        { name: "PDF to Markdown", path: "/pdf-to-markdown", desc: "PDF to .md text files" },
+        { name: "PDF to Text", path: "/pdf-to-text", desc: "Extract plain text string" },
       ]
     },
     {
-      title: "AI INTELLIGENCE",
-      color: "text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-900/50",
+      title: "OPTIMIZE & EXTRACT",
+      color: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/50",
       items: [
-        { name: "Chat with PDF", path: "/chat-with-pdf", desc: "Interactive Q&A assistant" },
-        { name: "AI Resume Reviewer", path: "/ai-resume-reviewer", desc: "Instant ATS score audit" },
-        { name: "AI Summarizer", path: "/ai-pdf-summarizer", desc: "Executive bullet point summary" },
-        { name: "Translate PDF", path: "/translate-pdf", desc: "Translate to 50+ languages" },
-        { name: "OCR PDF", path: "/ocr-pdf", desc: "Make scanned PDF searchable" },
+        { name: "Compress PDF", path: "/compress-pdf", desc: "Shrink PDF file size" },
+        { name: "PDF to PNG", path: "/pdf-to-png", desc: "Convert PDF pages to PNG" },
+        { name: "Compress to KB", path: "/compress-to-kb", desc: "Target 100KB, 200KB limit" },
+        { name: "Compress Image", path: "/image-compressor", desc: "Shrink image filesize" },
       ]
     },
     {
@@ -68,46 +60,39 @@ export default function AllTools() {
       color: "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-900/50",
       items: [
         { name: "Remove Background", path: "/image-background-remover", desc: "Instant AI BG removal" },
-        { name: "Compress Image", path: "/image-compressor", desc: "Shrink image filesize" },
-        { name: "Redact PDF", path: "/redact-pdf", desc: "Black out private data" },
-        { name: "Edit PDF", path: "/edit-pdf", desc: "Add text notes & annotations" },
-        { name: "Sign PDF", path: "/sign-pdf", desc: "Add digital signatures" },
-        { name: "Crop PDF", path: "/crop-pdf", desc: "Trim PDF whitespace margins" },
+        { name: "Change Background", path: "/change-background", desc: "Replace background color" },
+        { name: "Resize Image", path: "/resize-image", desc: "Resize width/height px" },
+        { name: "Crop Image", path: "/crop-image", desc: "Crop image borders" },
       ]
     },
     {
-      title: "IMAGE FORMATS",
-      color: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/50",
-      items: [
-        { name: "JPG to PNG", path: "/image-converter", desc: "Convert JPG to PNG" },
-        { name: "PNG to JPG", path: "/image-converter", desc: "Convert PNG to JPG" },
-        { name: "WebP to PNG", path: "/image-converter", desc: "Convert WebP to PNG" },
-        { name: "HEIC to JPG", path: "/image-converter", desc: "Convert iPhone HEIC" },
-        { name: "SVG to PNG", path: "/image-converter", desc: "Convert SVG vector" },
-      ]
-    },
-    {
-      title: "DEV & MEDIA",
-      color: "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 border-teal-200 dark:border-teal-900/50",
-      items: [
-        { name: "JSON to CSV", path: "/json-to-csv", desc: "JSON array to spreadsheet" },
-        { name: "Base64 to PDF", path: "/base64-to-pdf", desc: "Encode & decode Base64" },
-        { name: "PDF Metadata Editor", path: "/pdf-metadata-editor", desc: "Change PDF properties" },
-        { name: "AI Table Extractor", path: "/ai-table-extractor", desc: "PDF tables to CSV / Excel" },
-        { name: "Video to Audio", path: "/video-to-audio", desc: "Extract MP3 from MP4" },
-        { name: "Video Compressor", path: "/video-compressor", desc: "Compress video files" },
-      ]
-    },
-    {
-      title: "PDF REPAIR & FORMS",
+      title: "PNG & SVG VECTOR",
       color: "text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950/40 border-cyan-200 dark:border-cyan-900/50",
       items: [
-        { name: "Repair PDF", path: "/repair-pdf", desc: "Fix corrupted PDF files" },
-        { name: "Compare PDF", path: "/compare-pdf", desc: "Compare 2 PDF versions" },
-        { name: "PDF Forms", path: "/pdf-forms", desc: "Fill out interactive forms" },
-        { name: "Add Page Numbers", path: "/add-page-numbers-pdf", desc: "Number headers & footers" },
-        { name: "Watermark PDF", path: "/watermark-pdf", desc: "Overlay custom logo text" },
-        { name: "Unlock PDF", path: "/unlock-pdf", desc: "Remove PDF restrictions" },
+        { name: "HEIC to PNG", path: "/heic-to-png", desc: "Convert iPhone HEIC to PNG" },
+        { name: "WebP to PNG", path: "/webp-to-png", desc: "Convert WebP to PNG" },
+        { name: "SVG to PNG", path: "/svg-to-png", desc: "Convert SVG vector to PNG" },
+        { name: "PNG to SVG", path: "/png-to-svg", desc: "Vectorize PNG to SVG" },
+      ]
+    },
+    {
+      title: "JPG & FORMATS",
+      color: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-900/50",
+      items: [
+        { name: "HEIC to JPG", path: "/heic-to-jpg", desc: "Convert iPhone HEIC to JPG" },
+        { name: "BMP to JPG", path: "/bmp-to-jpg", desc: "Convert BMP to JPG" },
+        { name: "TIFF to JPG", path: "/tiff-to-jpg", desc: "Convert TIFF to JPG" },
+        { name: "JFIF to JPEG", path: "/jfif-to-jpeg", desc: "Convert JFIF to JPEG" },
+      ]
+    },
+    {
+      title: "DEV & VIDEO",
+      color: "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 border-teal-200 dark:border-teal-900/50",
+      items: [
+        { name: "JSON Formatter", path: "/json-formatter", desc: "Format & validate JSON" },
+        { name: "QR Generator", path: "/qr-generator", desc: "Generate custom QR code" },
+        { name: "MP4 to MP3", path: "/video-to-audio", desc: "Extract MP3 from MP4" },
+        { name: "Compress Video", path: "/video-compressor", desc: "Compress video files" },
       ]
     }
   ];

@@ -68,6 +68,25 @@ const PdfMetadataEditor = lazy(() => import('./pages/tools/PdfMetadataEditor'));
 const JsonToCsv = lazy(() => import('./pages/tools/JsonToCsv'));
 const Base64ToPdf = lazy(() => import('./pages/tools/Base64ToPdf'));
 
+const PdfToText = lazy(() => import('./pages/tools/PdfToText'));
+const CompressToKb = lazy(() => import('./pages/tools/CompressToKb'));
+const ChangeBackground = lazy(() => import('./pages/tools/ChangeBackground'));
+const ResizeImage = lazy(() => import('./pages/tools/ResizeImage'));
+const CropImage = lazy(() => import('./pages/tools/CropImage'));
+const PngToSvg = lazy(() => import('./pages/tools/PngToSvg'));
+const JsonFormatter = lazy(() => import('./pages/tools/JsonFormatter'));
+const QrGenerator = lazy(() => import('./pages/tools/QrGenerator'));
+
+const PngToPdf = lazy(() => import('./pages/tools/PngToPdf'));
+const PdfToPng = lazy(() => import('./pages/tools/PdfToPng'));
+const HeicToPng = lazy(() => import('./pages/tools/HeicToPng'));
+const WebpToPng = lazy(() => import('./pages/tools/WebpToPng'));
+const SvgToPng = lazy(() => import('./pages/tools/SvgToPng'));
+const HeicToJpg = lazy(() => import('./pages/tools/HeicToJpg'));
+const BmpToJpg = lazy(() => import('./pages/tools/BmpToJpg'));
+const TiffToJpg = lazy(() => import('./pages/tools/TiffToJpg'));
+const JfifToJpeg = lazy(() => import('./pages/tools/JfifToJpeg'));
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -140,6 +159,25 @@ function AppLayout() {
             <Route path="/pdf-metadata-editor" element={<PdfMetadataEditor />} />
             <Route path="/json-to-csv" element={<JsonToCsv />} />
             <Route path="/base64-to-pdf" element={<Base64ToPdf />} />
+
+            <Route path="/pdf-to-text" element={<PdfToText />} />
+            <Route path="/compress-to-kb" element={<CompressToKb />} />
+            <Route path="/change-background" element={<ChangeBackground />} />
+            <Route path="/resize-image" element={<ResizeImage />} />
+            <Route path="/crop-image" element={<CropImage />} />
+            <Route path="/png-to-svg" element={<PngToSvg />} />
+            <Route path="/json-formatter" element={<JsonFormatter />} />
+            <Route path="/qr-generator" element={<QrGenerator />} />
+
+            <Route path="/png-to-pdf" element={<PngToPdf />} />
+            <Route path="/pdf-to-png" element={<PdfToPng />} />
+            <Route path="/heic-to-png" element={<HeicToPng />} />
+            <Route path="/webp-to-png" element={<WebpToPng />} />
+            <Route path="/svg-to-png" element={<SvgToPng />} />
+            <Route path="/heic-to-jpg" element={<HeicToJpg />} />
+            <Route path="/bmp-to-jpg" element={<BmpToJpg />} />
+            <Route path="/tiff-to-jpg" element={<TiffToJpg />} />
+            <Route path="/jfif-to-jpeg" element={<JfifToJpeg />} />
             <Route path="/image-background-remover" element={<ImageBackgroundRemover />} />
             <Route path="/image-compressor" element={<ImageCompressor />} />
             <Route path="/pdf-to-word" element={<PdfToWord />} />

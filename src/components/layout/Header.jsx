@@ -71,98 +71,83 @@ export default function Header() {
   // 8-Column Mega Menu Tool Categories matching reference layout
   const megaColumns = [
     {
-      title: t('organizePdf'),
+      title: "ORGANIZE PDF",
       color: "text-rose-600 dark:text-rose-400",
       items: [
         { name: "Merge PDF", path: "/merge-pdf" },
         { name: "Split PDF", path: "/split-pdf" },
         { name: "Rotate PDF", path: "/rotate-pdf" },
         { name: "Protect PDF", path: "/protect-pdf" },
-        { name: "Remove Pages", path: "/remove-pages-pdf" },
-        { name: "Extract Pages", path: "/extract-pages-pdf" },
-        { name: "Organize PDF", path: "/organize-pdf" },
       ]
     },
     {
-      title: t('convertToPdf'),
+      title: "CONVERT TO PDF",
       color: "text-amber-600 dark:text-amber-400",
       items: [
         { name: "JPG to PDF", path: "/jpg-to-pdf" },
+        { name: "PNG to PDF", path: "/png-to-pdf" },
         { name: "Word to PDF", path: "/word-to-pdf" },
         { name: "PowerPoint to PDF", path: "/powerpoint-to-pdf" },
-        { name: "Excel to PDF", path: "/excel-to-pdf" },
-        { name: "HTML to PDF", path: "/html-to-pdf" },
-        { name: "Scan to PDF", path: "/scan-to-pdf" },
       ]
     },
     {
-      title: t('convertFromPdf'),
+      title: "CONVERT FROM PDF",
       color: "text-blue-600 dark:text-blue-400",
       items: [
         { name: "PDF to Word", path: "/pdf-to-word" },
         { name: "PDF to PowerPoint", path: "/pdf-to-powerpoint" },
         { name: "PDF to JPG", path: "/pdf-to-jpg" },
-        { name: "PDF to Excel", path: "/pdf-to-excel" },
-        { name: "PDF to PDF/A", path: "/pdf-to-pdfa" },
-        { name: "PDF to Markdown", path: "/pdf-to-markdown" },
+        { name: "PDF to Text", path: "/pdf-to-text" },
       ]
     },
     {
-      title: t('aiIntelligence'),
-      color: "text-purple-600 dark:text-purple-400",
+      title: "OPTIMIZE & EXTRACT",
+      color: "text-emerald-600 dark:text-emerald-400",
       items: [
-        { name: "Chat with PDF", path: "/chat-with-pdf" },
-        { name: "AI Resume Reviewer", path: "/ai-resume-reviewer" },
-        { name: "AI Summarizer", path: "/ai-pdf-summarizer" },
-        { name: "Translate PDF", path: "/translate-pdf" },
-        { name: "OCR PDF", path: "/ocr-pdf" },
+        { name: "Compress PDF", path: "/compress-pdf" },
+        { name: "PDF to PNG", path: "/pdf-to-png" },
+        { name: "Compress to KB", path: "/compress-to-kb" },
+        { name: "Compress Image", path: "/image-compressor" },
       ]
     },
     {
-      title: t('imageEditBg'),
+      title: "IMAGE EDIT & BG",
       color: "text-indigo-600 dark:text-indigo-400",
       items: [
         { name: "Remove Background", path: "/image-background-remover" },
-        { name: "Compress Image", path: "/image-compressor" },
-        { name: "Redact PDF", path: "/redact-pdf" },
-        { name: "Edit PDF", path: "/edit-pdf" },
-        { name: "Sign PDF", path: "/sign-pdf" },
-        { name: "Crop PDF", path: "/crop-pdf" },
+        { name: "Change Background", path: "/change-background" },
+        { name: "Resize Image", path: "/resize-image" },
+        { name: "Crop Image", path: "/crop-image" },
       ]
     },
     {
-      title: t('imageFormats'),
-      color: "text-emerald-600 dark:text-emerald-400",
-      items: [
-        { name: "JPG to PNG", path: "/image-converter" },
-        { name: "PNG to JPG", path: "/image-converter" },
-        { name: "WebP to PNG", path: "/image-converter" },
-        { name: "HEIC to JPG", path: "/image-converter" },
-        { name: "SVG to PNG", path: "/image-converter" },
-      ]
-    },
-    {
-      title: t('devMedia'),
-      color: "text-teal-600 dark:text-teal-400",
-      items: [
-        { name: "JSON to CSV", path: "/json-to-csv" },
-        { name: "Base64 to PDF", path: "/base64-to-pdf" },
-        { name: "PDF Metadata Editor", path: "/pdf-metadata-editor" },
-        { name: "AI Table Extractor", path: "/ai-table-extractor" },
-        { name: "Video to Audio", path: "/video-to-audio" },
-        { name: "Video Compressor", path: "/video-compressor" },
-      ]
-    },
-    {
-      title: t('repairForms'),
+      title: "PNG & SVG VECTOR",
       color: "text-cyan-600 dark:text-cyan-400",
       items: [
-        { name: "Repair PDF", path: "/repair-pdf" },
-        { name: "Compare PDF", path: "/compare-pdf" },
-        { name: "PDF Forms", path: "/pdf-forms" },
-        { name: "Add Page Numbers", path: "/add-page-numbers-pdf" },
-        { name: "Watermark PDF", path: "/watermark-pdf" },
-        { name: "Unlock PDF", path: "/unlock-pdf" },
+        { name: "HEIC to PNG", path: "/heic-to-png" },
+        { name: "WebP to PNG", path: "/webp-to-png" },
+        { name: "SVG to PNG", path: "/svg-to-png" },
+        { name: "PNG to SVG", path: "/png-to-svg" },
+      ]
+    },
+    {
+      title: "JPG & FORMATS",
+      color: "text-amber-600 dark:text-amber-400",
+      items: [
+        { name: "HEIC to JPG", path: "/heic-to-jpg" },
+        { name: "BMP to JPG", path: "/bmp-to-jpg" },
+        { name: "TIFF to JPG", path: "/tiff-to-jpg" },
+        { name: "JFIF to JPEG", path: "/jfif-to-jpeg" },
+      ]
+    },
+    {
+      title: "DEV & VIDEO",
+      color: "text-teal-600 dark:text-teal-400",
+      items: [
+        { name: "JSON Formatter", path: "/json-formatter" },
+        { name: "QR Generator", path: "/qr-generator" },
+        { name: "MP4 to MP3", path: "/video-to-audio" },
+        { name: "Compress Video", path: "/video-compressor" },
       ]
     }
   ];
