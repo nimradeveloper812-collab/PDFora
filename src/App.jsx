@@ -42,6 +42,24 @@ const ProtectPdf = lazy(() => import('./pages/tools/ProtectPdf'));
 const UnlockPdf = lazy(() => import('./pages/tools/UnlockPdf'));
 const CropPdf = lazy(() => import('./pages/tools/CropPdf'));
 
+const RepairPdf = lazy(() => import('./pages/tools/RepairPdf'));
+const RemovePagesPdf = lazy(() => import('./pages/tools/RemovePagesPdf'));
+const ExtractPagesPdf = lazy(() => import('./pages/tools/ExtractPagesPdf'));
+const OrganizePdf = lazy(() => import('./pages/tools/OrganizePdf'));
+const ScanToPdf = lazy(() => import('./pages/tools/ScanToPdf'));
+const OcrPdf = lazy(() => import('./pages/tools/OcrPdf'));
+const PdfToPowerpoint = lazy(() => import('./pages/tools/PdfToPowerpoint'));
+const HtmlToPdf = lazy(() => import('./pages/tools/HtmlToPdf'));
+const PdfToPdfA = lazy(() => import('./pages/tools/PdfToPdfA'));
+const SignPdf = lazy(() => import('./pages/tools/SignPdf'));
+const RedactPdf = lazy(() => import('./pages/tools/RedactPdf'));
+const EditPdf = lazy(() => import('./pages/tools/EditPdf'));
+const ComparePdf = lazy(() => import('./pages/tools/ComparePdf'));
+const PdfForms = lazy(() => import('./pages/tools/PdfForms'));
+const AiPdfSummarizer = lazy(() => import('./pages/tools/AiPdfSummarizer'));
+const TranslatePdf = lazy(() => import('./pages/tools/TranslatePdf'));
+const PdfToMarkdown = lazy(() => import('./pages/tools/PdfToMarkdown'));
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -88,6 +106,26 @@ function AppLayout() {
             <Route path="/protect-pdf" element={<ProtectPdf />} />
             <Route path="/unlock-pdf" element={<UnlockPdf />} />
             <Route path="/crop-pdf" element={<CropPdf />} />
+            <Route path="/repair-pdf" element={<RepairPdf />} />
+            <Route path="/remove-pages-pdf" element={<RemovePagesPdf />} />
+            <Route path="/remove-pages" element={<Navigate to="/remove-pages-pdf" replace />} />
+            <Route path="/extract-pages-pdf" element={<ExtractPagesPdf />} />
+            <Route path="/extract-pages" element={<Navigate to="/extract-pages-pdf" replace />} />
+            <Route path="/organize-pdf" element={<OrganizePdf />} />
+            <Route path="/scan-to-pdf" element={<ScanToPdf />} />
+            <Route path="/ocr-pdf" element={<OcrPdf />} />
+            <Route path="/pdf-to-powerpoint" element={<PdfToPowerpoint />} />
+            <Route path="/html-to-pdf" element={<HtmlToPdf />} />
+            <Route path="/pdf-to-pdfa" element={<PdfToPdfA />} />
+            <Route path="/sign-pdf" element={<SignPdf />} />
+            <Route path="/redact-pdf" element={<RedactPdf />} />
+            <Route path="/edit-pdf" element={<EditPdf />} />
+            <Route path="/compare-pdf" element={<ComparePdf />} />
+            <Route path="/pdf-forms" element={<PdfForms />} />
+            <Route path="/ai-pdf-summarizer" element={<AiPdfSummarizer />} />
+            <Route path="/ai-summarizer" element={<Navigate to="/ai-pdf-summarizer" replace />} />
+            <Route path="/translate-pdf" element={<TranslatePdf />} />
+            <Route path="/pdf-to-markdown" element={<PdfToMarkdown />} />
             <Route path="/image-background-remover" element={<ImageBackgroundRemover />} />
             <Route path="/image-compressor" element={<ImageCompressor />} />
             <Route path="/pdf-to-word" element={<PdfToWord />} />

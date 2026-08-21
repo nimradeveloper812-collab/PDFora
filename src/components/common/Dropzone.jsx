@@ -268,6 +268,74 @@ export default function Dropzone({ tool }) {
           result = await pdfApi.cropPdf(files[0], optionValues, handleProgress);
           filename = `${firstFileName}_cropped.pdf`;
           break;
+        case 'repair-pdf':
+          result = await pdfApi.repairPdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_repaired.pdf`;
+          break;
+        case 'remove-pages-pdf':
+          result = await pdfApi.removePagesPdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_pages_removed.pdf`;
+          break;
+        case 'extract-pages-pdf':
+          result = await pdfApi.extractPagesPdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_extracted.pdf`;
+          break;
+        case 'organize-pdf':
+          result = await pdfApi.organizePdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_organized.pdf`;
+          break;
+        case 'scan-to-pdf':
+          result = await pdfApi.scanToPdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_scanned.pdf`;
+          break;
+        case 'ocr-pdf':
+          result = await pdfApi.ocrPdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_ocr.pdf`;
+          break;
+        case 'pdf-to-powerpoint':
+          result = await pdfApi.pdfToPowerpoint(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_presentation.zip`;
+          break;
+        case 'html-to-pdf':
+          result = await pdfApi.htmlToPdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}.pdf`;
+          break;
+        case 'pdf-to-pdfa':
+          result = await pdfApi.pdfToPdfA(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_pdfa.pdf`;
+          break;
+        case 'sign-pdf':
+          result = await pdfApi.signPdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_signed.pdf`;
+          break;
+        case 'redact-pdf':
+          result = await pdfApi.redactPdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_redacted.pdf`;
+          break;
+        case 'edit-pdf':
+          result = await pdfApi.editPdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_edited.pdf`;
+          break;
+        case 'compare-pdf':
+          result = await pdfApi.comparePdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_compared.pdf`;
+          break;
+        case 'pdf-forms':
+          result = await pdfApi.pdfForms(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_form_filled.pdf`;
+          break;
+        case 'ai-pdf-summarizer':
+          result = await pdfApi.aiPdfSummarizer(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_summary.txt`;
+          break;
+        case 'translate-pdf':
+          result = await pdfApi.translatePdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_translated.pdf`;
+          break;
+        case 'pdf-to-markdown':
+          result = await pdfApi.pdfToMarkdown(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}.md`;
+          break;
         default:
           throw new Error('Unknown tool');
       }
