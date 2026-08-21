@@ -60,7 +60,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen pt-16 font-sans" style={{ backgroundColor: '#FAFAFC' }}>
+    <div className="min-h-screen pt-16 font-sans bg-slate-50 dark:bg-slate-900 text-zinc-900 dark:text-white">
       <Helmet>
         <title>PDFora — Free All-in-One Online File Converter &amp; Editor</title>
         <meta name="description" content="Free, fast, and private online suite to convert, compress, and edit PDFs, images, videos, and developer data in seconds." />
@@ -68,7 +68,7 @@ export default function Home() {
       </Helmet>
 
       {/* ── 1. PDFORA HERO BANNER ───────────────────────────────── */}
-      <section className="pt-14 pb-12 px-4 sm:px-6 lg:px-8 text-center bg-white border-b border-zinc-200">
+      <section className="pt-14 pb-12 px-4 sm:px-6 lg:px-8 text-center bg-white dark:bg-slate-900 border-b border-zinc-200 dark:border-slate-800">
         <div className="max-w-4xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200 font-display">
             <Sparkles className="w-3.5 h-3.5 text-purple-600" />

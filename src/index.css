@@ -2,7 +2,7 @@
 
 /* ============================================================
    PDFora World-Class SaaS Design System
-   Linear Polish + Stripe Professionalism + Apple Simplicity
+   Bright Pristine Light Mode + Deep Slate Dark Mode
    ============================================================ */
 
 @theme {
@@ -20,31 +20,23 @@
 
 @layer base {
   :root {
-    --brand-primary:      #4F46E5;
-    --brand-indigo:       #6366F1;
-    --brand-hover:        #4338CA;
-    --brand-active:       #3730A3;
-    --brand-light:        #EEF2FF;
-    --brand-border:       #E5E7EB;
+    --brand-primary:      #6C3FFC;
+    --brand-hover:        #5B2EE0;
+    --brand-active:       #4B24C5;
+    --brand-light:        #F3F0FF;
 
-    --pdfora-dark:        #0B0F19;
-    --pdfora-heading:     #0B0F19;
-    --pdfora-body:        #2D3748;
-    --pdfora-muted:       #64748B;
-    --pdfora-bg:          #FAFAFC;
-    --pdfora-card-bg:     #FFFFFF;
-    --pdfora-border:      #E5E7EB;
+    --bg-main:            #FFFFFF;
+    --bg-subtle:          #F8FAFC;
+    --bg-card:            #FFFFFF;
+    --border-color:       #E2E8F0;
+    --text-primary:       #0F172A;
+    --text-secondary:     #475569;
+    --text-muted:         #94A3B8;
 
-    --shadow-xs:  0 1px 2px rgba(11, 15, 25, 0.03);
-    --shadow-sm:  0 2px 8px rgba(79, 70, 229, 0.05);
-    --shadow-md:  0 8px 24px rgba(11, 15, 25, 0.06);
-    --shadow-lg:  0 16px 32px rgba(11, 15, 25, 0.09);
-
-    --radius-sm:   0.375rem;
-    --radius-md:   0.5rem;
-    --radius-lg:   0.75rem;
-    --radius-xl:   1rem;
-    --radius-2xl:  1.25rem;
+    --shadow-xs:  0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-sm:  0 2px 8px rgba(108, 63, 252, 0.05);
+    --shadow-md:  0 8px 24px rgba(15, 23, 42, 0.06);
+    --shadow-lg:  0 16px 32px rgba(15, 23, 42, 0.09);
   }
 
   *, *::before, *::after {
@@ -54,12 +46,14 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
   }
 
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #FAFAFC;
-    color: var(--pdfora-body);
+    background-color: var(--bg-main);
+    color: var(--text-primary);
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -68,7 +62,7 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Sora', 'Inter', sans-serif;
-    color: var(--pdfora-heading);
+    color: var(--text-primary);
     font-weight: 700;
     letter-spacing: -0.025em;
     line-height: 1.25;
@@ -90,7 +84,7 @@
   *:focus-visible {
     outline: 2.5px solid var(--brand-primary);
     outline-offset: 3px;
-    border-radius: var(--radius-sm);
+    border-radius: 0.375rem;
   }
 
   a, button {
@@ -118,14 +112,21 @@
 }
 
 /* ============================================================
-   PDFora Dark Mode Theme Overrides
+   PDFora High-Contrast Dark Mode Overrides
    ============================================================ */
 html.dark {
   color-scheme: dark;
+  --bg-main:            #0B0F19;
+  --bg-subtle:          #0F172A;
+  --bg-card:            #1E293B;
+  --border-color:       #334155;
+  --text-primary:       #F8FAFC;
+  --text-secondary:     #CBD5E1;
+  --text-muted:         #64748B;
 }
 
 html.dark body {
-  background-color: #0F172A !important;
+  background-color: #0B0F19 !important;
   color: #F8FAFC !important;
 }
 
@@ -135,7 +136,7 @@ html.dark header {
 }
 
 html.dark footer {
-  background-color: #0B0F19 !important;
+  background-color: #030712 !important;
   border-color: #1E293B !important;
   color: #94A3B8 !important;
 }
@@ -155,7 +156,8 @@ html.dark .bg-white {
 }
 
 html.dark .bg-zinc-50,
-html.dark .bg-zinc-100 {
+html.dark .bg-zinc-100,
+html.dark .bg-slate-50 {
   background-color: #0F172A !important;
 }
 
@@ -174,8 +176,4 @@ html.dark .text-zinc-700 {
 html.dark .text-zinc-600,
 html.dark .text-zinc-500 {
   color: #CBD5E1 !important;
-}
-
-html.dark section[aria-labelledby="tool-heading"] {
-  background-color: #0F172A !important;
 }

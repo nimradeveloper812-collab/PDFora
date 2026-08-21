@@ -287,14 +287,6 @@ export default function Header() {
 
               <ThemeToggle />
 
-              <Link
-                to="/merge-pdf"
-                className="inline-flex items-center gap-2 text-xs font-bold text-white rounded-xl px-4 py-2 transition-all active:scale-95 shadow-xs cursor-pointer"
-                style={{ backgroundColor: '#6C3FFC' }}
-              >
-                <span>Merge PDF</span>
-              </Link>
-
               {/* Mobile Hamburger */}
               <button
                 type="button"
