@@ -42,37 +42,37 @@ export default function Home() {
 
   const faqs = [
     {
-      q: 'What is FileMorph / PDFora?',
-      a: 'FileMorph is a fast, 100% free online file suite. Convert, compress, and edit PDFs, images, videos, and document data directly in your web browser.'
+      q: 'What is PDFora?',
+      a: 'PDFora is a fast, 100% free online file suite. Convert, compress, and edit PDFs, images, videos, and document data directly in your web browser.'
     },
     {
       q: 'Are my files kept private?',
-      a: 'Yes! FileMorph processes all files locally inside your browser memory using WebAssembly and canvas pipelines. Your documents are never uploaded to remote server storage.'
+      a: 'Yes! PDFora processes all files locally inside your browser memory using WebAssembly and canvas pipelines. Your documents are never uploaded to remote server storage.'
     },
     {
-      q: 'Do I need an account to use FileMorph?',
+      q: 'Do I need an account to use PDFora?',
       a: 'No registration, credit cards, or login required. All tools are immediately accessible for free.'
     },
     {
       q: 'What is the maximum file size limit?',
-      a: 'FileMorph supports files up to 50 MB per file, covering standard PDFs, Office files, decks, images, and audio tracks.'
+      a: 'PDFora supports files up to 50 MB per file, covering standard PDFs, Office files, decks, images, and audio tracks.'
     }
   ];
 
   return (
     <div className="min-h-screen pt-16 font-sans" style={{ backgroundColor: '#FAFAFC' }}>
       <Helmet>
-        <title>FileMorph — Free All-in-One Online File Converter &amp; Editor</title>
+        <title>PDFora — Free All-in-One Online File Converter &amp; Editor</title>
         <meta name="description" content="Free, fast, and private online suite to convert, compress, and edit PDFs, images, videos, and developer data in seconds." />
         <link rel="canonical" href="https://pdfora.nimradev.site/" />
       </Helmet>
 
-      {/* ── 1. FILEMORPH HERO BANNER ───────────────────────────────── */}
+      {/* ── 1. PDFORA HERO BANNER ───────────────────────────────── */}
       <section className="pt-14 pb-12 px-4 sm:px-6 lg:px-8 text-center bg-white border-b border-zinc-200">
         <div className="max-w-4xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200 font-display">
             <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-            <span>FileMorph Free Online File Suite</span>
+            <span>PDFora Free Online File Suite</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-zinc-900 tracking-tight font-heading leading-tight">
@@ -354,7 +354,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 space-y-2">
             <span className="text-xs font-extrabold uppercase tracking-wider text-purple-700 bg-purple-50 px-3 py-1 rounded-full border border-purple-200 font-display">
-              FileMorph Platform
+              PDFora Platform
             </span>
             <h2 className="text-2xl sm:text-4xl font-black text-zinc-900 tracking-tight font-heading">
               100% Free, Private &amp; Studio Quality

@@ -72,7 +72,7 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* FileMorph Style Navigation Menu */}
+          {/* PDFora Navigation Menu */}
           <nav className="hidden lg:flex items-center gap-1 font-display" role="navigation" aria-label="Main navigation">
             
             {/* Image Tools */}
