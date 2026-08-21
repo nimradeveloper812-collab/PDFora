@@ -2316,6 +2316,222 @@ export const TOOLS = [
       "audio-compressor",
       "image-compressor"
     ]
+  },
+  {
+    "id": "jpg-to-png",
+    "name": "JPG to PNG",
+    "slug": "jpg-to-png",
+    "path": "/jpg-to-png",
+    "category": "images",
+    "shortDesc": "Convert JPG/JPEG images to lossless PNG format online for free with vibrant color depth.",
+    "iconName": "ImageIcon"
+  },
+  {
+    "id": "png-to-jpg",
+    "name": "PNG to JPG",
+    "slug": "png-to-jpg",
+    "path": "/png-to-jpg",
+    "category": "images",
+    "shortDesc": "Convert PNG images to compact JPG format online to reduce file size and increase compatibility.",
+    "iconName": "ImageIcon"
+  },
+  {
+    "id": "webp-to-jpg",
+    "name": "WebP to JPG",
+    "slug": "webp-to-jpg",
+    "path": "/webp-to-jpg",
+    "category": "images",
+    "shortDesc": "Convert modern WebP images to standard JPG format for compatibility with all devices.",
+    "iconName": "ImageIcon"
+  },
+  {
+    "id": "jpg-to-webp",
+    "name": "JPG to WebP",
+    "slug": "jpg-to-webp",
+    "path": "/jpg-to-webp",
+    "category": "images",
+    "shortDesc": "Convert JPG to modern WebP format to reduce file sizes by 30-40% for faster loading.",
+    "iconName": "ImageIcon"
+  },
+  {
+    "id": "png-to-webp",
+    "name": "PNG to WebP",
+    "slug": "png-to-webp",
+    "path": "/png-to-webp",
+    "category": "images",
+    "shortDesc": "Convert PNG to WebP format with transparency preservation and smaller file sizes.",
+    "iconName": "ImageIcon"
+  },
+  {
+    "id": "webp-to-png",
+    "name": "WebP to PNG",
+    "slug": "webp-to-png",
+    "path": "/webp-to-png",
+    "category": "images",
+    "shortDesc": "Convert Google WebP images to lossless PNG with transparent alpha background support.",
+    "iconName": "ImageIcon"
+  },
+  {
+    "id": "heic-to-jpg",
+    "name": "HEIC to JPG",
+    "slug": "heic-to-jpg",
+    "path": "/heic-to-jpg",
+    "category": "images",
+    "shortDesc": "Convert Apple iPhone HEIC/HEIF photos to universal JPG format online in seconds.",
+    "iconName": "ImageIcon"
+  },
+  {
+    "id": "heic-to-png",
+    "name": "HEIC to PNG",
+    "slug": "heic-to-png",
+    "path": "/heic-to-png",
+    "category": "images",
+    "shortDesc": "Convert Apple iPhone HEIC photos to lossless PNG format with transparent background support.",
+    "iconName": "ImageIcon"
+  },
+  {
+    "id": "svg-to-png",
+    "name": "SVG to PNG",
+    "slug": "svg-to-png",
+    "path": "/svg-to-png",
+    "category": "images",
+    "shortDesc": "Convert vector SVG graphics into high-resolution transparent PNG images.",
+    "iconName": "ImageIcon"
+  },
+  {
+    "id": "avif-to-jpg",
+    "name": "AVIF to JPG",
+    "slug": "avif-to-jpg",
+    "path": "/avif-to-jpg",
+    "category": "images",
+    "shortDesc": "Convert next-generation AVIF images to standard universal JPG format.",
+    "iconName": "ImageIcon"
+  },
+  {
+    "id": "avif-to-png",
+    "name": "AVIF to PNG",
+    "slug": "avif-to-png",
+    "path": "/avif-to-png",
+    "category": "images",
+    "shortDesc": "Convert next-gen AVIF images to lossless PNG with transparent background support.",
+    "iconName": "ImageIcon"
+  },
+  {
+    "id": "gif-to-png",
+    "name": "GIF to PNG",
+    "slug": "gif-to-png",
+    "path": "/gif-to-png",
+    "category": "images",
+    "shortDesc": "Convert GIF images and animations into high-quality PNG pictures.",
+    "iconName": "ImageIcon"
+  },
+  {
+    "id": "bmp-to-jpg",
+    "name": "BMP to JPG",
+    "slug": "bmp-to-jpg",
+    "path": "/bmp-to-jpg",
+    "category": "images",
+    "shortDesc": "Convert uncompressed Windows Bitmap BMP files to lightweight JPG format.",
+    "iconName": "ImageIcon"
+  },
+  {
+    "id": "tiff-to-jpg",
+    "name": "TIFF to JPG",
+    "slug": "tiff-to-jpg",
+    "path": "/tiff-to-jpg",
+    "category": "images",
+    "shortDesc": "Convert large scanner and photography TIFF/TIF files to standard JPG photos.",
+    "iconName": "ImageIcon"
+  },
+  {
+    "id": "mp4-to-mp3",
+    "name": "MP4 to MP3",
+    "slug": "mp4-to-mp3",
+    "path": "/mp4-to-mp3",
+    "category": "video",
+    "shortDesc": "Extract high-quality audio tracks from MP4 video files and save as 320kbps MP3.",
+    "iconName": "FileVideo"
+  },
+  {
+    "id": "mp4-to-gif",
+    "name": "MP4 to GIF",
+    "slug": "mp4-to-gif",
+    "path": "/mp4-to-gif",
+    "category": "video",
+    "shortDesc": "Convert video clips into animated GIF memes and lightweight reaction animations.",
+    "iconName": "FileVideo"
+  },
+  {
+    "id": "mov-to-mp4",
+    "name": "MOV to MP4",
+    "slug": "mov-to-mp4",
+    "path": "/mov-to-mp4",
+    "category": "video",
+    "shortDesc": "Convert Apple QuickTime MOV videos to universal H.264 MP4 format online for free.",
+    "iconName": "FileVideo"
+  },
+  {
+    "id": "webm-to-mp4",
+    "name": "WebM to MP4",
+    "slug": "webm-to-mp4",
+    "path": "/webm-to-mp4",
+    "category": "video",
+    "shortDesc": "Convert HTML5 WebM browser screen recordings to standard MP4 video format.",
+    "iconName": "FileVideo"
+  },
+  {
+    "id": "avi-to-mp4",
+    "name": "AVI to MP4",
+    "slug": "avi-to-mp4",
+    "path": "/avi-to-mp4",
+    "category": "video",
+    "shortDesc": "Convert legacy AVI video files into universal H.264 MP4 format with high clarity.",
+    "iconName": "FileVideo"
+  },
+  {
+    "id": "mkv-to-mp4",
+    "name": "MKV to MP4",
+    "slug": "mkv-to-mp4",
+    "path": "/mkv-to-mp4",
+    "category": "video",
+    "shortDesc": "Convert Matroska MKV videos into universal MP4 files for editing and streaming.",
+    "iconName": "FileVideo"
+  },
+  {
+    "id": "mp4-to-webm",
+    "name": "MP4 to WebM",
+    "slug": "mp4-to-webm",
+    "path": "/mp4-to-webm",
+    "category": "video",
+    "shortDesc": "Convert MP4 videos into lightweight HTML5 WebM videos using VP9 and Opus audio.",
+    "iconName": "FileVideo"
+  },
+  {
+    "id": "mp4-to-mov",
+    "name": "MP4 to MOV",
+    "slug": "mp4-to-mov",
+    "path": "/mp4-to-mov",
+    "category": "video",
+    "shortDesc": "Convert MP4 videos to Apple QuickTime MOV format for Final Cut Pro and Mac editing.",
+    "iconName": "FileVideo"
+  },
+  {
+    "id": "mp4-to-avi",
+    "name": "MP4 to AVI",
+    "slug": "mp4-to-avi",
+    "path": "/mp4-to-avi",
+    "category": "video",
+    "shortDesc": "Convert modern MP4 files into legacy AVI container format with XviD/MPEG-4 encoding.",
+    "iconName": "FileVideo"
+  },
+  {
+    "id": "mute-video",
+    "name": "Mute Video",
+    "slug": "mute-video",
+    "path": "/mute-video",
+    "category": "video",
+    "shortDesc": "Remove soundtrack, background noise, and speech from any video clip instantly.",
+    "iconName": "FileVideo"
   }
 ];
 

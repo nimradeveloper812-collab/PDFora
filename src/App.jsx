@@ -84,7 +84,32 @@ function AppLayout() {
             <Route path="/video-to-audio" element={<VideoToAudio />} />
             <Route path="/audio-compressor" element={<AudioCompressor />} />
             <Route path="/image-converter" element={<ImageConverter />} />
+            <Route path="/jpg-to-png" element={<ImageConverter defaultFormat="png" />} />
+            <Route path="/png-to-jpg" element={<ImageConverter defaultFormat="jpg" />} />
+            <Route path="/webp-to-jpg" element={<ImageConverter defaultFormat="jpg" />} />
+            <Route path="/jpg-to-webp" element={<ImageConverter defaultFormat="webp" />} />
+            <Route path="/png-to-webp" element={<ImageConverter defaultFormat="webp" />} />
+            <Route path="/webp-to-png" element={<ImageConverter defaultFormat="png" />} />
+            <Route path="/heic-to-jpg" element={<ImageConverter defaultFormat="jpg" />} />
+            <Route path="/heic-to-png" element={<ImageConverter defaultFormat="png" />} />
+            <Route path="/svg-to-png" element={<ImageConverter defaultFormat="png" />} />
+            <Route path="/avif-to-jpg" element={<ImageConverter defaultFormat="jpg" />} />
+            <Route path="/avif-to-png" element={<ImageConverter defaultFormat="png" />} />
+            <Route path="/gif-to-png" element={<ImageConverter defaultFormat="png" />} />
+            <Route path="/bmp-to-jpg" element={<ImageConverter defaultFormat="jpg" />} />
+            <Route path="/tiff-to-jpg" element={<ImageConverter defaultFormat="jpg" />} />
+
             <Route path="/video-converter" element={<VideoConverter />} />
+            <Route path="/mp4-to-mp3" element={<VideoToAudio />} />
+            <Route path="/mp4-to-gif" element={<VideoConverter defaultFormat="gif" />} />
+            <Route path="/mov-to-mp4" element={<VideoConverter defaultFormat="mp4" />} />
+            <Route path="/webm-to-mp4" element={<VideoConverter defaultFormat="mp4" />} />
+            <Route path="/avi-to-mp4" element={<VideoConverter defaultFormat="mp4" />} />
+            <Route path="/mkv-to-mp4" element={<VideoConverter defaultFormat="mp4" />} />
+            <Route path="/mp4-to-webm" element={<VideoConverter defaultFormat="webm" />} />
+            <Route path="/mp4-to-mov" element={<VideoConverter defaultFormat="mov" />} />
+            <Route path="/mp4-to-avi" element={<VideoConverter defaultFormat="avi" />} />
+            <Route path="/mute-video" element={<VideoToAudio />} />
             <Route path="/video-compressor" element={<VideoCompressor />} />
 
             {/* Redirects */}
