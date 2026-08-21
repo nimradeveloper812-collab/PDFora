@@ -6,10 +6,12 @@ import {
 } from 'lucide-react';
 import { pdfApi } from '../../services/pdfApi';
 import { analytics } from '../../services/analytics';
+import { getToolTheme } from '../../data/toolsData';
 import AdBanner from './AdBanner';
 import SplitPdfControls from './SplitPdfControls';
 
 export default function Dropzone({ tool }) {
+  const theme = getToolTheme(tool.id, tool.category);
   const [files, setFiles]           = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [errorMsg, setErrorMsg]     = useState('');
@@ -387,75 +389,72 @@ export default function Dropzone({ tool }) {
                   minHeight: '260px',
                   padding: 'clamp(2rem, 6vw, 3.5rem)',
                   borderRadius: '1rem',
-                  border: isDragging ? '2px solid #3B82F6' : '2px dashed #BFDBFE',
+                  border: isDragging ? '2px solid #4F46E5' : '2px dashed #C7D2FE',
                   background: isDragging
-                    ? 'linear-gradient(180deg, #FFF0F8 0%, #DBEAFE 100%)'
-                    : 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)',
+                    ? '#EEF2FF'
+                    : 'linear-gradient(180deg, #FFFFFF 0%, #FAFAFC 100%)',
                   transform: isDragging ? 'scale(0.995)' : 'scale(1)',
-                  boxShadow: isDragging ? '0 0 0 6px rgba(59, 130, 246,0.08)' : 'none',
+                  boxShadow: isDragging ? '0 0 0 6px rgba(79, 70, 229,0.08)' : 'none',
                 }}
               >
                 <div
                   className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 transition-all duration-300"
                   style={{
-                    background: isDragging ? '#3B82F6' : '#DBEAFE',
-                    color: isDragging ? '#FFFFFF' : '#3B82F6',
+                    background: isDragging ? '#4F46E5' : '#EEF2FF',
+                    color: isDragging ? '#FFFFFF' : '#4F46E5',
                     transform: isDragging ? 'scale(1.08)' : 'scale(1)',
-                    boxShadow: isDragging ? '0 8px 24px rgba(59, 130, 246,0.30)' : 'none',
+                    boxShadow: isDragging ? '0 8px 24px rgba(79, 70, 229,0.30)' : 'none',
                   }}
                   aria-hidden="true"
                 >
                   <UploadCloud className="w-8 h-8" strokeWidth={1.8} />
                 </div>
 
-                <h3 className="text-lg sm:text-xl font-bold mb-1.5" style={{ color: '#18181B' }}>
+                <h3 className="text-lg sm:text-xl font-bold mb-1.5 font-heading" style={{ color: '#0B0F19' }}>
                   {isDragging
                     ? 'Release to upload'
-                    : <>Drop your file here, or{' '}
-                        <span style={{ color: '#3B82F6' }}>browse</span>
+                    : <>Drop your PDF or file here, or{' '}
+                        <span style={{ color: '#4F46E5' }}>browse</span>
                       </>
                   }
                 </h3>
-                <div className="flex flex-wrap items-center justify-center gap-1.5 mb-6 max-w-md">
-                  <span className="text-xs font-semibold text-zinc-500 mr-1">Supported Formats:</span>
+                <div className="flex flex-wrap items-center justify-center gap-1.5 mb-6 max-w-md font-sans">
+                  <span className="text-xs font-semibold text-zinc-500 mr-1 font-display">Supported Formats:</span>
                   {(tool.acceptedFileLabel || '').split(/,\s*/).map((fmt, idx) => (
                     <span
                       key={idx}
-                      className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200/70 shadow-xs"
+                      className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/70 shadow-xs font-display"
                     >
                       {fmt.replace(/\s*files?/i, '').trim()}
                     </span>
                   ))}
-                  <span className="text-xs text-zinc-400 font-medium ml-1">· Up to 50 MB</span>
+                  <span className="text-xs text-zinc-400 font-medium ml-1">· Maximum file size: 50 MB</span>
                 </div>
 
                 <button
                   type="button"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white transition-all duration-150 active:scale-95"
-                  style={{
-                    background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
-                    boxShadow: '0 4px 14px rgba(59, 130, 246,0.28)',
-                  }}
+                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-md text-sm font-bold text-white shadow-xs transition-all duration-150 active:scale-95 cursor-pointer font-display"
+                  style={{ backgroundColor: '#4F46E5' }}
                   onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }}
-                  aria-label={`Choose ${tool.acceptedFileLabel} file`}
+                  aria-label={`Select ${tool.acceptedFileLabel} file`}
                 >
                   <UploadCloud className="w-4 h-4" aria-hidden="true" />
-                  Choose File
+                  Choose Files
                 </button>
 
                 <div
-                  className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-4 text-[11px] font-medium"
-                  style={{ color: '#A1A1AA' }}
+                  className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-4 text-[11px] font-medium font-sans"
+                  style={{ color: '#64748B' }}
                   aria-label="Security information"
                 >
                   <span className="flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
-                    Secure SSL Connection
+                    <ShieldCheck className="w-3 h-3 shrink-0" style={{ color: '#4F46E5' }} aria-hidden="true" />
+                    In-Browser Memory Sandbox
                   </span>
                   <span aria-hidden="true">·</span>
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
-                    Auto-deleted after 1 hour
+                    <Clock className="w-3 h-3 shrink-0" style={{ color: '#4F46E5' }} aria-hidden="true" />
+                    Zero Permanent Server Storage
                   </span>
                 </div>
               </div>
@@ -679,17 +678,21 @@ export default function Dropzone({ tool }) {
                   </button>
                   <button
                     onClick={startProcessing}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold text-white transition-all duration-150 active:scale-95"
-                    style={{
-                      background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
-                      boxShadow: '0 4px 14px rgba(59, 130, 246,0.28)',
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246,0.38)')}
-                    onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 4px 14px rgba(59, 130, 246,0.28)')}
+                    className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-sm font-extrabold shadow-md transition-all duration-150 active:scale-95 cursor-pointer ${theme.btnBg}`}
                     aria-label={`Process and convert ${files.length} file${files.length > 1 ? 's' : ''}`}
                   >
                     <Sparkles className="w-4 h-4" aria-hidden="true" />
-                    Process &amp; Convert
+                    {tool.id === 'compress-pdf'
+                      ? 'Compress PDF Now'
+                      : tool.id === 'merge-pdf'
+                      ? 'Merge PDFs Now'
+                      : tool.id === 'split-pdf'
+                      ? 'Split PDF Pages'
+                      : tool.id.includes('to-pdf')
+                      ? 'Convert to PDF'
+                      : tool.id.includes('pdf-to')
+                      ? `Convert to ${tool.name.replace('PDF to ', '')}`
+                      : 'Process File'}
                     <ArrowRight className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
@@ -823,10 +826,8 @@ export default function Dropzone({ tool }) {
                 href={resultBlobUrl || '#'}
                 download={resultFilename || `PDFora_${tool.slug}_output.pdf`}
                 onClick={handleDownload}
-                className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-sm font-bold text-white transition-all active:scale-95 cursor-pointer"
+                className={`w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-sm font-extrabold shadow-md transition-all active:scale-95 cursor-pointer ${theme.btnBg}`}
                 style={{
-                  background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
-                  boxShadow: '0 4px 14px rgba(59, 130, 246,0.28)',
                   textDecoration: 'none',
                 }}
                 aria-label="Download converted file"

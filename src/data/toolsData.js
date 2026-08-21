@@ -37,6 +37,91 @@ export const TOOLS_CATEGORIES = [
   }
 ];
 
+export function getToolTheme(toolId, category) {
+  // PDFora Primary Purple Theme
+  if (toolId === 'compress-pdf' || toolId === 'split-pdf' || toolId === 'merge-pdf') {
+    return {
+      name: 'purple',
+      iconBg: 'bg-purple-50 text-purple-600 border-purple-100',
+      badgeBg: 'bg-purple-50 text-purple-700 border-purple-200',
+      btnBg: 'bg-purple-600 hover:bg-purple-700 text-white shadow-purple-500/20',
+      accentColor: '#6C3FFC',
+      lightBg: '#F3F0FF',
+      badgeTextColor: '#6C3FFC',
+    };
+  }
+  // Word & Document Tools
+  if (toolId === 'word-to-pdf' || toolId === 'pdf-to-word') {
+    return {
+      name: 'indigo',
+      iconBg: 'bg-indigo-50 text-indigo-600 border-indigo-100',
+      badgeBg: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+      btnBg: 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-500/20',
+      accentColor: '#4F46E5',
+      lightBg: '#EEF2FF',
+      badgeTextColor: '#4F46E5',
+    };
+  }
+  // Spreadsheet Tools
+  if (toolId === 'excel-to-pdf' || toolId === 'pdf-to-excel' || toolId === 'excel-to-word' || toolId === 'word-to-excel') {
+    return {
+      name: 'emerald',
+      iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+      badgeBg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      btnBg: 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/20',
+      accentColor: '#059669',
+      lightBg: '#ECFDF5',
+      badgeTextColor: '#059669',
+    };
+  }
+  // Presentation & Image Tools
+  if (toolId === 'powerpoint-to-pdf' || toolId === 'jpg-to-pdf' || toolId === 'pdf-to-jpg') {
+    return {
+      name: 'violet',
+      iconBg: 'bg-violet-50 text-violet-600 border-violet-100',
+      badgeBg: 'bg-violet-50 text-violet-700 border-violet-200',
+      btnBg: 'bg-violet-600 hover:bg-violet-700 text-white shadow-violet-500/20',
+      accentColor: '#7C3AED',
+      lightBg: '#F5F3FF',
+      badgeTextColor: '#7C3AED',
+    };
+  }
+  // Image & Background Utilities
+  if (category === 'images' || (toolId && toolId.includes('image'))) {
+    return {
+      name: 'fuchsia',
+      iconBg: 'bg-fuchsia-50 text-fuchsia-600 border-fuchsia-100',
+      badgeBg: 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200',
+      btnBg: 'bg-fuchsia-600 hover:bg-fuchsia-700 text-white shadow-fuchsia-500/20',
+      accentColor: '#C026D3',
+      lightBg: '#FDF4FF',
+      badgeTextColor: '#C026D3',
+    };
+  }
+  // Video & Audio Tools
+  if (category === 'video' || category === 'audio' || (toolId && (toolId.includes('video') || toolId.includes('audio')))) {
+    return {
+      name: 'purple',
+      iconBg: 'bg-purple-50 text-purple-600 border-purple-100',
+      badgeBg: 'bg-purple-50 text-purple-700 border-purple-200',
+      btnBg: 'bg-purple-600 hover:bg-purple-700 text-white shadow-purple-500/20',
+      accentColor: '#6C3FFC',
+      lightBg: '#F3F0FF',
+      badgeTextColor: '#6C3FFC',
+    };
+  }
+  // Default PDFora Brand Theme -> Primary Purple
+  return {
+    name: 'purple',
+    iconBg: 'bg-purple-50 text-purple-600 border-purple-100',
+    badgeBg: 'bg-purple-50 text-purple-700 border-purple-200',
+    btnBg: 'bg-purple-600 hover:bg-purple-700 text-white shadow-purple-500/20',
+    accentColor: '#6C3FFC',
+    lightBg: '#F3F0FF',
+    badgeTextColor: '#6C3FFC',
+  };
+}
+
 export const TOOLS = [
   {
     "id": "word-to-pdf",

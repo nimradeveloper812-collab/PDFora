@@ -45,10 +45,10 @@ function ScrollToTop() {
 
 function LoadingFallback() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-zinc-50">
       <div 
         className="w-10 h-10 rounded-full border-3 border-zinc-200 animate-spin" 
-        style={{ borderTopColor: '#3B82F6' }} 
+        style={{ borderTopColor: '#6C3FFC' }} 
       />
     </div>
   );
@@ -56,7 +56,7 @@ function LoadingFallback() {
 
 function AppLayout() {
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-white font-sans">
       <Header />
       <main className="flex-1">
         <Suspense fallback={<LoadingFallback />}>
@@ -87,7 +87,7 @@ function AppLayout() {
             <Route path="/video-converter" element={<VideoConverter />} />
             <Route path="/video-compressor" element={<VideoCompressor />} />
 
-            {/* Permanent Redirects for legacy /tools/:slug routes to prevent duplicate indexation */}
+            {/* Redirects */}
             <Route path="/tools/word-to-pdf" element={<Navigate to="/word-to-pdf" replace />} />
             <Route path="/tools/excel-to-pdf" element={<Navigate to="/excel-to-pdf" replace />} />
             <Route path="/tools/powerpoint-to-pdf" element={<Navigate to="/powerpoint-to-pdf" replace />} />
@@ -108,19 +108,18 @@ function AppLayout() {
             <Route path="/tools/video-converter" element={<Navigate to="/video-converter" replace />} />
             <Route path="/tools/video-compressor" element={<Navigate to="/video-compressor" replace />} />
 
-            {/* Common Alias Redirects */}
             <Route path="/compress-image" element={<Navigate to="/image-compressor" replace />} />
             <Route path="/remove-bg" element={<Navigate to="/image-background-remover" replace />} />
             <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
             <Route path="/terms" element={<Navigate to="/terms-of-service" replace />} />
 
-            {/* Informational Pages */}
+            {/* Pages */}
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
 
-            {/* 404 Fallback */}
+            {/* 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

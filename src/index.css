@@ -1,73 +1,50 @@
 @import "tailwindcss";
 
 /* ============================================================
-   PDFora Design System — Global Stylesheet
-   
-   Brand Palette:
-   Primary:        #2563EB
-   Primary Hover:  #1D4ED8
-   Light Blue:     #DBEAFE
-   Very Light:     #EFF6FF
-   Text Heading:   #0F172A
-   Text Body:      #334155
-   Text Secondary: #64748B
-   Border:         #BFDBFE
+   PDFora World-Class SaaS Design System
+   Linear Polish + Stripe Professionalism + Apple Simplicity
    ============================================================ */
 
-/* ---------- Custom Tailwind Theme Extension ---------- */
 @theme {
-  --color-brand-50: #EFF6FF;
-  --color-brand-100: #DBEAFE;
-  --color-brand-200: #BFDBFE;
-  --color-brand-300: #93C5FD;
-  --color-brand-400: #60A5FA;
-  --color-brand-500: #3B82F6;
-  --color-brand-600: #2563EB;
-  --color-brand-700: #1D4ED8;
-  --color-brand-800: #1E40AF;
-  --color-brand-900: #1E3A8A;
+  --color-brand-50: #EEF2FF;
+  --color-brand-100: #E0E7FF;
+  --color-brand-200: #C7D2FE;
+  --color-brand-300: #A5B4FC;
+  --color-brand-400: #818CF8;
+  --color-brand-500: #6366F1;
+  --color-brand-600: #4F46E5;
+  --color-brand-700: #4338CA;
+  --color-brand-800: #3730A3;
+  --color-brand-900: #312E81;
 }
 
-/* ---------- Base Layer ---------- */
 @layer base {
   :root {
-    --brand-primary:      #3B82F6;
-    --brand-hover:        #2563EB;
-    --brand-active:       #1D4ED8;
-    --brand-light:        #DBEAFE;
-    --brand-very-light:   #EFF6FF;
-    --brand-border:       #BFDBFE;
+    --brand-primary:      #4F46E5;
+    --brand-indigo:       #6366F1;
+    --brand-hover:        #4338CA;
+    --brand-active:       #3730A3;
+    --brand-light:        #EEF2FF;
+    --brand-border:       #E5E7EB;
 
-    --text-heading:       #18181B;
-    --text-body:          #3F3F46;
-    --text-secondary:     #52525B;
-    --text-muted:         #5E5E65;
+    --pdfora-dark:        #0B0F19;
+    --pdfora-heading:     #0B0F19;
+    --pdfora-body:        #2D3748;
+    --pdfora-muted:       #64748B;
+    --pdfora-bg:          #FAFAFC;
+    --pdfora-card-bg:     #FFFFFF;
+    --pdfora-border:      #E5E7EB;
 
-    --surface-white:      #FFFFFF;
-    --surface-light:      #EFF6FF;
-    --surface-section:    #F8FAFC;
-    --surface-alt:        #FAFAFA;
+    --shadow-xs:  0 1px 2px rgba(11, 15, 25, 0.03);
+    --shadow-sm:  0 2px 8px rgba(79, 70, 229, 0.05);
+    --shadow-md:  0 8px 24px rgba(11, 15, 25, 0.06);
+    --shadow-lg:  0 16px 32px rgba(11, 15, 25, 0.09);
 
-    /* Shadow tokens */
-    --shadow-xs:  0 1px 2px rgba(0,0,0,0.04);
-    --shadow-sm:  0 1px 4px rgba(59, 130, 246,0.05), 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-md:  0 4px 16px rgba(59, 130, 246,0.10), 0 1px 4px rgba(0,0,0,0.05);
-    --shadow-lg:  0 12px 32px rgba(59, 130, 246,0.12), 0 4px 12px rgba(0,0,0,0.06);
-    --shadow-xl:  0 24px 56px rgba(59, 130, 246,0.14), 0 8px 24px rgba(0,0,0,0.07);
-
-    /* Transition tokens */
-    --ease-fast:   150ms cubic-bezier(0.4, 0, 0.2, 1);
-    --ease-base:   200ms cubic-bezier(0.4, 0, 0.2, 1);
-    --ease-medium: 300ms cubic-bezier(0.4, 0, 0.2, 1);
-    --ease-spring: 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
-
-    /* Border radius tokens */
-    --radius-sm:   0.5rem;
-    --radius-md:   0.75rem;
-    --radius-lg:   1rem;
-    --radius-xl:   1.25rem;
-    --radius-2xl:  1.5rem;
-    --radius-full: 9999px;
+    --radius-sm:   0.375rem;
+    --radius-md:   0.5rem;
+    --radius-lg:   0.75rem;
+    --radius-xl:   1rem;
+    --radius-2xl:  1.25rem;
   }
 
   *, *::before, *::after {
@@ -81,543 +58,61 @@
 
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #FFFFFF;
-    color: var(--text-body);
+    background-color: #FAFAFC;
+    color: var(--pdfora-body);
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    line-height: 1.65;
+    line-height: 1.6;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    color: var(--text-heading);
+    font-family: 'Sora', 'Inter', sans-serif;
+    color: var(--pdfora-heading);
     font-weight: 700;
     letter-spacing: -0.025em;
-    line-height: 1.2;
+    line-height: 1.25;
   }
 
-  /* Accessible focus ring — only keyboard */
+  .font-heading {
+    font-family: 'Sora', sans-serif;
+  }
+
+  .font-display {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .font-sans {
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Accessible focus ring */
   *:focus-visible {
     outline: 2.5px solid var(--brand-primary);
     outline-offset: 3px;
     border-radius: var(--radius-sm);
   }
 
-  /* Remove blue highlight on mobile tap */
   a, button {
     -webkit-tap-highlight-color: transparent;
   }
 }
 
-/* ============================================================
-   BACKGROUND UTILITIES
-   ============================================================ */
-
-.bg-hero-radial {
-  background: radial-gradient(ellipse 90% 60% at 50% -5%, #DBEAFE 0%, #FFFFFF 68%);
-}
-
-.bg-section-blue {
-  background-color: #F8FAFC;
-}
-
-.bg-section-alt {
-  background-color: #EFF6FF;
-}
-
-.bg-blue-section {
-  background-color: #F8FAFC;
-}
-
-/* ============================================================
-   SHADOW UTILITIES
-   ============================================================ */
-
-.shadow-premium {
-  box-shadow: var(--shadow-sm);
-}
-
-.shadow-premium-hover {
-  box-shadow: var(--shadow-md);
-}
-
-.shadow-brand-lg {
-  box-shadow: var(--shadow-lg);
-}
-
-.glow-blue-sm {
-  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.06);
-}
-
-.glow-blue-lg {
-  box-shadow: 0 12px 40px rgba(59, 130, 246, 0.10);
-}
-
-/* ============================================================
-   CARD COMPONENT
-   ============================================================ */
-
-.glass-blue-card {
-  background: #FFFFFF;
-  border: 1px solid #BFDBFE;
-  box-shadow: var(--shadow-sm);
-  transition: all var(--ease-base);
-}
-
-.glass-blue-card:hover {
-  border-color: rgba(59, 130, 246, 0.45);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
-
-/* Tool cards */
-.tool-card-hover {
-  transition: all var(--ease-base);
-}
-
-.tool-card-hover:hover {
-  border-color: #3B82F6 !important;
-  box-shadow: var(--shadow-md) !important;
-  transform: translateY(-2px);
-}
-
-/* ============================================================
-   BUTTON SYSTEM
-   ============================================================ */
-
-/* Primary Button */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.625rem;
-  background-color: var(--brand-primary);
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 700;
-  border-radius: var(--radius-md);
-  border: 1.5px solid transparent;
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.28);
-  transition: all var(--ease-base);
-  cursor: pointer;
-  text-decoration: none;
-  white-space: nowrap;
-  user-select: none;
-}
-
-.btn-primary:hover {
-  background-color: var(--brand-hover);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.38);
-  transform: translateY(-1px);
-}
-
-.btn-primary:active {
-  background-color: var(--brand-active);
-  transform: translateY(0) scale(0.982);
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.22);
-}
-
-/* Secondary Button */
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background-color: white;
-  color: var(--brand-primary);
-  font-size: 0.875rem;
-  font-weight: 700;
-  border-radius: var(--radius-md);
-  border: 1.5px solid #BFDBFE;
-  transition: all var(--ease-base);
-  cursor: pointer;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.btn-secondary:hover {
-  background-color: #EFF6FF;
-  border-color: var(--brand-primary);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.12);
-  transform: translateY(-1px);
-}
-
-.btn-secondary:active {
-  transform: scale(0.982);
-}
-
-/* Ghost Button */
-.btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
-  background-color: transparent;
-  color: #52525B;
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: var(--radius-md);
-  border: 1.5px solid #E4E4E7;
-  transition: all var(--ease-base);
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.btn-ghost:hover {
-  color: var(--text-heading);
-  border-color: #D4D4D8;
-  background-color: #FAFAFA;
-}
-
-/* ============================================================
-   BADGE COMPONENT
-   ============================================================ */
-
-.badge-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  background-color: #DBEAFE;
-  color: #1D4ED8;
-  border: 1px solid #BFDBFE;
-  border-radius: var(--radius-full);
-}
-
-/* ============================================================
-   FORM ELEMENTS
-   ============================================================ */
-
-.input-brand {
-  width: 100%;
-  padding: 0.625rem 0.875rem;
-  font-size: 0.875rem;
-  color: var(--text-heading);
-  background-color: white;
-  border: 1.5px solid #BFDBFE;
-  border-radius: var(--radius-md);
-  transition: all var(--ease-base);
-  outline: none;
-  font-family: inherit;
-}
-
-.input-brand:hover {
-  border-color: #E0B5CF;
-}
-
-.input-brand:focus {
-  border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
-}
-
-.input-brand::placeholder {
-  color: var(--text-muted);
-}
-
-.input-error {
-  border-color: #FCA5A5 !important;
-  background-color: #FFF5F5;
-}
-
-.input-error:focus {
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.10) !important;
-}
-
-/* ============================================================
-   UPLOAD DROPZONE STATES
-   ============================================================ */
-
-.dropzone-idle {
-  border: 2px dashed #BFDBFE;
-  border-radius: var(--radius-xl);
-  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
-  transition: all var(--ease-medium);
-  cursor: pointer;
-}
-
-.dropzone-idle:hover {
-  border-color: rgba(59, 130, 246, 0.55);
-  background: linear-gradient(180deg, #EFF6FF 0%, #DBEAFE 50%, #EFF6FF 100%);
-}
-
-.dropzone-dragging {
-  border: 2px solid var(--brand-primary) !important;
-  background: #FFF0F8 !important;
-  transform: scale(0.996);
-  box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.08) !important;
-}
-
-.dashed-border-active {
-  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='%23E85D9E' stroke-width='2.5' stroke-dasharray='10%2c 7' stroke-dashoffset='0' stroke-linecap='round'/%3e%3c/svg%3e");
-  border: none;
-}
-
-/* ============================================================
-   PROGRESS BAR
-   ============================================================ */
-
-.progress-track {
-  width: 100%;
-  height: 0.375rem;
-  background-color: #DBEAFE;
-  border-radius: var(--radius-full);
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #3B82F6 0%, #2563EB 100%);
-  border-radius: var(--radius-full);
-  transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+/* Custom Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.progress-fill::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
-  animation: progress-shimmer 1.4s ease-in-out infinite;
+.animate-fade-in {
+  animation: fadeIn 200ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-@keyframes progress-shimmer {
-  0%   { transform: translateX(-100%); }
-  100% { transform: translateX(200%); }
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
-
-/* ============================================================
-   SKELETON LOADERS
-   ============================================================ */
-
-@keyframes skeleton-shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.skeleton {
-  background: linear-gradient(90deg, #DBEAFE 25%, #FFF0F8 50%, #DBEAFE 75%);
-  background-size: 200% 100%;
-  animation: skeleton-shimmer 1.6s ease-in-out infinite;
-  border-radius: var(--radius-sm);
-}
-
-/* ============================================================
-   FAQ ACCORDION
-   ============================================================ */
-
-.faq-accordion-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.faq-accordion-content.open {
-  max-height: 700px;
-}
-
-/* ============================================================
-   ANIMATIONS
-   ============================================================ */
-
-@keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes scale-in {
-  from { opacity: 0; transform: scale(0.94); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-@keyframes slide-in-top {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes bounce-soft {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-4px); }
-}
-
-@keyframes spin-brand {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes ping-brand {
-  75%, 100% { transform: scale(1.8); opacity: 0; }
-}
-
-/* Utility animation classes */
-.animate-fade-up {
-  animation: fade-in-up 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-.animate-scale-in {
-  animation: scale-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-.animate-slide-in-top {
-  animation: slide-in-top 0.25s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-.animate-bounce-soft {
-  animation: bounce-soft 2s ease-in-out infinite;
-}
-
-.animate-spin-brand {
-  animation: spin-brand 1s linear infinite;
-}
-
-.animate-ping-brand {
-  animation: ping-brand 1.2s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-/* ============================================================
-   NAVIGATION
-   ============================================================ */
-
-.nav-active-indicator {
-  position: relative;
-}
-
-.nav-active-indicator::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 16px;
-  height: 2px;
-  background: var(--brand-primary);
-  border-radius: var(--radius-full);
-}
-
-/* Mobile nav slide animation */
-.mobile-nav-enter {
-  animation: slide-in-top 0.22s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-/* ============================================================
-   TOAST NOTIFICATIONS
-   ============================================================ */
-
-.toast-container {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-  pointer-events: none;
-}
-
-.toast {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.875rem 1.25rem;
-  background: white;
-  border: 1px solid #BFDBFE;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--text-heading);
-  pointer-events: all;
-  max-width: 360px;
-  animation: fade-in-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.toast-success { border-left: 3px solid #22C55E; }
-.toast-error   { border-left: 3px solid #EF4444; }
-.toast-info    { border-left: 3px solid var(--brand-primary); }
-
-/* ============================================================
-   SECTION LABEL UTILITY
-   ============================================================ */
-
-.section-label {
-  font-size: 0.6875rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--brand-primary);
-}
-
-/* ============================================================
-   GRADIENT TEXT
-   ============================================================ */
-
-.gradient-text-brand {
-  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* ============================================================
-   CUSTOM SCROLLBAR
-   ============================================================ */
-
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-::-webkit-scrollbar-track {
-  background: #FAFAFA;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #BFDBFE;
-  border-radius: var(--radius-full);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--brand-primary);
-}
-
-/* ============================================================
-   OVERFLOW LOCK
-   ============================================================ */
-
-.overflow-hidden-mobile {
-  @media (max-width: 768px) {
-    overflow: hidden;
-  }
-}
-
-body.menu-open {
-  overflow: hidden;
-}
-
-/* ============================================================
-   DIVIDER
-   ============================================================ */
-
-.brand-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, #BFDBFE 30%, #BFDBFE 70%, transparent 100%);
-}
-
-/* ============================================================
-   RESPONSIVE HELPERS
-   ============================================================ */
 
-/* Prevent horizontal scroll */
-.safe-overflow {
-  max-width: 100vw;
-  overflow-x: hidden;
+.animate-pulse-glow {
+  animation: pulseGlow 2s infinite ease-in-out;
 }
