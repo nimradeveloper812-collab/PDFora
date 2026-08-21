@@ -7,6 +7,7 @@ import {
   FileVideo, RefreshCw, ShieldCheck, ArrowRight, Lock, Code
 } from 'lucide-react';
 import { TOOLS } from '../../data/toolsData';
+import ThemeToggle from '../common/ThemeToggle';
 
 export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -224,6 +225,7 @@ export default function Header() {
 
           {/* Right Action CTA */}
           <div className="hidden lg:flex items-center gap-3 shrink-0 font-display">
+            <ThemeToggle />
             <Link
               to="/tools"
               className="inline-flex items-center gap-2 text-xs font-bold text-white rounded-xl px-4 py-2.5 transition-all active:scale-95 shadow-xs cursor-pointer"
@@ -234,15 +236,18 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Mobile Hamburger */}
-          <button
-            type="button"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 rounded-md transition-colors text-zinc-900 hover:bg-zinc-100"
-            aria-label="Toggle navigation menu"
-          >
-            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          {/* Mobile Hamburger & Theme Toggle */}
+          <div className="flex items-center gap-2 lg:hidden">
+            <ThemeToggle />
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 rounded-md transition-colors text-zinc-900 hover:bg-zinc-100 dark:text-white dark:hover:bg-slate-800"
+              aria-label="Toggle navigation menu"
+            >
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
 
         </div>
       </div>
