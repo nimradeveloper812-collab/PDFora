@@ -35,6 +35,13 @@ const ImageConverter = lazy(() => import('./pages/tools/ImageConverter'));
 const VideoConverter = lazy(() => import('./pages/tools/VideoConverter'));
 const VideoCompressor = lazy(() => import('./pages/tools/VideoCompressor'));
 
+const RotatePdf = lazy(() => import('./pages/tools/RotatePdf'));
+const WatermarkPdf = lazy(() => import('./pages/tools/WatermarkPdf'));
+const AddPageNumbersPdf = lazy(() => import('./pages/tools/AddPageNumbersPdf'));
+const ProtectPdf = lazy(() => import('./pages/tools/ProtectPdf'));
+const UnlockPdf = lazy(() => import('./pages/tools/UnlockPdf'));
+const CropPdf = lazy(() => import('./pages/tools/CropPdf'));
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -75,6 +82,12 @@ function AppLayout() {
             <Route path="/merge-pdf" element={<MergePdf />} />
             <Route path="/compress-pdf" element={<CompressPdf />} />
             <Route path="/split-pdf" element={<SplitPdf />} />
+            <Route path="/rotate-pdf" element={<RotatePdf />} />
+            <Route path="/watermark-pdf" element={<WatermarkPdf />} />
+            <Route path="/add-page-numbers-pdf" element={<AddPageNumbersPdf />} />
+            <Route path="/protect-pdf" element={<ProtectPdf />} />
+            <Route path="/unlock-pdf" element={<UnlockPdf />} />
+            <Route path="/crop-pdf" element={<CropPdf />} />
             <Route path="/image-background-remover" element={<ImageBackgroundRemover />} />
             <Route path="/image-compressor" element={<ImageCompressor />} />
             <Route path="/pdf-to-word" element={<PdfToWord />} />

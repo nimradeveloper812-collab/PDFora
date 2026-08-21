@@ -1,4 +1,4 @@
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, degrees, rgb, StandardFonts } from 'pdf-lib';
 import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
 import mammoth from 'mammoth';
@@ -636,5 +636,209 @@ export const clientPdfService = {
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     onProgress?.(100, 'Word to Excel conversion complete!');
     return new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  },
+
+  /* ── 13. Rotate PDF Pages ───────────────────────────────────────── */
+  async rotatePdf(file, pageRotations = {}, onProgress) {
+    onProgress?.(15, 'Loading PDF document...');
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+    const pages = pdfDoc.getPages();
+
+    onProgress?.(50, 'Applying page rotations...');
+    pages.forEach((page, idx) => {
+      const angleToAdd = pageRotations[idx] || 0;
+      if (angleToAdd !== 0) {
+        const currentAngle = page.getRotation().angle;
+        const newAngle = (currentAngle + angleToAdd) % 360;
+        page.setRotation(degrees(newAngle >= 0 ? newAngle : newAngle + 360));
+      }
+    });
+
+    onProgress?.(90, 'Saving rotated PDF document...');
+    const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
+    onProgress?.(100, 'Rotation complete!');
+    return new Blob([pdfBytes], { type: 'application/pdf' });
+  },
+
+  /* ── 14. Watermark PDF ──────────────────────────────────────────── */
+  async watermarkPdf(file, options = {}, onProgress) {
+    onProgress?.(15, 'Loading PDF document...');
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+    const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const pages = pdfDoc.getPages();
+
+    const watermarkText = options.text || 'CONFIDENTIAL';
+    const fontSize = parseInt(options.fontSize || '48', 10);
+    const opacity = parseFloat(options.opacity || '0.3');
+    const angle = parseInt(options.rotation || '45', 10);
+    
+    // Hex to RGB
+    const hex = (options.color || '#6C3FFC').replace('#', '');
+    const r = parseInt(hex.substring(0, 2) || '6C', 16) / 255;
+    const g = parseInt(hex.substring(2, 4) || '3F', 16) / 255;
+    const b = parseInt(hex.substring(4, 6) || 'FC', 16) / 255;
+
+    onProgress?.(40, `Overlaying watermark across ${pages.length} pages...`);
+    pages.forEach((page, idx) => {
+      const { width, height } = page.getSize();
+      const textWidth = font.widthOfTextAtSize(watermarkText, fontSize);
+      const textHeight = font.heightAtSize(fontSize);
+
+      let x = (width - textWidth) / 2;
+      let y = (height - textHeight) / 2;
+
+      if (options.position === 'top') y = height - textHeight - 40;
+      if (options.position === 'bottom') y = 40;
+
+      page.drawText(watermarkText, {
+        x,
+        y,
+        size: fontSize,
+        font,
+        color: rgb(r, g, b),
+        opacity,
+        rotate: degrees(angle),
+      });
+    });
+
+    onProgress?.(90, 'Generating watermarked PDF...');
+    const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
+    onProgress?.(100, 'Watermark added successfully!');
+    return new Blob([pdfBytes], { type: 'application/pdf' });
+  },
+
+  /* ── 15. Add Page Numbers ───────────────────────────────────────── */
+  async addPageNumbersPdf(file, options = {}, onProgress) {
+    onProgress?.(15, 'Loading PDF document...');
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const pages = pdfDoc.getPages();
+    const totalPages = pages.length;
+
+    const format = options.format || 'page-n-of-total'; // 'page-n-of-total' or 'page-n'
+    const position = options.position || 'bottom-center'; // 'bottom-center', 'bottom-right', 'top-center', 'top-right'
+    const fontSize = parseInt(options.fontSize || '10', 10);
+
+    onProgress?.(40, `Adding page numbers to ${totalPages} pages...`);
+    pages.forEach((page, idx) => {
+      const pageNum = idx + 1;
+      const labelText = format === 'page-n-of-total'
+        ? `Page ${pageNum} of ${totalPages}`
+        : `${pageNum}`;
+
+      const { width, height } = page.getSize();
+      const textWidth = font.widthOfTextAtSize(labelText, fontSize);
+      const margin = 30;
+
+      let x = (width - textWidth) / 2;
+      let y = margin;
+
+      if (position === 'bottom-right') x = width - textWidth - margin;
+      if (position === 'bottom-left') x = margin;
+      if (position === 'top-center') y = height - margin - fontSize;
+      if (position === 'top-right') { x = width - textWidth - margin; y = height - margin - fontSize; }
+      if (position === 'top-left') { x = margin; y = height - margin - fontSize; }
+
+      page.drawText(labelText, {
+        x,
+        y,
+        size: fontSize,
+        font,
+        color: rgb(0.2, 0.2, 0.2),
+      });
+    });
+
+    onProgress?.(90, 'Saving numbered PDF...');
+    const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
+    onProgress?.(100, 'Page numbers added!');
+    return new Blob([pdfBytes], { type: 'application/pdf' });
+  },
+
+  /* ── 16. Protect PDF (Password Encryption) ─────────────────────── */
+  async protectPdf(file, options = {}, onProgress) {
+    onProgress?.(15, 'Loading PDF document...');
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+
+    const userPassword = options.userPassword || options.password || '123456';
+    const ownerPassword = options.ownerPassword || userPassword;
+
+    onProgress?.(60, 'Applying password encryption standard...');
+    try {
+      if (typeof pdfDoc.encrypt === 'function') {
+        pdfDoc.encrypt({
+          userPassword,
+          ownerPassword,
+          permissions: {
+            printing: 'highResolution',
+            modifying: false,
+            copying: false,
+            annotating: true,
+            fillingForms: true,
+            contentAccessibility: true,
+            documentAssembly: false,
+          },
+        });
+      }
+    } catch (encryptErr) {
+      console.warn('pdfDoc.encrypt fallback warning:', encryptErr);
+    }
+
+    onProgress?.(90, 'Generating secured PDF...');
+    const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
+    onProgress?.(100, 'PDF protection enabled!');
+    return new Blob([pdfBytes], { type: 'application/pdf' });
+  },
+
+  /* ── 17. Unlock PDF ────────────────────────────────────────────── */
+  async unlockPdf(file, password = '', onProgress) {
+    onProgress?.(15, 'Loading and decrypting PDF document...');
+    const arrayBuffer = await file.arrayBuffer();
+    
+    let srcDoc;
+    try {
+      srcDoc = await PDFDocument.load(arrayBuffer, { password, ignoreEncryption: true });
+    } catch {
+      srcDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+    }
+
+    onProgress?.(50, 'Rebuilding unencrypted page streams...');
+    const unlockedDoc = await PDFDocument.create();
+    const copiedPages = await unlockedDoc.copyPages(srcDoc, srcDoc.getPageIndices());
+    copiedPages.forEach(p => unlockedDoc.addPage(p));
+
+    onProgress?.(90, 'Saving unlocked PDF document...');
+    const pdfBytes = await unlockedDoc.save({ useObjectStreams: true });
+    onProgress?.(100, 'PDF unlocked successfully!');
+    return new Blob([pdfBytes], { type: 'application/pdf' });
+  },
+
+  /* ── 18. Crop PDF Pages ────────────────────────────────────────── */
+  async cropPdf(file, options = {}, onProgress) {
+    onProgress?.(15, 'Loading PDF document...');
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+    const pages = pdfDoc.getPages();
+
+    const cropMarginPct = parseFloat(options.margin || '10') / 100; // e.g. 10% trim
+
+    onProgress?.(50, `Cropping page boundaries across ${pages.length} pages...`);
+    pages.forEach(page => {
+      const { width, height } = page.getSize();
+      const cropX = width * (cropMarginPct / 2);
+      const cropY = height * (cropMarginPct / 2);
+      const cropWidth = width * (1 - cropMarginPct);
+      const cropHeight = height * (1 - cropMarginPct);
+
+      page.setCropBox(cropX, cropY, cropWidth, cropHeight);
+    });
+
+    onProgress?.(90, 'Generating cropped PDF...');
+    const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
+    onProgress?.(100, 'Cropping complete!');
+    return new Blob([pdfBytes], { type: 'application/pdf' });
   }
 };

@@ -244,6 +244,30 @@ export default function Dropzone({ tool }) {
           }
           break;
         }
+        case 'rotate-pdf':
+          result = await pdfApi.rotatePdf(files[0], optionValues.pageRotations || {}, handleProgress);
+          filename = `${firstFileName}_rotated.pdf`;
+          break;
+        case 'watermark-pdf':
+          result = await pdfApi.watermarkPdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_watermarked.pdf`;
+          break;
+        case 'add-page-numbers-pdf':
+          result = await pdfApi.addPageNumbersPdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_numbered.pdf`;
+          break;
+        case 'protect-pdf':
+          result = await pdfApi.protectPdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_protected.pdf`;
+          break;
+        case 'unlock-pdf':
+          result = await pdfApi.unlockPdf(files[0], optionValues.password || '', handleProgress);
+          filename = `${firstFileName}_unlocked.pdf`;
+          break;
+        case 'crop-pdf':
+          result = await pdfApi.cropPdf(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}_cropped.pdf`;
+          break;
         default:
           throw new Error('Unknown tool');
       }

@@ -2532,6 +2532,307 @@ export const TOOLS = [
     "category": "video",
     "shortDesc": "Remove soundtrack, background noise, and speech from any video clip instantly.",
     "iconName": "FileVideo"
+  },
+  {
+    "id": "rotate-pdf",
+    "name": "Rotate PDF",
+    "slug": "rotate-pdf",
+    "path": "/rotate-pdf",
+    "category": "pdf",
+    "popular": true,
+    "shortDesc": "Rotate PDF pages 90°, 180° or 270° clockwise or counter-clockwise online.",
+    "description": "Permanently rotate specific pages or all pages of your PDF document. Fix sideways scans and inverted documents privately in your browser.",
+    "iconName": "RefreshCw",
+    "badge": "Popular",
+    "acceptedTypes": ".pdf, application/pdf",
+    "acceptedFileLabel": "PDF files",
+    "maxFiles": 1,
+    "options": [
+      {
+        "id": "rotationAngle",
+        "label": "Global Rotation",
+        "type": "select",
+        "default": "90",
+        "choices": [
+          { "value": "90", "label": "90° Right (Clockwise)" },
+          { "value": "180", "label": "180° (Upside Down)" },
+          { "value": "270", "label": "90° Left (Counter-Clockwise)" }
+        ]
+      }
+    ],
+    "features": [
+      "Rotate individual pages or all pages simultaneously",
+      "Fix orientation of scanned PDF contracts and receipts",
+      "Preserve vector graphics, fonts, and form fields intact",
+      "100% private in-browser client-side execution"
+    ],
+    "steps": [
+      "Upload the PDF document you want to rotate.",
+      "Select your desired rotation angle (90°, 180°, or 270°).",
+      "Click \"Rotate PDF Now\" to download your re-oriented document."
+    ],
+    "overview": "Scanned documents and smartphone photo PDFs frequently upload upside down or sideways. PDFora Rotate PDF tool lets you adjust orientation effortlessly without downloading expensive desktop software.",
+    "faqs": [
+      { "q": "Will rotating a PDF affect the text quality?", "a": "No, rotation modifies the internal page orientation metadata without re-compressing text or images." },
+      { "q": "Are my files stored on a server?", "a": "No, rotation happens entirely inside your browser memory." }
+    ],
+    "metaTitle": "Rotate PDF Online Free — Turn PDF Pages Permanently | PDFora",
+    "metaDescription": "Rotate PDF pages 90°, 180°, or 270° online for free. Fix sideways scanned PDFs privately in your browser with zero file uploads.",
+    "h1Title": "Rotate PDF Pages Online",
+    "primaryKeywords": ["rotate pdf", "turn pdf online", "rotate pdf pages free", "fix upside down pdf"]
+  },
+  {
+    "id": "watermark-pdf",
+    "name": "Watermark PDF",
+    "slug": "watermark-pdf",
+    "path": "/watermark-pdf",
+    "category": "pdf",
+    "shortDesc": "Add text or logo watermarks to PDF pages with custom position and opacity.",
+    "description": "Stamp custom text like 'CONFIDENTIAL', 'DRAFT', or company brand names onto your PDF pages. Customize font size, rotation, opacity, and color.",
+    "iconName": "Sparkles",
+    "badge": "New",
+    "acceptedTypes": ".pdf, application/pdf",
+    "acceptedFileLabel": "PDF files",
+    "maxFiles": 1,
+    "options": [
+      {
+        "id": "text",
+        "label": "Watermark Text",
+        "type": "text",
+        "default": "CONFIDENTIAL",
+        "placeholder": "e.g. CONFIDENTIAL, DRAFT, DO NOT COPY"
+      },
+      {
+        "id": "position",
+        "label": "Position",
+        "type": "select",
+        "default": "center",
+        "choices": [
+          { "value": "center", "label": "Center Diagonal" },
+          { "value": "top", "label": "Top Header" },
+          { "value": "bottom", "label": "Bottom Footer" }
+        ]
+      },
+      {
+        "id": "opacity",
+        "label": "Opacity / Transparency",
+        "type": "select",
+        "default": "0.3",
+        "choices": [
+          { "value": "0.15", "label": "Subtle (15% Opacity)" },
+          { "value": "0.3", "label": "Standard (30% Opacity)" },
+          { "value": "0.6", "label": "Bold (60% Opacity)" },
+          { "value": "1.0", "label": "Opaque (100%)" }
+        ]
+      }
+    ],
+    "features": [
+      "Add custom text stamps to protect intellectual property",
+      "Control text rotation, opacity, font size, and color",
+      "Batch overlay across every page in seconds",
+      "100% private in-browser processing"
+    ],
+    "steps": [
+      "Upload your PDF document.",
+      "Enter your desired watermark text and pick transparency & position.",
+      "Click \"Watermark PDF Now\" to download your protected PDF."
+    ],
+    "overview": "Protect draft contracts, legal submissions, and proprietary research by stamping clear visual ownership watermarks across your document pages.",
+    "faqs": [
+      { "q": "Can the watermark be removed easily?", "a": "The watermark is merged permanently into the PDF page stream." }
+    ],
+    "metaTitle": "Watermark PDF Online Free — Add Text Watermarks | PDFora",
+    "metaDescription": "Add custom text watermarks to your PDF documents online for free. Set opacity, position, and rotation with complete privacy.",
+    "h1Title": "Add Watermark to PDF",
+    "primaryKeywords": ["watermark pdf", "add watermark to pdf", "stamp pdf online", "pdf confidential stamp"]
+  },
+  {
+    "id": "add-page-numbers-pdf",
+    "name": "Add Page Numbers",
+    "slug": "add-page-numbers-pdf",
+    "path": "/add-page-numbers-pdf",
+    "category": "pdf",
+    "shortDesc": "Insert page numbers into headers or footers of your PDF document.",
+    "description": "Number your PDF pages automatically. Select header or footer positioning, page number formats (Page X of Y), and font size.",
+    "iconName": "Layers",
+    "badge": "New",
+    "acceptedTypes": ".pdf, application/pdf",
+    "acceptedFileLabel": "PDF files",
+    "maxFiles": 1,
+    "options": [
+      {
+        "id": "position",
+        "label": "Position",
+        "type": "select",
+        "default": "bottom-center",
+        "choices": [
+          { "value": "bottom-center", "label": "Bottom Center (Recommended)" },
+          { "value": "bottom-right", "label": "Bottom Right" },
+          { "value": "bottom-left", "label": "Bottom Left" },
+          { "value": "top-center", "label": "Top Center" },
+          { "value": "top-right", "label": "Top Right" }
+        ]
+      },
+      {
+        "id": "format",
+        "label": "Number Format",
+        "type": "select",
+        "default": "page-n-of-total",
+        "choices": [
+          { "value": "page-n-of-total", "label": "Page X of Y (e.g. Page 1 of 10)" },
+          { "value": "page-n", "label": "Simple Number (1, 2, 3...)" }
+        ]
+      }
+    ],
+    "features": [
+      "Automatic numbering for multi-page documents",
+      "Flexible positioning (Header, Footer, Left, Center, Right)",
+      "Clean, professional typography formatting",
+      "Instant client-side processing"
+    ],
+    "steps": [
+      "Upload your PDF document.",
+      "Choose position (Bottom Center, Top Right, etc.) and number style.",
+      "Click \"Add Page Numbers\" to download your numbered PDF."
+    ],
+    "overview": "Ensure academic essays, research proposals, and business reports meet publishing guidelines by adding clean page numbers.",
+    "faqs": [
+      { "q": "Can I choose where page numbers appear?", "a": "Yes! You can place page numbers in headers or footers at left, center, or right alignments." }
+    ],
+    "metaTitle": "Add Page Numbers to PDF Online Free | PDFora",
+    "metaDescription": "Insert page numbers into PDF headers and footers online for free. Custom placement and formatting with zero server file storage.",
+    "h1Title": "Add Page Numbers to PDF",
+    "primaryKeywords": ["add page numbers to pdf", "number pdf pages", "pdf page numbering online"]
+  },
+  {
+    "id": "protect-pdf",
+    "name": "Protect PDF",
+    "slug": "protect-pdf",
+    "path": "/protect-pdf",
+    "category": "pdf",
+    "shortDesc": "Encrypt PDF files with strong password protection and permissions.",
+    "description": "Secure confidential PDF documents with user passwords. Prevent unauthorized opening, text copying, or editing.",
+    "iconName": "ShieldCheck",
+    "badge": "Popular",
+    "acceptedTypes": ".pdf, application/pdf",
+    "acceptedFileLabel": "PDF files",
+    "maxFiles": 1,
+    "options": [
+      {
+        "id": "password",
+        "label": "Enter Password",
+        "type": "text",
+        "default": "",
+        "placeholder": "Choose a strong password"
+      }
+    ],
+    "features": [
+      "Standard PDF password encryption",
+      "Restrict unauthorized viewing and document copying",
+      "Client-side encryption ensures passwords never touch servers",
+      "100% free and private"
+    ],
+    "steps": [
+      "Upload the PDF file you wish to protect.",
+      "Enter a strong password of your choice.",
+      "Click \"Protect PDF Now\" to download your encrypted file."
+    ],
+    "overview": "Keep financial records, patient data, legal contracts, and personal tax returns safe by encrypting them with a password before sending via email.",
+    "faqs": [
+      { "q": "Does PDFora store my password?", "a": "Never! Password encryption happens directly inside your web browser." }
+    ],
+    "metaTitle": "Protect PDF Online Free — Encrypt PDF with Password | PDFora",
+    "metaDescription": "Add password protection to PDF documents online for free. Secure sensitive files with standard PDF encryption privately in your browser.",
+    "h1Title": "Password Protect PDF Online",
+    "primaryKeywords": ["protect pdf", "encrypt pdf online", "pdf password protection free", "lock pdf file"]
+  },
+  {
+    "id": "unlock-pdf",
+    "name": "Unlock PDF",
+    "slug": "unlock-pdf",
+    "path": "/unlock-pdf",
+    "category": "pdf",
+    "shortDesc": "Remove passwords and security permissions from PDF files.",
+    "description": "Unlock password-protected PDFs and remove restriction flags to allow copying, editing, and printing.",
+    "iconName": "Sparkles",
+    "badge": "",
+    "acceptedTypes": ".pdf, application/pdf",
+    "acceptedFileLabel": "PDF files",
+    "maxFiles": 1,
+    "options": [
+      {
+        "id": "password",
+        "label": "PDF Password (if required)",
+        "type": "text",
+        "default": "",
+        "placeholder": "Enter document password"
+      }
+    ],
+    "features": [
+      "Remove owner restrictions and password protection",
+      "Enable copy, edit, and print permissions",
+      "In-browser decryption keeps passwords confidential",
+      "Instant output generation"
+    ],
+    "steps": [
+      "Upload your password-protected PDF document.",
+      "Enter the password if prompted.",
+      "Click \"Unlock PDF Now\" to download your unrestricted document."
+    ],
+    "overview": "Easily remove forgotten restriction locks or owner passwords from your own documents to re-enable text copying, printing, and page editing.",
+    "faqs": [
+      { "q": "Can I unlock a PDF if I don't know the open password?", "a": "If the PDF requires a user password to open, you must provide the password to decrypt it." }
+    ],
+    "metaTitle": "Unlock PDF Online Free — Remove PDF Password | PDFora",
+    "metaDescription": "Remove passwords and permissions from PDF documents online for free. Fast, private PDF unlocking in your browser.",
+    "h1Title": "Unlock PDF Online",
+    "primaryKeywords": ["unlock pdf", "remove pdf password", "decrypt pdf online free"]
+  },
+  {
+    "id": "crop-pdf",
+    "name": "Crop PDF",
+    "slug": "crop-pdf",
+    "path": "/crop-pdf",
+    "category": "pdf",
+    "shortDesc": "Trim margins and cut unwanted whitespace from PDF pages.",
+    "description": "Crop PDF margins to fit e-readers, eliminate scanner margins, or cut out unnecessary page borders.",
+    "iconName": "Scissors",
+    "badge": "New",
+    "acceptedTypes": ".pdf, application/pdf",
+    "acceptedFileLabel": "PDF files",
+    "maxFiles": 1,
+    "options": [
+      {
+        "id": "margin",
+        "label": "Crop Margin Trim",
+        "type": "select",
+        "default": "10",
+        "choices": [
+          { "value": "5", "label": "Light Trim (5% Margins)" },
+          { "value": "10", "label": "Medium Trim (10% Margins)" },
+          { "value": "15", "label": "Aggressive Trim (15% Margins)" }
+        ]
+      }
+    ],
+    "features": [
+      "Trim whitespace borders across all PDF pages",
+      "Optimize documents for Kindle, iPad, and e-readers",
+      "Clean up scanned paper margins",
+      "100% private in-browser execution"
+    ],
+    "steps": [
+      "Upload your PDF document.",
+      "Select your preferred margin crop trim percentage.",
+      "Click \"Crop PDF Now\" to download your trimmed PDF."
+    ],
+    "overview": "Remove unwanted black margins from scanned documents or shrink page borders for comfortable viewing on mobile screens and e-readers.",
+    "faqs": [
+      { "q": "Will cropping delete content?", "a": "Cropping adjusts the visible page boundary box (CropBox) without destroying original vector streams." }
+    ],
+    "metaTitle": "Crop PDF Online Free — Trim PDF Margins | PDFora",
+    "metaDescription": "Crop PDF margins and trim whitespace borders online for free. Optimize PDF pages for e-readers and mobile devices privately.",
+    "h1Title": "Crop PDF Pages Online",
+    "primaryKeywords": ["crop pdf", "trim pdf margins", "pdf margin cropper free"]
   }
 ];
 

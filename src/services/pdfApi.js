@@ -169,5 +169,29 @@ export const pdfApi = {
     if (res) return await res.blob();
 
     return await clientPdfService.convertWordToExcel(file, onProgress);
+  },
+
+  async rotatePdf(file, rotations, onProgress) {
+    return await clientPdfService.rotatePdf(file, rotations, onProgress);
+  },
+
+  async watermarkPdf(file, options, onProgress) {
+    return await clientPdfService.watermarkPdf(file, options, onProgress);
+  },
+
+  async addPageNumbersPdf(file, options, onProgress) {
+    return await clientPdfService.addPageNumbersPdf(file, options, onProgress);
+  },
+
+  async protectPdf(file, options, onProgress) {
+    return await clientPdfService.protectPdf(file, options, onProgress);
+  },
+
+  async unlockPdf(file, password, onProgress) {
+    return await clientPdfService.unlockPdf(file, password, onProgress);
+  },
+
+  async cropPdf(file, options, onProgress) {
+    return await clientPdfService.cropPdf(file, options, onProgress);
   }
 };
