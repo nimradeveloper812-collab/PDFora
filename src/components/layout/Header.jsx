@@ -9,6 +9,8 @@ import {
 import { TOOLS } from '../../data/toolsData';
 import ThemeToggle from '../common/ThemeToggle';
 import QuickSearchModal from '../common/QuickSearchModal';
+import LanguageSwitcher from '../common/LanguageSwitcher';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -18,6 +20,8 @@ export default function Header() {
   const navRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -67,7 +71,7 @@ export default function Header() {
   // 8-Column Mega Menu Tool Categories matching reference layout
   const megaColumns = [
     {
-      title: "ORGANIZE PDF",
+      title: t('organizePdf'),
       color: "text-rose-600 dark:text-rose-400",
       items: [
         { name: "Merge PDF", path: "/merge-pdf" },
@@ -80,7 +84,7 @@ export default function Header() {
       ]
     },
     {
-      title: "CONVERT TO PDF",
+      title: t('convertToPdf'),
       color: "text-amber-600 dark:text-amber-400",
       items: [
         { name: "JPG to PDF", path: "/jpg-to-pdf" },
@@ -92,7 +96,7 @@ export default function Header() {
       ]
     },
     {
-      title: "CONVERT FROM PDF",
+      title: t('convertFromPdf'),
       color: "text-blue-600 dark:text-blue-400",
       items: [
         { name: "PDF to Word", path: "/pdf-to-word" },
@@ -104,7 +108,7 @@ export default function Header() {
       ]
     },
     {
-      title: "AI INTELLIGENCE",
+      title: t('aiIntelligence'),
       color: "text-purple-600 dark:text-purple-400",
       items: [
         { name: "Chat with PDF", path: "/chat-with-pdf" },
@@ -115,7 +119,7 @@ export default function Header() {
       ]
     },
     {
-      title: "IMAGE EDIT & BG",
+      title: t('imageEditBg'),
       color: "text-indigo-600 dark:text-indigo-400",
       items: [
         { name: "Remove Background", path: "/image-background-remover" },
@@ -127,7 +131,7 @@ export default function Header() {
       ]
     },
     {
-      title: "IMAGE FORMATS",
+      title: t('imageFormats'),
       color: "text-emerald-600 dark:text-emerald-400",
       items: [
         { name: "JPG to PNG", path: "/image-converter" },
@@ -138,7 +142,7 @@ export default function Header() {
       ]
     },
     {
-      title: "DEV & MEDIA",
+      title: t('devMedia'),
       color: "text-teal-600 dark:text-teal-400",
       items: [
         { name: "JSON to CSV", path: "/json-to-csv" },
@@ -150,7 +154,7 @@ export default function Header() {
       ]
     },
     {
-      title: "PDF REPAIR & FORMS",
+      title: t('repairForms'),
       color: "text-cyan-600 dark:text-cyan-400",
       items: [
         { name: "Repair PDF", path: "/repair-pdf" },
@@ -210,7 +214,7 @@ export default function Header() {
                   }`}
                 >
                   <Grid className="w-3.5 h-3.5 text-purple-600" />
-                  <span>All Tools</span>
+                  <span>{t('allTools')}</span>
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform ${activeDropdown === 'mega' ? 'rotate-180' : ''}`} />
                 </button>
               </div>
@@ -225,7 +229,7 @@ export default function Header() {
                 }`}
               >
                 <FileText className="w-3.5 h-3.5 text-purple-600" />
-                <span>PDF Tools</span>
+                <span>{t('pdfTools')}</span>
               </Link>
 
               {/* Image Tools */}
@@ -238,7 +242,7 @@ export default function Header() {
                 }`}
               >
                 <ImageIcon className="w-3.5 h-3.5 text-purple-600" />
-                <span>Image Tools</span>
+                <span>{t('imageTools')}</span>
               </Link>
 
               {/* Video & Audio */}
@@ -251,7 +255,7 @@ export default function Header() {
                 }`}
               >
                 <FileVideo className="w-3.5 h-3.5 text-purple-600" />
-                <span>Video &amp; Audio</span>
+                <span>{t('mediaTools')}</span>
               </Link>
 
               {/* Developer & AI */}
@@ -264,27 +268,28 @@ export default function Header() {
                 }`}
               >
                 <Code className="w-3.5 h-3.5 text-purple-600" />
-                <span>Developer &amp; AI</span>
+                <span>{t('developerAi')}</span>
               </Link>
 
             </nav>
 
             {/* Right Action Bar */}
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               
               {/* Quick Search Ctrl+K Button */}
               <button
                 type="button"
                 onClick={() => setIsSearchOpen(true)}
-                className="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-zinc-200 dark:border-slate-700 bg-zinc-50 dark:bg-slate-800 hover:bg-zinc-100 dark:hover:bg-slate-700/80 text-zinc-500 dark:text-zinc-300 text-xs font-medium transition-all"
+                className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-slate-700 bg-zinc-50 dark:bg-slate-800 hover:bg-zinc-100 dark:hover:bg-slate-700/80 text-zinc-500 dark:text-zinc-300 text-xs font-medium transition-all"
               >
                 <Search className="w-3.5 h-3.5 text-purple-600" />
-                <span>Search 48+ tools...</span>
+                <span>{t('searchPlaceholder')}</span>
                 <kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-slate-700 text-[10px] font-mono text-zinc-600 dark:text-zinc-300 font-bold">
                   ⌘K
                 </kbd>
               </button>
 
+              <LanguageSwitcher />
               <ThemeToggle />
 
               {/* Mobile Hamburger */}

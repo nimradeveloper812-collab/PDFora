@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 /* ============================================================
-   PDFora World-Class SaaS Design System
-   Bright Pristine Light Mode + Deep Slate Dark Mode
+   PDFora Universal Theme System
+   100% Pure White Light Mode vs Deep Obsidian Dark Mode
    ============================================================ */
 
 @theme {
@@ -18,78 +18,179 @@
   --color-brand-900: #312E81;
 }
 
-@layer base {
-  :root {
-    --brand-primary:      #6C3FFC;
-    --brand-hover:        #5B2EE0;
-    --brand-active:       #4B24C5;
-    --brand-light:        #F3F0FF;
+/* Base resets */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
-    --bg-main:            #FFFFFF;
-    --bg-subtle:          #F8FAFC;
-    --bg-card:            #FFFFFF;
-    --border-color:       #E2E8F0;
-    --text-primary:       #0F172A;
-    --text-secondary:     #475569;
-    --text-muted:         #94A3B8;
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
 
-    --shadow-xs:  0 1px 2px rgba(15, 23, 42, 0.04);
-    --shadow-sm:  0 2px 8px rgba(108, 63, 252, 0.05);
-    --shadow-md:  0 8px 24px rgba(15, 23, 42, 0.06);
-    --shadow-lg:  0 16px 32px rgba(15, 23, 42, 0.09);
-  }
+/* ============================================================
+   LIGHT MODE (Default - 100% Pure White Background & Sharp Dark Text)
+   ============================================================ */
+html:not(.dark) {
+  color-scheme: light;
+}
 
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
+html:not(.dark) body,
+html:not(.dark) #root,
+html:not(.dark) main,
+html:not(.dark) .min-h-screen {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+}
 
-  html {
-    scroll-behavior: smooth;
-    -webkit-text-size-adjust: 100%;
-    background-color: var(--bg-main);
-    color: var(--text-primary);
-  }
+html:not(.dark) header {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+}
 
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: var(--bg-main);
-    color: var(--text-primary);
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    line-height: 1.6;
-  }
+html:not(.dark) footer {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+  color: #475569 !important;
+}
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Sora', 'Inter', sans-serif;
-    color: var(--text-primary);
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    line-height: 1.25;
-  }
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) h4,
+html:not(.dark) h5,
+html:not(.dark) h6 {
+  color: #0F172A !important;
+}
 
-  .font-heading {
-    font-family: 'Sora', sans-serif;
-  }
+html:not(.dark) .bg-white {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+}
 
-  .font-display {
-    font-family: 'Space Grotesk', sans-serif;
-  }
+html:not(.dark) .bg-zinc-50,
+html:not(.dark) .bg-zinc-100,
+html:not(.dark) .bg-slate-50,
+html:not(.dark) .bg-slate-100 {
+  background-color: #F8FAFC !important;
+}
 
-  .font-sans {
-    font-family: 'Inter', sans-serif;
-  }
+html:not(.dark) .border-zinc-100,
+html:not(.dark) .border-zinc-200,
+html:not(.dark) .border-zinc-300,
+html:not(.dark) .border-slate-200 {
+  border-color: #E2E8F0 !important;
+}
 
-  /* Accessible focus ring */
-  *:focus-visible {
-    outline: 2.5px solid var(--brand-primary);
-    outline-offset: 3px;
-    border-radius: 0.375rem;
-  }
+html:not(.dark) .text-zinc-900,
+html:not(.dark) .text-zinc-800,
+html:not(.dark) .text-zinc-700 {
+  color: #0F172A !important;
+}
 
-  a, button {
-    -webkit-tap-highlight-color: transparent;
-  }
+html:not(.dark) .text-zinc-600,
+html:not(.dark) .text-zinc-500 {
+  color: #475569 !important;
+}
+
+html:not(.dark) .text-zinc-400 {
+  color: #64748B !important;
+}
+
+/* ============================================================
+   DARK MODE (100% Deep Obsidian Dark Background & Crisp Bright Text)
+   ============================================================ */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body,
+html.dark #root,
+html.dark main,
+html.dark .min-h-screen {
+  background-color: #0A0E1A !important;
+  color: #F8FAFC !important;
+}
+
+html.dark header {
+  background-color: #0F172A !important;
+  border-color: #1E293B !important;
+}
+
+html.dark footer {
+  background-color: #030712 !important;
+  border-color: #1E293B !important;
+  color: #94A3B8 !important;
+}
+
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6 {
+  color: #F8FAFC !important;
+}
+
+html.dark .bg-white {
+  background-color: #131B2E !important;
+  color: #F8FAFC !important;
+}
+
+html.dark .bg-zinc-50,
+html.dark .bg-zinc-100,
+html.dark .bg-slate-50,
+html.dark .bg-slate-100,
+html.dark .bg-zinc-50\/70,
+html.dark .bg-zinc-50\/30 {
+  background-color: #0F172A !important;
+}
+
+html.dark .border-zinc-100,
+html.dark .border-zinc-200,
+html.dark .border-zinc-300,
+html.dark .border-slate-200 {
+  border-color: #1E293B !important;
+}
+
+html.dark .text-zinc-900,
+html.dark .text-zinc-800,
+html.dark .text-zinc-700 {
+  color: #F8FAFC !important;
+}
+
+html.dark .text-zinc-600,
+html.dark .text-zinc-500 {
+  color: #CBD5E1 !important;
+}
+
+html.dark .text-zinc-400 {
+  color: #94A3B8 !important;
+}
+
+html.dark section {
+  background-color: #0A0E1A !important;
+}
+
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+  border-color: #1E293B !important;
+}
+
+/* Typography Fonts */
+.font-heading {
+  font-family: 'Sora', sans-serif;
+}
+
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-sans {
+  font-family: 'Inter', sans-serif;
 }
 
 /* Custom Animations */
@@ -109,71 +210,4 @@
 
 .animate-pulse-glow {
   animation: pulseGlow 2s infinite ease-in-out;
-}
-
-/* ============================================================
-   PDFora High-Contrast Dark Mode Overrides
-   ============================================================ */
-html.dark {
-  color-scheme: dark;
-  --bg-main:            #0B0F19;
-  --bg-subtle:          #0F172A;
-  --bg-card:            #1E293B;
-  --border-color:       #334155;
-  --text-primary:       #F8FAFC;
-  --text-secondary:     #CBD5E1;
-  --text-muted:         #64748B;
-}
-
-html.dark body {
-  background-color: #0B0F19 !important;
-  color: #F8FAFC !important;
-}
-
-html.dark header {
-  background-color: rgba(15, 23, 42, 0.95) !important;
-  border-color: #1E293B !important;
-}
-
-html.dark footer {
-  background-color: #030712 !important;
-  border-color: #1E293B !important;
-  color: #94A3B8 !important;
-}
-
-html.dark h1, 
-html.dark h2, 
-html.dark h3, 
-html.dark h4, 
-html.dark h5, 
-html.dark h6 {
-  color: #F8FAFC !important;
-}
-
-html.dark .bg-white {
-  background-color: #1E293B !important;
-  color: #F8FAFC !important;
-}
-
-html.dark .bg-zinc-50,
-html.dark .bg-zinc-100,
-html.dark .bg-slate-50 {
-  background-color: #0F172A !important;
-}
-
-html.dark .border-zinc-100,
-html.dark .border-zinc-200,
-html.dark .border-zinc-300 {
-  border-color: #334155 !important;
-}
-
-html.dark .text-zinc-900,
-html.dark .text-zinc-800,
-html.dark .text-zinc-700 {
-  color: #F8FAFC !important;
-}
-
-html.dark .text-zinc-600,
-html.dark .text-zinc-500 {
-  color: #CBD5E1 !important;
 }
