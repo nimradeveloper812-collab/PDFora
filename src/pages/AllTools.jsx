@@ -4,55 +4,153 @@ import { Link, useSearchParams } from 'react-router-dom';
 import {
   FileText, Search, Sparkles, ArrowRight, Table, Presentation,
   Image as ImageIcon, FileImage, Layers, Minimize2, Scissors,
-  Music, FileVideo, RefreshCw
+  Music, FileVideo, RefreshCw, Grid, Code, CheckCircle2, ShieldCheck
 } from 'lucide-react';
-import { TOOLS, TOOLS_CATEGORIES, getToolTheme } from '../data/toolsData';
-
-const iconMap = {
-  FileText, Table, Presentation,
-  Image: ImageIcon, FileImage, Layers, Minimize2, Scissors, Sparkles,
-  Music, FileVideo, RefreshCw
-};
+import { TOOLS, getToolTheme } from '../data/toolsData';
 
 export default function AllTools() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeCategory = searchParams.get('category') || 'all';
   const [searchQuery, setSearchQuery] = useState('');
 
+  // 8 Organized Tool Columns matching the user reference screenshot
+  const directoryColumns = [
+    {
+      title: "ORGANIZE PDF",
+      color: "text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900/50",
+      items: [
+        { name: "Merge PDF", path: "/merge-pdf", desc: "Combine multiple PDFs into one" },
+        { name: "Split PDF", path: "/split-pdf", desc: "Separate PDF into individual pages" },
+        { name: "Rotate PDF", path: "/rotate-pdf", desc: "Rotate pages 90° or 180°" },
+        { name: "Protect PDF", path: "/protect-pdf", desc: "Encrypt PDF with password" },
+        { name: "Remove Pages", path: "/remove-pages-pdf", desc: "Delete unwanted pages" },
+        { name: "Extract Pages", path: "/extract-pages-pdf", desc: "Pull out specific pages" },
+        { name: "Organize PDF", path: "/organize-pdf", desc: "Reorder page sequences" },
+      ]
+    },
+    {
+      title: "CONVERT TO PDF",
+      color: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-900/50",
+      items: [
+        { name: "JPG to PDF", path: "/jpg-to-pdf", desc: "Convert images to PDF" },
+        { name: "Word to PDF", path: "/word-to-pdf", desc: "DOCX documents to PDF" },
+        { name: "PowerPoint to PDF", path: "/powerpoint-to-pdf", desc: "PPTX slides to PDF" },
+        { name: "Excel to PDF", path: "/excel-to-pdf", desc: "XLSX sheets to PDF" },
+        { name: "HTML to PDF", path: "/html-to-pdf", desc: "Web pages & HTML to PDF" },
+        { name: "Scan to PDF", path: "/scan-to-pdf", desc: "Photo scans to PDF" },
+      ]
+    },
+    {
+      title: "CONVERT FROM PDF",
+      color: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-900/50",
+      items: [
+        { name: "PDF to Word", path: "/pdf-to-word", desc: "PDF to editable DOCX" },
+        { name: "PDF to PowerPoint", path: "/pdf-to-powerpoint", desc: "PDF pages to PPTX slides" },
+        { name: "PDF to JPG", path: "/pdf-to-jpg", desc: "Extract PDF pages as images" },
+        { name: "PDF to Excel", path: "/pdf-to-excel", desc: "PDF tables to XLSX" },
+        { name: "PDF to PDF/A", path: "/pdf-to-pdfa", desc: "ISO archival compliance" },
+        { name: "PDF to Markdown", path: "/pdf-to-markdown", desc: "PDF to .md text files" },
+      ]
+    },
+    {
+      title: "AI INTELLIGENCE",
+      color: "text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-900/50",
+      items: [
+        { name: "Chat with PDF", path: "/chat-with-pdf", desc: "Interactive Q&A assistant" },
+        { name: "AI Resume Reviewer", path: "/ai-resume-reviewer", desc: "Instant ATS score audit" },
+        { name: "AI Summarizer", path: "/ai-pdf-summarizer", desc: "Executive bullet point summary" },
+        { name: "Translate PDF", path: "/translate-pdf", desc: "Translate to 50+ languages" },
+        { name: "OCR PDF", path: "/ocr-pdf", desc: "Make scanned PDF searchable" },
+      ]
+    },
+    {
+      title: "IMAGE EDIT & BG",
+      color: "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-900/50",
+      items: [
+        { name: "Remove Background", path: "/image-background-remover", desc: "Instant AI BG removal" },
+        { name: "Compress Image", path: "/image-compressor", desc: "Shrink image filesize" },
+        { name: "Redact PDF", path: "/redact-pdf", desc: "Black out private data" },
+        { name: "Edit PDF", path: "/edit-pdf", desc: "Add text notes & annotations" },
+        { name: "Sign PDF", path: "/sign-pdf", desc: "Add digital signatures" },
+        { name: "Crop PDF", path: "/crop-pdf", desc: "Trim PDF whitespace margins" },
+      ]
+    },
+    {
+      title: "IMAGE FORMATS",
+      color: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/50",
+      items: [
+        { name: "JPG to PNG", path: "/image-converter", desc: "Convert JPG to PNG" },
+        { name: "PNG to JPG", path: "/image-converter", desc: "Convert PNG to JPG" },
+        { name: "WebP to PNG", path: "/image-converter", desc: "Convert WebP to PNG" },
+        { name: "HEIC to JPG", path: "/image-converter", desc: "Convert iPhone HEIC" },
+        { name: "SVG to PNG", path: "/image-converter", desc: "Convert SVG vector" },
+      ]
+    },
+    {
+      title: "DEV & MEDIA",
+      color: "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 border-teal-200 dark:border-teal-900/50",
+      items: [
+        { name: "JSON to CSV", path: "/json-to-csv", desc: "JSON array to spreadsheet" },
+        { name: "Base64 to PDF", path: "/base64-to-pdf", desc: "Encode & decode Base64" },
+        { name: "PDF Metadata Editor", path: "/pdf-metadata-editor", desc: "Change PDF properties" },
+        { name: "AI Table Extractor", path: "/ai-table-extractor", desc: "PDF tables to CSV / Excel" },
+        { name: "Video to Audio", path: "/video-to-audio", desc: "Extract MP3 from MP4" },
+        { name: "Video Compressor", path: "/video-compressor", desc: "Compress video files" },
+      ]
+    },
+    {
+      title: "PDF REPAIR & FORMS",
+      color: "text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950/40 border-cyan-200 dark:border-cyan-900/50",
+      items: [
+        { name: "Repair PDF", path: "/repair-pdf", desc: "Fix corrupted PDF files" },
+        { name: "Compare PDF", path: "/compare-pdf", desc: "Compare 2 PDF versions" },
+        { name: "PDF Forms", path: "/pdf-forms", desc: "Fill out interactive forms" },
+        { name: "Add Page Numbers", path: "/add-page-numbers-pdf", desc: "Number headers & footers" },
+        { name: "Watermark PDF", path: "/watermark-pdf", desc: "Overlay custom logo text" },
+        { name: "Unlock PDF", path: "/unlock-pdf", desc: "Remove PDF restrictions" },
+      ]
+    }
+  ];
+
   const filteredTools = TOOLS.filter(tool => {
-    const matchesCategory = activeCategory === 'all' || tool.category === activeCategory;
+    const matchesCategory =
+      activeCategory === 'all' ||
+      (activeCategory === 'pdf' && (tool.category === 'pdf' || tool.id.includes('pdf'))) ||
+      (activeCategory === 'images' && (tool.category === 'images' || tool.id.includes('image') || tool.id.includes('jpg'))) ||
+      (activeCategory === 'media' && (tool.category === 'video' || tool.category === 'audio' || tool.id.includes('video') || tool.id.includes('audio'))) ||
+      (activeCategory === 'developer' && (tool.badge === 'Developer Tool' || tool.badge === 'AI Feature' || tool.id.includes('json') || tool.id.includes('base64')));
+
+    const q = searchQuery.toLowerCase().trim();
     const matchesSearch =
-      tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tool.shortDesc.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (tool.primaryKeywords || []).some(k => k.toLowerCase().includes(searchQuery.toLowerCase()));
+      !q ||
+      tool.name.toLowerCase().includes(q) ||
+      tool.shortDesc.toLowerCase().includes(q) ||
+      (tool.primaryKeywords || []).some(k => k.toLowerCase().includes(q));
 
     return matchesCategory && matchesSearch;
   });
 
   return (
-    <div className="min-h-screen bg-white pt-16">
+    <div className="min-h-screen bg-white dark:bg-slate-900 text-zinc-900 dark:text-white pt-16 font-sans">
       <Helmet>
-        <title>All 19 Free Online PDF &amp; Document Tools | PDFora</title>
-        <meta name="description" content="Browse all 19 free online PDF, document, image, video, and audio tools on PDFora. Convert Word, Excel, PPT, JPG to PDF, merge, compress, and split documents instantly." />
+        <title>All 48 Free Online PDF &amp; AI Document Tools | PDFora</title>
+        <meta name="description" content="Browse all 48 free online PDF, document, image, video, audio, and AI tools on PDFora. Convert Word, Excel, PPT, JPG to PDF, merge, compress, split, edit metadata, chat with PDF, and review resumes instantly." />
         <link rel="canonical" href="https://pdfora.nimradev.site/tools" />
       </Helmet>
 
-      {/* Header */}
-      <section
-        className="pt-10 pb-12 px-4 sm:px-6 lg:px-8 text-center border-b border-zinc-200"
-        style={{ backgroundColor: '#FAFAFC' }}
-      >
+      {/* Header Banner */}
+      <section className="pt-10 pb-12 px-4 sm:px-6 lg:px-8 text-center border-b border-zinc-200 dark:border-slate-800 bg-zinc-50/70 dark:bg-slate-950/70">
         <div className="max-w-4xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 font-display">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-            <span>Complete Document Toolkit — 100% Free &amp; Private</span>
+          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-extrabold bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+            <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+            <span>Complete 48-Tool Suite — 100% Free &amp; In-Browser Privacy</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-zinc-900 tracking-tight font-heading">
-            All Document &amp; Media Tools
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight font-heading">
+            All Document, Image &amp; AI Tools
           </h1>
-          <p className="text-sm sm:text-base text-zinc-600 max-w-xl mx-auto font-sans">
-            Select any tool to convert, compress, merge, split, or edit files instantly.
+          <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-xl mx-auto font-sans">
+            Organize, convert, compress, edit, or analyze your files instantly with zero server uploads.
           </p>
 
           <div className="max-w-md mx-auto pt-2">
@@ -62,97 +160,141 @@ export default function AllTools() {
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Filter tools by keyword..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm bg-white text-zinc-900 border border-zinc-300 font-sans focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                placeholder="Search 48+ tools by name or keyword..."
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm bg-white dark:bg-slate-800 text-zinc-900 dark:text-white border border-zinc-300 dark:border-slate-700 font-sans focus:outline-none focus:ring-2 focus:ring-purple-600 shadow-xs"
               />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Category Pills & Grid */}
-      <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-8 border-b border-zinc-200 pb-4">
-          <button
-            onClick={() => setSearchParams({})}
-            className={`px-3.5 py-1.5 rounded-md text-xs font-bold transition-all font-display ${
-              activeCategory === 'all'
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
-            }`}
-          >
-            All Tools ({TOOLS.length})
-          </button>
-          {TOOLS_CATEGORIES.map(cat => {
-            const count = TOOLS.filter(t => t.category === cat.id).length;
+      {/* Category Tabs Bar */}
+      <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-8 border-b border-zinc-200 dark:border-slate-800 pb-4">
+          {[
+            { id: 'all', label: 'All Tools (48)' },
+            { id: 'pdf', label: 'PDF Tools' },
+            { id: 'images', label: 'Image Tools' },
+            { id: 'media', label: 'Video & Audio' },
+            { id: 'developer', label: 'Developer & AI' },
+          ].map(cat => {
             const isActive = activeCategory === cat.id;
             return (
               <button
                 key={cat.id}
-                onClick={() => setSearchParams({ category: cat.id })}
-                className={`px-3.5 py-1.5 rounded-md text-xs font-bold transition-all font-display ${
+                onClick={() => setSearchParams(cat.id === 'all' ? {} : { category: cat.id })}
+                className={`px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
+                    ? 'bg-purple-600 text-white shadow-md'
+                    : 'bg-zinc-100 dark:bg-slate-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-slate-700'
                 }`}
               >
-                {cat.name} ({count})
+                {cat.label}
               </button>
             );
           })}
         </div>
 
-        {filteredTools.length === 0 ? (
-          <div className="text-center py-16 bg-zinc-50 rounded-xl border border-zinc-200 max-w-md mx-auto my-8 space-y-3">
-            <Search className="w-8 h-8 text-zinc-400 mx-auto" />
-            <h3 className="text-base font-bold text-zinc-800 font-heading">No tools found matching your filter</h3>
-            <p className="text-xs text-zinc-500 font-sans">Try clearing your search query or selecting another category.</p>
-            <button
-              onClick={() => { setSearchQuery(''); setSearchParams({}); }}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white rounded-md transition-all shadow-xs font-display cursor-pointer"
-              style={{ backgroundColor: '#4F46E5' }}
-            >
-              Reset Filters
-            </button>
+        {/* Display Grouped 8-Column Directory Layout matching user reference screenshot when viewing All Tools */}
+        {activeCategory === 'all' && !searchQuery ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-black uppercase tracking-wider text-purple-700 dark:text-purple-400 flex items-center gap-2">
+                <Grid className="w-4 h-4" />
+                All PDFora Tools Directory (8 Categories • 48 Tools)
+              </h3>
+              <span className="text-xs text-zinc-400 font-medium hidden sm:inline">
+                Click any tool to launch in-browser
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+              {directoryColumns.map((col, idx) => (
+                <div
+                  key={idx}
+                  className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-zinc-200 dark:border-slate-800 shadow-xs flex flex-col justify-between space-y-3"
+                >
+                  <div className="space-y-3">
+                    <span className={`inline-block px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${col.color}`}>
+                      {col.title}
+                    </span>
+
+                    <ul className="space-y-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                      {col.items.map((item, itemIdx) => (
+                        <li key={itemIdx}>
+                          <Link
+                            to={item.path}
+                            className="group block hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                          >
+                            <span className="block font-bold text-zinc-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                              • {item.name}
+                            </span>
+                            <span className="block text-[10px] text-zinc-400 font-normal line-clamp-1">
+                              {item.desc}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredTools.map(tool => {
-              const Icon = iconMap[tool.iconName] || FileText;
-              const theme = getToolTheme(tool.id, tool.category);
-
-              return (
-                <Link
-                  key={tool.id}
-                  to={tool.path}
-                  className="group flex flex-col justify-between p-4 bg-white rounded-xl border border-zinc-200 hover:border-indigo-600 hover:shadow-md transition-all duration-200"
-                  style={{ textDecoration: 'none' }}
+          /* Filtered Card Grid View */
+          <div>
+            {filteredTools.length === 0 ? (
+              <div className="text-center py-16 bg-zinc-50 dark:bg-slate-800/50 rounded-2xl border border-zinc-200 dark:border-slate-800 max-w-md mx-auto my-8 space-y-3">
+                <Search className="w-8 h-8 text-zinc-400 mx-auto" />
+                <h3 className="text-base font-bold text-zinc-800 dark:text-white">No tools found matching your search</h3>
+                <p className="text-xs text-zinc-500 font-sans">Try clearing your search query or selecting another category tab.</p>
+                <button
+                  onClick={() => { setSearchQuery(''); setSearchParams({}); }}
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold text-white rounded-xl transition-all shadow-xs cursor-pointer"
+                  style={{ backgroundColor: '#6C3FFC' }}
                 >
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border ${theme.iconBg}`}>
-                        <Icon className="w-4.5 h-4.5" strokeWidth={2} />
+                  Reset Filters
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {filteredTools.map(tool => {
+                  const theme = getToolTheme(tool.id, tool.category);
+
+                  return (
+                    <Link
+                      key={tool.id}
+                      to={tool.path}
+                      className="group flex flex-col justify-between p-5 bg-white dark:bg-slate-800/90 rounded-2xl border border-zinc-200 dark:border-slate-800 hover:border-purple-600 dark:hover:border-purple-500 hover:shadow-lg transition-all duration-200"
+                    >
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${theme.iconBg}`}>
+                            <FileText className="w-4.5 h-4.5 text-purple-600" />
+                          </div>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300 border border-purple-200 dark:border-purple-800 uppercase tracking-wider">
+                            {tool.badge || tool.category}
+                          </span>
+                        </div>
+
+                        <h3 className="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                          {tool.name}
+                        </h3>
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed line-clamp-2">
+                          {tool.shortDesc || tool.description}
+                        </p>
                       </div>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider font-display ${theme.badgeBg}`}>
-                        {tool.category}
-                      </span>
-                    </div>
 
-                    <h3 className="text-sm font-bold text-zinc-900 group-hover:text-indigo-600 transition-colors mb-1 font-heading">
-                      {tool.name}
-                    </h3>
-                    <p className="text-xs text-zinc-500 leading-relaxed font-sans line-clamp-2">
-                      {tool.shortDesc}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-3 mt-3 border-t border-zinc-100 text-[11px] font-bold text-zinc-700 group-hover:text-indigo-600 font-display">
-                    <span>Launch Tool</span>
-                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-                  </div>
-                </Link>
-              );
-            })}
+                      <div className="flex items-center justify-between pt-3 mt-3 border-t border-zinc-100 dark:border-slate-700 text-xs font-bold text-zinc-700 dark:text-zinc-300 group-hover:text-purple-600 dark:group-hover:text-purple-400">
+                        <span>Launch Tool</span>
+                        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
       </section>

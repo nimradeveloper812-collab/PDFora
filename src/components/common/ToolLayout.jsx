@@ -10,6 +10,12 @@ import AudioCompressorTool from '../media/AudioCompressorTool';
 import ImageConverterTool from '../media/ImageConverterTool';
 import VideoConverterTool from '../media/VideoConverterTool';
 import VideoCompressorTool from '../media/VideoCompressorTool';
+import ChatWithPdfTool from '../pdf/ChatWithPdfTool';
+import AiResumeReviewerTool from '../pdf/AiResumeReviewerTool';
+import AiTableExtractorTool from '../pdf/AiTableExtractorTool';
+import PdfMetadataEditorTool from '../pdf/PdfMetadataEditorTool';
+import JsonToCsvTool from '../pdf/JsonToCsvTool';
+import Base64ToPdfTool from '../pdf/Base64ToPdfTool';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
@@ -227,6 +233,18 @@ export default function ToolLayout({ tool }) {
           <VideoConverterTool />
         ) : tool.id === 'video-compressor' ? (
           <VideoCompressorTool />
+        ) : tool.id === 'chat-with-pdf' ? (
+          <ChatWithPdfTool />
+        ) : tool.id === 'ai-resume-reviewer' ? (
+          <AiResumeReviewerTool />
+        ) : tool.id === 'ai-table-extractor' ? (
+          <AiTableExtractorTool />
+        ) : tool.id === 'pdf-metadata-editor' ? (
+          <PdfMetadataEditorTool />
+        ) : tool.id === 'json-to-csv' ? (
+          <JsonToCsvTool />
+        ) : tool.id === 'base64-to-pdf' ? (
+          <Base64ToPdfTool />
         ) : (
           <Dropzone tool={tool} />
         )}

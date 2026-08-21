@@ -60,6 +60,14 @@ const AiPdfSummarizer = lazy(() => import('./pages/tools/AiPdfSummarizer'));
 const TranslatePdf = lazy(() => import('./pages/tools/TranslatePdf'));
 const PdfToMarkdown = lazy(() => import('./pages/tools/PdfToMarkdown'));
 
+const ChatWithPdf = lazy(() => import('./pages/tools/ChatWithPdf'));
+const AiResumeReviewer = lazy(() => import('./pages/tools/AiResumeReviewer'));
+const AiTableExtractor = lazy(() => import('./pages/tools/AiTableExtractor'));
+
+const PdfMetadataEditor = lazy(() => import('./pages/tools/PdfMetadataEditor'));
+const JsonToCsv = lazy(() => import('./pages/tools/JsonToCsv'));
+const Base64ToPdf = lazy(() => import('./pages/tools/Base64ToPdf'));
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -126,6 +134,12 @@ function AppLayout() {
             <Route path="/ai-summarizer" element={<Navigate to="/ai-pdf-summarizer" replace />} />
             <Route path="/translate-pdf" element={<TranslatePdf />} />
             <Route path="/pdf-to-markdown" element={<PdfToMarkdown />} />
+            <Route path="/chat-with-pdf" element={<ChatWithPdf />} />
+            <Route path="/ai-resume-reviewer" element={<AiResumeReviewer />} />
+            <Route path="/ai-table-extractor" element={<AiTableExtractor />} />
+            <Route path="/pdf-metadata-editor" element={<PdfMetadataEditor />} />
+            <Route path="/json-to-csv" element={<JsonToCsv />} />
+            <Route path="/base64-to-pdf" element={<Base64ToPdf />} />
             <Route path="/image-background-remover" element={<ImageBackgroundRemover />} />
             <Route path="/image-compressor" element={<ImageCompressor />} />
             <Route path="/pdf-to-word" element={<PdfToWord />} />
