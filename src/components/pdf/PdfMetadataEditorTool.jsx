@@ -124,13 +124,13 @@ export default function PdfMetadataEditorTool() {
         </div>
       ) : (
         <div className="p-6 sm:p-8 rounded-3xl bg-white border border-zinc-200 shadow-xl space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
+          <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-zinc-100">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold shrink-0">
                 <FileText className="w-5 h-5" />
               </div>
-              <div>
-                <h4 className="text-base font-bold text-zinc-900">{file.name}</h4>
+              <div className="min-w-0">
+                <h4 className="text-base font-bold text-zinc-900 truncate max-w-xs">{file.name}</h4>
                 <p className="text-xs text-zinc-500 font-medium">Edit PDF document properties &amp; metadata tags</p>
               </div>
             </div>
@@ -209,7 +209,7 @@ export default function PdfMetadataEditorTool() {
             </div>
           </div>
 
-          <div className="pt-4 flex items-center justify-between border-t border-zinc-100">
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-zinc-100 text-center sm:text-left">
             <span className="text-xs text-zinc-400 font-medium">Metadata will be permanently embedded into the PDF stream.</span>
             {!isDone ? (
               <button

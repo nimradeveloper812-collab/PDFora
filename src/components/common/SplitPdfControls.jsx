@@ -142,7 +142,7 @@ export default function SplitPdfControls({ totalPages = 1, config, onChange }) {
                 {ranges.map((r, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-blue-50/50 border border-blue-200/80"
+                    className="flex flex-wrap items-center justify-between gap-2.5 p-3 sm:p-3.5 rounded-xl bg-blue-50/50 border border-blue-200/80"
                   >
                     <span className="text-xs font-bold text-blue-800 whitespace-nowrap">
                       Range {idx + 1}

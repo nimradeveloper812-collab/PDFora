@@ -85,7 +85,7 @@ export default function ImageComparisonSlider({
   return (
     <div className="w-full flex flex-col gap-3">
       {/* View mode toggle header */}
-      <div className="flex items-center justify-between text-xs text-zinc-500 px-1">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-500 px-1">
         <span className="font-medium">
           {viewMode === 'split' ? 'Drag slider or use arrow keys to compare' : 'Side-by-side preview'}
         </span>

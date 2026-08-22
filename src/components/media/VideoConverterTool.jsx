@@ -172,9 +172,11 @@ export default function VideoConverterTool() {
           <p className="text-zinc-500 max-w-md mx-auto mb-6 text-sm">
             Drag & drop your video file here, or click to browse. Supports MP4, WebM, MKV, AVI, MOV, WMV, FLV, TS, and OGV.
           </p>
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-100 text-xs font-semibold text-zinc-600">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            Max file size: 200 MB • FFmpeg hardware-accelerated transcoding
+          <div className="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-2 rounded-full bg-zinc-100 text-xs font-semibold text-zinc-600 text-center">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>Max file size: 200 MB</span>
+            <span className="hidden xs:inline">•</span>
+            <span>FFmpeg hardware-accelerated transcoding</span>
           </div>
         </div>
       )}

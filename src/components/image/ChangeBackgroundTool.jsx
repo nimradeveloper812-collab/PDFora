@@ -92,24 +92,24 @@ export default function ChangeBackgroundTool() {
 
           <div className="space-y-2">
             <label className="block text-xs font-bold text-zinc-700">Choose Replacement Background Color:</label>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-6 gap-2.5">
               {colors.map(c => (
                 <button
                   key={c.hex}
                   type="button"
                   onClick={() => setBgColor(c.hex)}
-                  className={`p-3 rounded-2xl border text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+                  className={`p-2.5 sm:p-3 rounded-2xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
                     bgColor === c.hex ? 'ring-2 ring-indigo-600 border-transparent shadow-xs' : 'border-zinc-200'
                   }`}
                 >
-                  <span className="w-4 h-4 rounded-full border border-zinc-300" style={{ backgroundColor: c.hex }} />
-                  <span>{c.label}</span>
+                  <span className="w-3.5 h-3.5 rounded-full border border-zinc-300 shrink-0" style={{ backgroundColor: c.hex }} />
+                  <span className="truncate">{c.label}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="pt-2 flex justify-between items-center">
+          <div className="pt-2 flex flex-col sm:flex-row justify-between items-center gap-3">
             {resultUrl ? (
               <a
                 href={resultUrl}

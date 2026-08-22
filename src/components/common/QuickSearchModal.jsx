@@ -43,21 +43,21 @@ export default function QuickSearchModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-zinc-950/60 backdrop-blur-xs animate-fade-in font-sans">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-6 sm:pt-20 px-3 sm:px-4 bg-zinc-950/60 backdrop-blur-xs animate-fade-in font-sans">
       <div
-        className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl border border-zinc-200 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col"
+        className="relative w-full max-w-2xl bg-white dark:bg-[#141622] rounded-3xl border border-zinc-200 dark:border-[#2A2E45] shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
         onClick={e => e.stopPropagation()}
       >
         {/* Search Header */}
-        <div className="flex items-center px-4 py-3.5 border-b border-zinc-200 dark:border-slate-800 gap-3">
-          <Search className="w-5 h-5 text-purple-600 shrink-0" />
+        <div className="flex items-center px-4 py-3.5 border-b border-zinc-200 dark:border-[#2A2E45] gap-3">
+          <Search className="w-5 h-5 text-purple-600 dark:text-purple-400 shrink-0" />
           <input
             type="text"
             autoFocus
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Search 48+ tools (e.g. compress, merge, watermark, resume)..."
-            className="flex-1 bg-transparent text-sm text-zinc-900 dark:text-white placeholder-zinc-400 outline-none"
+            className="flex-1 bg-transparent text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none"
           />
           <button
             onClick={onClose}
@@ -68,9 +68,9 @@ export default function QuickSearchModal({ isOpen, onClose }) {
         </div>
 
         {/* Results List */}
-        <div className="max-h-[380px] overflow-y-auto p-3 space-y-1">
+        <div className="max-h-[60vh] sm:max-h-[380px] overflow-y-auto p-3 space-y-1">
           {filteredTools.length === 0 ? (
-            <div className="py-12 text-center text-xs text-zinc-400">
+            <div className="py-12 text-center text-xs text-zinc-400 dark:text-zinc-500">
               No tools matching "{query}" found.
             </div>
           ) : (
@@ -80,7 +80,7 @@ export default function QuickSearchModal({ isOpen, onClose }) {
                 <div
                   key={t.id}
                   onClick={() => handleSelectTool(t.path)}
-                  className="flex items-center justify-between p-3 rounded-2xl cursor-pointer hover:bg-purple-50/70 dark:hover:bg-slate-800/80 transition-all group"
+                  className="flex items-center justify-between p-3 rounded-2xl cursor-pointer hover:bg-purple-50/70 dark:hover:bg-[#1B1E2E] transition-all group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div className={`w-9 h-9 rounded-xl flex items-center justify-center border shrink-0 ${theme.iconBg}`}>
@@ -88,11 +88,11 @@ export default function QuickSearchModal({ isOpen, onClose }) {
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-zinc-900 dark:text-white group-hover:text-purple-600 transition-colors">
+                        <span className="text-xs font-bold text-zinc-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                           {t.name}
                         </span>
                         {t.badge && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300">
                             {t.badge}
                           </span>
                         )}
@@ -102,7 +102,7 @@ export default function QuickSearchModal({ isOpen, onClose }) {
                       </p>
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-zinc-300 group-hover:text-purple-600 transition-transform group-hover:translate-x-1 shrink-0" />
+                  <ArrowRight className="w-4 h-4 text-zinc-300 dark:text-zinc-600 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-transform group-hover:translate-x-1 shrink-0" />
                 </div>
               );
             })
@@ -110,12 +110,12 @@ export default function QuickSearchModal({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-2.5 bg-zinc-50 dark:bg-slate-950 border-t border-zinc-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-zinc-400">
+        <div className="px-4 py-2.5 bg-zinc-50 dark:bg-[#0D0D14] border-t border-zinc-200 dark:border-[#2A2E45] flex items-center justify-between text-[11px] text-zinc-400 font-sans">
           <span className="flex items-center gap-1">
-            <Sparkles className="w-3 h-3 text-purple-600" />
+            <Sparkles className="w-3 h-3 text-purple-600 dark:text-purple-400" />
             48 Online Tools • 100% In-Browser Privacy
           </span>
-          <span className="font-mono">Press <kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-slate-800 text-zinc-700 dark:text-zinc-300">ESC</kbd> to close</span>
+          <span className="font-mono">Press <kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-[#2A2E45] text-zinc-700 dark:text-zinc-300">ESC</kbd> to close</span>
         </div>
       </div>
     </div>

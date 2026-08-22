@@ -145,7 +145,7 @@ export default function ChatWithPdfTool() {
           </div>
         </div>
       ) : (
-        <div className="rounded-3xl border border-zinc-200 bg-white overflow-hidden shadow-xl flex flex-col h-[620px]">
+        <div className="rounded-3xl border border-zinc-200 bg-white overflow-hidden shadow-xl flex flex-col h-[500px] sm:h-[620px] max-h-[80vh]">
           {/* Header */}
           <div className="px-6 py-4 border-b border-zinc-200 bg-zinc-50/80 flex items-center justify-between">
             <div className="flex items-center gap-3 min-w-0">

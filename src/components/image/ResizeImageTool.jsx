@@ -91,12 +91,12 @@ export default function ResizeImageTool() {
         </div>
       ) : (
         <div className="p-6 sm:p-8 rounded-3xl bg-white border border-zinc-200 shadow-xl space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
+          <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-zinc-100">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold shrink-0">
                 <ImageIcon className="w-5 h-5" />
               </div>
-              <h4 className="text-base font-bold text-zinc-900">{file.name}</h4>
+              <h4 className="text-base font-bold text-zinc-900 truncate max-w-xs">{file.name}</h4>
             </div>
             <button onClick={() => setFile(null)} className="text-xs font-bold text-zinc-500 hover:text-zinc-900 flex items-center gap-1">
               <RefreshCcw className="w-3.5 h-3.5" />
@@ -136,7 +136,7 @@ export default function ResizeImageTool() {
             <label htmlFor="aspect" className="text-xs font-bold text-zinc-700">Lock Aspect Ratio</label>
           </div>
 
-          <div className="pt-2 flex justify-between items-center">
+          <div className="pt-2 flex flex-col sm:flex-row justify-between items-center gap-3">
             {resultUrl ? (
               <a
                 href={resultUrl}

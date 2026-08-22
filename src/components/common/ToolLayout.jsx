@@ -131,7 +131,7 @@ export default function ToolLayout({ tool }) {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white pt-20">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-[#0D0D14] pt-20 transition-colors">
       <Helmet>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDesc} />
@@ -171,24 +171,24 @@ export default function ToolLayout({ tool }) {
       {/* ── Breadcrumb ─────────────────────────────────────── */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 w-full">
         <nav
-          className="flex items-center gap-2 text-xs font-semibold text-zinc-500"
+          className="flex items-center gap-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400"
           aria-label="Breadcrumb"
         >
           <Link
             to="/"
-            className="hover:text-blue-600 transition-colors"
+            className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
           >
             Home
           </Link>
           <span aria-hidden="true">/</span>
           <Link
             to={`/tools?category=${tool.category}`}
-            className="hover:text-blue-600 transition-colors"
+            className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
           >
             {categoryName}
           </Link>
           <span aria-hidden="true">/</span>
-          <span className="font-bold text-zinc-900" aria-current="page">
+          <span className="font-bold text-zinc-900 dark:text-white" aria-current="page">
             {tool.name}
           </span>
         </nav>
@@ -196,24 +196,23 @@ export default function ToolLayout({ tool }) {
 
       {/* ── Tool Hero ──────────────────────────────────────── */}
       <section
-        className="pt-4 pb-10 px-4 sm:px-6 lg:px-8 text-center border-b border-zinc-100"
-        style={{ backgroundColor: '#F8FAFC' }}
+        className="pt-4 pb-10 px-4 sm:px-6 lg:px-8 text-center bg-[#F8FAFC] dark:bg-[#141622] border-b border-zinc-100 dark:border-[#2A2E45] transition-colors"
         aria-labelledby="tool-heading"
       >
         <div className="max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
-            <Sparkles className="w-3.5 h-3.5 text-blue-600" aria-hidden="true" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+            <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" aria-hidden="true" />
             <span>100% Free &amp; Private In-Browser Tool</span>
           </div>
 
           <h1
             id="tool-heading"
-            className="text-3xl sm:text-4xl lg:text-5xl font-black text-zinc-900 tracking-tight"
+            className="text-2xl sm:text-4xl lg:text-5xl font-black text-zinc-900 dark:text-white tracking-tight"
           >
             {h1Title}
           </h1>
 
-          <p className="text-sm sm:text-base leading-relaxed max-w-2xl mx-auto text-zinc-600 font-normal">
+          <p className="text-sm sm:text-base leading-relaxed max-w-2xl mx-auto text-zinc-600 dark:text-zinc-300 font-normal">
             {tool.description}
           </p>
         </div>
@@ -221,7 +220,7 @@ export default function ToolLayout({ tool }) {
 
       {/* ── Tool Interactive Area ─────────────────────────── */}
       <section
-        className="px-4 sm:px-6 lg:px-8 py-10 bg-white border-b border-zinc-200"
+        className="px-4 sm:px-6 lg:px-8 py-10 bg-white dark:bg-[#0D0D14] border-b border-zinc-200 dark:border-[#2A2E45] transition-colors"
         aria-label={`${tool.name} interactive area`}
       >
         {tool.id === 'image-background-remover' ? (
@@ -265,7 +264,7 @@ export default function ToolLayout({ tool }) {
         )}
 
         {/* Trust highlights below dropzone */}
-        <div className="max-w-4xl mx-auto mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="max-w-4xl mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { icon: Zap,        title: 'Fast Processing',   sub: 'In-browser engine'   },
             { icon: Sparkles,   title: 'High Quality',      sub: 'Original accuracy'   },
@@ -274,14 +273,14 @@ export default function ToolLayout({ tool }) {
           ].map(({ icon: Icon, title, sub }) => (
             <div
               key={title}
-              className="flex items-center gap-2.5 p-3 rounded-lg bg-zinc-50 border border-zinc-200"
+              className="flex items-center gap-2.5 p-3 rounded-lg bg-zinc-50 dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45]"
             >
-              <div className="w-8 h-8 rounded-md flex items-center justify-center shrink-0 bg-blue-50 text-blue-600 border border-blue-100">
+              <div className="w-8 h-8 rounded-md flex items-center justify-center shrink-0 bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-900">
                 <Icon className="w-4 h-4" />
               </div>
               <div className="text-left min-w-0">
-                <p className="text-xs font-bold text-zinc-900 truncate">{title}</p>
-                <p className="text-[10px] text-zinc-500 truncate font-normal">{sub}</p>
+                <p className="text-xs font-bold text-zinc-900 dark:text-white truncate">{title}</p>
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate font-normal">{sub}</p>
               </div>
             </div>
           ))}
@@ -298,20 +297,20 @@ export default function ToolLayout({ tool }) {
           className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
           aria-labelledby="overview-heading"
         >
-          <div className="p-6 sm:p-8 rounded-lg bg-white border border-zinc-200">
+          <div className="p-6 sm:p-8 rounded-lg bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45]">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+              <span className="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/50 px-2.5 py-0.5 rounded-full border border-purple-200 dark:border-purple-800">
                 Complete Guide
               </span>
-              <span className="text-xs font-medium text-zinc-500">• Updated 2026</span>
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">• Updated 2026</span>
             </div>
             <h2
               id="overview-heading"
-              className="text-xl sm:text-2xl font-bold mb-3 text-zinc-900 tracking-tight"
+              className="text-xl sm:text-2xl font-bold mb-3 text-zinc-900 dark:text-white tracking-tight"
             >
               About {tool.name} on PDFora
             </h2>
-            <p className="text-sm leading-relaxed text-zinc-600 font-normal">
+            <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300 font-normal">
               {tool.overview}
             </p>
           </div>
@@ -326,11 +325,11 @@ export default function ToolLayout({ tool }) {
         <div className="text-center mb-8 space-y-1">
           <h2
             id="how-to-use-heading"
-            className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight"
+            className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-white tracking-tight"
           >
             How to Use {tool.name}
           </h2>
-          <p className="text-xs sm:text-sm text-zinc-500 font-normal">
+          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-normal">
             Process your documents in three simple steps.
           </p>
         </div>
@@ -339,18 +338,17 @@ export default function ToolLayout({ tool }) {
           {tool.steps.map((step, idx) => (
             <div
               key={idx}
-              className="p-5 rounded-lg bg-white border border-zinc-200 space-y-2.5"
+              className="p-5 rounded-lg bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] space-y-2.5"
             >
               <div
-                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white font-display"
-                style={{ backgroundColor: '#4F46E5' }}
+                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white font-display bg-purple-600 dark:bg-purple-500"
               >
                 {idx + 1}
               </div>
-              <h3 className="text-sm font-bold text-zinc-900">
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
                 Step {idx + 1}
               </h3>
-              <p className="text-xs text-zinc-500 leading-relaxed font-normal">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-normal">
                 {step}
               </p>
             </div>
@@ -367,11 +365,11 @@ export default function ToolLayout({ tool }) {
           <div className="text-center mb-8 space-y-1">
             <h2
               id="usecases-heading"
-              className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight"
+              className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-white tracking-tight"
             >
               Who Uses {tool.name}?
             </h2>
-            <p className="text-xs sm:text-sm text-zinc-500 font-normal">
+            <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-normal">
               Built for students, freelancers, accountants, and professionals.
             </p>
           </div>
@@ -380,12 +378,12 @@ export default function ToolLayout({ tool }) {
             {tool.useCases.map((uc, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-lg bg-white border border-zinc-200 space-y-1"
+                className="p-4 rounded-lg bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] space-y-1"
               >
-                <h3 className="text-sm font-bold text-zinc-900">
+                <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
                   {uc.title}
                 </h3>
-                <p className="text-xs text-zinc-600 leading-relaxed font-normal">
+                <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed font-normal">
                   {uc.desc}
                 </p>
               </div>
@@ -403,7 +401,7 @@ export default function ToolLayout({ tool }) {
           <div className="text-center mb-8 space-y-1">
             <h2
               id="tool-faq-heading"
-              className="text-2xl font-bold text-zinc-900 tracking-tight"
+              className="text-2xl font-bold text-zinc-900 dark:text-white tracking-tight"
             >
               Frequently Asked Questions
             </h2>
@@ -416,24 +414,25 @@ export default function ToolLayout({ tool }) {
                 <div
                   key={idx}
                   role="listitem"
-                  className="rounded-lg border border-zinc-200 overflow-hidden bg-white"
-                  style={{
-                    borderColor: isOpen ? '#0055FF' : '#E8E8E8',
-                  }}
+                  className={`rounded-lg border overflow-hidden bg-white dark:bg-[#141622] transition-colors ${
+                    isOpen
+                      ? 'border-purple-600 dark:border-purple-500'
+                      : 'border-zinc-200 dark:border-[#2A2E45]'
+                  }`}
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full px-5 py-3.5 text-left flex items-center justify-between gap-4 transition-colors"
+                    className="w-full px-5 py-3.5 text-left flex items-center justify-between gap-4 transition-colors cursor-pointer"
                     aria-expanded={isOpen}
                   >
-                    <span className={`text-sm font-bold ${isOpen ? 'text-blue-600' : 'text-zinc-900'}`}>{faq.q}</span>
+                    <span className={`text-sm font-bold ${isOpen ? 'text-purple-600 dark:text-purple-400' : 'text-zinc-900 dark:text-white'}`}>{faq.q}</span>
                     <ChevronDown
-                      className={`w-4 h-4 shrink-0 transition-transform ${isOpen ? 'rotate-180 text-blue-600' : 'text-zinc-400'}`}
+                      className={`w-4 h-4 shrink-0 transition-transform ${isOpen ? 'rotate-180 text-purple-600 dark:text-purple-400' : 'text-zinc-400 dark:text-zinc-500'}`}
                       aria-hidden="true"
                     />
                   </button>
                   {isOpen && (
-                    <div className="px-5 pb-4 pt-1 text-xs sm:text-sm text-zinc-600 leading-relaxed border-t border-zinc-100 font-normal">
+                    <div className="px-5 pb-4 pt-1 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-100 dark:border-[#2A2E45] font-normal">
                       {faq.a}
                     </div>
                   )}
@@ -449,16 +448,16 @@ export default function ToolLayout({ tool }) {
         className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
         aria-labelledby="related-tools-heading"
       >
-        <div className="flex items-center justify-between mb-6 pb-2 border-b border-zinc-200">
+        <div className="flex items-center justify-between mb-6 pb-2 border-b border-zinc-200 dark:border-[#2A2E45]">
           <h3
             id="related-tools-heading"
-            className="text-xs font-bold uppercase tracking-wider text-zinc-900"
+            className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-white"
           >
             Explore Related Tools
           </h3>
           <Link
             to="/tools"
-            className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700"
+            className="inline-flex items-center gap-1 text-xs font-bold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300"
           >
             View All Tools
             <ArrowRight className="w-3.5 h-3.5" />
@@ -473,21 +472,21 @@ export default function ToolLayout({ tool }) {
               <Link
                 key={other.id}
                 to={other.path}
-                className="group flex flex-col justify-between p-4 rounded-lg bg-white border border-zinc-200 hover:border-blue-500 hover:bg-zinc-50 transition-all shadow-xs"
+                className="group flex flex-col justify-between p-4 rounded-lg bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] hover:border-purple-600 dark:hover:border-purple-500 hover:bg-zinc-50 dark:hover:bg-[#1B1E2E] transition-all shadow-xs"
                 style={{ textDecoration: 'none' }}
               >
                 <div>
                   <div className={`w-9 h-9 rounded-md flex items-center justify-center mb-2 border shrink-0 ${theme.iconBg}`}>
                     <Icon className="w-4 h-4" strokeWidth={2} />
                   </div>
-                  <h4 className="text-sm font-bold text-zinc-900 group-hover:text-blue-600 transition-colors mb-0.5">
+                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors mb-0.5">
                     {other.name}
                   </h4>
-                  <p className="text-[11px] text-zinc-500 leading-relaxed line-clamp-2 font-normal">
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed line-clamp-2 font-normal">
                     {other.shortDesc}
                   </p>
                 </div>
-                <div className="flex items-center justify-between pt-2 mt-2 text-[11px] font-bold text-zinc-600 group-hover:text-blue-600 border-t border-zinc-100">
+                <div className="flex items-center justify-between pt-2 mt-2 text-[11px] font-bold text-zinc-600 dark:text-zinc-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 border-t border-zinc-100 dark:border-[#2A2E45]">
                   <span>Use Tool</span>
                   <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
                 </div>

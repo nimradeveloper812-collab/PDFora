@@ -85,7 +85,7 @@ Our aggregate liability for any dispute shall not exceed $50.00 USD.`,
 
 export default function TermsOfService() {
   return (
-    <div className="pt-24 pb-20 min-h-screen">
+    <div className="pt-24 pb-20 min-h-screen bg-white dark:bg-[#0D0D14] text-zinc-900 dark:text-white transition-colors">
       <Helmet>
         <title>Terms of Service — PDFora | Free Online PDF Suite</title>
         <meta name="description" content="Review the Terms of Service for PDFora. Free, secure, and in-browser online PDF conversion and management utilities." />
@@ -104,33 +104,27 @@ export default function TermsOfService() {
 
       {/* Hero */}
       <section
-        className="py-12 px-4 sm:px-6 lg:px-8 text-center"
-        style={{
-          background: 'radial-gradient(ellipse 85% 55% at 50% -5%, #DBEAFE 0%, #FFFFFF 68%)',
-          borderBottom: '1px solid #BFDBFE',
-        }}
+        className="py-12 px-4 sm:px-6 lg:px-8 text-center bg-[#F8FAFC] dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45] transition-colors"
         aria-labelledby="tos-heading"
       >
         <div className="max-w-3xl mx-auto space-y-4">
           <div
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold"
-            style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800"
           >
-            <FileText className="w-3.5 h-3.5" aria-hidden="true" />
+            <FileText className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" aria-hidden="true" />
             <span>Legal Agreement</span>
           </div>
           <h1
             id="tos-heading"
-            className="text-3xl sm:text-5xl font-black"
-            style={{ color: '#18181B', letterSpacing: '-0.035em' }}
+            className="text-3xl sm:text-5xl font-black text-zinc-900 dark:text-white font-heading"
           >
             Terms of Service
           </h1>
-          <p className="text-sm" style={{ color: '#71717A' }}>
-            Last Updated: <strong style={{ color: '#3F3F46' }}>August 17, 2026</strong>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 font-sans">
+            Last Updated: <strong className="text-zinc-700 dark:text-zinc-200">August 17, 2026</strong>
             &nbsp;&middot;&nbsp; Effective immediately
           </p>
-          <p className="text-sm leading-relaxed max-w-xl mx-auto" style={{ color: '#52525B' }}>
+          <p className="text-sm leading-relaxed max-w-xl mx-auto text-zinc-600 dark:text-zinc-300 font-sans">
             Please read these Terms carefully before using PDFora. They govern your access
             and use of all our free PDF tools and services.
           </p>
@@ -140,16 +134,15 @@ export default function TermsOfService() {
       {/* Quick Summary Banner */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
         <div
-          className="rounded-2xl p-5 flex items-start gap-3"
-          style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}
+          className="rounded-2xl p-5 flex items-start gap-3 bg-zinc-50 dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45]"
         >
-          <Sparkles className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#3B82F6' }} aria-hidden="true" />
+          <Sparkles className="w-5 h-5 mt-0.5 shrink-0 text-purple-600 dark:text-purple-400" aria-hidden="true" />
           <div>
-            <p className="text-sm font-bold" style={{ color: '#18181B' }}>Plain English Summary</p>
-            <p className="text-xs mt-1 leading-relaxed" style={{ color: '#52525B' }}>
+            <p className="text-sm font-bold text-zinc-900 dark:text-white font-heading">Plain English Summary</p>
+            <p className="text-xs mt-1 leading-relaxed text-zinc-600 dark:text-zinc-300 font-sans">
               PDFora is 100% free to use. You own your files. Documents are processed privately in your browser memory without server storage.
               Use the platform fairly and responsibly. Questions? Contact{' '}
-              <a href="mailto:contact@nimradev.site" style={{ color: '#3B82F6' }}>contact@nimradev.site</a>.
+              <a href="mailto:contact@nimradev.site" className="text-purple-600 dark:text-purple-400 underline">contact@nimradev.site</a>.
             </p>
           </div>
         </div>
@@ -160,17 +153,15 @@ export default function TermsOfService() {
         {SECTIONS.map((section, idx) => (
           <div
             key={idx}
-            className="rounded-2xl p-6 sm:p-7"
-            style={{ background: '#FFFFFF', border: '1px solid #BFDBFE', boxShadow: '0 1px 4px rgba(59, 130, 246,0.04)' }}
+            className="rounded-2xl p-6 sm:p-7 bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xs"
           >
             <h2
-              className="text-base sm:text-lg font-extrabold mb-4 flex items-start gap-2"
-              style={{ color: '#18181B' }}
+              className="text-base sm:text-lg font-extrabold mb-4 flex items-start gap-2 text-zinc-900 dark:text-white font-heading"
             >
-              <span className="shrink-0" style={{ color: '#3B82F6' }}>{section.title.split('.')[0]}.</span>
+              <span className="shrink-0 text-purple-600 dark:text-purple-400">{section.title.split('.')[0]}.</span>
               <span>{section.title.split('. ').slice(1).join('. ')}</span>
             </h2>
-            <div className="text-sm leading-relaxed space-y-3" style={{ color: '#52525B' }}>
+            <div className="text-sm leading-relaxed space-y-3 text-zinc-600 dark:text-zinc-300 font-sans">
               {section.content.split('\n\n').map((para, i) => (
                 <p key={i} className="whitespace-pre-line">{para.replace(/\*\*(.*?)\*\*/g, '$1')}</p>
               ))}

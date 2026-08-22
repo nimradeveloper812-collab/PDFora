@@ -1,9 +1,56 @@
 @import "tailwindcss";
 
 /* ============================================================
-   PDFora Universal Theme System
-   100% Pure White Light Mode vs Deep Obsidian Dark Mode
+   PDFora Design Token System (Light & Dark Theme Standardization)
    ============================================================ */
+
+:root {
+  color-scheme: light;
+  --background: #F8F9FC;
+  --surface: #FFFFFF;
+  --surface-secondary: #F1F5F9;
+  --surface-elevated: #FFFFFF;
+  --border: #E2E8F0;
+  --border-subtle: #F1F5F9;
+  --text-primary: #0D0D14;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --primary: #6C3FFC;
+  --primary-hover: #5B2FE4;
+  --primary-active: #4C23CE;
+  --accent: #8B5CF6;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --input-background: #FFFFFF;
+  --input-border: #CBD5E1;
+  --focus-ring: rgba(108, 63, 252, 0.4);
+  --overlay: rgba(13, 13, 20, 0.6);
+}
+
+html.dark {
+  color-scheme: dark;
+  --background: #0D0D14;
+  --surface: #141622;
+  --surface-secondary: #1B1E2E;
+  --surface-elevated: #22263A;
+  --border: #2A2E45;
+  --border-subtle: #1E2235;
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+  --primary: #8B5CF6;
+  --primary-hover: #7C3AED;
+  --primary-active: #6D28D9;
+  --accent: #A78BFA;
+  --success: #34D399;
+  --warning: #FBBF24;
+  --error: #F87171;
+  --input-background: #141622;
+  --input-border: #2A2E45;
+  --focus-ring: rgba(139, 92, 246, 0.5);
+  --overlay: rgba(0, 0, 0, 0.75);
+}
 
 @theme {
   --color-brand-50: #EEF2FF;
@@ -18,7 +65,7 @@
   --color-brand-900: #312E81;
 }
 
-/* Base resets */
+/* Base resets & Responsive Safety Guards */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -28,156 +75,34 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
-/* ============================================================
-   LIGHT MODE (Default - 100% Pure White Background & Sharp Dark Text)
-   ============================================================ */
-html:not(.dark) {
-  color-scheme: light;
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
+  background-color: var(--background);
+  color: var(--text-primary);
+  transition: background-color 150ms ease, color 150ms ease;
 }
 
-html:not(.dark) body,
-html:not(.dark) #root,
-html:not(.dark) main,
-html:not(.dark) .min-h-screen {
-  background-color: #FFFFFF !important;
-  color: #0F172A !important;
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
-html:not(.dark) header {
-  background-color: #FFFFFF !important;
-  border-color: #E2E8F0 !important;
+img, video, canvas, svg, iframe {
+  max-width: 100%;
+  height: auto;
 }
 
-html:not(.dark) footer {
-  background-color: #F8FAFC !important;
-  border-color: #E2E8F0 !important;
-  color: #475569 !important;
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-html:not(.dark) h1,
-html:not(.dark) h2,
-html:not(.dark) h3,
-html:not(.dark) h4,
-html:not(.dark) h5,
-html:not(.dark) h6 {
-  color: #0F172A !important;
-}
-
-html:not(.dark) .bg-white {
-  background-color: #FFFFFF !important;
-  color: #0F172A !important;
-}
-
-html:not(.dark) .bg-zinc-50,
-html:not(.dark) .bg-zinc-100,
-html:not(.dark) .bg-slate-50,
-html:not(.dark) .bg-slate-100 {
-  background-color: #F8FAFC !important;
-}
-
-html:not(.dark) .border-zinc-100,
-html:not(.dark) .border-zinc-200,
-html:not(.dark) .border-zinc-300,
-html:not(.dark) .border-slate-200 {
-  border-color: #E2E8F0 !important;
-}
-
-html:not(.dark) .text-zinc-900,
-html:not(.dark) .text-zinc-800,
-html:not(.dark) .text-zinc-700 {
-  color: #0F172A !important;
-}
-
-html:not(.dark) .text-zinc-600,
-html:not(.dark) .text-zinc-500 {
-  color: #475569 !important;
-}
-
-html:not(.dark) .text-zinc-400 {
-  color: #64748B !important;
-}
-
-/* ============================================================
-   DARK MODE (100% Deep Obsidian Dark Background & Crisp Bright Text)
-   ============================================================ */
-html.dark {
-  color-scheme: dark;
-}
-
-html.dark body,
-html.dark #root,
-html.dark main,
-html.dark .min-h-screen {
-  background-color: #0A0E1A !important;
-  color: #F8FAFC !important;
-}
-
-html.dark header {
-  background-color: #0F172A !important;
-  border-color: #1E293B !important;
-}
-
-html.dark footer {
-  background-color: #030712 !important;
-  border-color: #1E293B !important;
-  color: #94A3B8 !important;
-}
-
-html.dark h1,
-html.dark h2,
-html.dark h3,
-html.dark h4,
-html.dark h5,
-html.dark h6 {
-  color: #F8FAFC !important;
-}
-
-html.dark .bg-white {
-  background-color: #131B2E !important;
-  color: #F8FAFC !important;
-}
-
-html.dark .bg-zinc-50,
-html.dark .bg-zinc-100,
-html.dark .bg-slate-50,
-html.dark .bg-slate-100,
-html.dark .bg-zinc-50\/70,
-html.dark .bg-zinc-50\/30 {
-  background-color: #0F172A !important;
-}
-
-html.dark .border-zinc-100,
-html.dark .border-zinc-200,
-html.dark .border-zinc-300,
-html.dark .border-slate-200 {
-  border-color: #1E293B !important;
-}
-
-html.dark .text-zinc-900,
-html.dark .text-zinc-800,
-html.dark .text-zinc-700 {
-  color: #F8FAFC !important;
-}
-
-html.dark .text-zinc-600,
-html.dark .text-zinc-500 {
-  color: #CBD5E1 !important;
-}
-
-html.dark .text-zinc-400 {
-  color: #94A3B8 !important;
-}
-
-html.dark section {
-  background-color: #0A0E1A !important;
-}
-
-html.dark input,
-html.dark textarea,
-html.dark select {
-  background-color: #0F172A !important;
-  color: #F8FAFC !important;
-  border-color: #1E293B !important;
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Typography Fonts */

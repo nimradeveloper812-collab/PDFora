@@ -116,7 +116,7 @@ export default function AllTools() {
   });
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900 text-zinc-900 dark:text-white pt-16 font-sans">
+    <div className="min-h-screen bg-white dark:bg-[#0D0D14] text-zinc-900 dark:text-white pt-16 font-sans transition-colors">
       <Helmet>
         <title>All 48 Free Online PDF &amp; AI Document Tools | PDFora</title>
         <meta name="description" content="Browse all 48 free online PDF, document, image, video, audio, and AI tools on PDFora. Convert Word, Excel, PPT, JPG to PDF, merge, compress, split, edit metadata, chat with PDF, and review resumes instantly." />
@@ -124,29 +124,29 @@ export default function AllTools() {
       </Helmet>
 
       {/* Header Banner */}
-      <section className="pt-10 pb-12 px-4 sm:px-6 lg:px-8 text-center border-b border-zinc-200 dark:border-slate-800 bg-zinc-50/70 dark:bg-slate-950/70">
+      <section className="pt-10 pb-12 px-4 sm:px-6 lg:px-8 text-center border-b border-zinc-200 dark:border-[#2A2E45] bg-zinc-50/70 dark:bg-[#141622] transition-colors">
         <div className="max-w-4xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-extrabold bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-            <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-extrabold bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+            <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
             <span>Complete 48-Tool Suite — 100% Free &amp; In-Browser Privacy</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight font-heading">
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight font-heading text-zinc-900 dark:text-white">
             All Document, Image &amp; AI Tools
           </h1>
-          <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-xl mx-auto font-sans">
+          <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 max-w-xl mx-auto font-sans">
             Organize, convert, compress, edit, or analyze your files instantly with zero server uploads.
           </p>
 
           <div className="max-w-md mx-auto pt-2">
             <div className="relative flex items-center">
-              <Search className="w-4.5 h-4.5 absolute left-3.5 text-zinc-400 pointer-events-none" />
+              <Search className="w-4.5 h-4.5 absolute left-3.5 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search 48+ tools by name or keyword..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm bg-white dark:bg-slate-800 text-zinc-900 dark:text-white border border-zinc-300 dark:border-slate-700 font-sans focus:outline-none focus:ring-2 focus:ring-purple-600 shadow-xs"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm bg-white dark:bg-[#1B1E2E] text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 border border-zinc-300 dark:border-[#2A2E45] font-sans focus:outline-none focus:ring-2 focus:ring-purple-600 shadow-xs"
               />
             </div>
           </div>
@@ -155,7 +155,7 @@ export default function AllTools() {
 
       {/* Category Tabs Bar */}
       <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-8 border-b border-zinc-200 dark:border-slate-800 pb-4">
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-8 border-b border-zinc-200 dark:border-[#2A2E45] pb-4">
           {[
             { id: 'all', label: 'All Tools (48)' },
             { id: 'pdf', label: 'PDF Tools' },
@@ -171,7 +171,7 @@ export default function AllTools() {
                 className={`px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all cursor-pointer ${
                   isActive
                     ? 'bg-purple-600 text-white shadow-md'
-                    : 'bg-zinc-100 dark:bg-slate-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-slate-700'
+                    : 'bg-zinc-100 dark:bg-[#1B1E2E] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-[#2A2E45]'
                 }`}
               >
                 {cat.label}
@@ -188,19 +188,19 @@ export default function AllTools() {
                 <Grid className="w-4 h-4" />
                 All PDFora Tools Directory (8 Categories • 48 Tools)
               </h3>
-              <span className="text-xs text-zinc-400 font-medium hidden sm:inline">
+              <span className="text-xs text-zinc-400 dark:text-zinc-500 font-medium hidden sm:inline">
                 Click any tool to launch in-browser
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4">
               {directoryColumns.map((col, idx) => (
                 <div
                   key={idx}
-                  className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-zinc-200 dark:border-slate-800 shadow-xs flex flex-col justify-between space-y-3"
+                  className="p-3.5 rounded-2xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xs flex flex-col justify-between space-y-3"
                 >
-                  <div className="space-y-3">
-                    <span className={`inline-block px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${col.color}`}>
+                  <div className="space-y-3 min-w-0">
+                    <span className={`inline-block px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border truncate max-w-full ${col.color}`}>
                       {col.title}
                     </span>
 
@@ -214,7 +214,7 @@ export default function AllTools() {
                             <span className="block font-bold text-zinc-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                               • {item.name}
                             </span>
-                            <span className="block text-[10px] text-zinc-400 font-normal line-clamp-1">
+                            <span className="block text-[10px] text-zinc-400 dark:text-zinc-500 font-normal line-clamp-1">
                               {item.desc}
                             </span>
                           </Link>
@@ -230,10 +230,10 @@ export default function AllTools() {
           /* Filtered Card Grid View */
           <div>
             {filteredTools.length === 0 ? (
-              <div className="text-center py-16 bg-zinc-50 dark:bg-slate-800/50 rounded-2xl border border-zinc-200 dark:border-slate-800 max-w-md mx-auto my-8 space-y-3">
-                <Search className="w-8 h-8 text-zinc-400 mx-auto" />
+              <div className="text-center py-16 bg-zinc-50 dark:bg-[#141622] rounded-2xl border border-zinc-200 dark:border-[#2A2E45] max-w-md mx-auto my-8 space-y-3">
+                <Search className="w-8 h-8 text-zinc-400 dark:text-zinc-500 mx-auto" />
                 <h3 className="text-base font-bold text-zinc-800 dark:text-white">No tools found matching your search</h3>
-                <p className="text-xs text-zinc-500 font-sans">Try clearing your search query or selecting another category tab.</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 font-sans">Try clearing your search query or selecting another category tab.</p>
                 <button
                   onClick={() => { setSearchQuery(''); setSearchParams({}); }}
                   className="inline-flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold text-white rounded-xl transition-all shadow-xs cursor-pointer"
@@ -251,14 +251,14 @@ export default function AllTools() {
                     <Link
                       key={tool.id}
                       to={tool.path}
-                      className="group flex flex-col justify-between p-5 bg-white dark:bg-slate-800/90 rounded-2xl border border-zinc-200 dark:border-slate-800 hover:border-purple-600 dark:hover:border-purple-500 hover:shadow-lg transition-all duration-200"
+                      className="group flex flex-col justify-between p-5 bg-white dark:bg-[#141622] rounded-2xl border border-zinc-200 dark:border-[#2A2E45] hover:border-purple-600 dark:hover:border-purple-500 hover:shadow-lg transition-all duration-200"
                     >
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${theme.iconBg}`}>
-                            <FileText className="w-4.5 h-4.5 text-purple-600" />
+                            <FileText className="w-4.5 h-4.5 text-purple-600 dark:text-purple-400" />
                           </div>
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300 border border-purple-200 dark:border-purple-800 uppercase tracking-wider">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border border-purple-200 dark:border-purple-800 uppercase tracking-wider">
                             {tool.badge || tool.category}
                           </span>
                         </div>
@@ -271,7 +271,7 @@ export default function AllTools() {
                         </p>
                       </div>
 
-                      <div className="flex items-center justify-between pt-3 mt-3 border-t border-zinc-100 dark:border-slate-700 text-xs font-bold text-zinc-700 dark:text-zinc-300 group-hover:text-purple-600 dark:group-hover:text-purple-400">
+                      <div className="flex items-center justify-between pt-3 mt-3 border-t border-zinc-100 dark:border-[#2A2E45] text-xs font-bold text-zinc-700 dark:text-zinc-300 group-hover:text-purple-600 dark:group-hover:text-purple-400">
                         <span>Launch Tool</span>
                         <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                       </div>

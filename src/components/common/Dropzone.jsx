@@ -428,11 +428,8 @@ export default function Dropzone({ tool }) {
       />
 
       <div
-        className="rounded-3xl overflow-hidden transition-all"
+        className="rounded-3xl overflow-hidden transition-all bg-white dark:bg-[#141622] border border-blue-200 dark:border-[#2A2E45] shadow-xl"
         style={{
-          background: '#FFFFFF',
-          border: '1px solid #BFDBFE',
-          boxShadow: '0 8px 32px rgba(59, 130, 246,0.07), 0 2px 8px rgba(0,0,0,0.04)',
           padding: 'clamp(1.25rem, 4vw, 1.75rem)',
         }}
       >
@@ -502,11 +499,11 @@ export default function Dropzone({ tool }) {
                   <UploadCloud className="w-8 h-8" strokeWidth={1.8} />
                 </div>
 
-                <h3 className="text-lg sm:text-xl font-bold mb-1.5 font-heading" style={{ color: '#0B0F19' }}>
+                <h3 className="text-lg sm:text-xl font-bold mb-1.5 font-heading text-zinc-900 dark:text-white">
                   {isDragging
                     ? 'Release to upload'
                     : <>Drop your PDF or file here, or{' '}
-                        <span style={{ color: '#4F46E5' }}>browse</span>
+                        <span className="text-purple-600 dark:text-purple-400">browse</span>
                       </>
                   }
                 </h3>
@@ -608,8 +605,8 @@ export default function Dropzone({ tool }) {
                         >
                           <FileText className="w-4 h-4" />
                         </div>
-                        <div className="min-w-0">
-                          <p className="text-xs sm:text-sm font-semibold truncate max-w-45 sm:max-w-sm" style={{ color: '#18181B' }}>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs sm:text-sm font-semibold truncate max-w-[160px] xs:max-w-[220px] sm:max-w-sm" style={{ color: '#18181B' }}>
                             {file.name}
                           </p>
                           <p className="text-[11px] mt-0.5" style={{ color: '#A1A1AA' }}>

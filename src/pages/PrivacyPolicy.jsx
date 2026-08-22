@@ -97,7 +97,7 @@ To exercise any privacy rights, email contact@nimradev.site. We respond within 2
 
 export default function PrivacyPolicy() {
   return (
-    <div className="pt-24 pb-20 min-h-screen">
+    <div className="pt-24 pb-20 min-h-screen bg-white dark:bg-[#0D0D14] text-zinc-900 dark:text-white transition-colors">
       <Helmet>
         <title>Privacy Policy — PDFora | Secure &amp; In-Browser PDF Suite</title>
         <meta name="description" content="Read the PDFora Privacy Policy. Learn how our in-browser client-side engine ensures 100% private file processing with zero server file storage." />
@@ -116,32 +116,26 @@ export default function PrivacyPolicy() {
 
       {/* Hero */}
       <section
-        className="py-12 px-4 sm:px-6 lg:px-8 text-center"
-        style={{
-          background: 'radial-gradient(ellipse 85% 55% at 50% -5%, #DBEAFE 0%, #FFFFFF 68%)',
-          borderBottom: '1px solid #BFDBFE',
-        }}
+        className="py-12 px-4 sm:px-6 lg:px-8 text-center bg-[#F8FAFC] dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45] transition-colors"
         aria-labelledby="privacy-heading"
       >
         <div className="max-w-3xl mx-auto space-y-4">
           <div
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold"
-            style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800"
           >
-            <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
+            <ShieldCheck className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" aria-hidden="true" />
             <span>Privacy-First Architecture</span>
           </div>
           <h1
             id="privacy-heading"
-            className="text-3xl sm:text-5xl font-black"
-            style={{ color: '#18181B', letterSpacing: '-0.035em' }}
+            className="text-3xl sm:text-5xl font-black text-zinc-900 dark:text-white font-heading"
           >
             Privacy Policy
           </h1>
-          <p className="text-sm" style={{ color: '#71717A' }}>
-            Last Updated: <strong style={{ color: '#3F3F46' }}>August 17, 2026</strong>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 font-sans">
+            Last Updated: <strong className="text-zinc-700 dark:text-zinc-200">August 17, 2026</strong>
           </p>
-          <p className="text-sm leading-relaxed max-w-xl mx-auto" style={{ color: '#52525B' }}>
+          <p className="text-sm leading-relaxed max-w-xl mx-auto text-zinc-600 dark:text-zinc-300 font-sans">
             At PDFora, your privacy is foundational. We process your documents locally in your browser
             so your confidential files never touch our servers.
           </p>
@@ -151,13 +145,12 @@ export default function PrivacyPolicy() {
       {/* Summary Banner */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
         <div
-          className="rounded-2xl p-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center"
-          style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}
+          className="rounded-2xl p-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center bg-zinc-50 dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45]"
         >
           {[{ val: '0 Bytes', lbl: 'Server file storage' }, { val: 'In-Browser', lbl: 'Client-side processing' }, { val: '100% Free', lbl: 'No account required' }].map(({ val, lbl }) => (
             <div key={lbl} className="space-y-1">
-              <div className="text-2xl font-black" style={{ color: '#3B82F6' }}>{val}</div>
-              <div className="text-xs font-medium" style={{ color: '#52525B' }}>{lbl}</div>
+              <div className="text-2xl font-black text-purple-600 dark:text-purple-400 font-heading">{val}</div>
+              <div className="text-xs font-medium text-zinc-500 dark:text-zinc-400 font-sans">{lbl}</div>
             </div>
           ))}
         </div>
@@ -168,21 +161,19 @@ export default function PrivacyPolicy() {
         {SECTIONS.map((section, idx) => (
           <div
             key={idx}
-            className="rounded-2xl p-6 sm:p-7"
-            style={{ background: '#FFFFFF', border: '1px solid #BFDBFE', boxShadow: '0 1px 4px rgba(59, 130, 246,0.04)' }}
+            className="rounded-2xl p-6 sm:p-7 bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xs"
           >
             <h2
-              className="text-base sm:text-lg font-extrabold mb-4 flex items-start gap-2"
-              style={{ color: '#18181B' }}
+              className="text-base sm:text-lg font-extrabold mb-4 flex items-start gap-2 text-zinc-900 dark:text-white font-heading"
             >
-              <span className="shrink-0" style={{ color: '#3B82F6' }}>{section.title.split('.')[0]}.</span>
+              <span className="shrink-0 text-purple-600 dark:text-purple-400">{section.title.split('.')[0]}.</span>
               <span>{section.title.split('. ').slice(1).join('. ')}</span>
             </h2>
-            <div className="text-sm leading-relaxed space-y-3" style={{ color: '#52525B' }}>
+            <div className="text-sm leading-relaxed space-y-3 text-zinc-600 dark:text-zinc-300 font-sans">
               {section.content.split('\n\n').map((para, i) => {
                 const formatted = para.split(/(\*\*.*?\*\*)/g).map((part, pIdx) => {
                   if (part.startsWith('**') && part.endsWith('**')) {
-                    return <strong key={pIdx} style={{ color: '#18181B' }}>{part.slice(2, -2)}</strong>;
+                    return <strong key={pIdx} className="text-zinc-900 dark:text-white font-bold">{part.slice(2, -2)}</strong>;
                   }
                   return part;
                 });

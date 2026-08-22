@@ -158,8 +158,8 @@ export default function Header() {
         ref={navRef}
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-150 ${
           scrolled
-            ? 'bg-white/95 dark:bg-slate-900/95 backdrop-blur-md py-2 border-b border-zinc-200 dark:border-slate-800 shadow-xs'
-            : 'bg-white dark:bg-slate-900 py-2.5 border-b border-zinc-200 dark:border-slate-800'
+            ? 'bg-white/95 dark:bg-[#0D0D14]/95 backdrop-blur-md py-2 border-b border-zinc-200 dark:border-[#2A2E45] shadow-xs'
+            : 'bg-white dark:bg-[#0D0D14] py-2.5 border-b border-zinc-200 dark:border-[#2A2E45]'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -277,7 +277,17 @@ export default function Header() {
             {/* Right Action Bar */}
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               
-              {/* Quick Search Ctrl+K Button */}
+              {/* Mobile Quick Search Button */}
+              <button
+                type="button"
+                onClick={() => setIsSearchOpen(true)}
+                className="p-2 rounded-xl text-purple-600 hover:bg-purple-50 dark:hover:bg-slate-800 sm:hidden transition-colors"
+                aria-label="Search tools"
+              >
+                <Search className="w-5 h-5" />
+              </button>
+
+              {/* Quick Search Ctrl+K Button (Desktop & Tablet) */}
               <button
                 type="button"
                 onClick={() => setIsSearchOpen(true)}
@@ -293,11 +303,12 @@ export default function Header() {
               <LanguageSwitcher />
               <ThemeToggle />
 
-              {/* Mobile Hamburger */}
+              {/* Mobile Hamburger Button */}
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 rounded-md transition-colors text-zinc-900 hover:bg-zinc-100 dark:text-white dark:hover:bg-slate-800 lg:hidden"
+                className="p-2 rounded-xl transition-colors text-zinc-900 hover:bg-zinc-100 dark:text-white dark:hover:bg-slate-800 lg:hidden"
+                aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
               >
                 {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
@@ -306,11 +317,81 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Dynamic Categorized Mega Menu Overlay (100% Pure White in Light Mode / Obsidian in Dark Mode) */}
+        {/* Dynamic Mobile Navigation Drawer (< lg screens) */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden absolute top-full left-0 right-0 bg-white dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45] shadow-2xl p-4 max-h-[80vh] overflow-y-auto z-50 animate-fade-in font-sans">
+            <div className="space-y-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsSearchOpen(true);
+                }}
+                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-zinc-50 dark:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45] text-xs font-medium text-zinc-600 dark:text-zinc-300"
+              >
+                <span className="flex items-center gap-2">
+                  <Search className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                  <span>Search 48+ tools...</span>
+                </span>
+                <kbd className="px-2 py-0.5 rounded bg-zinc-200 dark:bg-[#2A2E45] text-[10px] font-mono font-bold">
+                  Search
+                </kbd>
+              </button>
+
+              <div className="pt-2 border-t border-zinc-100 dark:border-[#2A2E45] space-y-1">
+                <Link
+                  to="/tools"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40"
+                >
+                  <span className="flex items-center gap-2">
+                    <Grid className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                    <span>All 48 Tools Directory</span>
+                  </span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+
+                {megaColumns.map((col, idx) => (
+                  <div key={idx} className="pt-2">
+                    <div className={`px-3 py-1 text-[11px] font-black uppercase tracking-wider ${col.color}`}>
+                      {col.title}
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 pl-3 pt-1">
+                      {col.items.map((item, itemIdx) => (
+                        <Link
+                          key={itemIdx}
+                          to={item.path}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="py-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-purple-600 dark:hover:text-purple-400 truncate"
+                        >
+                          • {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-3 border-t border-zinc-100 dark:border-[#2A2E45] flex items-center justify-around text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-purple-600 dark:hover:text-purple-400">
+                  About Us
+                </Link>
+                <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-purple-600 dark:hover:text-purple-400">
+                  Contact
+                </Link>
+                <Link to="/privacy-policy" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-purple-600 dark:hover:text-purple-400">
+                  Privacy
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Dynamic Categorized Mega Menu Overlay (Desktop >= lg) */}
         {activeDropdown && (
           <div
             onMouseLeave={() => setActiveDropdown(null)}
-            className="absolute top-full left-0 right-0 bg-white dark:bg-slate-900 border-b border-zinc-200 dark:border-slate-800 shadow-2xl p-6 z-50 animate-fade-in font-sans"
+            className="hidden lg:block absolute top-full left-0 right-0 bg-white dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45] shadow-2xl p-6 z-50 animate-fade-in font-sans"
           >
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center justify-between pb-3 mb-4 border-b border-zinc-100 dark:border-slate-800">

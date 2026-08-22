@@ -100,7 +100,7 @@ export default function Contact() {
   const blurStyle   = e => { e.currentTarget.style.borderColor = errors[e.currentTarget.name] ? '#FCA5A5' : '#BFDBFE'; e.currentTarget.style.boxShadow = 'none'; };
 
   return (
-    <div className="pt-[88px] sm:pt-[96px] pb-20 min-h-screen">
+    <div className="pt-[88px] sm:pt-[96px] pb-20 min-h-screen bg-white dark:bg-[#0D0D14] text-zinc-900 dark:text-white transition-colors">
       <Helmet>
         <title>Contact Support — PDFora | Free Online PDF Platform Help</title>
         <meta name="description" content="Contact the PDFora support team. Send us your feedback, feature requests, questions, or bug reports." />
@@ -119,29 +119,23 @@ export default function Contact() {
 
       {/* ── Hero ──────────────────────────────────────────── */}
       <section
-        className="py-14 px-4 sm:px-6 lg:px-8 text-center"
-        style={{
-          background: 'radial-gradient(ellipse 85% 55% at 50% -5%, #DBEAFE 0%, #FFFFFF 68%)',
-          borderBottom: '1px solid #BFDBFE',
-        }}
+        className="py-14 px-4 sm:px-6 lg:px-8 text-center bg-[#F8FAFC] dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45] transition-colors"
         aria-labelledby="contact-heading"
       >
         <div className="max-w-2xl mx-auto space-y-4">
           <div
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold"
-            style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid #BFDBFE' }}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800"
           >
-            <MessageCircle className="w-3.5 h-3.5" aria-hidden="true" />
+            <MessageCircle className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" aria-hidden="true" />
             We&apos;re here to help
           </div>
           <h1
             id="contact-heading"
-            className="text-3xl sm:text-5xl font-black"
-            style={{ color: '#18181B', letterSpacing: '-0.035em' }}
+            className="text-3xl sm:text-5xl font-black text-zinc-900 dark:text-white font-heading"
           >
             Contact Support
           </h1>
-          <p className="text-sm sm:text-base leading-relaxed" style={{ color: '#52525B' }}>
+          <p className="text-sm sm:text-base leading-relaxed text-zinc-600 dark:text-zinc-300 font-sans">
             Have a question, bug report, or feature request? Send us a message and we'll
             respond within one business day.
           </p>

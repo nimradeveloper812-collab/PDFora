@@ -203,9 +203,9 @@ export default function ImageCompressorTool() {
                 <span>Select Image</span>
               </div>
 
-              <div className="flex items-center gap-2 text-xs text-zinc-400 mt-2 font-medium">
+              <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-zinc-400 mt-2 font-medium text-center">
                 <span>Supports JPG, PNG, WebP up to 50 MB</span>
-                <span>•</span>
+                <span className="hidden xs:inline">•</span>
                 <span className="flex items-center gap-1 text-emerald-600">
                   <ShieldCheck className="w-3.5 h-3.5" /> 100% In-Browser Privacy
                 </span>
