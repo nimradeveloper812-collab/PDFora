@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ============================================================
    PDFora Design Token System (Light & Dark Theme Standardization)
    ============================================================ */

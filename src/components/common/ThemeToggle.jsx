@@ -1,34 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Sun, Moon } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 export default function ThemeToggle({ className = '' }) {
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('pdfora-theme');
-      if (stored) return stored === 'dark';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    if (isDark) {
-      root.classList.add('dark');
-      localStorage.setItem('pdfora-theme', 'dark');
-    } else {
-      root.classList.remove('dark');
-      localStorage.setItem('pdfora-theme', 'light');
-    }
-  }, [isDark]);
+  const { isDark, toggleTheme } = useTheme();
 
   return (
     <button
       type="button"
-      onClick={() => setIsDark(!isDark)}
+      onClick={toggleTheme}
       className={`p-2 rounded-xl border transition-all duration-200 flex items-center justify-center cursor-pointer ${
         isDark
-          ? 'bg-slate-800 border-slate-700 text-amber-400 hover:bg-slate-700 shadow-xs'
+          ? 'bg-[#141622] border-[#2A2E45] text-amber-400 hover:bg-[#1B1E2E] shadow-xs'
           : 'bg-zinc-100 border-zinc-200 text-zinc-700 hover:bg-zinc-200 hover:text-zinc-900 shadow-xs'
       } ${className}`}
       aria-label={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}

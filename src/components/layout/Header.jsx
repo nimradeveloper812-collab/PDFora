@@ -321,6 +321,16 @@ export default function Header() {
         {isMobileMenuOpen && (
           <div className="lg:hidden absolute top-full left-0 right-0 bg-white dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45] shadow-2xl p-4 max-h-[80vh] overflow-y-auto z-50 animate-fade-in font-sans">
             <div className="space-y-4">
+              <div className="flex items-center justify-between gap-2 pb-2 border-b border-zinc-100 dark:border-[#2A2E45]">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 font-display">{t('language')}:</span>
+                  <LanguageSwitcher />
+                </div>
+                <div className="flex items-center gap-2">
+                  <ThemeToggle />
+                </div>
+              </div>
+
               <button
                 type="button"
                 onClick={() => {
@@ -331,7 +341,7 @@ export default function Header() {
               >
                 <span className="flex items-center gap-2">
                   <Search className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                  <span>Search 48+ tools...</span>
+                  <span>{t('searchPlaceholder')}</span>
                 </span>
                 <kbd className="px-2 py-0.5 rounded bg-zinc-200 dark:bg-[#2A2E45] text-[10px] font-mono font-bold">
                   Search

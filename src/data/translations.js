@@ -12,11 +12,14 @@ export const TRANSLATIONS = {
     imageTools: "Image Tools",
     mediaTools: "Video & Audio",
     developerAi: "Developer & AI",
+    developerTools: "Developer & AI Suite",
+    devSuiteDesc: "Format JSON, generate QR codes, chat with PDFs, and review resumes with AI.",
     searchPlaceholder: "Search 48+ tools...",
     mergePdf: "Merge PDF",
-    about: "About",
-    contact: "Contact",
+    about: "About Us",
+    contact: "Contact Support",
     close: "Close",
+    language: "Language",
 
     // Directory Columns
     organizePdf: "ORGANIZE PDF",
@@ -54,11 +57,14 @@ export const TRANSLATIONS = {
     imageTools: "تصویری ٹولز",
     mediaTools: "ویڈیو اور آڈیو",
     developerAi: "ڈیولپر اور اے آئی",
+    developerTools: "ڈیولپر اور اے آئی سویٹ",
+    devSuiteDesc: "JSON فارمیٹ کریں، QR کوڈ بنائیں، AI کے ساتھ گفتگو کریں اور ریزومے کا جائزہ لیں۔",
     searchPlaceholder: "48 سے زائد ٹولز تلاش کریں...",
     mergePdf: "پی ڈی ایف ضم کریں",
     about: "ہمارے بارے میں",
     contact: "رابطہ کریں",
     close: "بند کریں",
+    language: "زبان",
 
     // Directory Columns
     organizePdf: "پی ڈی ایف ترتیب دیں",
@@ -96,11 +102,14 @@ export const TRANSLATIONS = {
     imageTools: "Herramientas de Imagen",
     mediaTools: "Video y Audio",
     developerAi: "Desarrollador e IA",
+    developerTools: "Suite de Desarrollador e IA",
+    devSuiteDesc: "Formatee JSON, genere códigos QR, chatee con PDF y revise currículums con IA.",
     searchPlaceholder: "Buscar 48+ herramientas...",
     mergePdf: "Unir PDF",
     about: "Acerca de",
     contact: "Contacto",
     close: "Cerrar",
+    language: "Idioma",
 
     // Directory Columns
     organizePdf: "ORGANIZAR PDF",
@@ -138,11 +147,14 @@ export const TRANSLATIONS = {
     imageTools: "أدوات الصور",
     mediaTools: "الفيديو والصوت",
     developerAi: "المطور والذكاء الاصطناعي",
+    developerTools: "مجموعة المطور والذكاء الاصطناعي",
+    devSuiteDesc: "تنسيق JSON، إنشاء رموز QR، المحادثة مع ملفات PDF ومراجعة السير الذاتية بالذكاء الاصطناعي.",
     searchPlaceholder: "ابحث في أكثر من 48 أداة...",
     mergePdf: "دمج PDF",
     about: "معلومات عنا",
     contact: "اتصل بنا",
     close: "إغلاق",
+    language: "اللغة",
 
     // Directory Columns
     organizePdf: "تنظيم PDF",

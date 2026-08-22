@@ -7,6 +7,7 @@ const pdfTools = TOOLS.filter(t => t.category === 'pdf');
 const documentTools = TOOLS.filter(t => t.category === 'documents');
 const imageTools = TOOLS.filter(t => t.category === 'images');
 const mediaTools = TOOLS.filter(t => ['video', 'audio'].includes(t.category));
+const devTools = TOOLS.filter(t => t.badge === 'Developer Tool' || t.badge === 'AI Feature' || t.id.includes('json') || t.id.includes('base64') || t.id.includes('qr') || t.id.includes('chat') || t.id.includes('resume') || t.id.includes('table'));
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -55,7 +56,7 @@ export default function Footer() {
               PDF Suite
             </h4>
             <ul className="space-y-2">
-              {pdfTools.map(tool => (
+              {pdfTools.slice(0, 7).map(tool => (
                 <li key={tool.id}>
                   <Link
                     to={tool.path}
@@ -87,13 +88,23 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Image Tools Column */}
+          {/* Image & Media Tools Column */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider mb-4 text-zinc-900 dark:text-white font-display">
-              Image Tools
+              Image &amp; Media
             </h4>
             <ul className="space-y-2">
-              {imageTools.map(tool => (
+              {imageTools.slice(0, 5).map(tool => (
+                <li key={tool.id}>
+                  <Link
+                    to={tool.path}
+                    className="text-xs text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans truncate block"
+                  >
+                    {tool.name}
+                  </Link>
+                </li>
+              ))}
+              {mediaTools.map(tool => (
                 <li key={tool.id}>
                   <Link
                     to={tool.path}
@@ -106,13 +117,13 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Media & Company Column */}
+          {/* Developer, AI & Company Column */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider mb-4 text-zinc-900 dark:text-white font-display">
-              Media &amp; Company
+              Dev &amp; Company
             </h4>
             <ul className="space-y-2">
-              {mediaTools.map(tool => (
+              {devTools.map(tool => (
                 <li key={tool.id}>
                   <Link
                     to={tool.path}
@@ -122,7 +133,7 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
-              <li className="pt-2">
+              <li className="pt-2 border-t border-zinc-100 dark:border-[#2A2E45]">
                 <Link to="/about" className="text-xs text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">
                   About Us
                 </Link>

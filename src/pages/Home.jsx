@@ -4,17 +4,19 @@ import { Link } from 'react-router-dom';
 import {
   FileText, Search, Sparkles, ArrowRight, ShieldCheck, Zap,
   Smartphone, Globe, ChevronDown, Table, Presentation, Image as ImageIcon,
-  FileImage, Layers, Minimize2, Scissors, Music, FileVideo, RefreshCw, Code, CheckCircle
+  FileImage, Layers, Minimize2, Scissors, Music, FileVideo, RefreshCw, Code, CheckCircle, Cpu
 } from 'lucide-react';
 import { TOOLS } from '../data/toolsData';
+import { useLanguage } from '../context/LanguageContext';
 
 const iconMap = {
   FileText, Table, Presentation,
   Image: ImageIcon, FileImage, Layers, Minimize2, Scissors, Sparkles,
-  Music, FileVideo, RefreshCw, Code
+  Music, FileVideo, RefreshCw, Code, Cpu
 };
 
 export default function Home() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFaq, setActiveFaq] = useState(null);
 
@@ -24,15 +26,16 @@ export default function Home() {
     { name: 'Merge PDF', path: '/merge-pdf' },
     { name: 'Split PDF', path: '/split-pdf' },
     { name: 'Compress PDF', path: '/compress-pdf' },
-    { name: 'JPG to PDF', path: '/jpg-to-pdf' },
-    { name: 'MP4 to MP3', path: '/video-to-audio' },
-    { name: 'Compress Image', path: '/image-compressor' }
+    { name: 'JSON Formatter', path: '/json-formatter' },
+    { name: 'QR Generator', path: '/qr-generator' },
+    { name: 'MP4 to MP3', path: '/video-to-audio' }
   ];
 
   const imageTools = TOOLS.filter(t => t.category === 'images' || t.id.includes('image') || t.id.includes('jpg'));
   const pdfTools = TOOLS.filter(t => t.category === 'pdf' || t.id.includes('pdf'));
   const mediaTools = TOOLS.filter(t => t.category === 'video' || t.category === 'audio' || t.id.includes('video') || t.id.includes('audio'));
   const docTools = TOOLS.filter(t => t.category === 'documents');
+  const devTools = TOOLS.filter(t => t.badge === 'Developer Tool' || t.badge === 'AI Feature' || t.id.includes('json') || t.id.includes('base64') || t.id.includes('qr') || t.id.includes('chat') || t.id.includes('resume') || t.id.includes('table') || t.id.includes('summarizer') || t.id.includes('metadata'));
 
   const filteredTools = TOOLS.filter(t =>
     t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -317,6 +320,51 @@ export default function Home() {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {docTools.map(tool => {
                   const Icon = iconMap[tool.iconName] || Table;
+                  return (
+                    <Link
+                      key={tool.id}
+                      to={tool.path}
+                      className="group flex flex-col justify-between p-5 bg-white dark:bg-[#141622] rounded-2xl border border-zinc-200 dark:border-[#2A2E45] hover:border-purple-600 dark:hover:border-purple-500 hover:shadow-xl transition-all"
+                      style={{ textDecoration: 'none' }}
+                    >
+                      <div>
+                        <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-3 border border-purple-100 dark:border-purple-900 group-hover:scale-105 group-hover:bg-purple-600 dark:group-hover:bg-purple-600 group-hover:text-white transition-all">
+                          <Icon className="w-5 h-5" strokeWidth={2} />
+                        </div>
+                        <h3 className="text-base font-extrabold text-zinc-900 dark:text-white group-hover:text-purple-700 dark:group-hover:text-purple-400 transition-colors mb-1 font-heading">
+                          {tool.name}
+                        </h3>
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-sans line-clamp-2">
+                          {tool.shortDesc}
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between pt-3 mt-3 border-t border-zinc-100 dark:border-[#2A2E45] text-xs font-bold text-purple-600 dark:text-purple-400 font-display">
+                        <span>Open tool</span>
+                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Category 5: Developer & AI Suite */}
+            <div>
+              <div className="flex items-center justify-between pb-3 mb-6 border-b border-zinc-200 dark:border-[#2A2E45]">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center border border-teal-100 dark:border-teal-900">
+                    <Code className="w-4.5 h-4.5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-extrabold text-zinc-900 dark:text-white font-heading">{t('developerTools')}</h2>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 font-sans">{t('devSuiteDesc')}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {devTools.map(tool => {
+                  const Icon = iconMap[tool.iconName] || Code;
                   return (
                     <Link
                       key={tool.id}
