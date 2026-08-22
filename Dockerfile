@@ -1,49 +1,17 @@
-# -----------------------------------
-# Stage 1: Build React Frontend
-# -----------------------------------
-FROM node:20-alpine AS frontend-build
+FROM node:20-alpine
 WORKDIR /app
+
+RUN apk add --no-cache ffmpeg
+
 COPY package*.json ./
 RUN npm ci
+
 COPY . .
 RUN npm run build
 
-# -----------------------------------
-# Stage 2: Build .NET Backend
-# -----------------------------------
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS backend-build
-WORKDIR /src
-COPY backend/PDFora.Backend.csproj backend/
-RUN dotnet restore backend/PDFora.Backend.csproj
-COPY backend/ backend/
-WORKDIR /src/backend
-RUN dotnet publish PDFora.Backend.csproj -c Release -o /app/publish
+ENV NODE_ENV=production
+ENV PORT=8080
 
-# -----------------------------------
-# Stage 3: Final Production Image
-# -----------------------------------
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
-WORKDIR /app
+EXPOSE 8080
 
-# Install LibreOffice, Ghostscript, ImageMagick, and fonts required for PDF processing
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    libreoffice \
-    ghostscript \
-    imagemagick \
-    fonts-liberation \
-    fonts-dejavu \
-    && (sed -i 's/rights="none" pattern="PDF"/rights="read | write" pattern="PDF"/' /etc/ImageMagick-*/policy.xml 2>/dev/null || true) \
-    && rm -rf /var/lib/apt/lists/*
-
-EXPOSE 80
-EXPOSE 443
-
-# Copy the published .NET backend
-COPY --from=backend-build /app/publish .
-
-# Copy the built React frontend into the wwwroot folder so .NET can serve it
-COPY --from=frontend-build /app/dist ./wwwroot
-
-
-ENTRYPOINT ["dotnet", "PDFora.Backend.dll"]
+CMD ["node", "server.js"]

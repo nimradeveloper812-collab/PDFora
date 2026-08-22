@@ -1,480 +1,464 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  FileText, ChevronDown, Menu, X, Sparkles, ArrowRight,
-  FileCheck, Table, Presentation, Image as ImageIcon,
-  FileImage, Layers, Minimize2, Scissors, Grid3x3
+  FileText, ChevronDown, Menu, X, Sparkles,
+  FileCheck, Search, ArrowRight, ShieldCheck,
+  Grid, Layers, Scissors, Code, Image as ImageIcon,
+  Video, Lock, Edit3, Table, RefreshCw, FileVideo, Award
 } from 'lucide-react';
 import { TOOLS } from '../../data/toolsData';
-
-const iconMap = {
-  FileText, Table, Presentation,
-  Image: ImageIcon, FileImage, Layers, Minimize2, Scissors
-};
-
-// Individual nav link component
-function NavLink({ to, children, isActive }) {
-  return (
-    <Link
-      to={to}
-      className={`relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
-        isActive
-          ? 'text-pink-600 bg-pink-50 font-semibold nav-active-indicator'
-          : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
-      }`}
-      style={isActive ? { color: '#E85D9E', backgroundColor: '#FCE7F3' } : {}}
-    >
-      {children}
-    </Link>
-  );
-}
+import ThemeToggle from '../common/ThemeToggle';
+import QuickSearchModal from '../common/QuickSearchModal';
+import LanguageSwitcher from '../common/LanguageSwitcher';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function Header() {
-  const [isToolsOpen, setIsToolsOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const dropdownRef = useRef(null);
+  const navRef = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
-  // Scroll listener for header shadow
+  const { t } = useLanguage();
+
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 16);
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close everything on route change
   useEffect(() => {
-    setIsToolsOpen(false);
+    setActiveDropdown(null);
     setIsMobileMenuOpen(false);
-    document.body.classList.remove('menu-open');
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
-  // Body scroll lock when mobile menu open
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.classList.add('menu-open');
-    } else {
-      document.body.classList.remove('menu-open');
-    }
-    return () => document.body.classList.remove('menu-open');
-  }, [isMobileMenuOpen]);
-
-  // Click outside to close dropdown
   useEffect(() => {
     function handleClickOutside(e) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setIsToolsOpen(false);
+      if (navRef.current && !navRef.current.contains(e.target)) {
+        setActiveDropdown(null);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Escape key to close mobile menu / dropdown
-  useEffect(() => {
-    function handleEscape(e) {
-      if (e.key === 'Escape') {
-        setIsToolsOpen(false);
-        setIsMobileMenuOpen(false);
-      }
-    }
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, []);
+  // Determine Active Category for Navigation Highlighting
+  const getActiveTab = () => {
+    const path = location.pathname;
+    const search = location.search;
 
-  const convertTools = TOOLS.filter(t => t.category.startsWith('convert'));
-  const otherTools  = TOOLS.filter(t => !t.category.startsWith('convert'));
-  const isToolsActive = location.pathname.startsWith('/tools');
+    if (path === '/tools' && search.includes('category=pdf')) return 'pdf';
+    if (path === '/tools' && search.includes('category=images')) return 'images';
+    if (path === '/tools' && search.includes('category=media')) return 'media';
+    if (path === '/tools' && search.includes('category=developer')) return 'developer';
+
+    const currentTool = TOOLS.find(t => t.path === path);
+    if (currentTool) {
+      if (currentTool.category === 'images') return 'images';
+      if (currentTool.category === 'video' || currentTool.category === 'audio') return 'media';
+      if (currentTool.badge === 'Developer Tool' || currentTool.badge === 'AI Feature' || currentTool.id.includes('json') || currentTool.id.includes('base64')) return 'developer';
+      return 'pdf';
+    }
+
+    if (path === '/tools') return 'all';
+    return null;
+  };
+
+  const activeTab = getActiveTab();
+
+  // 8-Column Mega Menu Tool Categories matching reference layout
+  const megaColumns = [
+    {
+      title: "ORGANIZE PDF",
+      color: "text-rose-600 dark:text-rose-400",
+      items: [
+        { name: "Merge PDF", path: "/merge-pdf" },
+        { name: "Split PDF", path: "/split-pdf" },
+        { name: "Rotate PDF", path: "/rotate-pdf" },
+        { name: "Protect PDF", path: "/protect-pdf" },
+      ]
+    },
+    {
+      title: "CONVERT TO PDF",
+      color: "text-amber-600 dark:text-amber-400",
+      items: [
+        { name: "JPG to PDF", path: "/jpg-to-pdf" },
+        { name: "PNG to PDF", path: "/png-to-pdf" },
+        { name: "Word to PDF", path: "/word-to-pdf" },
+        { name: "PowerPoint to PDF", path: "/powerpoint-to-pdf" },
+      ]
+    },
+    {
+      title: "CONVERT FROM PDF",
+      color: "text-blue-600 dark:text-blue-400",
+      items: [
+        { name: "PDF to Word", path: "/pdf-to-word" },
+        { name: "PDF to PowerPoint", path: "/pdf-to-powerpoint" },
+        { name: "PDF to JPG", path: "/pdf-to-jpg" },
+        { name: "PDF to Text", path: "/pdf-to-text" },
+      ]
+    },
+    {
+      title: "OPTIMIZE & EXTRACT",
+      color: "text-emerald-600 dark:text-emerald-400",
+      items: [
+        { name: "Compress PDF", path: "/compress-pdf" },
+        { name: "PDF to PNG", path: "/pdf-to-png" },
+        { name: "Compress to KB", path: "/compress-to-kb" },
+        { name: "Compress Image", path: "/image-compressor" },
+      ]
+    },
+    {
+      title: "IMAGE EDIT & BG",
+      color: "text-indigo-600 dark:text-indigo-400",
+      items: [
+        { name: "Remove Background", path: "/image-background-remover" },
+        { name: "Change Background", path: "/change-background" },
+        { name: "Resize Image", path: "/resize-image" },
+        { name: "Crop Image", path: "/crop-image" },
+      ]
+    },
+    {
+      title: "PNG & SVG VECTOR",
+      color: "text-cyan-600 dark:text-cyan-400",
+      items: [
+        { name: "HEIC to PNG", path: "/heic-to-png" },
+        { name: "WebP to PNG", path: "/webp-to-png" },
+        { name: "SVG to PNG", path: "/svg-to-png" },
+        { name: "PNG to SVG", path: "/png-to-svg" },
+      ]
+    },
+    {
+      title: "JPG & FORMATS",
+      color: "text-amber-600 dark:text-amber-400",
+      items: [
+        { name: "HEIC to JPG", path: "/heic-to-jpg" },
+        { name: "BMP to JPG", path: "/bmp-to-jpg" },
+        { name: "TIFF to JPG", path: "/tiff-to-jpg" },
+        { name: "JFIF to JPEG", path: "/jfif-to-jpeg" },
+      ]
+    },
+    {
+      title: "DEV & VIDEO",
+      color: "text-teal-600 dark:text-teal-400",
+      items: [
+        { name: "JSON Formatter", path: "/json-formatter" },
+        { name: "QR Generator", path: "/qr-generator" },
+        { name: "MP4 to MP3", path: "/video-to-audio" },
+        { name: "Compress Video", path: "/video-compressor" },
+      ]
+    }
+  ];
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-white/95 backdrop-blur-md py-3'
-          : 'bg-white/85 backdrop-blur-sm py-4'
-      }`}
-      style={{
-        borderBottom: scrolled
-          ? '1px solid #F1D5E3'
-          : '1px solid rgba(241, 213, 227, 0.4)',
-        boxShadow: scrolled ? '0 1px 16px rgba(232, 93, 158, 0.06)' : 'none',
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-4">
+    <>
+      <header
+        ref={navRef}
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-150 ${
+          scrolled
+            ? 'bg-white/95 dark:bg-[#0D0D14]/95 backdrop-blur-md py-2 border-b border-zinc-200 dark:border-[#2A2E45] shadow-xs'
+            : 'bg-white dark:bg-[#0D0D14] py-2.5 border-b border-zinc-200 dark:border-[#2A2E45]'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-4 h-12">
 
-          {/* ── Logo ───────────────────────────────────────────── */}
-          <Link
-            to="/"
-            className="flex items-center gap-2.5 group shrink-0"
-            aria-label="PDFora — Home"
-          >
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
-              style={{
-                background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                boxShadow: '0 4px 12px rgba(232, 93, 158, 0.30)',
-              }}
-            >
-              <FileCheck className="w-5 h-5" strokeWidth={2.3} aria-hidden="true" />
-            </div>
-            <span className="text-xl font-extrabold tracking-tight" style={{ color: '#18181B', letterSpacing: '-0.03em' }}>
-              PDF<span style={{ color: '#E85D9E' }}>ora</span>
-            </span>
-            <span
-              className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold"
-              style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
-              aria-label="Pakistan's free tool"
-            >
-              <span>🇵🇰</span>
-              <span>PAKISTAN</span>
-            </span>
-          </Link>
-
-          {/* ── Desktop Navigation ─────────────────────────────── */}
-          <nav className="hidden md:flex items-center gap-0.5 lg:gap-1" role="navigation" aria-label="Main navigation">
-
-            <NavLink to="/" isActive={location.pathname === '/'}>
-              Home
-            </NavLink>
-
-            {/* Tools Dropdown */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                id="tools-menu-btn"
-                onClick={() => setIsToolsOpen(!isToolsOpen)}
-                aria-haspopup="true"
-                aria-expanded={isToolsOpen}
-                aria-controls="tools-dropdown"
-                className={`px-3 py-2 rounded-lg text-sm font-medium inline-flex items-center gap-1 transition-all duration-150 ${
-                  isToolsActive || isToolsOpen
-                    ? 'font-semibold'
-                    : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
-                }`}
-                style={
-                  isToolsActive || isToolsOpen
-                    ? { color: '#E85D9E', backgroundColor: '#FCE7F3' }
-                    : {}
-                }
-              >
-                <span>PDF Tools</span>
-                <ChevronDown
-                  className={`w-3.5 h-3.5 transition-transform duration-250 ${isToolsOpen ? 'rotate-180' : ''}`}
-                  style={{ color: isToolsOpen ? '#E85D9E' : '#A1A1AA' }}
-                  aria-hidden="true"
-                />
-              </button>
-
-              {/* Mega Dropdown */}
-              {isToolsOpen && (
-                <div
-                  id="tools-dropdown"
-                  role="menu"
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2.5 w-[660px] bg-white rounded-2xl p-5 z-50 animate-slide-in-top"
-                  style={{
-                    border: '1px solid #F1D5E3',
-                    boxShadow: '0 20px 48px rgba(232, 93, 158, 0.12), 0 4px 16px rgba(0,0,0,0.06)',
-                  }}
-                >
-                  {/* Dropdown Header */}
-                  <div className="flex items-center justify-between pb-3 mb-3" style={{ borderBottom: '1px solid #F9F0F5' }}>
-                    <span
-                      className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider"
-                      style={{ color: '#E85D9E' }}
-                    >
-                      <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-                      PDF Tool Suite
-                    </span>
-                    <Link
-                      to="/tools"
-                      onClick={() => setIsToolsOpen(false)}
-                      className="flex items-center gap-1 text-xs font-semibold transition-colors hover:underline group/link"
-                      style={{ color: '#71717A' }}
-                      role="menuitem"
-                    >
-                      View All {TOOLS.length} Tools
-                      <ArrowRight
-                        className="w-3 h-3 transition-transform group-hover/link:translate-x-0.5"
-                        aria-hidden="true"
-                      />
-                    </Link>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Left — Convert */}
-                    <div>
-                      <div
-                        className="px-2 mb-2 text-[10px] font-bold uppercase tracking-wider"
-                        style={{ color: '#A1A1AA' }}
-                      >
-                        Convert PDF
-                      </div>
-                      <div className="space-y-0.5">
-                        {convertTools.slice(0, 4).map(tool => {
-                          const Icon = iconMap[tool.iconName] || FileText;
-                          return (
-                            <Link
-                              key={tool.id}
-                              to={tool.path}
-                              onClick={() => setIsToolsOpen(false)}
-                              role="menuitem"
-                              className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-150 group/item hover:bg-pink-50"
-                              style={{ textDecoration: 'none' }}
-                            >
-                              <div
-                                className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 group-hover/item:scale-105"
-                                style={{ background: '#FCE7F3', color: '#E85D9E' }}
-                              >
-                                <Icon className="w-4 h-4" aria-hidden="true" />
-                              </div>
-                              <div className="min-w-0">
-                                <div
-                                  className="text-xs font-semibold transition-colors group-hover/item:text-pink-600 truncate"
-                                  style={{ color: '#18181B' }}
-                                >
-                                  {tool.name}
-                                </div>
-                                <p
-                                  className="text-[11px] truncate mt-0.5"
-                                  style={{ color: '#A1A1AA' }}
-                                >
-                                  {tool.shortDesc}
-                                </p>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Right — Organize & Optimize */}
-                    <div>
-                      <div
-                        className="px-2 mb-2 text-[10px] font-bold uppercase tracking-wider"
-                        style={{ color: '#A1A1AA' }}
-                      >
-                        Edit &amp; Optimize
-                      </div>
-                      <div className="space-y-0.5">
-                        {[...otherTools, ...convertTools.slice(4)].map(tool => {
-                          const Icon = iconMap[tool.iconName] || FileText;
-                          return (
-                            <Link
-                              key={tool.id}
-                              to={tool.path}
-                              onClick={() => setIsToolsOpen(false)}
-                              role="menuitem"
-                              className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-150 group/item hover:bg-pink-50"
-                              style={{ textDecoration: 'none' }}
-                            >
-                              <div
-                                className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 group-hover/item:scale-105"
-                                style={{ background: '#FCE7F3', color: '#E85D9E' }}
-                              >
-                                <Icon className="w-4 h-4" aria-hidden="true" />
-                              </div>
-                              <div className="min-w-0">
-                                <div
-                                  className="text-xs font-semibold transition-colors group-hover/item:text-pink-600 truncate"
-                                  style={{ color: '#18181B' }}
-                                >
-                                  {tool.name}
-                                </div>
-                                <p
-                                  className="text-[11px] truncate mt-0.5"
-                                  style={{ color: '#A1A1AA' }}
-                                >
-                                  {tool.shortDesc}
-                                </p>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <NavLink to="/tools" isActive={location.pathname === '/tools'}>
-              All Tools
-            </NavLink>
-            <NavLink to="/about" isActive={location.pathname === '/about'}>
-              About
-            </NavLink>
-            <NavLink to="/contact" isActive={location.pathname === '/contact'}>
-              Contact
-            </NavLink>
-          </nav>
-
-          {/* ── Desktop CTA ────────────────────────────────────── */}
-          <div className="hidden md:flex items-center gap-3 shrink-0">
+            {/* Brand Logo */}
             <Link
-              to="/tools"
-              className="inline-flex items-center gap-2 text-sm font-bold text-white rounded-xl px-4 py-2.5 transition-all duration-200 hover:shadow-lg active:scale-95"
-              style={{
-                background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                boxShadow: '0 4px 14px rgba(232, 93, 158, 0.30)',
-                textDecoration: 'none',
-              }}
+              to="/"
+              className="flex items-center gap-2.5 group shrink-0"
+              aria-label="PDFora home"
             >
-              <Grid3x3 className="w-4 h-4" aria-hidden="true" />
-              <span>Explore Tools</span>
-            </Link>
-          </div>
-
-          {/* ── Mobile Hamburger ───────────────────────────────── */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-xl transition-colors duration-150"
-            style={{
-              color: '#18181B',
-              background: isMobileMenuOpen ? '#FCE7F3' : 'transparent',
-            }}
-            aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-            aria-expanded={isMobileMenuOpen}
-            aria-controls="mobile-nav"
-          >
-            {isMobileMenuOpen
-              ? <X className="w-5 h-5" aria-hidden="true" />
-              : <Menu className="w-5 h-5" aria-hidden="true" />
-            }
-          </button>
-        </div>
-      </div>
-
-      {/* ── Mobile Navigation Drawer ───────────────────────────── */}
-      {isMobileMenuOpen && (
-        <div
-          id="mobile-nav"
-          role="navigation"
-          aria-label="Mobile navigation"
-          className="md:hidden fixed inset-x-0 bottom-0 bg-white overflow-y-auto mobile-nav-enter"
-          style={{
-            top: scrolled ? '57px' : '65px',
-            borderTop: '1px solid #F1D5E3',
-            zIndex: 40,
-          }}
-        >
-          <div className="px-4 pt-5 pb-8 space-y-1">
-
-            {/* Primary Nav Links */}
-            {[
-              { to: '/', label: 'Home' },
-              { to: '/about', label: 'About PDFora' },
-              { to: '/contact', label: 'Contact Support' },
-            ].map(({ to, label }) => (
-              <Link
-                key={to}
-                to={to}
-                className="flex items-center px-4 py-3 rounded-xl text-base font-semibold transition-all duration-150"
+              <div
+                className="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-xs transition-transform group-hover:scale-105"
                 style={{
-                  color: location.pathname === to ? '#E85D9E' : '#18181B',
-                  background: location.pathname === to ? '#FCE7F3' : 'transparent',
-                  textDecoration: 'none',
+                  background: 'linear-gradient(135deg, #6C3FFC 0%, #4B24C5 100%)',
                 }}
               >
-                {label}
-              </Link>
-            ))}
-
-            {/* All Tools Link */}
-            <Link
-              to="/tools"
-              className="flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold transition-all duration-150"
-              style={{
-                color: location.pathname === '/tools' ? '#E85D9E' : '#18181B',
-                background: location.pathname === '/tools' ? '#FCE7F3' : 'transparent',
-                textDecoration: 'none',
-              }}
-            >
-              <span>All PDF Tools</span>
-              <span
-                className="text-[11px] font-bold px-2.5 py-0.5 rounded-full"
-                style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
-              >
-                {TOOLS.length} Tools
+                <FileCheck className="w-5 h-5" strokeWidth={2.3} aria-hidden="true" />
+              </div>
+              <span className="text-2xl font-black tracking-tight text-zinc-900 dark:text-white font-heading">
+                PDF<span style={{ color: '#6C3FFC' }}>ora</span>
               </span>
             </Link>
 
-            {/* Quick Tool Links */}
-            <div
-              className="mx-1 mt-3 p-4 rounded-2xl space-y-4"
-              style={{ background: '#FFF7FB', border: '1px solid #F1D5E3' }}
-            >
-              <div>
-                <p
-                  className="text-[10px] font-bold uppercase tracking-widest mb-2.5"
-                  style={{ color: '#E85D9E' }}
+            {/* Header Tabs Navigation */}
+            <nav className="hidden lg:flex items-center gap-1 font-display" role="navigation">
+              
+              {/* All Tools Mega Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setActiveDropdown(activeDropdown === 'mega' ? null : 'mega')}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+                    activeDropdown === 'mega' || activeTab === 'all'
+                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
+                      : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-slate-800'
+                  }`}
                 >
-                  Popular Converters
-                </p>
-                <div className="grid grid-cols-2 gap-1">
-                  {convertTools.slice(0, 4).map(t => (
-                    <Link
-                      key={t.id}
-                      to={t.path}
-                      className="flex items-center gap-2 px-2 py-2 rounded-lg text-xs font-semibold transition-colors"
-                      style={{ color: '#3F3F46', textDecoration: 'none' }}
-                    >
-                      <span
-                        className="w-1.5 h-1.5 rounded-full shrink-0"
-                        style={{ background: '#E85D9E' }}
-                        aria-hidden="true"
-                      />
-                      <span className="truncate">{t.name}</span>
-                    </Link>
-                  ))}
-                </div>
+                  <Grid className="w-3.5 h-3.5 text-purple-600" />
+                  <span>{t('allTools')}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${activeDropdown === 'mega' ? 'rotate-180' : ''}`} />
+                </button>
               </div>
 
-              <div style={{ borderTop: '1px solid #F1D5E3', paddingTop: '0.75rem' }}>
-                <p
-                  className="text-[10px] font-bold uppercase tracking-widest mb-2.5"
-                  style={{ color: '#E85D9E' }}
+              {/* PDF Tools Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setActiveDropdown(activeDropdown === 'pdf' ? null : 'pdf')}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+                    activeDropdown === 'pdf' || activeTab === 'pdf'
+                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
+                      : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-slate-800'
+                  }`}
                 >
-                  Edit &amp; Organize
-                </p>
-                <div className="grid grid-cols-2 gap-1">
-                  {otherTools.map(t => (
-                    <Link
-                      key={t.id}
-                      to={t.path}
-                      className="flex items-center gap-2 px-2 py-2 rounded-lg text-xs font-semibold transition-colors"
-                      style={{ color: '#3F3F46', textDecoration: 'none' }}
-                    >
-                      <span
-                        className="w-1.5 h-1.5 rounded-full shrink-0"
-                        style={{ background: '#E85D9E' }}
-                        aria-hidden="true"
-                      />
-                      <span className="truncate">{t.name}</span>
-                    </Link>
-                  ))}
-                </div>
+                  <FileText className="w-3.5 h-3.5 text-purple-600" />
+                  <span>{t('pdfTools')}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${activeDropdown === 'pdf' ? 'rotate-180' : ''}`} />
+                </button>
               </div>
-            </div>
 
-            {/* Mobile CTA */}
-            <div className="pt-4">
-              <Link
-                to="/tools"
-                className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all active:scale-95"
-                style={{
-                  background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                  boxShadow: '0 4px 14px rgba(232, 93, 158, 0.28)',
-                  textDecoration: 'none',
-                }}
+              {/* Image Tools Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setActiveDropdown(activeDropdown === 'images' ? null : 'images')}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+                    activeDropdown === 'images' || activeTab === 'images'
+                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
+                      : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <ImageIcon className="w-3.5 h-3.5 text-purple-600" />
+                  <span>{t('imageTools')}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${activeDropdown === 'images' ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
+
+              {/* Video & Audio Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setActiveDropdown(activeDropdown === 'media' ? null : 'media')}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+                    activeDropdown === 'media' || activeTab === 'media'
+                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
+                      : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <FileVideo className="w-3.5 h-3.5 text-purple-600" />
+                  <span>{t('mediaTools')}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${activeDropdown === 'media' ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
+
+              {/* Developer & AI Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setActiveDropdown(activeDropdown === 'developer' ? null : 'developer')}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+                    activeDropdown === 'developer' || activeTab === 'developer'
+                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
+                      : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <Code className="w-3.5 h-3.5 text-purple-600" />
+                  <span>{t('developerAi')}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${activeDropdown === 'developer' ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
+
+            </nav>
+
+            {/* Right Action Bar */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              
+              {/* Mobile Quick Search Button */}
+              <button
+                type="button"
+                onClick={() => setIsSearchOpen(true)}
+                className="p-2 rounded-xl text-purple-600 hover:bg-purple-50 dark:hover:bg-slate-800 sm:hidden transition-colors"
+                aria-label="Search tools"
               >
-                <Grid3x3 className="w-4 h-4" aria-hidden="true" />
-                <span>Explore All Tools</span>
-              </Link>
+                <Search className="w-5 h-5" />
+              </button>
+
+              {/* Quick Search Ctrl+K Button (Desktop & Tablet) */}
+              <button
+                type="button"
+                onClick={() => setIsSearchOpen(true)}
+                className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-slate-700 bg-zinc-50 dark:bg-slate-800 hover:bg-zinc-100 dark:hover:bg-slate-700/80 text-zinc-500 dark:text-zinc-300 text-xs font-medium transition-all"
+              >
+                <Search className="w-3.5 h-3.5 text-purple-600" />
+                <span>{t('searchPlaceholder')}</span>
+                <kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-slate-700 text-[10px] font-mono text-zinc-600 dark:text-zinc-300 font-bold">
+                  ⌘K
+                </kbd>
+              </button>
+
+              <LanguageSwitcher />
+              <ThemeToggle />
+
+              {/* Mobile Hamburger Button */}
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 rounded-xl transition-colors text-zinc-900 hover:bg-zinc-100 dark:text-white dark:hover:bg-slate-800 lg:hidden"
+                aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              >
+                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
             </div>
+
           </div>
         </div>
-      )}
-    </header>
+
+        {/* Dynamic Mobile Navigation Drawer (< lg screens) */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden absolute top-full left-0 right-0 bg-white dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45] shadow-2xl p-4 max-h-[80vh] overflow-y-auto z-50 animate-fade-in font-sans">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between gap-2 pb-2 border-b border-zinc-100 dark:border-[#2A2E45]">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 font-display">{t('language')}:</span>
+                  <LanguageSwitcher />
+                </div>
+                <div className="flex items-center gap-2">
+                  <ThemeToggle />
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsSearchOpen(true);
+                }}
+                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-zinc-50 dark:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45] text-xs font-medium text-zinc-600 dark:text-zinc-300"
+              >
+                <span className="flex items-center gap-2">
+                  <Search className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                  <span>{t('searchPlaceholder')}</span>
+                </span>
+                <kbd className="px-2 py-0.5 rounded bg-zinc-200 dark:bg-[#2A2E45] text-[10px] font-mono font-bold">
+                  Search
+                </kbd>
+              </button>
+
+              <div className="pt-2 border-t border-zinc-100 dark:border-[#2A2E45] space-y-1">
+                <Link
+                  to="/tools"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40"
+                >
+                  <span className="flex items-center gap-2">
+                    <Grid className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                    <span>All 48 Tools Directory</span>
+                  </span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+
+                {megaColumns.map((col, idx) => (
+                  <div key={idx} className="pt-2">
+                    <div className={`px-3 py-1 text-[11px] font-black uppercase tracking-wider ${col.color}`}>
+                      {col.title}
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 pl-3 pt-1">
+                      {col.items.map((item, itemIdx) => (
+                        <Link
+                          key={itemIdx}
+                          to={item.path}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="py-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-purple-600 dark:hover:text-purple-400 truncate"
+                        >
+                          • {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-3 border-t border-zinc-100 dark:border-[#2A2E45] flex items-center justify-around text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-purple-600 dark:hover:text-purple-400">
+                  About Us
+                </Link>
+                <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-purple-600 dark:hover:text-purple-400">
+                  Contact
+                </Link>
+                <Link to="/privacy-policy" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-purple-600 dark:hover:text-purple-400">
+                  Privacy
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Dynamic Categorized Mega Menu Overlay (Desktop >= lg) */}
+        {activeDropdown && (
+          <div
+            onMouseLeave={() => setActiveDropdown(null)}
+            className="hidden lg:block absolute top-full left-0 right-0 bg-white dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45] shadow-2xl p-6 z-50 animate-fade-in font-sans"
+          >
+            <div className="max-w-7xl mx-auto">
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-zinc-100 dark:border-slate-800">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-purple-700 dark:text-purple-400 flex items-center gap-2">
+                  <Grid className="w-4 h-4" />
+                  {activeDropdown === 'mega' && 'All PDFora Tools Directory (8 Categories)'}
+                  {activeDropdown === 'pdf' && 'PDF Tools Suite (4 Categories)'}
+                  {activeDropdown === 'images' && 'Image Tools & Formats Suite (3 Categories)'}
+                  {activeDropdown === 'media' && 'Video & Audio Converter Suite'}
+                  {activeDropdown === 'developer' && 'Developer & AI Intelligence Suite'}
+                </span>
+                <button
+                  onClick={() => setActiveDropdown(null)}
+                  className="text-xs font-bold text-zinc-400 hover:text-zinc-600 cursor-pointer"
+                >
+                  Close ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 text-xs">
+                {megaColumns
+                  .filter((_, idx) => {
+                    if (activeDropdown === 'mega') return true;
+                    if (activeDropdown === 'pdf') return [0, 1, 2, 3].includes(idx);
+                    if (activeDropdown === 'images') return [4, 5, 6].includes(idx);
+                    if (activeDropdown === 'media') return [7].includes(idx);
+                    if (activeDropdown === 'developer') return [7, 3].includes(idx);
+                    return true;
+                  })
+                  .map((col, idx) => (
+                    <div key={idx} className="space-y-2.5">
+                      <h5 className={`font-black text-[11px] uppercase tracking-wider ${col.color}`}>
+                        {col.title}
+                      </h5>
+                      <ul className="space-y-1.5 font-medium text-zinc-800 dark:text-zinc-200">
+                        {col.items.map((item, itemIdx) => (
+                          <li key={itemIdx}>
+                            <Link
+                              to={item.path}
+                              onClick={() => setActiveDropdown(null)}
+                              className="block hover:text-purple-600 dark:hover:text-purple-400 truncate transition-colors"
+                            >
+                              • {item.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* Quick Search Modal */}
+      <QuickSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+    </>
   );
 }

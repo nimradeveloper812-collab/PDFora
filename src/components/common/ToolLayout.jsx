@@ -2,17 +2,37 @@ import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import Dropzone from './Dropzone';
+import AdBanner from './AdBanner';
+import BackgroundRemoverTool from '../image/BackgroundRemoverTool';
+import ImageCompressorTool from '../image/ImageCompressorTool';
+import VideoToAudioTool from '../media/VideoToAudioTool';
+import AudioCompressorTool from '../media/AudioCompressorTool';
+import ImageConverterTool from '../media/ImageConverterTool';
+import VideoConverterTool from '../media/VideoConverterTool';
+import VideoCompressorTool from '../media/VideoCompressorTool';
+import ChatWithPdfTool from '../pdf/ChatWithPdfTool';
+import AiResumeReviewerTool from '../pdf/AiResumeReviewerTool';
+import AiTableExtractorTool from '../pdf/AiTableExtractorTool';
+import PdfMetadataEditorTool from '../pdf/PdfMetadataEditorTool';
+import JsonToCsvTool from '../pdf/JsonToCsvTool';
+import Base64ToPdfTool from '../pdf/Base64ToPdfTool';
+import CompressToKbTool from '../pdf/CompressToKbTool';
+import ChangeBackgroundTool from '../image/ChangeBackgroundTool';
+import ResizeImageTool from '../image/ResizeImageTool';
+import JsonFormatterTool from '../pdf/JsonFormatterTool';
+import QrGeneratorTool from '../pdf/QrGeneratorTool';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
   Image as ImageIcon, FileImage, Layers, Minimize2,
-  Scissors, ChevronDown, Smartphone, Globe
+  Scissors, ChevronDown, Smartphone, Globe, Video, Music, FileAudio, FileVideo, RefreshCw
 } from 'lucide-react';
-import { TOOLS } from '../../data/toolsData';
+import { TOOLS, TOOLS_CATEGORIES, getToolTheme } from '../../data/toolsData';
 
 const iconMap = {
   FileText, Table, Presentation,
-  Image: ImageIcon, FileImage, Layers, Minimize2, Scissors
+  Image: ImageIcon, FileImage, Layers, Minimize2, Scissors, Sparkles,
+  Video, Music, FileAudio, FileVideo, RefreshCw
 };
 
 export default function ToolLayout({ tool }) {
@@ -23,41 +43,152 @@ export default function ToolLayout({ tool }) {
     setOpenFaq(null);
   }, [tool.id]);
 
-  const otherTools = TOOLS.filter(t => t.id !== tool.id).slice(0, 4);
+  const categoryObj = TOOLS_CATEGORIES.find(c => c.id === tool.category);
+  const categoryName = categoryObj ? categoryObj.name : 'Tools';
+  const categoryUrl = `https://pdfora.nimradev.site/tools?category=${tool.category}`;
+
+  const relatedTools = (tool.relatedToolIds && tool.relatedToolIds.length > 0)
+    ? tool.relatedToolIds.map(id => TOOLS.find(t => t.id === id)).filter(Boolean)
+    : TOOLS.filter(t => t.id !== tool.id).slice(0, 4);
+
+  const canonicalUrl = `https://pdfora.nimradev.site${tool.path}`;
+  const seoTitle = tool.metaTitle || `${tool.name} Online — Free, Fast & Private | PDFora`;
+  const seoDesc = tool.metaDescription || `${tool.description} 100% free online PDF utility with private in-browser WebAssembly processing, zero file limits, and zero server file persistence.`;
+  const h1Title = tool.h1Title || tool.name;
+  const keywordsStr = (tool.primaryKeywords || []).join(', ');
+
+  const webAppSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    'name': `${tool.name} - PDFora`,
+    'url': canonicalUrl,
+    'description': tool.description,
+    'applicationCategory': 'BusinessApplication',
+    'operatingSystem': 'All',
+    'browserRequirements': 'Requires JavaScript and HTML5 support',
+    'offers': {
+      '@type': 'Offer',
+      'price': '0',
+      'priceCurrency': 'USD'
+    },
+    'creator': {
+      '@type': 'Organization',
+      'name': 'PDFora',
+      'url': 'https://pdfora.nimradev.site'
+    }
+  };
+
+  const howToSchema = tool.steps && tool.steps.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    'name': `How to use ${tool.name} online with PDFora`,
+    'description': `Follow these simple steps to use ${tool.name} for free in your browser with complete privacy.`,
+    'step': tool.steps.map((stepText, idx) => ({
+      '@type': 'HowToStep',
+      'position': idx + 1,
+      'name': `Step ${idx + 1}`,
+      'text': stepText,
+      'url': `${canonicalUrl}#step-${idx + 1}`
+    }))
+  } : null;
+
+  const faqSchema = tool.faqs && tool.faqs.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    'mainEntity': tool.faqs.map(f => ({
+      '@type': 'Question',
+      'name': f.q,
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': f.a
+      }
+    }))
+  } : null;
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    'itemListElement': [
+      {
+        '@type': 'ListItem',
+        'position': 1,
+        'name': 'Home',
+        'item': 'https://pdfora.nimradev.site/'
+      },
+      {
+        '@type': 'ListItem',
+        'position': 2,
+        'name': categoryName,
+        'item': categoryUrl
+      },
+      {
+        '@type': 'ListItem',
+        'position': 3,
+        'name': tool.name,
+        'item': canonicalUrl
+      }
+    ]
+  };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-[#0D0D14] pt-20 transition-colors">
       <Helmet>
-        <title>{tool.name} — Free Online PDF Tool | PDFora Pakistan</title>
-        <meta name="description" content={`${tool.description} Fast, private, and 100% free online PDF tool in Pakistan.`} />
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDesc} />
+        {keywordsStr && <meta name="keywords" content={keywordsStr} />}
+        <link rel="canonical" href={canonicalUrl} />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDesc} />
+        <meta property="og:image" content="https://pdfora.nimradev.site/og-image.jpg" />
+        <meta property="og:site_name" content="PDFora" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={canonicalUrl} />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDesc} />
+
+        <script type="application/ld+json">
+          {JSON.stringify(webAppSchema)}
+        </script>
+        {howToSchema && (
+          <script type="application/ld+json">
+            {JSON.stringify(howToSchema)}
+          </script>
+        )}
+        {faqSchema && (
+          <script type="application/ld+json">
+            {JSON.stringify(faqSchema)}
+          </script>
+        )}
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbSchema)}
+        </script>
       </Helmet>
 
       {/* ── Breadcrumb ─────────────────────────────────────── */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 w-full">
         <nav
-          className="flex items-center gap-2 text-xs font-medium"
+          className="flex items-center gap-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400"
           aria-label="Breadcrumb"
-          style={{ color: '#A1A1AA' }}
         >
           <Link
             to="/"
-            style={{ color: '#71717A', textDecoration: 'none' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#E85D9E')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#71717A')}
+            className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
           >
             Home
           </Link>
           <span aria-hidden="true">/</span>
           <Link
-            to="/tools"
-            style={{ color: '#71717A', textDecoration: 'none' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#E85D9E')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#71717A')}
+            to={`/tools?category=${tool.category}`}
+            className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
           >
-            Tools
+            {categoryName}
           </Link>
           <span aria-hidden="true">/</span>
-          <span className="font-semibold" style={{ color: '#18181B' }} aria-current="page">
+          <span className="font-bold text-zinc-900 dark:text-white" aria-current="page">
             {tool.name}
           </span>
         </nav>
@@ -65,99 +196,141 @@ export default function ToolLayout({ tool }) {
 
       {/* ── Tool Hero ──────────────────────────────────────── */}
       <section
-        className="pt-6 pb-12 px-4 sm:px-6 lg:px-8 text-center"
-        style={{
-          background: 'radial-gradient(ellipse 80% 55% at 50% -5%, #FCE7F3 0%, #FFFFFF 65%)',
-        }}
+        className="pt-4 pb-10 px-4 sm:px-6 lg:px-8 text-center bg-[#F8FAFC] dark:bg-[#141622] border-b border-zinc-100 dark:border-[#2A2E45] transition-colors"
         aria-labelledby="tool-heading"
       >
-        <div className="max-w-3xl mx-auto space-y-4">
-          <div
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold"
-            style={{
-              background: '#FCE7F3',
-              color: '#B83A7C',
-              border: '1px solid #F1D5E3',
-              boxShadow: '0 1px 4px rgba(232,93,158,0.08)',
-            }}
-          >
-            <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            100% Free Online Tool
+        <div className="max-w-3xl mx-auto space-y-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+            <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" aria-hidden="true" />
+            <span>100% Free &amp; Private In-Browser Tool</span>
           </div>
 
           <h1
             id="tool-heading"
-            className="text-3xl sm:text-4xl lg:text-5xl font-black"
-            style={{ color: '#18181B', letterSpacing: '-0.035em' }}
+            className="text-2xl sm:text-4xl lg:text-5xl font-black text-zinc-900 dark:text-white tracking-tight"
           >
-            {tool.name}
+            {h1Title}
           </h1>
 
-          <p
-            className="text-sm sm:text-base leading-relaxed max-w-2xl mx-auto"
-            style={{ color: '#52525B' }}
-          >
+          <p className="text-sm sm:text-base leading-relaxed max-w-2xl mx-auto text-zinc-600 dark:text-zinc-300 font-normal">
             {tool.description}
           </p>
         </div>
       </section>
 
-      {/* ── Upload Dropzone ────────────────────────────────── */}
+      {/* ── Tool Interactive Area ─────────────────────────── */}
       <section
-        className="px-4 sm:px-6 lg:px-8 mb-12"
-        aria-label={`${tool.name} upload area`}
+        className="px-4 sm:px-6 lg:px-8 py-10 bg-white dark:bg-[#0D0D14] border-b border-zinc-200 dark:border-[#2A2E45] transition-colors"
+        aria-label={`${tool.name} interactive area`}
       >
-        <Dropzone tool={tool} />
+        {tool.id === 'image-background-remover' ? (
+          <BackgroundRemoverTool tool={tool} />
+        ) : tool.id === 'image-compressor' ? (
+          <ImageCompressorTool tool={tool} />
+        ) : tool.id === 'video-to-audio' ? (
+          <VideoToAudioTool />
+        ) : tool.id === 'audio-compressor' ? (
+          <AudioCompressorTool />
+        ) : tool.id === 'image-converter' ? (
+          <ImageConverterTool />
+        ) : tool.id === 'video-converter' ? (
+          <VideoConverterTool />
+        ) : tool.id === 'video-compressor' ? (
+          <VideoCompressorTool />
+        ) : tool.id === 'chat-with-pdf' ? (
+          <ChatWithPdfTool />
+        ) : tool.id === 'ai-resume-reviewer' ? (
+          <AiResumeReviewerTool />
+        ) : tool.id === 'ai-table-extractor' ? (
+          <AiTableExtractorTool />
+        ) : tool.id === 'pdf-metadata-editor' ? (
+          <PdfMetadataEditorTool />
+        ) : tool.id === 'json-to-csv' ? (
+          <JsonToCsvTool />
+        ) : tool.id === 'base64-to-pdf' ? (
+          <Base64ToPdfTool />
+        ) : tool.id === 'compress-to-kb' ? (
+          <CompressToKbTool />
+        ) : tool.id === 'change-background' ? (
+          <ChangeBackgroundTool />
+        ) : tool.id === 'resize-image' ? (
+          <ResizeImageTool />
+        ) : tool.id === 'json-formatter' ? (
+          <JsonFormatterTool />
+        ) : tool.id === 'qr-generator' ? (
+          <QrGeneratorTool />
+        ) : (
+          <Dropzone tool={tool} />
+        )}
 
         {/* Trust highlights below dropzone */}
-        <div className="max-w-4xl mx-auto mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="max-w-4xl mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { icon: Zap,        title: 'Fast Processing',   sub: '1-click conversion'  },
-            { icon: Sparkles,   title: 'High Quality',      sub: 'No quality loss'     },
-            { icon: ShieldCheck,title: 'Privacy Focused',   sub: 'Auto-deleted files'  },
-            { icon: Smartphone, title: 'Works on Mobile',   sub: 'Full touch support'  },
+            { icon: Zap,        title: 'Fast Processing',   sub: 'In-browser engine'   },
+            { icon: Sparkles,   title: 'High Quality',      sub: 'Original accuracy'   },
+            { icon: ShieldCheck,title: 'Privacy Secured',   sub: 'Zero server uploads' },
+            { icon: Smartphone, title: 'Works Everywhere',  sub: 'Mobile & Desktop'    },
           ].map(({ icon: Icon, title, sub }) => (
             <div
               key={title}
-              className="flex items-center gap-2.5 p-3.5 rounded-xl transition-all duration-150"
-              style={{
-                background: '#FFFFFF',
-                border: '1px solid #F1D5E3',
-                boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
-              }}
+              className="flex items-center gap-2.5 p-3 rounded-lg bg-zinc-50 dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45]"
             >
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                style={{ background: '#FCE7F3', color: '#E85D9E' }}
-                aria-hidden="true"
-              >
+              <div className="w-8 h-8 rounded-md flex items-center justify-center shrink-0 bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-900">
                 <Icon className="w-4 h-4" />
               </div>
               <div className="text-left min-w-0">
-                <p className="text-xs font-bold truncate" style={{ color: '#18181B' }}>{title}</p>
-                <p className="text-[10px] truncate" style={{ color: '#A1A1AA' }}>{sub}</p>
+                <p className="text-xs font-bold text-zinc-900 dark:text-white truncate">{title}</p>
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate font-normal">{sub}</p>
               </div>
             </div>
           ))}
         </div>
+
+        <div className="max-w-4xl mx-auto mt-6">
+          <AdBanner slot="7890123456" className="my-2" />
+        </div>
       </section>
+
+      {/* ── Overview & Deep Guide ─────────────────────────── */}
+      {tool.overview && (
+        <section
+          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+          aria-labelledby="overview-heading"
+        >
+          <div className="p-6 sm:p-8 rounded-lg bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45]">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/50 px-2.5 py-0.5 rounded-full border border-purple-200 dark:border-purple-800">
+                Complete Guide
+              </span>
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">• Updated 2026</span>
+            </div>
+            <h2
+              id="overview-heading"
+              className="text-xl sm:text-2xl font-bold mb-3 text-zinc-900 dark:text-white tracking-tight"
+            >
+              About {tool.name} on PDFora
+            </h2>
+            <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300 font-normal">
+              {tool.overview}
+            </p>
+          </div>
+        </section>
+      )}
 
       {/* ── How to Use ─────────────────────────────────────── */}
       <section
-        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-16"
+        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
         aria-labelledby="how-to-use-heading"
       >
-        <div className="text-center mb-10 space-y-1.5">
-          <span className="section-label">Step by Step</span>
+        <div className="text-center mb-8 space-y-1">
           <h2
             id="how-to-use-heading"
-            className="text-2xl sm:text-3xl font-extrabold"
-            style={{ color: '#18181B', letterSpacing: '-0.03em' }}
+            className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-white tracking-tight"
           >
             How to Use {tool.name}
           </h2>
-          <p className="text-sm" style={{ color: '#71717A' }}>
-            Process your files in three easy steps.
+          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-normal">
+            Process your documents in three simple steps.
           </p>
         </div>
 
@@ -165,31 +338,17 @@ export default function ToolLayout({ tool }) {
           {tool.steps.map((step, idx) => (
             <div
               key={idx}
-              className="relative p-6 rounded-2xl space-y-3 group transition-all duration-200"
-              style={{
-                background: '#FFFFFF',
-                border: '1px solid #F1D5E3',
-                boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = '#E85D9E';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,93,158,0.09)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = '#F1D5E3';
-                e.currentTarget.style.boxShadow = '0 1px 4px rgba(232,93,158,0.04)';
-              }}
+              className="p-5 rounded-lg bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] space-y-2.5"
             >
               <div
-                className="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-black transition-all duration-200"
-                style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white font-display bg-purple-600 dark:bg-purple-500"
               >
-                0{idx + 1}
+                {idx + 1}
               </div>
-              <h3 className="text-sm font-bold" style={{ color: '#18181B' }}>
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
                 Step {idx + 1}
               </h3>
-              <p className="text-xs leading-relaxed" style={{ color: '#71717A' }}>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-normal">
                 {step}
               </p>
             </div>
@@ -197,125 +356,54 @@ export default function ToolLayout({ tool }) {
         </div>
       </section>
 
-      {/* ── Features & Security ────────────────────────────── */}
-      <section
-        className="py-14 mb-16"
-        style={{ background: '#FFF7FB', borderTop: '1px solid #F1D5E3', borderBottom: '1px solid #F1D5E3' }}
-        aria-labelledby="features-heading"
-      >
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10 space-y-1.5">
-            <span className="section-label">Platform Benefits</span>
+      {/* ── Real-World Use Cases ───────────────────────────── */}
+      {tool.useCases?.length > 0 && (
+        <section
+          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
+          aria-labelledby="usecases-heading"
+        >
+          <div className="text-center mb-8 space-y-1">
             <h2
-              id="features-heading"
-              className="text-2xl sm:text-3xl font-extrabold"
-              style={{ color: '#18181B', letterSpacing: '-0.03em' }}
+              id="usecases-heading"
+              className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-white tracking-tight"
             >
-              Why Use PDFora?
+              Who Uses {tool.name}?
             </h2>
-            <p className="text-sm" style={{ color: '#71717A' }}>
-              Fast, private, and accurate document conversion.
+            <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-normal">
+              Built for students, freelancers, accountants, and professionals.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto">
-            {tool.features.map((feature, idx) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {tool.useCases.map((uc, idx) => (
               <div
                 key={idx}
-                className="flex items-start gap-3.5 p-4 rounded-2xl"
-                style={{
-                  background: '#FFFFFF',
-                  border: '1px solid #F1D5E3',
-                  boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
-                }}
+                className="p-4 rounded-lg bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] space-y-1"
               >
-                <div
-                  className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-                  style={{ background: '#FCE7F3' }}
-                  aria-hidden="true"
-                >
-                  <CheckCircle2 className="w-4 h-4" style={{ color: '#E85D9E' }} />
-                </div>
-                <div>
-                  <h4 className="text-xs sm:text-sm font-semibold" style={{ color: '#18181B' }}>
-                    {feature}
-                  </h4>
-                  <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#71717A' }}>
-                    Output maintains original quality and formatting throughout the process.
-                  </p>
-                </div>
+                <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
+                  {uc.title}
+                </h3>
+                <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed font-normal">
+                  {uc.desc}
+                </p>
               </div>
             ))}
-
-            {/* Static security feature */}
-            <div
-              className="flex items-start gap-3.5 p-4 rounded-2xl"
-              style={{
-                background: '#FFFFFF',
-                border: '1px solid #F1D5E3',
-                boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
-              }}
-            >
-              <div
-                className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-                style={{ background: '#FCE7F3' }}
-                aria-hidden="true"
-              >
-                <ShieldCheck className="w-4 h-4" style={{ color: '#E85D9E' }} />
-              </div>
-              <div>
-                <h4 className="text-xs sm:text-sm font-semibold" style={{ color: '#18181B' }}>
-                  End-to-End Privacy Guaranteed
-                </h4>
-                <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#71717A' }}>
-                  Files are encrypted during transit and permanently deleted within 60 minutes.
-                </p>
-              </div>
-            </div>
-
-            <div
-              className="flex items-start gap-3.5 p-4 rounded-2xl"
-              style={{
-                background: '#FFFFFF',
-                border: '1px solid #F1D5E3',
-                boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
-              }}
-            >
-              <div
-                className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-                style={{ background: '#FCE7F3' }}
-                aria-hidden="true"
-              >
-                <Globe className="w-4 h-4" style={{ color: '#E85D9E' }} />
-              </div>
-              <div>
-                <h4 className="text-xs sm:text-sm font-semibold" style={{ color: '#18181B' }}>
-                  No Installation Required
-                </h4>
-                <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#71717A' }}>
-                  Runs entirely in your browser on Mac, Windows, iOS, and Android.
-                </p>
-              </div>
-            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── Tool FAQs ──────────────────────────────────────── */}
       {tool.faqs?.length > 0 && (
         <section
-          className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mb-16"
+          className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
           aria-labelledby="tool-faq-heading"
         >
-          <div className="text-center mb-8 space-y-1.5">
-            <span className="section-label">Common Questions</span>
+          <div className="text-center mb-8 space-y-1">
             <h2
               id="tool-faq-heading"
-              className="text-2xl font-extrabold flex items-center justify-center gap-2"
-              style={{ color: '#18181B', letterSpacing: '-0.03em' }}
+              className="text-2xl font-bold text-zinc-900 dark:text-white tracking-tight"
             >
-              <HelpCircle className="w-5 h-5 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
-              Tool FAQs
+              Frequently Asked Questions
             </h2>
           </div>
 
@@ -326,34 +414,28 @@ export default function ToolLayout({ tool }) {
                 <div
                   key={idx}
                   role="listitem"
-                  className="rounded-2xl overflow-hidden transition-all duration-200"
-                  style={{
-                    background: '#FFFFFF',
-                    border: `1px solid ${isOpen ? '#E85D9E' : '#F1D5E3'}`,
-                    boxShadow: isOpen ? '0 4px 16px rgba(232,93,158,0.08)' : '0 1px 4px rgba(232,93,158,0.03)',
-                  }}
+                  className={`rounded-lg border overflow-hidden bg-white dark:bg-[#141622] transition-colors ${
+                    isOpen
+                      ? 'border-purple-600 dark:border-purple-500'
+                      : 'border-zinc-200 dark:border-[#2A2E45]'
+                  }`}
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full px-5 py-4 text-left flex items-center justify-between gap-4 transition-colors duration-150"
+                    className="w-full px-5 py-3.5 text-left flex items-center justify-between gap-4 transition-colors cursor-pointer"
                     aria-expanded={isOpen}
-                    style={{ color: isOpen ? '#E85D9E' : '#18181B' }}
                   >
-                    <span className="text-sm font-semibold">{faq.q}</span>
+                    <span className={`text-sm font-bold ${isOpen ? 'text-purple-600 dark:text-purple-400' : 'text-zinc-900 dark:text-white'}`}>{faq.q}</span>
                     <ChevronDown
-                      className={`w-4 h-4 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-                      style={{ color: isOpen ? '#E85D9E' : '#A1A1AA' }}
+                      className={`w-4 h-4 shrink-0 transition-transform ${isOpen ? 'rotate-180 text-purple-600 dark:text-purple-400' : 'text-zinc-400 dark:text-zinc-500'}`}
                       aria-hidden="true"
                     />
                   </button>
-                  <div className={`faq-accordion-content ${isOpen ? 'open' : ''}`}>
-                    <div
-                      className="px-5 pb-5 pt-1 text-sm leading-relaxed"
-                      style={{ color: '#52525B', borderTop: '1px solid #FFF0F8' }}
-                    >
+                  {isOpen && (
+                    <div className="px-5 pb-4 pt-1 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-100 dark:border-[#2A2E45] font-normal">
                       {faq.a}
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })}
@@ -363,85 +445,50 @@ export default function ToolLayout({ tool }) {
 
       {/* ── Related Tools ──────────────────────────────────── */}
       <section
-        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"
+        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
         aria-labelledby="related-tools-heading"
       >
-        <div
-          className="flex items-center justify-between mb-8 pb-3"
-          style={{ borderBottom: '1px solid #F1D5E3' }}
-        >
+        <div className="flex items-center justify-between mb-6 pb-2 border-b border-zinc-200 dark:border-[#2A2E45]">
           <h3
             id="related-tools-heading"
-            className="text-sm font-bold uppercase tracking-wider"
-            style={{ color: '#18181B' }}
+            className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-white"
           >
             Explore Related Tools
           </h3>
           <Link
             to="/tools"
-            className="inline-flex items-center gap-1 text-xs font-semibold group/more"
-            style={{ color: '#E85D9E', textDecoration: 'none' }}
+            className="inline-flex items-center gap-1 text-xs font-bold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300"
           >
-            View All
-            <ArrowRight
-              className="w-3.5 h-3.5 transition-transform group-hover/more:translate-x-0.5"
-              aria-hidden="true"
-            />
+            View All Tools
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {otherTools.map(other => {
+          {relatedTools.map(other => {
             const Icon = iconMap[other.iconName] || FileText;
+            const theme = getToolTheme(other.id, other.category);
             return (
               <Link
                 key={other.id}
                 to={other.path}
-                className="group flex flex-col justify-between p-5 rounded-2xl transition-all duration-200"
-                style={{
-                  background: '#FFFFFF',
-                  border: '1px solid #F1D5E3',
-                  boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
-                  textDecoration: 'none',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = '#E85D9E';
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,93,158,0.10)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = '#F1D5E3';
-                  e.currentTarget.style.boxShadow = '0 1px 4px rgba(232,93,158,0.04)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
+                className="group flex flex-col justify-between p-4 rounded-lg bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] hover:border-purple-600 dark:hover:border-purple-500 hover:bg-zinc-50 dark:hover:bg-[#1B1E2E] transition-all shadow-xs"
+                style={{ textDecoration: 'none' }}
               >
                 <div>
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 transition-all duration-200 group-hover:scale-105"
-                    style={{ background: '#FCE7F3', color: '#E85D9E' }}
-                    aria-hidden="true"
-                  >
-                    <Icon className="w-5 h-5" strokeWidth={2} />
+                  <div className={`w-9 h-9 rounded-md flex items-center justify-center mb-2 border shrink-0 ${theme.iconBg}`}>
+                    <Icon className="w-4 h-4" strokeWidth={2} />
                   </div>
-                  <h4
-                    className="text-sm font-bold mb-1 transition-colors group-hover:text-pink-600"
-                    style={{ color: '#18181B' }}
-                  >
+                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors mb-0.5">
                     {other.name}
                   </h4>
-                  <p className="text-[11px] leading-relaxed line-clamp-2" style={{ color: '#71717A' }}>
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed line-clamp-2 font-normal">
                     {other.shortDesc}
                   </p>
                 </div>
-                <div
-                  className="flex items-center justify-between pt-3 mt-3 text-[11px] font-bold transition-all duration-150"
-                  style={{ borderTop: '1px solid #FFF0F8', color: '#E85D9E' }}
-                >
-                  <span>Open Tool</span>
-                  <ArrowRight
-                    className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5"
-                    aria-hidden="true"
-                  />
+                <div className="flex items-center justify-between pt-2 mt-2 text-[11px] font-bold text-zinc-600 dark:text-zinc-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 border-t border-zinc-100 dark:border-[#2A2E45]">
+                  <span>Use Tool</span>
+                  <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
                 </div>
               </Link>
             );

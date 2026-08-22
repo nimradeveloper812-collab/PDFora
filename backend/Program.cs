@@ -1,9 +1,27 @@
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.Configuration;
 using PDFora.Backend.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+// Use CreateEmptyBuilder to prevent default FileSystemWatcher / inotify allocations in Linux containers
+var builder = WebApplication.CreateEmptyBuilder(new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = AppContext.BaseDirectory,
+    WebRootPath = Path.Combine(AppContext.BaseDirectory, "wwwroot")
+});
 
-// Configure large file uploads
+// Add configuration without any file watchers (reloadOnChange: false)
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+    .AddEnvironmentVariables();
+
+// Configure Kestrel web server with dynamic port binding for Render
+builder.WebHost.UseKestrel();
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
+// Core services
+builder.Services.AddRouting();
 builder.Services.Configure<FormOptions>(options =>
 {
     options.ValueLengthLimit = int.MaxValue;
@@ -14,7 +32,6 @@ builder.Services.Configure<FormOptions>(options =>
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 
-// Add CORS
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -31,20 +48,9 @@ builder.Services.AddSingleton<ILibreOfficeService, LibreOfficeService>();
 builder.Services.AddSingleton<IImageConversionService, ImageConversionService>();
 builder.Services.AddSingleton<IPdfManipulationService, PdfManipulationService>();
 
-builder.Services.AddOpenApi();
-
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
-
+app.UseRouting();
 app.UseCors();
 
 // Serve the React frontend from wwwroot

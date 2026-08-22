@@ -3,90 +3,90 @@ import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import {
   Award, Sparkles, CheckCircle2, ShieldCheck,
-  Zap, Globe, ArrowRight, Lock, Clock
+  Zap, Globe, ArrowRight, Lock, Cpu
 } from 'lucide-react';
 
 const commitments = [
   {
     icon: ShieldCheck,
-    title: 'Zero Data Monetization',
-    desc: 'We never inspect, store, or share your uploaded documents or their contents with any third party.',
+    title: 'Zero Server Storage',
+    desc: 'Your documents are processed locally inside your web browser sandbox. Files never upload to or persist on remote servers.',
   },
   {
-    icon: Clock,
-    title: 'Automated 1-Hour Deletion',
-    desc: 'Every uploaded file is permanently and automatically deleted from our servers after 60 minutes.',
+    icon: Cpu,
+    title: 'Client-Side In-Browser Engine',
+    desc: 'Using modern WebAssembly and JavaScript pipelines, conversions happen directly on your device with zero transfer latency.',
   },
   {
     icon: Lock,
     title: 'No Account Required',
-    desc: 'Convert, merge, and compress files instantly without creating an account or providing an email.',
+    desc: 'Convert, merge, split, and compress files instantly without creating an account, subscription, or providing personal details.',
   },
   {
     icon: Globe,
     title: 'Works on Any Device',
-    desc: 'PDFora is fully responsive and runs in your browser on desktop, tablet, iPhone, and Android.',
+    desc: 'PDFora is fully responsive and runs seamlessly in any modern web browser across desktop, tablet, iPhone, and Android.',
   },
 ];
 
 const values = [
   {
     icon: Zap,
-    title: 'Speed',
-    desc: 'Built on high-performance servers. Most files finish converting in under five seconds.',
+    title: 'Instant Speed',
+    desc: 'Direct in-browser execution delivers instantaneous document rendering and conversion with zero upload wait times.',
   },
   {
     icon: CheckCircle2,
     title: 'Simplicity',
-    desc: 'A clean interface with no clutter, no confusing settings, and no mandatory steps.',
+    desc: 'A clean, distraction-free interface with no complex setups, artificial daily caps, or hidden paywalls.',
   },
   {
     icon: ShieldCheck,
-    title: 'Privacy',
-    desc: 'Your documents are yours alone. We process files in isolated sessions with TLS 1.3 encryption.',
+    title: 'Complete Privacy',
+    desc: 'Your confidential contracts, tax forms, and personal files stay securely in your device memory at all times.',
   },
 ];
 
 export default function About() {
   return (
-    <div className="pt-16 pb-20 min-h-screen">
+    <div className="pt-[88px] sm:pt-[96px] pb-20 min-h-screen bg-white dark:bg-[#0D0D14] text-zinc-900 dark:text-white transition-colors">
       <Helmet>
-        <title>About Us — PDFora | Pakistan's Free Online PDF Platform</title>
-        <meta name="description" content="Learn about PDFora, Pakistan's premier free online PDF platform built for students, professionals, and businesses." />
+        <title>About Us — PDFora | Free, Private &amp; Secure Online PDF Tools</title>
+        <meta name="description" content="Learn about PDFora, a fast, private, in-browser online PDF suite built for students, professionals, and businesses worldwide." />
+        <link rel="canonical" href="https://pdfora.nimradev.site/about" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://pdfora.nimradev.site/about" />
+        <meta property="og:title" content="About Us — PDFora | Free, Private & Secure Online PDF Tools" />
+        <meta property="og:description" content="Learn about PDFora, a fast, private, in-browser online PDF suite built for students, professionals, and businesses worldwide." />
+        <meta property="og:image" content="https://pdfora.nimradev.site/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://pdfora.nimradev.site/about" />
+        <meta name="twitter:title" content="About Us — PDFora" />
+        <meta name="twitter:description" content="Learn about PDFora, a fast, private, in-browser online PDF suite built for students, professionals, and businesses worldwide." />
+        <meta name="twitter:image" content="https://pdfora.nimradev.site/og-image.jpg" />
       </Helmet>
 
       {/* ── Hero ──────────────────────────────────────────── */}
       <section
-        className="py-14 px-4 sm:px-6 lg:px-8 text-center"
-        style={{
-          background: 'radial-gradient(ellipse 85% 55% at 50% -5%, #FCE7F3 0%, #FFFFFF 68%)',
-          borderBottom: '1px solid #F1D5E3',
-        }}
+        className="py-14 px-4 sm:px-6 lg:px-8 text-center bg-[#F8FAFC] dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45] transition-colors"
         aria-labelledby="about-heading"
       >
         <div className="max-w-3xl mx-auto space-y-4">
           <div
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold"
-            style={{
-              background: '#FCE7F3',
-              color: '#B83A7C',
-              border: '1px solid #F1D5E3',
-              boxShadow: '0 1px 4px rgba(232,93,158,0.08)',
-            }}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800"
           >
-            <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>🇵🇰 Proudly Made in Pakistan</span>
+            <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" aria-hidden="true" />
+            <span>Privacy-First PDF Suite</span>
           </div>
           <h1
             id="about-heading"
-            className="text-3xl sm:text-5xl font-black"
-            style={{ color: '#18181B', letterSpacing: '-0.035em' }}
+            className="text-3xl sm:text-5xl font-black text-zinc-900 dark:text-white font-heading"
           >
             About PDFora
           </h1>
-          <p className="text-sm sm:text-base leading-relaxed max-w-xl mx-auto" style={{ color: '#52525B' }}>
-            PDFora was built in Pakistan with one clear goal: online document tools should be instant,
-            100% free, and strictly private for everyone.
+          <p className="text-sm sm:text-base leading-relaxed max-w-xl mx-auto text-zinc-600 dark:text-zinc-300 font-sans">
+            PDFora was built with one clear mission: document tools should be instant,
+            100% free, and strictly private for everyone worldwide.
           </p>
         </div>
       </section>
@@ -98,48 +98,40 @@ export default function About() {
           {/* Left — Story */}
           <div className="space-y-6">
             <div>
-              <span className="section-label">Our Story</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/60 px-2.5 py-0.5 rounded-full border border-purple-200 dark:border-purple-800">Our Mission</span>
               <h2
-                className="text-2xl sm:text-3xl font-extrabold mt-2"
-                style={{ color: '#18181B', letterSpacing: '-0.03em' }}
+                className="text-2xl sm:text-3xl font-extrabold mt-2 text-zinc-900 dark:text-white font-heading"
               >
-                Built for Students, Freelancers &amp; Businesses
+                Built for Students, Freelancers &amp; Professionals Worldwide
               </h2>
             </div>
 
-            <p className="text-sm leading-relaxed" style={{ color: '#52525B' }}>
-              Students, university researchers, freelancers, and office workers across Pakistan often faced paywalls, restrictive daily upload caps, or unreliable tools when trying to convert or merge PDFs.
+            <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300 font-sans">
+              Every day, millions of students, university researchers, freelancers, and businesses need to convert, combine, or compress PDF documents. Traditional online converters upload your sensitive contracts, resumes, and personal documents to distant third-party servers.
             </p>
-            <p className="text-sm leading-relaxed" style={{ color: '#52525B' }}>
-              PDFora changes that. We built a fast, clean, and reliable tool suite right here in Pakistan that respects your privacy. Every conversion runs securely in an isolated session and files are wiped completely within 1 hour — no exceptions.
+            <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300 font-sans">
+              PDFora revolutionizes this experience by executing text formatting, layout structuring, and image processing directly inside your modern browser sandbox. Your confidential files never leave your device, ensuring maximum security and zero transfer latency.
             </p>
 
             {/* Stats */}
             <div className="grid grid-cols-2 gap-4 pt-2">
               {[
-                { value: '100%',   label: 'Free Platform' },
-                { value: 'TLS 1.3', label: 'Encryption Standard' },
-                { value: '60 min', label: 'Auto-delete Window' },
-                { value: '0',      label: 'Accounts Needed' },
+                { value: '100%',   label: 'Free & Open Tools' },
+                { value: '0 Bytes', label: 'Server File Storage' },
+                { value: 'Client', label: 'In-Browser Engine' },
+                { value: '0',      label: 'Accounts Required' },
               ].map(({ value, label }) => (
                 <div
                   key={label}
-                  className="p-4 rounded-2xl text-center"
-                  style={{
-                    background: '#FFF7FB',
-                    border: '1px solid #F1D5E3',
-                    boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
-                  }}
+                  className="p-4 rounded-2xl text-center bg-zinc-50 dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45]"
                 >
                   <div
-                    className="text-2xl font-black"
-                    style={{ color: '#E85D9E', letterSpacing: '-0.03em' }}
+                    className="text-2xl font-black text-purple-600 dark:text-purple-400 font-heading"
                   >
                     {value}
                   </div>
                   <div
-                    className="text-[10px] font-bold uppercase tracking-wider mt-1"
-                    style={{ color: '#71717A' }}
+                    className="text-[10px] font-bold uppercase tracking-wider mt-1 text-zinc-500 dark:text-zinc-400 font-display"
                   >
                     {label}
                   </div>
@@ -150,18 +142,12 @@ export default function About() {
 
           {/* Right — Core Commitments Card */}
           <div
-            className="rounded-3xl p-7 space-y-5"
-            style={{
-              background: '#FFFFFF',
-              border: '1px solid #F1D5E3',
-              boxShadow: '0 8px 32px rgba(232,93,158,0.08), 0 2px 8px rgba(0,0,0,0.04)',
-            }}
+            className="rounded-3xl p-7 space-y-5 bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xl"
           >
             <h3
-              className="text-base font-bold flex items-center gap-2"
-              style={{ color: '#18181B' }}
+              className="text-base font-bold flex items-center gap-2 text-zinc-900 dark:text-white font-heading"
             >
-              <Award className="w-5 h-5 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
+              <Award className="w-5 h-5 shrink-0 text-purple-600 dark:text-purple-400" aria-hidden="true" />
               Core Commitments
             </h3>
 
@@ -169,15 +155,14 @@ export default function About() {
               {commitments.map(({ icon: Icon, title, desc }) => (
                 <div key={title} className="flex items-start gap-3">
                   <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-                    style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-900"
                     aria-hidden="true"
                   >
                     <Icon className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold" style={{ color: '#18181B' }}>{title}</h4>
-                    <p className="text-[11px] mt-0.5 leading-relaxed" style={{ color: '#71717A' }}>
+                    <h4 className="text-xs font-bold text-zinc-900 dark:text-white">{title}</h4>
+                    <p className="text-[11px] mt-0.5 leading-relaxed text-zinc-500 dark:text-zinc-400 font-sans">
                       {desc}
                     </p>
                   </div>
@@ -185,13 +170,11 @@ export default function About() {
               ))}
             </div>
 
-            <div style={{ borderTop: '1px solid #F1D5E3', paddingTop: '1rem' }}>
+            <div className="border-t border-zinc-100 dark:border-[#2A2E45] pt-4">
               <Link
                 to="/tools"
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold text-white transition-all active:scale-95"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold text-white transition-all active:scale-95 bg-purple-600 dark:bg-purple-600 hover:bg-purple-700 font-display"
                 style={{
-                  background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                  boxShadow: '0 4px 14px rgba(232,93,158,0.28)',
                   textDecoration: 'none',
                 }}
               >
@@ -205,21 +188,19 @@ export default function About() {
 
       {/* ── Values Section ────────────────────────────────── */}
       <section
-        className="py-16 px-4 sm:px-6 lg:px-8"
-        style={{ background: '#FFF7FB', borderTop: '1px solid #F1D5E3', borderBottom: '1px solid #F1D5E3' }}
+        className="py-16 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-[#141622] border-t border-b border-zinc-200 dark:border-[#2A2E45] transition-colors"
         aria-labelledby="values-heading"
       >
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10 space-y-2">
-            <span className="section-label">Our Values</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/60 px-2.5 py-0.5 rounded-full border border-purple-200 dark:border-purple-800">Our Values</span>
             <h2
               id="values-heading"
-              className="text-2xl sm:text-3xl font-extrabold"
-              style={{ color: '#18181B', letterSpacing: '-0.03em' }}
+              className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white font-heading"
             >
               What We Stand For
             </h2>
-            <p className="text-sm" style={{ color: '#71717A' }}>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 font-sans">
               Three principles that guide every design and engineering decision we make.
             </p>
           </div>
@@ -228,24 +209,18 @@ export default function About() {
             {values.map(({ icon: Icon, title, desc }) => (
               <div
                 key={title}
-                className="p-6 rounded-2xl text-center space-y-3"
-                style={{
-                  background: '#FFFFFF',
-                  border: '1px solid #F1D5E3',
-                  boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
-                }}
+                className="p-6 rounded-2xl text-center space-y-3 bg-white dark:bg-[#0D0D14] border border-zinc-200 dark:border-[#2A2E45] shadow-xs"
               >
                 <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto"
-                  style={{ background: '#FCE7F3', color: '#E85D9E' }}
+                  className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-900"
                   aria-hidden="true"
                 >
                   <Icon className="w-6 h-6" strokeWidth={2} />
                 </div>
-                <h3 className="text-base font-bold" style={{ color: '#18181B' }}>
+                <h3 className="text-base font-bold text-zinc-900 dark:text-white font-heading">
                   {title}
                 </h3>
-                <p className="text-xs leading-relaxed" style={{ color: '#71717A' }}>
+                <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400 font-sans">
                   {desc}
                 </p>
               </div>
@@ -258,20 +233,17 @@ export default function About() {
       <section className="py-14 px-4 sm:px-6 lg:px-8" aria-label="Get started with PDFora">
         <div className="max-w-2xl mx-auto text-center space-y-5">
           <h2
-            className="text-2xl sm:text-3xl font-extrabold"
-            style={{ color: '#18181B', letterSpacing: '-0.03em' }}
+            className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white font-heading"
           >
             Ready to Get Started?
           </h2>
-          <p className="text-sm leading-relaxed" style={{ color: '#71717A' }}>
-            Try any of our {8} PDF tools — completely free, with no sign-up or installation.
+          <p className="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400 font-sans">
+            Try any of our PDF tools — completely free, with no sign-up or installation.
           </p>
           <Link
             to="/tools"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold text-white transition-all active:scale-95"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold text-white transition-all active:scale-95 bg-purple-600 dark:bg-purple-600 hover:bg-purple-700 shadow-md font-display"
             style={{
-              background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-              boxShadow: '0 6px 20px rgba(232,93,158,0.30)',
               textDecoration: 'none',
             }}
           >
