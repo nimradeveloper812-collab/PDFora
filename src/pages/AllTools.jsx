@@ -23,6 +23,7 @@ export default function AllTools() {
         { name: "Split PDF", path: "/split-pdf", desc: "Separate PDF into individual pages" },
         { name: "Rotate PDF", path: "/rotate-pdf", desc: "Rotate pages 90° or 180°" },
         { name: "Protect PDF", path: "/protect-pdf", desc: "Encrypt PDF with password" },
+        { name: "Unlock PDF", path: "/unlock-pdf", desc: "Remove PDF password & permissions" },
       ]
     },
     {

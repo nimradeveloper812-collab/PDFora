@@ -21,6 +21,9 @@ import ChangeBackgroundTool from '../image/ChangeBackgroundTool';
 import ResizeImageTool from '../image/ResizeImageTool';
 import JsonFormatterTool from '../pdf/JsonFormatterTool';
 import QrGeneratorTool from '../pdf/QrGeneratorTool';
+import UnlockPdfTool from '../pdf/UnlockPdfTool';
+import ProtectPdfTool from '../pdf/ProtectPdfTool';
+import RotatePdfTool from '../pdf/RotatePdfTool';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
@@ -259,6 +262,12 @@ export default function ToolLayout({ tool }) {
           <JsonFormatterTool />
         ) : tool.id === 'qr-generator' ? (
           <QrGeneratorTool />
+        ) : tool.id === 'unlock-pdf' ? (
+          <UnlockPdfTool />
+        ) : tool.id === 'protect-pdf' ? (
+          <ProtectPdfTool />
+        ) : tool.id === 'rotate-pdf' ? (
+          <RotatePdfTool />
         ) : (
           <Dropzone tool={tool} />
         )}

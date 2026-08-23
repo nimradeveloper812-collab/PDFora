@@ -78,6 +78,7 @@ export default function Header() {
         { name: "Split PDF", path: "/split-pdf" },
         { name: "Rotate PDF", path: "/rotate-pdf" },
         { name: "Protect PDF", path: "/protect-pdf" },
+        { name: "Unlock PDF", path: "/unlock-pdf" },
       ]
     },
     {

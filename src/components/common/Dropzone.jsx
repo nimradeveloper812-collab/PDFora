@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import {
   UploadCloud, File, X, Plus, CheckCircle2, Download,
   RotateCcw, Sparkles, ArrowRight, ShieldCheck, FileText,
-  Sliders, AlertCircle, Clock, Eye
+  Sliders, AlertCircle, Clock, Eye, ChevronUp, ChevronDown, ArrowUpDown
 } from 'lucide-react';
 import { pdfApi } from '../../services/pdfApi';
 import { analytics } from '../../services/analytics';
@@ -36,6 +36,7 @@ export default function Dropzone({ tool }) {
   const [resultBlobUrl, setResultBlobUrl] = useState(null);
   const [resultFilename, setResultFilename] = useState('');
   const [actualResultSize, setActualResultSize] = useState(0);
+  const [showPreview, setShowPreview] = useState(true);
   const fileInputRef = useRef(null);
 
   /* ── helpers ──────────────────────────────────────────── */
@@ -159,16 +160,36 @@ export default function Dropzone({ tool }) {
     setErrorMsg('');
   };
 
+  const moveFile = (idx, direction) => {
+    setFiles(prev => {
+      const next = [...prev];
+      const target = idx + direction;
+      if (target < 0 || target >= next.length) return prev;
+      const temp = next[idx];
+      next[idx] = next[target];
+      next[target] = temp;
+      return next;
+    });
+  };
+
+  const sortFilesAZ = () => {
+    setFiles(prev => [...prev].sort((a, b) => a.name.localeCompare(b.name)));
+  };
+
   const handleOptionChange = (id, val) =>
     setOptionValues(prev => ({ ...prev, [id]: val }));
 
   /* ── real processing ────────────────────────────── */
   const startProcessing = async () => {
     if (!files.length) return;
-    const startTime = performance.now();
     setStatus('processing');
     setProgress(10);
     setProgressText('Preparing file for processing…');
+    
+    // Yield to let React render the loading screen
+    await new Promise(resolve => setTimeout(resolve, 80));
+
+    const startTime = performance.now();
     analytics.trackConversionStart(tool.id, tool.id === 'split-pdf' ? splitConfig : optionValues);
 
     const handleProgress = (pct, msg) => {
@@ -389,6 +410,7 @@ export default function Dropzone({ tool }) {
     }
     setResultFilename('');
     setActualResultSize(0);
+    setShowPreview(true);
     const init = {};
     tool.options?.forEach(o => { init[o.id] = o.default; });
     setOptionValues(init);
@@ -565,25 +587,40 @@ export default function Dropzone({ tool }) {
                     </span>
                   </div>
 
-                  {tool.maxFiles > 1 && files.length < tool.maxFiles && (
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-all"
-                      style={{
-                        color: '#3B82F6',
-                        background: '#DBEAFE',
-                        border: '1px solid #BFDBFE',
-                      }}
-                      aria-label="Add more files"
-                    >
-                      <Plus className="w-3.5 h-3.5" aria-hidden="true" />
-                      Add More
-                    </button>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {files.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={sortFilesAZ}
+                        className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-lg transition-all text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 border border-zinc-200 dark:border-zinc-700 cursor-pointer"
+                        title="Sort files alphabetically"
+                      >
+                        <ArrowUpDown className="w-3 h-3" />
+                        <span>Sort A-Z</span>
+                      </button>
+                    )}
+
+                    {tool.maxFiles > 1 && files.length < tool.maxFiles && (
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-all cursor-pointer"
+                        style={{
+                          color: '#3B82F6',
+                          background: '#DBEAFE',
+                          border: '1px solid #BFDBFE',
+                        }}
+                        aria-label="Add more files"
+                      >
+                        <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+                        Add More
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <div
-                  className="space-y-2 max-h-52 overflow-y-auto pr-1"
+                  className="space-y-2 max-h-60 overflow-y-auto pr-1"
                   role="list"
                   aria-label="Selected files"
                 >
@@ -599,11 +636,14 @@ export default function Dropzone({ tool }) {
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div
-                          className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                          className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 relative font-bold text-xs"
                           style={{ background: '#DBEAFE', color: '#3B82F6' }}
                           aria-hidden="true"
                         >
                           <FileText className="w-4 h-4" />
+                          <span className="absolute -top-1 -right-1 w-4 h-4 bg-purple-600 text-white rounded-full text-[9px] flex items-center justify-center font-bold">
+                            {idx + 1}
+                          </span>
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-xs sm:text-sm font-semibold truncate max-w-[160px] xs:max-w-[220px] sm:max-w-sm" style={{ color: '#18181B' }}>
@@ -614,16 +654,43 @@ export default function Dropzone({ tool }) {
                           </p>
                         </div>
                       </div>
-                      <button
-                        onClick={() => removeFile(idx)}
-                        className="p-1.5 rounded-lg transition-colors hover:bg-red-50"
-                        style={{ color: '#A1A1AA' }}
-                        aria-label={`Remove ${file.name}`}
-                        onMouseEnter={e => (e.currentTarget.style.color = '#EF4444')}
-                        onMouseLeave={e => (e.currentTarget.style.color = '#A1A1AA')}
-                      >
-                        <X className="w-3.5 h-3.5" aria-hidden="true" />
-                      </button>
+
+                      <div className="flex items-center gap-1 shrink-0">
+                        {files.length > 1 && (
+                          <div className="flex items-center gap-0.5 mr-1 bg-white rounded-lg border border-zinc-200 p-0.5">
+                            <button
+                              type="button"
+                              onClick={() => moveFile(idx, -1)}
+                              disabled={idx === 0}
+                              className={`p-1 rounded transition-colors ${idx === 0 ? 'text-zinc-300 cursor-not-allowed' : 'text-zinc-600 hover:text-purple-600 hover:bg-zinc-100 cursor-pointer'}`}
+                              title="Move Up"
+                            >
+                              <ChevronUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveFile(idx, 1)}
+                              disabled={idx === files.length - 1}
+                              className={`p-1 rounded transition-colors ${idx === files.length - 1 ? 'text-zinc-300 cursor-not-allowed' : 'text-zinc-600 hover:text-purple-600 hover:bg-zinc-100 cursor-pointer'}`}
+                              title="Move Down"
+                            >
+                              <ChevronDown className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => removeFile(idx)}
+                          className="p-1.5 rounded-lg transition-colors hover:bg-red-50 cursor-pointer"
+                          style={{ color: '#A1A1AA' }}
+                          aria-label={`Remove ${file.name}`}
+                          onMouseEnter={e => (e.currentTarget.style.color = '#EF4444')}
+                          onMouseLeave={e => (e.currentTarget.style.color = '#A1A1AA')}
+                        >
+                          <X className="w-3.5 h-3.5" aria-hidden="true" />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -971,6 +1038,55 @@ export default function Dropzone({ tool }) {
                 Process Another
               </button>
             </div>
+
+            {/* Live Preview Section */}
+            {resultBlobUrl && (
+              <div className="w-full mt-6 pt-6 border-t border-zinc-100 dark:border-[#2A2E45]">
+                <button
+                  type="button"
+                  onClick={() => setShowPreview(!showPreview)}
+                  className="mx-auto flex items-center gap-1.5 text-xs font-bold text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors cursor-pointer py-1 px-3 bg-zinc-50 dark:bg-[#1C1E30] rounded-lg border border-zinc-200 dark:border-[#2D324E] shadow-sm mb-4"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>{showPreview ? 'Hide Live Preview' : 'Show Live Preview'}</span>
+                </button>
+                {showPreview && (
+                  <div className="w-full bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl p-2 border border-zinc-200 dark:border-[#2A2E45] shadow-inner overflow-hidden animate-fade-in">
+                    {resultFilename?.toLowerCase().endsWith('.pdf') ? (
+                      <iframe
+                        src={resultBlobUrl}
+                        title="PDF Preview"
+                        className="w-full h-[550px] rounded-xl border-0 bg-white"
+                      />
+                    ) : resultFilename?.toLowerCase().endsWith('.jpg') ||
+                        resultFilename?.toLowerCase().endsWith('.jpeg') ||
+                        resultFilename?.toLowerCase().endsWith('.png') ||
+                        resultFilename?.toLowerCase().endsWith('.webp') ||
+                        resultFilename?.toLowerCase().endsWith('.bmp') ||
+                        resultFilename?.toLowerCase().endsWith('.gif') ? (
+                      <img
+                        src={resultBlobUrl}
+                        alt="Preview"
+                        className="max-w-full max-h-[550px] mx-auto object-contain rounded-xl"
+                      />
+                    ) : resultFilename?.toLowerCase().endsWith('.txt') ||
+                        resultFilename?.toLowerCase().endsWith('.md') ||
+                        resultFilename?.toLowerCase().endsWith('.json') ||
+                        resultFilename?.toLowerCase().endsWith('.csv') ? (
+                      <iframe
+                        src={resultBlobUrl}
+                        title="Text Preview"
+                        className="w-full h-[350px] rounded-xl bg-white dark:bg-zinc-950 text-left p-4 font-mono text-xs overflow-auto border-0"
+                      />
+                    ) : (
+                      <div className="py-8 text-xs text-zinc-500 dark:text-zinc-400">
+                        Preview not available for this file type ({resultFilename?.split('.').pop()?.toUpperCase()}). Please download to view.
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* ── High-CPM Download View Ad ── */}
             <div className="max-w-md mx-auto pt-2">

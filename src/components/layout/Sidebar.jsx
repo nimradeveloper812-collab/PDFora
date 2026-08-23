@@ -26,7 +26,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
     setOpenSection(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const pdfTools = TOOLS.filter(t => ['compress-pdf', 'merge-pdf', 'split-pdf'].includes(t.id));
+  const pdfTools = TOOLS.filter(t => ['compress-pdf', 'merge-pdf', 'split-pdf', 'rotate-pdf', 'protect-pdf', 'unlock-pdf'].includes(t.id));
   const convertTools = TOOLS.filter(t => t.category === 'documents' || ['jpg-to-pdf', 'pdf-to-jpg', 'powerpoint-to-pdf'].includes(t.id));
   const mediaTools = TOOLS.filter(t => ['images', 'video', 'audio'].includes(t.category) && !['jpg-to-pdf', 'pdf-to-jpg'].includes(t.id));
 

@@ -124,19 +124,28 @@ export default function Base64ToPdfTool() {
           </div>
 
           {pdfBlobUrl && (
-            <div className="pt-4 border-t border-zinc-100 flex items-center justify-between animate-fade-up">
-              <span className="text-xs font-bold text-emerald-600 flex items-center gap-1.5">
-                <FileText className="w-4 h-4" />
-                PDF Decoded Successfully!
-              </span>
-              <a
-                href={pdfBlobUrl}
-                download="decoded_document.pdf"
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md bg-emerald-600 hover:bg-emerald-700 transition-all"
-              >
-                <Download className="w-4 h-4" />
-                Download Decoded PDF
-              </a>
+            <div className="space-y-4">
+              <div className="pt-4 border-t border-zinc-100 flex items-center justify-between animate-fade-up">
+                <span className="text-xs font-bold text-emerald-600 flex items-center gap-1.5">
+                  <FileText className="w-4 h-4" />
+                  PDF Decoded Successfully!
+                </span>
+                <a
+                  href={pdfBlobUrl}
+                  download="decoded_document.pdf"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md bg-emerald-600 hover:bg-emerald-700 transition-all"
+                >
+                  <Download className="w-4 h-4" />
+                  Download Decoded PDF
+                </a>
+              </div>
+              <div className="w-full bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl p-2 border border-zinc-200 dark:border-[#2A2E45] shadow-inner overflow-hidden">
+                <iframe
+                  src={pdfBlobUrl}
+                  title="PDF Preview"
+                  className="w-full h-[450px] rounded-xl border-0 bg-white"
+                />
+              </div>
             </div>
           )}
         </div>

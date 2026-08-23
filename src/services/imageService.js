@@ -118,10 +118,10 @@ export async function removeImageBackground(fileOrBlob, onProgress) {
     const imglyModule = await import('@imgly/background-removal');
     const imglyRemoveBackground = imglyModule.removeBackground || imglyModule.default || imglyModule;
 
-    if (onProgress) onProgress(25, 'Loading segmentation model...');
+    if (onProgress) onProgress(25, 'Loading fast segmentation model...');
 
     const config = {
-      model: 'isnet', // Fast and highly accurate general salient object segmentation
+      model: 'isnet_quint8', // 4x smaller 8-bit quantized model for lightning fast download & inference
       output: {
         format: 'image/png',
         quality: 1.0,
@@ -134,20 +134,22 @@ export async function removeImageBackground(fileOrBlob, onProgress) {
 
         if (typeof key === 'string') {
           if (key.includes('fetch')) {
-            pct = 30 + Math.min(25, Math.floor((current / (total || 1)) * 25));
+            const fraction = total && total > 0 ? current / total : 0.5;
+            pct = 30 + Math.min(28, Math.floor(fraction * 28));
             label = 'Downloading AI model weights...';
           } else if (key.includes('init') || key.includes('load')) {
-            pct = 58;
+            pct = 60;
             label = 'Preparing ONNX neural pipeline...';
           } else if (key.includes('compute') || key.includes('inference')) {
-            pct = 60 + Math.min(30, Math.floor((current / (total || 1)) * 30));
+            const fraction = total && total > 0 ? current / total : 0.5;
+            pct = 62 + Math.min(30, Math.floor(fraction * 30));
             label = 'Extracting foreground subject...';
           } else if (key.includes('post')) {
-            pct = 92;
+            pct = 94;
             label = 'Refining transparent alpha edges...';
           }
         }
-        onProgress(Math.min(96, pct), label);
+        onProgress(Math.min(98, pct), label);
       }
     };
 
