@@ -103,16 +103,6 @@ export default function Header() {
                 </button>
               </div>
 
-              {/* Direct AI & Extraction Link */}
-              <Link
-                to="/tools?category=pdf-ai"
-                className="px-3.5 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/50 hover:bg-purple-100 dark:hover:bg-purple-900/60 border border-purple-200 dark:border-purple-800 transition-colors"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-                <span>AI &amp; Extraction</span>
-                <span className="px-1.5 py-0.2 text-[9px] font-black uppercase rounded bg-purple-600 text-white">AI</span>
-              </Link>
-
               <Link
                 to="/tools"
                 className="px-3.5 py-2 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
