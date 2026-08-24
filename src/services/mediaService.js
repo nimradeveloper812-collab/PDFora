@@ -63,39 +63,60 @@ export function formatBytes(bytes, decimals = 2) {
  */
 export async function extractAudioFromVideo(file, options = {}, onProgress) {
   const { format = 'mp3', bitrate = '192k' } = options;
-  onProgress?.(15, 'Uploading video to processing engine...');
+  onProgress?.(15, 'Uploading video to audio demuxer...');
 
   const formData = new FormData();
   formData.append('file', file);
   formData.append('format', format);
   formData.append('bitrate', bitrate);
 
-  onProgress?.(45, 'Extracting audio track with FFmpeg...');
+  let curProgress = 25;
+  const progressTimer = setInterval(() => {
+    if (curProgress < 90) {
+      curProgress += Math.floor(Math.random() * 9) + 5;
+      if (curProgress > 90) curProgress = 90;
 
-  const res = await fetch(`${API_BASE}/api/media/video-to-audio`, {
-    method: 'POST',
-    body: formData,
-  });
+      let msg = 'Extracting audio stream with FFmpeg...';
+      if (curProgress > 50 && curProgress <= 75) {
+        msg = `Encoding ${format.toUpperCase()} audio channels at ${bitrate}...`;
+      } else if (curProgress > 75) {
+        msg = 'Packaging audio bitstream...';
+      }
+      onProgress?.(curProgress, msg);
+    }
+  }, 450);
 
-  if (!res.ok) {
-    let errorMsg = 'Failed to extract audio from video.';
-    try {
-      const json = await res.json();
-      if (json.error) errorMsg = json.error;
-    } catch {}
-    throw new Error(errorMsg);
+  try {
+    const res = await fetch(`${API_BASE}/api/media/video-to-audio`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    clearInterval(progressTimer);
+
+    if (!res.ok) {
+      let errorMsg = 'Failed to extract audio from video.';
+      try {
+        const json = await res.json();
+        if (json.error) errorMsg = json.error;
+      } catch {}
+      throw new Error(errorMsg);
+    }
+
+    onProgress?.(95, 'Finalizing audio file...');
+    const blob = await res.blob();
+    const outputSize = parseInt(res.headers.get('X-Output-Size') || blob.size, 10);
+
+    onProgress?.(100, 'Audio extraction complete!');
+    return {
+      blob,
+      outputSize,
+      format,
+    };
+  } catch (err) {
+    clearInterval(progressTimer);
+    throw err;
   }
-
-  onProgress?.(90, 'Finalizing audio file...');
-  const blob = await res.blob();
-  const outputSize = parseInt(res.headers.get('X-Output-Size') || blob.size, 10);
-
-  onProgress?.(100, 'Audio extraction complete!');
-  return {
-    blob,
-    outputSize,
-    format,
-  };
 }
 
 /**
@@ -231,42 +252,63 @@ export async function convertVideo(file, options = {}, onProgress) {
  */
 export async function compressVideo(file, options = {}, onProgress) {
   const { preset = 'balanced', resolution = 'original' } = options;
-  onProgress?.(15, 'Uploading video for compression...');
+  onProgress?.(15, 'Uploading video to processing engine...');
 
   const formData = new FormData();
   formData.append('file', file);
   formData.append('preset', preset);
   formData.append('resolution', resolution);
 
-  onProgress?.(50, 'Compressing video stream with H.264 & AAC...');
+  let curProgress = 25;
+  const progressTimer = setInterval(() => {
+    if (curProgress < 90) {
+      curProgress += Math.floor(Math.random() * 8) + 4;
+      if (curProgress > 90) curProgress = 90;
 
-  const res = await fetch(`${API_BASE}/api/media/compress-video`, {
-    method: 'POST',
-    body: formData,
-  });
+      let msg = 'Compressing video stream with H.264 & AAC...';
+      if (curProgress > 45 && curProgress <= 70) {
+        msg = 'Encoding video frames at high speed...';
+      } else if (curProgress > 70) {
+        msg = 'Optimizing bitrates & container metadata...';
+      }
+      onProgress?.(curProgress, msg);
+    }
+  }, 600);
 
-  if (!res.ok) {
-    let errorMsg = 'Failed to compress video file.';
-    try {
-      const json = await res.json();
-      if (json.error) errorMsg = json.error;
-    } catch {}
-    throw new Error(errorMsg);
+  try {
+    const res = await fetch(`${API_BASE}/api/media/compress-video`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    clearInterval(progressTimer);
+
+    if (!res.ok) {
+      let errorMsg = 'Failed to compress video file.';
+      try {
+        const json = await res.json();
+        if (json.error) errorMsg = json.error;
+      } catch {}
+      throw new Error(errorMsg);
+    }
+
+    onProgress?.(95, 'Finalizing output video...');
+    const blob = await res.blob();
+    const originalSize = parseInt(res.headers.get('X-Original-Size') || file.size, 10);
+    const compressedSize = parseInt(res.headers.get('X-Compressed-Size') || blob.size, 10);
+    const savedPercent = res.headers.get('X-Saved-Percent') || 
+      (originalSize > 0 ? (((originalSize - compressedSize) / originalSize) * 100).toFixed(1) : '0.0');
+
+    onProgress?.(100, 'Video compression complete!');
+    return {
+      blob,
+      originalSize,
+      compressedSize,
+      savedPercent,
+      format: 'mp4',
+    };
+  } catch (err) {
+    clearInterval(progressTimer);
+    throw err;
   }
-
-  onProgress?.(90, 'Packaging compressed video...');
-  const blob = await res.blob();
-  const originalSize = parseInt(res.headers.get('X-Original-Size') || file.size, 10);
-  const compressedSize = parseInt(res.headers.get('X-Compressed-Size') || blob.size, 10);
-  const savedPercent = res.headers.get('X-Saved-Percent') || 
-    (originalSize > 0 ? (((originalSize - compressedSize) / originalSize) * 100).toFixed(1) : '0.0');
-
-  onProgress?.(100, 'Video compression complete!');
-  return {
-    blob,
-    originalSize,
-    compressedSize,
-    savedPercent,
-    format: 'mp4',
-  };
 }

@@ -172,7 +172,12 @@ app.post('/api/media/video-to-audio', (req, res) => {
     const outFilename = `${(req.file.originalname || 'audio').replace(/\.[^/.]+$/, '')}.${targetFormat}`;
     const outputPath = path.join(mediaTempDir, `out_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${targetFormat}`);
 
-    let cmd = ffmpeg(inputPath).noVideo();
+    let cmd = ffmpeg(inputPath)
+      .noVideo()
+      .outputOptions([
+        '-threads', '0',
+        '-preset', 'ultrafast'
+      ]);
 
     if (targetFormat === 'mp3') {
       cmd = cmd.audioCodec('libmp3lame').audioBitrate(bitrate).toFormat('mp3');
@@ -631,7 +636,8 @@ function runVideoCompressPass(inputPath, outputPath, options) {
       .audioBitrate(audioBitrate)
       .outputOptions([
         '-crf', String(crf),
-        '-preset', 'faster',
+        '-preset', 'superfast',
+        '-threads', '0',
         '-movflags', '+faststart',
         '-pix_fmt', 'yuv420p',
         '-vf', filterString
