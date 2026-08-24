@@ -147,7 +147,9 @@ export const CATEGORIES_DATA = [
         desc: 'Convert HEIC, WebP, SVG, PNG, JPG, BMP, TIFF, and AVIF.',
         toolIds: [
           'image-converter', 'png-to-svg', 'heic-to-jpg', 'heic-to-png',
-          'webp-to-png', 'svg-to-png', 'bmp-to-jpg', 'tiff-to-jpg', 'jfif-to-jpeg'
+          'webp-to-png', 'svg-to-png', 'bmp-to-jpg', 'tiff-to-jpg', 'jfif-to-jpeg',
+          'jpg-to-png', 'png-to-jpg', 'webp-to-jpg', 'jpg-to-webp',
+          'png-to-webp', 'avif-to-jpg', 'avif-to-png', 'gif-to-png'
         ]
       }
     ]
@@ -163,7 +165,9 @@ export const CATEGORIES_DATA = [
         name: 'Video & Audio',
         desc: 'Extract MP3, convert video containers, and compress video clips.',
         toolIds: [
-          'video-to-audio', 'audio-compressor', 'video-converter', 'video-compressor'
+          'video-to-audio', 'audio-compressor', 'video-converter', 'video-compressor',
+          'mp4-to-mp3', 'mp4-to-gif', 'mov-to-mp4', 'webm-to-mp4', 'avi-to-mp4',
+          'mkv-to-mp4', 'mp4-to-webm', 'mp4-to-mov', 'mp4-to-avi', 'mute-video'
         ]
       },
       {
