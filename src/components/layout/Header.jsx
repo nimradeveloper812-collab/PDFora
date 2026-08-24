@@ -422,7 +422,15 @@ export default function Header() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 text-xs">
+              <div className={`gap-6 text-xs ${
+                activeDropdown === 'mega'
+                  ? 'grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8'
+                  : activeDropdown === 'pdf'
+                  ? 'grid grid-cols-2 md:grid-cols-4 max-w-5xl mx-auto'
+                  : activeDropdown === 'images'
+                  ? 'grid grid-cols-1 sm:grid-cols-3 max-w-4xl mx-auto'
+                  : 'grid grid-cols-1 sm:grid-cols-2 max-w-xl mx-auto'
+              }`}>
                 {megaColumns
                   .filter((_, idx) => {
                     if (activeDropdown === 'mega') return true;
@@ -433,7 +441,7 @@ export default function Header() {
                     return true;
                   })
                   .map((col, idx) => (
-                    <div key={idx} className="space-y-2.5">
+                    <div key={idx} className="space-y-2.5 p-3 rounded-xl bg-zinc-50/50 dark:bg-[#1B1E2E]/40 border border-zinc-100 dark:border-[#2A2E45]/60">
                       <h5 className={`font-black text-[11px] uppercase tracking-wider ${col.color}`}>
                         {col.title}
                       </h5>
@@ -443,7 +451,7 @@ export default function Header() {
                             <Link
                               to={item.path}
                               onClick={() => setActiveDropdown(null)}
-                              className="block hover:text-purple-600 dark:hover:text-purple-400 truncate transition-colors"
+                              className="block hover:text-purple-600 dark:hover:text-purple-400 truncate transition-colors py-0.5"
                             >
                               • {item.name}
                             </Link>
