@@ -41,7 +41,7 @@ export default function Footer() {
             </Link>
 
             <p className="text-xs sm:text-sm leading-relaxed max-w-xs text-zinc-600 dark:text-zinc-400 font-sans">
-              Free, private online document and media toolkit. Convert, merge, split, compress, and edit files in your browser with zero server file logging.
+              Free, private online document and media tools. Files stay in your browser.
             </p>
 
             <div className="flex items-center gap-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 pt-1 font-display">

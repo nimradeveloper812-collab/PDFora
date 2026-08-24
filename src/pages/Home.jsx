@@ -99,7 +99,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
             <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-            <span>Category-Organized PDF Platform · 100% Private In-Browser</span>
+            <span>Free · Private · In-Browser</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-zinc-900 dark:text-white leading-tight">
@@ -108,7 +108,7 @@ export default function Home() {
           </h1>
 
           <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 max-w-xl mx-auto leading-relaxed">
-            Easily discover tools organized by clear categories. Merge, convert, edit, compress, and secure documents directly inside your browser.
+            Merge, convert, edit, compress, and secure documents directly in your browser. No uploads needed.
           </p>
 
           {/* Primary Action Button */}
@@ -125,7 +125,7 @@ export default function Home() {
               to="/tools"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl text-sm font-bold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-[#1B1E2E] hover:bg-zinc-200 dark:hover:bg-[#2A2E45] border border-zinc-200 dark:border-[#2A2E45] transition-all"
             >
-              <span>Browse 8-Column Directory</span>
+              <span>View All Tools</span>
             </Link>
           </div>
 
@@ -137,7 +137,7 @@ export default function Home() {
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search tools or categories (e.g. merge, word to pdf, compress)..."
+                placeholder="Search tools (e.g. merge, compress, jpg)..."
                 className="w-full pl-11 pr-10 py-3.5 rounded-2xl text-sm bg-zinc-50 dark:bg-[#1B1E2E] text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 border border-zinc-200 dark:border-[#2A2E45] shadow-xs focus:outline-none focus:ring-2 focus:ring-purple-600 focus:bg-white dark:focus:bg-[#141622] transition-all"
                 aria-label="Search tools"
               />
@@ -209,11 +209,8 @@ export default function Home() {
           <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
             <div className="text-center space-y-1">
               <h2 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
-                Select a Tool Category
+                Tool Categories
               </h2>
-              <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
-                Choose a category below to explore dedicated tools.
-              </p>
             </div>
 
             {/* 8 Primary Category Cards */}
@@ -368,11 +365,8 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center space-y-1">
             <h2 className="text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
-              Why Use PDFora?
+              Why PDFora?
             </h2>
-            <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
-              Designed for speed, privacy, and seamless usability.
-            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -380,9 +374,9 @@ export default function Home() {
               <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-100 dark:border-emerald-900">
                 <CheckCircle className="w-5 h-5" />
               </div>
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-white">100% Free &amp; Unlimited</h3>
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-white">100% Free</h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                No credit cards, no subscriptions, and no paywalls. Process as many files as you need anytime.
+                No sign-up, no subscriptions, no limits.
               </p>
             </div>
 
@@ -390,9 +384,9 @@ export default function Home() {
               <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center border border-purple-100 dark:border-purple-900">
                 <ShieldCheck className="w-5 h-5" />
               </div>
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-white">100% Private (In-Browser)</h3>
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-white">Private</h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                Your files are processed locally inside your web browser sandbox. Zero files are uploaded to servers.
+                Files stay in your browser. Nothing is uploaded.
               </p>
             </div>
 
@@ -400,9 +394,9 @@ export default function Home() {
               <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-100 dark:border-blue-900">
                 <Zap className="w-5 h-5" />
               </div>
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-white">Fast &amp; Studio Quality</h3>
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-white">Fast</h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                Powered by native multi-threaded WebAssembly engines for instant conversion and original quality.
+                Instant processing via WebAssembly engine.
               </p>
             </div>
           </div>

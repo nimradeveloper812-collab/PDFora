@@ -91,7 +91,7 @@ export default function Contact() {
             Contact Support
           </h1>
           <p className="text-sm sm:text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
-            Have a question, bug report, or feature request? Send us a message and we'll respond within one business day.
+            Have a question or feedback? Send us a message below.
           </p>
         </div>
       </section>
@@ -124,7 +124,6 @@ export default function Contact() {
                   Support Hours
                 </h4>
                 <p className="text-sm font-bold text-zinc-900 dark:text-white">Mon – Sat, 9am – 9pm PKT</p>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Pakistan Standard Time (UTC+5)</p>
               </div>
             </div>
 
@@ -137,18 +136,7 @@ export default function Contact() {
                   Location
                 </h4>
                 <p className="text-sm font-bold text-zinc-900 dark:text-white">Lahore, Pakistan 🇵🇰</p>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Serving users worldwide</p>
               </div>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/80 space-y-2">
-              <div className="flex items-center gap-2 text-purple-700 dark:text-purple-300 font-bold text-sm">
-                <Sparkles className="w-4 h-4 text-purple-600" />
-                <span>Tip: Check FAQs first</span>
-              </div>
-              <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
-                Most common questions about conversion limits, privacy, and file formats are answered on our homepage.
-              </p>
             </div>
           </div>
 

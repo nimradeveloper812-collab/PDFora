@@ -300,31 +300,7 @@ export default function ToolLayout({ tool }) {
         </div>
       </section>
 
-      {/* ── Overview & Deep Guide ─────────────────────────── */}
-      {tool.overview && (
-        <section
-          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
-          aria-labelledby="overview-heading"
-        >
-          <div className="p-6 sm:p-8 rounded-lg bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45]">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/50 px-2.5 py-0.5 rounded-full border border-purple-200 dark:border-purple-800">
-                Complete Guide
-              </span>
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">• Updated 2026</span>
-            </div>
-            <h2
-              id="overview-heading"
-              className="text-xl sm:text-2xl font-bold mb-3 text-zinc-900 dark:text-white tracking-tight"
-            >
-              About {tool.name} on PDFora
-            </h2>
-            <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300 font-normal">
-              {tool.overview}
-            </p>
-          </div>
-        </section>
-      )}
+
 
       {/* ── How to Use ─────────────────────────────────────── */}
       <section

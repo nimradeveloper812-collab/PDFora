@@ -39,16 +39,11 @@ export default function AllTools() {
       {/* Header Banner */}
       <section className="pt-12 pb-10 px-4 sm:px-6 lg:px-8 text-center border-b border-zinc-200 dark:border-[#2A2E45] bg-white dark:bg-[#141622] transition-colors">
         <div className="max-w-4xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-            <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-            <span>Category → Subcategory → Tool Architecture</span>
-          </div>
-
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-zinc-900 dark:text-white">
-            All Document &amp; File Tools
+            All Tools Directory
           </h1>
           <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 max-w-xl mx-auto">
-            Browse PDFora's complete tool directory organized into 8 primary categories and subcategories.
+            Browse all 89 document, image, video, and developer tools.
           </p>
 
           <div className="max-w-md mx-auto pt-2">
