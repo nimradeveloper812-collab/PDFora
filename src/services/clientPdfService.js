@@ -1356,5 +1356,37 @@ export const clientPdfService = {
 
     onProgress?.(100, 'Markdown conversion complete!');
     return new Blob([mdContent], { type: 'text/markdown;charset=utf-8' });
+  },
+
+  /* ── 36. Extract PDF Text Pages ───────────────────────────────── */
+  async extractPdfTextPages(file, onProgress) {
+    onProgress?.(10, 'Loading PDF document engine...');
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfjs = await loadPdfJs();
+    const loadingTask = pdfjs.getDocument({ data: new Uint8Array(arrayBuffer) });
+    const pdfDoc = await loadingTask.promise;
+    const numPages = pdfDoc.numPages;
+
+    const pages = [];
+    for (let i = 1; i <= numPages; i++) {
+      const progressPct = 10 + Math.round((i / numPages) * 85);
+      onProgress?.(progressPct, `Parsing page ${i} of ${numPages}...`);
+
+      const page = await pdfDoc.getPage(i);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items
+        .map(item => item.str)
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      pages.push({
+        pageNum: i,
+        text: pageText
+      });
+    }
+
+    onProgress?.(100, 'Document text parsing complete!');
+    return pages;
   }
 };
