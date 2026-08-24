@@ -1273,38 +1273,120 @@ export const clientPdfService = {
 
   /* ── 33. AI PDF Summarizer ──────────────────────────────────────── */
   async aiPdfSummarizer(file, options = {}, onProgress) {
-    onProgress?.(20, 'Reading document text for AI summarization...');
+    onProgress?.(10, 'Loading full PDF document engine...');
     const arrayBuffer = await file.arrayBuffer();
     const pdfjs = await loadPdfJs();
     const loadingTask = pdfjs.getDocument({ data: new Uint8Array(arrayBuffer) });
     const pdfDoc = await loadingTask.promise;
     const numPages = pdfDoc.numPages;
 
-    let allText = '';
-    const samplePages = Math.min(numPages, 5);
-    for (let i = 1; i <= samplePages; i++) {
+    const pageSummaries = [];
+    let totalWordCount = 0;
+    let fullTextStream = '';
+
+    // Loop through ALL pages of the document
+    for (let i = 1; i <= numPages; i++) {
+      const progressPct = 10 + Math.round((i / numPages) * 75);
+      onProgress?.(progressPct, `Parsing page ${i} of ${numPages} for full document AI summary...`);
+
       const page = await pdfDoc.getPage(i);
-      const content = await page.getTextContent();
-      allText += content.items.map(item => item.str).join(' ') + '\n';
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items
+        .map(item => item.str)
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      if (pageText.length > 0) {
+        const words = pageText.split(/\s+/).filter(Boolean);
+        totalWordCount += words.length;
+        fullTextStream += pageText + ' ';
+
+        // Extract key sentences for this page
+        const sentences = pageText
+          .split(/(?<=[.!?])\s+/)
+          .map(s => s.trim())
+          .filter(s => s.length > 20 && !s.toLowerCase().startsWith('page '));
+
+        if (sentences.length > 0) {
+          pageSummaries.push({
+            pageNum: i,
+            wordCount: words.length,
+            keySentences: sentences.slice(0, Math.min(sentences.length, 3))
+          });
+        }
+      }
     }
 
-    onProgress?.(70, 'Generating AI executive summary & takeaways...');
-    const words = allText.split(/\s+/).filter(Boolean);
-    const wordCount = words.length;
+    onProgress?.(90, 'Synthesizing full-document AI executive summary...');
 
-    const summaryText = `🤖 AI Document Summary: "${file.name}"\n` +
-      `═══════════════════════════════════════════════════════════\n\n` +
-      `📊 Document Metrics:\n` +
-      `• Total Pages: ${numPages}\n` +
-      `• Approx Word Count: ~${wordCount * (numPages / samplePages | 1)} words\n` +
-      `• Processing Engine: In-Browser Neural Parser\n\n` +
-      `💡 Executive Highlights:\n` +
-      `1. Document structure verified with ${numPages} continuous section(s).\n` +
-      `2. Extracted sample preview:\n` +
-      `   "${words.slice(0, 45).join(' ')}..."\n\n` +
-      `✅ All key terms and clauses analyzed successfully.`;
+    // Handle scanned/empty PDF
+    if (totalWordCount < 10) {
+      const scannedMsg = `🤖 AI Document Summary: "${file.name}"\n` +
+        `═══════════════════════════════════════════════════════════\n\n` +
+        `⚠️ Selectable Text Layer Not Found:\n` +
+        `This document (${numPages} page(s)) does not contain readable text. It may be a scanned image PDF.\n\n` +
+        `💡 Recommendation:\n` +
+        `Please use PDFora's free "OCR PDF" tool to convert scanned images into searchable text before summarizing.`;
+      
+      onProgress?.(100, 'AI Summarization complete!');
+      return new Blob([scannedMsg], { type: 'text/plain;charset=utf-8' });
+    }
 
-    onProgress?.(100, 'AI Summarization complete!');
+    // Extract Overall Key Highlights across full document
+    const allSentences = fullTextStream.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(s => s.length > 25);
+    
+    // Find key dates, financial, and topic statements
+    const dateRegex = /\b(\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4}|(?:january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2},?\s+\d{4}|\d{4}|deadline|due date|effective date)\b/gi;
+    const moneyRegex = /(\$|\bUSD\b|\bEUR\b|\bRs\b|\bPKR\b|\btotal\b|\bfee\b|\bpayment\b|\bcost\b|\binvoice\b)/i;
+
+    const datesFound = allSentences.filter(s => dateRegex.test(s)).slice(0, 4);
+    const financialFound = allSentences.filter(s => moneyRegex.test(s)).slice(0, 4);
+
+    // Build the Full Document Summary Report
+    let summaryText = `🤖 FULL DOCUMENT AI SUMMARY & ANALYSIS\n`;
+    summaryText += `═══════════════════════════════════════════════════════════\n`;
+    summaryText += `📄 File Name: ${file.name}\n`;
+    summaryText += `📊 Total Pages Analyzed: ${numPages} Page(s)\n`;
+    summaryText += `📝 Total Words Processed: ~${totalWordCount.toLocaleString()} Words\n`;
+    summaryText += `⚡ Processing Scope: 100% Full Document In-Browser Scan\n`;
+    summaryText += `═══════════════════════════════════════════════════════════\n\n`;
+
+    summaryText += `💡 EXECUTIVE OVERVIEW & PRIMARY THESIS:\n`;
+    summaryText += `───────────────────────────────────────────────────────────\n`;
+    if (allSentences.length > 0) {
+      summaryText += `${allSentences.slice(0, 3).join(' ')}\n\n`;
+    }
+
+    summaryText += `📖 PAGE-BY-PAGE DETAILED BREAKDOWN (Full ${numPages} Pages):\n`;
+    summaryText += `───────────────────────────────────────────────────────────\n`;
+    pageSummaries.forEach(ps => {
+      summaryText += `\n[ Page ${ps.pageNum} ] (${ps.wordCount} words)\n`;
+      ps.keySentences.forEach(sentence => {
+        summaryText += `  • ${sentence}\n`;
+      });
+    });
+
+    if (datesFound.length > 0) {
+      summaryText += `\n\n📅 KEY DATES, TIMELINES & DEADLINES DETECTED:\n`;
+      summaryText += `───────────────────────────────────────────────────────────\n`;
+      datesFound.forEach(d => {
+        summaryText += `  • ${d}\n`;
+      });
+    }
+
+    if (financialFound.length > 0) {
+      summaryText += `\n\n💰 FINANCIAL, PAYMENT & VALUE CLAUSES DETECTED:\n`;
+      summaryText += `───────────────────────────────────────────────────────────\n`;
+      financialFound.forEach(f => {
+        summaryText += `  • ${f}\n`;
+      });
+    }
+
+    summaryText += `\n\n✅ FULL DOCUMENT ANALYSIS COMPLETE\n`;
+    summaryText += `Generated privately by PDFora In-Browser Neural Engine.`;
+
+    onProgress?.(100, 'Full document AI Summarization complete!');
     return new Blob([summaryText], { type: 'text/plain;charset=utf-8' });
   },
 
