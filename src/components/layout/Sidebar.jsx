@@ -17,6 +17,7 @@ const iconMap = {
 export default function Sidebar({ mobileOpen, setMobileOpen }) {
   const location = useLocation();
   const [openSection, setOpenSection] = useState({
+    ai: true,
     pdf: true,
     convert: true,
     media: true
@@ -26,6 +27,10 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
     setOpenSection(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
+  const aiTools = TOOLS.filter(t => [
+    'chat-with-pdf', 'ai-resume-reviewer', 'ai-table-extractor',
+    'ai-pdf-summarizer', 'translate-pdf', 'ocr-pdf', 'pdf-metadata-editor'
+  ].includes(t.id));
   const pdfTools = TOOLS.filter(t => ['compress-pdf', 'merge-pdf', 'split-pdf', 'rotate-pdf', 'protect-pdf', 'unlock-pdf'].includes(t.id));
   const convertTools = TOOLS.filter(t => t.category === 'documents' || ['jpg-to-pdf', 'pdf-to-jpg', 'powerpoint-to-pdf'].includes(t.id));
   const mediaTools = TOOLS.filter(t => ['images', 'video', 'audio'].includes(t.category) && !['jpg-to-pdf', 'pdf-to-jpg'].includes(t.id));
@@ -89,6 +94,44 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
               19
             </span>
           </Link>
+        </div>
+
+        {/* 0. AI Intelligence & Extraction */}
+        <div>
+          <button
+            onClick={() => toggleSection('ai')}
+            className="w-full flex items-center justify-between px-2 py-1.5 text-[11px] font-extrabold text-purple-600 dark:text-purple-400 uppercase tracking-wider font-display hover:text-purple-700"
+          >
+            <span className="flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>AI &amp; Extraction</span>
+            </span>
+            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openSection.ai ? 'rotate-180' : ''}`} />
+          </button>
+
+          {openSection.ai && (
+            <div className="mt-1 space-y-0.5">
+              {aiTools.map(t => {
+                const Icon = iconMap[t.iconName] || Sparkles;
+                const isActive = location.pathname === t.path;
+                return (
+                  <Link
+                    key={t.id}
+                    to={t.path}
+                    onClick={() => setMobileOpen && setMobileOpen(false)}
+                    className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs transition-colors ${
+                      isActive
+                        ? 'bg-purple-100 text-purple-800 font-bold dark:bg-purple-950/80 dark:text-purple-200'
+                        : 'text-zinc-700 hover:bg-purple-50 hover:text-purple-700 dark:text-zinc-300 dark:hover:bg-zinc-800'
+                    }`}
+                  >
+                    <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-purple-600' : 'text-purple-500'}`} />
+                    <span className="truncate">{t.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* 1. PDF Suite */}

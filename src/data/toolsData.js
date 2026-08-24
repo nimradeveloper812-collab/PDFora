@@ -3,13 +3,19 @@ export const TOOLS_CATEGORIES = [
     "id": "all",
     "name": "All Tools",
     "shortName": "All",
-    "desc": "Complete suite of 19 free online document, image, video, and audio tools."
+    "desc": "Complete suite of 89 free online document, image, video, audio, and AI tools."
   },
   {
     "id": "pdf",
     "name": "PDF Tools",
     "shortName": "PDF",
     "desc": "Everything you need to merge, split, compress, and organize PDF documents."
+  },
+  {
+    "id": "pdf-ai",
+    "name": "AI Intelligence & Extraction",
+    "shortName": "AI & Extraction",
+    "desc": "Chat with PDFs, summarize content, extract tables, and run OCR with AI."
   },
   {
     "id": "documents",

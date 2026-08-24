@@ -7,7 +7,11 @@ const pdfTools = TOOLS.filter(t => t.category === 'pdf');
 const documentTools = TOOLS.filter(t => t.category === 'documents');
 const imageTools = TOOLS.filter(t => t.category === 'images');
 const mediaTools = TOOLS.filter(t => ['video', 'audio'].includes(t.category));
-const devTools = TOOLS.filter(t => t.badge === 'Developer Tool' || t.badge === 'AI Feature' || t.id.includes('json') || t.id.includes('base64') || t.id.includes('qr') || t.id.includes('chat') || t.id.includes('resume') || t.id.includes('table'));
+const aiTools = TOOLS.filter(t => [
+  'chat-with-pdf', 'ai-resume-reviewer', 'ai-table-extractor',
+  'ai-pdf-summarizer', 'translate-pdf', 'ocr-pdf', 'pdf-metadata-editor'
+].includes(t.id));
+const devTools = TOOLS.filter(t => t.badge === 'Developer Tool' || t.id.includes('json') || t.id.includes('base64') || t.id.includes('qr'));
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -117,13 +121,13 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Developer, AI & Company Column */}
+          {/* AI Intelligence & Extraction Column */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider mb-4 text-zinc-900 dark:text-white font-display">
-              Dev &amp; Company
+            <h4 className="text-xs font-extrabold uppercase tracking-wider mb-4 text-purple-600 dark:text-purple-400 font-display flex items-center gap-1">
+              <span>AI &amp; Extraction</span>
             </h4>
             <ul className="space-y-2">
-              {devTools.map(tool => (
+              {aiTools.map(tool => (
                 <li key={tool.id}>
                   <Link
                     to={tool.path}
@@ -133,14 +137,38 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
-              <li className="pt-2 border-t border-zinc-100 dark:border-[#2A2E45]">
+            </ul>
+          </div>
+
+          {/* Company & Support Column */}
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider mb-4 text-zinc-900 dark:text-white font-display">
+              Company
+            </h4>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/tools" className="text-xs text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">
+                  All 89 Tools
+                </Link>
+              </li>
+              <li>
                 <Link to="/about" className="text-xs text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">
                   About Us
                 </Link>
               </li>
               <li>
                 <Link to="/contact" className="text-xs text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">
-                  Contact
+                  Contact Support
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy-policy" className="text-xs text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms-of-service" className="text-xs text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">
+                  Terms of Service
                 </Link>
               </li>
             </ul>

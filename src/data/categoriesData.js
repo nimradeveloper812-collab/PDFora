@@ -107,7 +107,7 @@ export const CATEGORIES_DATA = [
     id: 'pdf-ai',
     name: 'AI Intelligence & Extraction',
     iconName: 'Cpu',
-    desc: 'Chat with PDFs, summarize content, extract tables, and run OCR.',
+    desc: 'Chat with PDFs, summarize content, extract tables, run OCR, and convert to Markdown.',
     subcategories: [
       {
         id: 'ai-tools',
@@ -120,9 +120,9 @@ export const CATEGORIES_DATA = [
       },
       {
         id: 'data-ocr',
-        name: 'OCR & Metadata',
-        desc: 'Recognize scanned text and edit metadata.',
-        toolIds: ['ocr-pdf', 'pdf-metadata-editor']
+        name: 'OCR & Extraction',
+        desc: 'Recognize scanned text, edit metadata, and extract markdown.',
+        toolIds: ['ocr-pdf', 'pdf-metadata-editor', 'pdf-to-markdown']
       }
     ]
   },
