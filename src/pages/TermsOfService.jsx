@@ -85,7 +85,7 @@ Our aggregate liability for any dispute shall not exceed $50.00 USD.`,
 
 export default function TermsOfService() {
   return (
-    <div className="pt-24 pb-20 min-h-screen bg-white dark:bg-[#0D0D14] text-zinc-900 dark:text-white transition-colors">
+    <div className="pt-16 pb-20 min-h-screen bg-white dark:bg-[#0D0D14] text-zinc-900 dark:text-white transition-colors">
       <Helmet>
         <title>Terms of Service — PDFora | Free Online PDF Suite</title>
         <meta name="description" content="Review the Terms of Service for PDFora. Free, secure, and in-browser online PDF conversion and management utilities." />

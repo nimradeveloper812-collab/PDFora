@@ -49,7 +49,7 @@ const values = [
 
 export default function About() {
   return (
-    <div className="pt-[88px] sm:pt-[96px] pb-20 min-h-screen bg-white dark:bg-[#0D0D14] text-zinc-900 dark:text-white transition-colors">
+    <div className="pt-16 pb-20 min-h-screen bg-white dark:bg-[#0D0D14] text-zinc-900 dark:text-white transition-colors">
       <Helmet>
         <title>About Us — PDFora | Free, Private &amp; Secure Online PDF Tools</title>
         <meta name="description" content="Learn about PDFora, a fast, private, in-browser online PDF suite built for students, professionals, and businesses worldwide." />

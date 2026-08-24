@@ -97,7 +97,7 @@ To exercise any privacy rights, email contact@nimradev.site. We respond within 2
 
 export default function PrivacyPolicy() {
   return (
-    <div className="pt-24 pb-20 min-h-screen bg-white dark:bg-[#0D0D14] text-zinc-900 dark:text-white transition-colors">
+    <div className="pt-16 pb-20 min-h-screen bg-white dark:bg-[#0D0D14] text-zinc-900 dark:text-white transition-colors">
       <Helmet>
         <title>Privacy Policy — PDFora | Secure &amp; In-Browser PDF Suite</title>
         <meta name="description" content="Read the PDFora Privacy Policy. Learn how our in-browser client-side engine ensures 100% private file processing with zero server file storage." />
