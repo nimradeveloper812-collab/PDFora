@@ -1002,18 +1002,57 @@ export const clientPdfService = {
     const arrayBuffer = await file.arrayBuffer();
     const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
     const pages = pdfDoc.getPages();
+    const totalPages = pages.length;
 
-    const cropMarginPct = parseFloat(options.margin || '10') / 100; // e.g. 10% trim
+    const cropScope = options.cropScope || 'all';
+    const pagesToCropStr = options.pagesToCrop || options.pages || `1-${totalPages}`;
 
-    onProgress?.(50, `Cropping page boundaries across ${pages.length} pages...`);
-    pages.forEach(page => {
-      const { width, height } = page.getSize();
-      const cropX = width * (cropMarginPct / 2);
-      const cropY = height * (cropMarginPct / 2);
-      const cropWidth = width * (1 - cropMarginPct);
-      const cropHeight = height * (1 - cropMarginPct);
+    const targetSet = new Set();
+    if (cropScope === 'all') {
+      for (let i = 0; i < totalPages; i++) targetSet.add(i);
+    } else {
+      (pagesToCropStr || '').split(',').forEach(part => {
+        const trimmed = part.trim();
+        if (trimmed.includes('-')) {
+          const [startStr, endStr] = trimmed.split('-');
+          const start = parseInt(startStr, 10);
+          const end = parseInt(endStr, 10);
+          if (!isNaN(start) && !isNaN(end)) {
+            for (let i = Math.min(start, end); i <= Math.max(start, end); i++) {
+              if (i >= 1 && i <= totalPages) targetSet.add(i - 1);
+            }
+          }
+        } else {
+          const val = parseInt(trimmed, 10);
+          if (!isNaN(val) && val >= 1 && val <= totalPages) {
+            targetSet.add(val - 1);
+          }
+        }
+      });
+    }
 
-      page.setCropBox(cropX, cropY, cropWidth, cropHeight);
+    if (targetSet.size === 0) {
+      for (let i = 0; i < totalPages; i++) targetSet.add(i);
+    }
+
+    const topPct = Math.min(45, Math.max(0, parseFloat(options.marginTop ?? options.margin ?? 10))) / 100;
+    const bottomPct = Math.min(45, Math.max(0, parseFloat(options.marginBottom ?? options.margin ?? 10))) / 100;
+    const leftPct = Math.min(45, Math.max(0, parseFloat(options.marginLeft ?? options.margin ?? 10))) / 100;
+    const rightPct = Math.min(45, Math.max(0, parseFloat(options.marginRight ?? options.margin ?? 10))) / 100;
+
+    onProgress?.(50, `Cropping page boundaries across ${targetSet.size} page(s)...`);
+
+    pages.forEach((page, idx) => {
+      if (targetSet.has(idx)) {
+        const { width, height } = page.getSize();
+        const cropX = width * leftPct;
+        const cropY = height * bottomPct;
+        const cropWidth = Math.max(10, width * (1 - leftPct - rightPct));
+        const cropHeight = Math.max(10, height * (1 - topPct - bottomPct));
+
+        page.setCropBox(cropX, cropY, cropWidth, cropHeight);
+        page.setMediaBox(cropX, cropY, cropWidth, cropHeight);
+      }
     });
 
     onProgress?.(90, 'Generating cropped PDF...');

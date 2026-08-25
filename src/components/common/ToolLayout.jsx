@@ -21,6 +21,7 @@ import QrGeneratorTool from '../pdf/QrGeneratorTool';
 import UnlockPdfTool from '../pdf/UnlockPdfTool';
 import ProtectPdfTool from '../pdf/ProtectPdfTool';
 import RotatePdfTool from '../pdf/RotatePdfTool';
+import CropPdfTool from '../pdf/CropPdfTool';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
@@ -259,6 +260,8 @@ export default function ToolLayout({ tool }) {
           <ProtectPdfTool />
         ) : tool.id === 'rotate-pdf' ? (
           <RotatePdfTool />
+        ) : tool.id === 'crop-pdf' ? (
+          <CropPdfTool />
         ) : (
           <Dropzone tool={tool} />
         )}
