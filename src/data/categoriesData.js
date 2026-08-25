@@ -16,7 +16,7 @@ export const CATEGORIES_DATA = [
         id: 'merge-split',
         name: 'Merge & Split',
         desc: 'Combine multiple files or separate pages.',
-        toolIds: ['merge-pdf', 'split-pdf', 'organize-pdf']
+        toolIds: ['merge-pdf', 'split-pdf']
       },
       {
         id: 'page-management',

@@ -207,10 +207,6 @@ export const pdfApi = {
     return await clientPdfService.extractPagesPdf(file, options, onProgress);
   },
 
-  async organizePdf(file, options, onProgress) {
-    return await clientPdfService.organizePdf(file, options, onProgress);
-  },
-
   async scanToPdf(file, options, onProgress) {
     return await clientPdfService.scanToPdf(file, options, onProgress);
   },
