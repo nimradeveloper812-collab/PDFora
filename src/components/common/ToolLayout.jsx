@@ -16,6 +16,7 @@ import Base64ToPdfTool from '../pdf/Base64ToPdfTool';
 import CompressToKbTool from '../pdf/CompressToKbTool';
 import ChangeBackgroundTool from '../image/ChangeBackgroundTool';
 import ResizeImageTool from '../image/ResizeImageTool';
+import CropImageTool from '../image/CropImageTool';
 import JsonFormatterTool from '../pdf/JsonFormatterTool';
 import QrGeneratorTool from '../pdf/QrGeneratorTool';
 import UnlockPdfTool from '../pdf/UnlockPdfTool';
@@ -250,6 +251,8 @@ export default function ToolLayout({ tool }) {
           <ChangeBackgroundTool />
         ) : tool.id === 'resize-image' ? (
           <ResizeImageTool />
+        ) : tool.id === 'crop-image' ? (
+          <CropImageTool />
         ) : tool.id === 'json-formatter' ? (
           <JsonFormatterTool />
         ) : tool.id === 'qr-generator' ? (
