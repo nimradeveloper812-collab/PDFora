@@ -22,6 +22,7 @@ import UnlockPdfTool from '../pdf/UnlockPdfTool';
 import ProtectPdfTool from '../pdf/ProtectPdfTool';
 import RotatePdfTool from '../pdf/RotatePdfTool';
 import CropPdfTool from '../pdf/CropPdfTool';
+import ScanToPdfTool from '../pdf/ScanToPdfTool';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
@@ -262,6 +263,8 @@ export default function ToolLayout({ tool }) {
           <RotatePdfTool />
         ) : tool.id === 'crop-pdf' ? (
           <CropPdfTool />
+        ) : tool.id === 'scan-to-pdf' ? (
+          <ScanToPdfTool />
         ) : (
           <Dropzone tool={tool} />
         )}
