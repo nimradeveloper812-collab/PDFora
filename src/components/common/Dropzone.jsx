@@ -9,6 +9,7 @@ import { analytics } from '../../services/analytics';
 import { getToolTheme } from '../../data/toolsData';
 import AdBanner from './AdBanner';
 import SplitPdfControls from './SplitPdfControls';
+import RemovePdfControls from './RemovePdfControls';
 
 export default function Dropzone({ tool }) {
   const theme = getToolTheme(tool.id, tool.category);
@@ -122,7 +123,7 @@ export default function Dropzone({ tool }) {
     const totalBytes = valid.reduce((a, f) => a + (f.size || 0), 0);
     analytics.trackFileUpload(tool.id, valid.length, totalBytes);
 
-    if (['split-pdf', 'extract-pages-pdf'].includes(tool.id) && valid[0]) {
+    if (['split-pdf', 'extract-pages-pdf', 'remove-pages-pdf'].includes(tool.id) && valid[0]) {
       (async () => {
         try {
           const { PDFDocument } = await import('pdf-lib');
@@ -636,7 +637,7 @@ export default function Dropzone({ tool }) {
                           </p>
                           <p className="text-[11px] mt-0.5 font-medium flex items-center gap-1.5 flex-wrap" style={{ color: '#64748B' }}>
                             <span>{fmt(file.size)}</span>
-                            {splitTotalPages > 0 && ['split-pdf', 'extract-pages-pdf'].includes(tool.id) && (
+                            {splitTotalPages > 0 && ['split-pdf', 'extract-pages-pdf', 'remove-pages-pdf'].includes(tool.id) && (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-100 text-blue-700 text-[10px] font-bold border border-blue-200">
                                 📄 {splitTotalPages} Pages Total (Pages 1-{splitTotalPages})
                               </span>
@@ -690,6 +691,12 @@ export default function Dropzone({ tool }) {
                     totalPages={splitTotalPages}
                     config={splitConfig}
                     onChange={setSplitConfig}
+                  />
+                ) : tool.id === 'remove-pages-pdf' ? (
+                  <RemovePdfControls
+                    totalPages={splitTotalPages}
+                    value={optionValues.pagesToRemove || '1'}
+                    onChange={(val) => handleOptionChange('pagesToRemove', val)}
                   />
                 ) : tool.options?.length > 0 && (
                   <div
