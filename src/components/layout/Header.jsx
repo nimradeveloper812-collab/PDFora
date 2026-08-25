@@ -83,7 +83,7 @@ export default function Header() {
                 to="/"
                 className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
               >
-                Home
+                {t('home')}
               </Link>
 
               {/* Tools ▼ Mega Dropdown */}
@@ -98,7 +98,7 @@ export default function Header() {
                   }`}
                 >
                   <Grid className="w-3 h-3 text-purple-600" />
-                  <span>Tools &amp; Categories</span>
+                  <span>{t('toolsCategories')}</span>
                   <ChevronDown className={`w-3 h-3 transition-transform ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
               </div>
@@ -107,21 +107,21 @@ export default function Header() {
                 to="/tools"
                 className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
               >
-                All Tools Directory
+                {t('allToolsDirectory')}
               </Link>
 
               <Link
                 to="/about"
                 className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
               >
-                About
+                {t('about')}
               </Link>
 
               <Link
                 to="/contact"
                 className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
               >
-                Support
+                {t('support')}
               </Link>
 
             </nav>
@@ -136,7 +136,7 @@ export default function Header() {
                 className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-300 text-xs font-medium transition-all"
               >
                 <Search className="w-3 h-3 text-purple-600" />
-                <span>Search tools...</span>
+                <span>{t('searchTools')}</span>
                 <kbd className="px-1 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 text-[10px] font-mono text-zinc-600 dark:text-zinc-300 font-bold">
                   ⌘K
                 </kbd>
@@ -343,7 +343,7 @@ export default function Header() {
             >
               <span className="flex items-center gap-2">
                 <Search className="w-4 h-4 text-purple-600" />
-                <span>Search tools...</span>
+                <span>{t('searchTools')}</span>
               </span>
               <kbd className="px-2 py-0.5 rounded bg-zinc-200 dark:bg-[#2A2E45] text-[10px] font-mono font-bold">Search</kbd>
             </button>
@@ -407,9 +407,9 @@ export default function Header() {
             </div>
 
             <div className="pt-3 border-t border-zinc-200 dark:border-[#2A2E45] flex items-center justify-around text-xs font-bold text-zinc-600 dark:text-zinc-300">
-              <Link to="/tools" onClick={() => setIsMobileMenuOpen(false)}>All Directory</Link>
-              <Link to="/about" onClick={() => setIsMobileMenuOpen(false)}>About</Link>
-              <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>Support</Link>
+              <Link to="/tools" onClick={() => setIsMobileMenuOpen(false)}>{t('allToolsDirectory')}</Link>
+              <Link to="/about" onClick={() => setIsMobileMenuOpen(false)}>{t('about')}</Link>
+              <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>{t('support')}</Link>
             </div>
           </div>
         )}

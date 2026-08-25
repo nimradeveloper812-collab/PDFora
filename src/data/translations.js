@@ -21,6 +21,13 @@ export const TRANSLATIONS = {
     close: "Close",
     language: "Language",
 
+    // Header Nav
+    home: "Home",
+    toolsCategories: "Tools & Categories",
+    allToolsDirectory: "All Tools Directory",
+    support: "Support",
+    searchTools: "Search tools...",
+
     // Directory Columns
     organizePdf: "ORGANIZE PDF",
     convertToPdf: "CONVERT TO PDF",
@@ -65,6 +72,13 @@ export const TRANSLATIONS = {
     contact: "رابطہ کریں",
     close: "بند کریں",
     language: "زبان",
+
+    // Header Nav
+    home: "ہوم",
+    toolsCategories: "ٹولز اور زمرے",
+    allToolsDirectory: "تمام ٹولز ڈائریکٹری",
+    support: "سپورٹ",
+    searchTools: "ٹولز تلاش کریں...",
 
     // Directory Columns
     organizePdf: "پی ڈی ایف ترتیب دیں",
@@ -111,6 +125,13 @@ export const TRANSLATIONS = {
     close: "Cerrar",
     language: "Idioma",
 
+    // Header Nav
+    home: "Inicio",
+    toolsCategories: "Herramientas & Categorías",
+    allToolsDirectory: "Directorio de Herramientas",
+    support: "Soporte",
+    searchTools: "Buscar herramientas...",
+
     // Directory Columns
     organizePdf: "ORGANIZAR PDF",
     convertToPdf: "CONVERTIR A PDF",
@@ -155,6 +176,13 @@ export const TRANSLATIONS = {
     contact: "اتصل بنا",
     close: "إغلاق",
     language: "اللغة",
+
+    // Header Nav
+    home: "الرئيسية",
+    toolsCategories: "الأدوات والفئات",
+    allToolsDirectory: "دليل جميع الأدوات",
+    support: "الدعم",
+    searchTools: "ابحث في الأدوات...",
 
     // Directory Columns
     organizePdf: "تنظيم PDF",
