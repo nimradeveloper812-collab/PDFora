@@ -11,6 +11,7 @@ import ImageConverterTool from '../media/ImageConverterTool';
 import VideoConverterTool from '../media/VideoConverterTool';
 import VideoCompressorTool from '../media/VideoCompressorTool';
 import ChatWithPdfTool from '../pdf/ChatWithPdfTool';
+import AiPdfSummarizerTool from '../pdf/AiPdfSummarizerTool';
 import AiResumeReviewerTool from '../pdf/AiResumeReviewerTool';
 import AiTableExtractorTool from '../pdf/AiTableExtractorTool';
 import PdfMetadataEditorTool from '../pdf/PdfMetadataEditorTool';
@@ -242,6 +243,8 @@ export default function ToolLayout({ tool }) {
           <VideoCompressorTool />
         ) : tool.id === 'chat-with-pdf' ? (
           <ChatWithPdfTool />
+        ) : tool.id === 'ai-pdf-summarizer' ? (
+          <AiPdfSummarizerTool />
         ) : tool.id === 'ai-resume-reviewer' ? (
           <AiResumeReviewerTool />
         ) : tool.id === 'ai-table-extractor' ? (

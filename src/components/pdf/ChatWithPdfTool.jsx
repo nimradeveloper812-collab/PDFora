@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   UploadCloud, MessageSquare, Send, Sparkles, FileText,
-  CheckCircle2, Bot, User, RefreshCcw, ShieldCheck, AlertCircle, Loader2
+  CheckCircle2, Bot, User, RefreshCcw, ShieldCheck, AlertCircle, Loader2,
+  Settings, Key, Copy, Check
 } from 'lucide-react';
 import { clientPdfService } from '../../services/clientPdfService';
+import { aiService } from '../../services/aiService';
+import ApiKeyModal from '../common/ApiKeyModal';
 
 export default function ChatWithPdfTool() {
   const [file, setFile] = useState(null);
@@ -18,6 +21,8 @@ export default function ChatWithPdfTool() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [isKeyModalOpen, setIsKeyModalOpen] = useState(false);
+  const [copiedId, setCopiedId] = useState(null);
 
   const fileInputRef = useRef(null);
   const chatBottomRef = useRef(null);
@@ -62,9 +67,12 @@ export default function ChatWithPdfTool() {
       setExtractedPages(pages);
 
       const hasText = totalExtractedWords > 5;
+      const effectiveKey = aiService.getEffectiveApiKey();
+      const aiEngineName = effectiveKey ? 'Gemini 2.0 Flash' : 'Smart NLP';
+
       const initialMessage = hasText
-        ? `Hello! I have analyzed "${uploadedFile.name}" (${pages.length} page${pages.length > 1 ? 's' : ''}, ~${totalExtractedWords.toLocaleString()} words extracted). You can ask me any question about its contents, query specific terms, or click a suggested prompt below.`
-        : `Hello! I loaded "${uploadedFile.name}" (${pages.length} page${pages.length > 1 ? 's' : ''}). Note: Very little selectable text was detected. If this is a scanned image PDF, you can also run our OCR PDF tool to extract readable text.`;
+        ? `Hello! I have loaded "${uploadedFile.name}" (${pages.length} page${pages.length > 1 ? 's' : ''}, ~${totalExtractedWords.toLocaleString()} words). Active AI Engine: ${aiEngineName}.\n\nYou can ask me any question about its contents, query specific terms, or click a suggested prompt below.`
+        : `Hello! I loaded "${uploadedFile.name}" (${pages.length} page${pages.length > 1 ? 's' : ''}). Note: Very little selectable text was detected. If this is a scanned image PDF, you can run our OCR PDF tool to extract readable text.`;
 
       setMessages([
         {
@@ -82,208 +90,47 @@ export default function ChatWithPdfTool() {
     }
   };
 
-  const handleSendMessage = (queryText) => {
+  const handleSendMessage = async (queryText) => {
     const textToSend = queryText || inputQuery;
     if (!textToSend.trim() || isProcessing) return;
 
     const userQuery = textToSend.trim();
     const userMsg = { id: Date.now(), sender: 'user', text: userQuery };
+    
     setMessages(prev => [...prev, userMsg]);
     setInputQuery('');
     setIsProcessing(true);
+    setErrorMsg(null);
 
-    setTimeout(() => {
-      const response = generateAiAnswer(userQuery, extractedPages, file?.name || 'Document');
+    try {
+      const response = await aiService.chatWithDocument({
+        pages: extractedPages,
+        fileName: file?.name || 'Document.pdf',
+        query: userQuery,
+        history: messages
+      });
+
       const aiMsg = {
         id: Date.now() + 1,
         sender: 'ai',
         text: response.text,
-        citation: response.citation
+        citation: response.citation,
+        source: response.source
       };
 
       setMessages(prev => [...prev, aiMsg]);
+    } catch (err) {
+      console.error('Chat AI error:', err);
+      setErrorMsg(err.message || 'Failed to process question.');
+    } finally {
       setIsProcessing(false);
-    }, 600);
+    }
   };
 
-  const generateAiAnswer = (query, pages, fileName) => {
-    const lowerQuery = query.toLowerCase();
-
-    // Check if pages have text
-    const allText = pages.map(p => p.text).join(' ');
-    if (!allText || allText.trim().length < 10) {
-      return {
-        text: `This document ("${fileName}") does not contain a selectable text layer (it may be a scanned image PDF or vector graphics). Try running our free OCR PDF tool to generate searchable text before chatting.`,
-        citation: null
-      };
-    }
-
-    // 1. Executive Summary Query
-    if (
-      lowerQuery.includes('summarize') ||
-      lowerQuery.includes('summary') ||
-      lowerQuery.includes('main point') ||
-      lowerQuery.includes('overview')
-    ) {
-      const summaryItems = [];
-      pages.forEach((p) => {
-        if (!p.text) return;
-        const sentences = p.text.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 20);
-        if (sentences.length > 0) {
-          summaryItems.push({
-            pageNum: p.pageNum,
-            snippet: sentences.slice(0, 2).join(' ')
-          });
-        }
-      });
-
-      if (summaryItems.length > 0) {
-        const topSnippets = summaryItems.slice(0, 3);
-        const textOutput = `Here is a summary of "${fileName}":\n\n` +
-          topSnippets.map((item) => `• [Page ${item.pageNum}]: ${item.snippet}`).join('\n\n') +
-          `\n\nTotal analyzed: ${pages.length} page(s), ~${totalWords.toLocaleString()} words.`;
-
-        return {
-          text: textOutput,
-          citation: `Referenced across Pages 1–${Math.min(pages.length, 3)}`
-        };
-      }
-    }
-
-    // 2. Dates & Deadlines Query
-    if (
-      lowerQuery.includes('date') ||
-      lowerQuery.includes('deadline') ||
-      lowerQuery.includes('when') ||
-      lowerQuery.includes('timeline') ||
-      lowerQuery.includes('year') ||
-      lowerQuery.includes('schedule')
-    ) {
-      const dateRegex = /\b(\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4}|(?:january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2},?\s+\d{4}|\d{4}|deadline|due date|effective date)\b/gi;
-      
-      const matchedSentences = [];
-      pages.forEach(p => {
-        if (!p.text) return;
-        const sentences = p.text.split(/(?<=[.!?])\s+/);
-        sentences.forEach(sentence => {
-          if (dateRegex.test(sentence) && sentence.trim().length > 15) {
-            matchedSentences.push({ pageNum: p.pageNum, text: sentence.trim() });
-          }
-        });
-      });
-
-      if (matchedSentences.length > 0) {
-        const topMatches = matchedSentences.slice(0, 3);
-        const answerText = `Key dates & deadlines found in "${fileName}":\n\n` +
-          topMatches.map(m => `• Page ${m.pageNum}: "${m.text}"`).join('\n\n');
-        return {
-          text: answerText,
-          citation: `Referenced in Page ${topMatches[0].pageNum}`
-        };
-      }
-    }
-
-    // 3. Financial & Payment Terms
-    if (
-      lowerQuery.includes('payment') ||
-      lowerQuery.includes('financial') ||
-      lowerQuery.includes('cost') ||
-      lowerQuery.includes('price') ||
-      lowerQuery.includes('fee') ||
-      lowerQuery.includes('amount') ||
-      lowerQuery.includes('total') ||
-      lowerQuery.includes('dollar') ||
-      lowerQuery.includes('$') ||
-      lowerQuery.includes('invoice')
-    ) {
-      const financialRegex = /(\$|\bUSD\b|\bEUR\b|\bRs\b|\bPKR\b|\btotal\b|\bfee\b|\bpayment\b|\bcost\b|\binvoice\b)/i;
-      const matchedSentences = [];
-
-      pages.forEach(p => {
-        if (!p.text) return;
-        const sentences = p.text.split(/(?<=[.!?])\s+/);
-        sentences.forEach(sentence => {
-          if (financialRegex.test(sentence) && sentence.trim().length > 15) {
-            matchedSentences.push({ pageNum: p.pageNum, text: sentence.trim() });
-          }
-        });
-      });
-
-      if (matchedSentences.length > 0) {
-        const topMatches = matchedSentences.slice(0, 3);
-        const answerText = `Financial & payment clauses found in "${fileName}":\n\n` +
-          topMatches.map(m => `• Page ${m.pageNum}: "${m.text}"`).join('\n\n');
-        return {
-          text: answerText,
-          citation: `Referenced in Page ${topMatches[0].pageNum}`
-        };
-      }
-    }
-
-    // 4. General Keyword Search across document text
-    const stopwords = new Set([
-      'what', 'is', 'the', 'are', 'in', 'on', 'at', 'to', 'for', 'of',
-      'and', 'or', 'a', 'an', 'this', 'that', 'with', 'from', 'by', 'be',
-      'how', 'which', 'where', 'who', 'tell', 'me', 'about', 'list'
-    ]);
-    const queryTokens = lowerQuery
-      .replace(/[^\w\s]/g, '')
-      .split(/\s+/)
-      .filter(t => t.length > 2 && !stopwords.has(t));
-
-    if (queryTokens.length > 0) {
-      const scoredSentences = [];
-
-      pages.forEach(p => {
-        if (!p.text) return;
-        const sentences = p.text.split(/(?<=[.!?])\s+/);
-        sentences.forEach(sentence => {
-          const lowerSentence = sentence.toLowerCase();
-          let score = 0;
-
-          // Check token occurrences
-          queryTokens.forEach(token => {
-            if (lowerSentence.includes(token)) {
-              score += 2;
-            }
-          });
-
-          // Exact phrase bonus
-          if (lowerSentence.includes(lowerQuery)) {
-            score += 10;
-          }
-
-          if (score > 0 && sentence.trim().length > 15) {
-            scoredSentences.push({
-              pageNum: p.pageNum,
-              text: sentence.trim(),
-              score
-            });
-          }
-        });
-      });
-
-      // Sort by highest score
-      scoredSentences.sort((a, b) => b.score - a.score);
-
-      if (scoredSentences.length > 0) {
-        const topMatches = scoredSentences.slice(0, 3);
-        const answerText = `Based on your search in "${fileName}":\n\n` +
-          topMatches.map(m => `• Page ${m.pageNum}: "${m.text}"`).join('\n\n');
-
-        return {
-          text: answerText,
-          citation: `Referenced in Page ${topMatches[0].pageNum}`
-        };
-      }
-    }
-
-    // Fallback: Return sample text snippet from page 1
-    const sampleSnippet = pages[0]?.text?.slice(0, 250) || '';
-    return {
-      text: `I searched across all ${pages.length} page(s) of "${fileName}" for "${query}", but did not find an exact sentence match. Here is a preview snippet from Page 1:\n\n"${sampleSnippet}..."\n\nTry asking about specific headings, dates, or keywords present in the text.`,
-      citation: pages.length > 0 ? `Referenced in Page 1` : null
-    };
+  const copyMessage = (id, text) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   const resetChat = () => {
@@ -296,8 +143,12 @@ export default function ChatWithPdfTool() {
     setErrorMsg(null);
   };
 
+  const hasApiKey = Boolean(aiService.getEffectiveApiKey());
+
   return (
     <div className="w-full max-w-4xl mx-auto font-sans">
+      <ApiKeyModal isOpen={isKeyModalOpen} onClose={() => setIsKeyModalOpen(false)} />
+
       <input
         ref={fileInputRef}
         type="file"
@@ -307,9 +158,17 @@ export default function ChatWithPdfTool() {
       />
 
       {errorMsg && (
-        <div className="mb-4 p-4 rounded-2xl bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-semibold flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>{errorMsg}</span>
+        <div className="mb-4 p-4 rounded-2xl bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-semibold flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{errorMsg}</span>
+          </div>
+          <button
+            onClick={() => setIsKeyModalOpen(true)}
+            className="underline font-bold text-red-800 dark:text-red-200 text-xs cursor-pointer shrink-0"
+          >
+            Settings
+          </button>
         </div>
       )}
 
@@ -319,7 +178,7 @@ export default function ChatWithPdfTool() {
             <Loader2 className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-base font-bold text-zinc-900 dark:text-white">Parsing PDF Text Layer</h4>
+            <h4 className="text-base font-bold text-zinc-900 dark:text-white font-heading">Parsing PDF Text Layer</h4>
             <p className="text-xs text-purple-700 dark:text-purple-300 mt-1">{parseStatus}</p>
           </div>
           <div className="max-w-xs mx-auto bg-zinc-200 dark:bg-zinc-700 h-2 rounded-full overflow-hidden">
@@ -338,7 +197,9 @@ export default function ChatWithPdfTool() {
           onDrop={e => {
             e.preventDefault();
             setIsDragging(false);
-            e.dataTransfer.files?.[0] && handleFileUpload(e.dataTransfer.files[0]);
+            if (e.dataTransfer.files?.[0]) {
+              handleFileUpload(e.dataTransfer.files[0]);
+            }
           }}
           onClick={() => fileInputRef.current?.click()}
           className="relative cursor-pointer text-center flex flex-col items-center justify-center p-8 sm:p-12 rounded-3xl border-2 border-dashed transition-all bg-white dark:bg-[#141622] border-zinc-300 dark:border-[#2A2E45] hover:border-purple-500 shadow-xs"
@@ -355,7 +216,7 @@ export default function ChatWithPdfTool() {
             Upload PDF to Chat with AI Assistant
           </h3>
           <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto mb-6">
-            Extract text, ask questions, query clauses, and search your PDF textbooks or contracts privately in your browser.
+            Ask questions, query clauses, search facts, and extract answers from textbooks, legal documents, or contracts with AI.
           </p>
 
           <button
@@ -366,15 +227,25 @@ export default function ChatWithPdfTool() {
             Select PDF Document
           </button>
 
-          <div className="mt-6 flex items-center gap-2 text-xs font-semibold text-zinc-400 dark:text-zinc-500">
-            <ShieldCheck className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-            <span>100% In-Browser Privacy — Zero File Persistence</span>
+          <div className="mt-6 flex items-center justify-center gap-4 text-xs font-semibold text-zinc-400 dark:text-zinc-500 flex-wrap">
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              <span>100% In-Browser Privacy</span>
+            </div>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); setIsKeyModalOpen(true); }}
+              className="flex items-center gap-1 text-purple-600 dark:text-purple-400 hover:underline cursor-pointer font-bold"
+            >
+              <Settings className="w-3.5 h-3.5" />
+              <span>{hasApiKey ? 'Gemini AI Active' : 'Configure Gemini API Key'}</span>
+            </button>
           </div>
         </div>
       )}
 
       {file && !isParsing && (
-        <div className="rounded-3xl border border-zinc-200 dark:border-[#2A2E45] bg-white dark:bg-[#141622] overflow-hidden shadow-xl flex flex-col h-[500px] sm:h-[620px] max-h-[80vh]">
+        <div className="rounded-3xl border border-zinc-200 dark:border-[#2A2E45] bg-white dark:bg-[#141622] overflow-hidden shadow-xl flex flex-col h-[520px] sm:h-[650px] max-h-[82vh]">
           {/* Header */}
           <div className="px-6 py-4 border-b border-zinc-200 dark:border-[#2A2E45] bg-zinc-50/80 dark:bg-[#1B1E2E]/80 flex items-center justify-between">
             <div className="flex items-center gap-3 min-w-0">
@@ -384,17 +255,30 @@ export default function ChatWithPdfTool() {
               <div className="min-w-0">
                 <h4 className="text-sm font-bold text-zinc-900 dark:text-white truncate">{file.name}</h4>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-                  {pageCount} Page{pageCount > 1 ? 's' : ''} • ~{totalWords.toLocaleString()} Words • AI Assistant Active
+                  {pageCount} Page{pageCount > 1 ? 's' : ''} • ~{totalWords.toLocaleString()} Words •{' '}
+                  <span className="text-purple-600 dark:text-purple-400 font-bold">
+                    {hasApiKey ? '✨ Gemini AI' : '⚡ Smart NLP AI'}
+                  </span>
                 </p>
               </div>
             </div>
-            <button
-              onClick={resetChat}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-700 dark:text-zinc-200 bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] hover:bg-zinc-100 dark:hover:bg-[#2A2E45] transition-colors cursor-pointer"
-            >
-              <RefreshCcw className="w-3.5 h-3.5" />
-              New Document
-            </button>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsKeyModalOpen(true)}
+                className="p-2 rounded-lg border border-zinc-200 dark:border-[#2A2E45] hover:bg-zinc-100 dark:hover:bg-[#2A2E45] text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
+                title="AI Key Settings"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
+              <button
+                onClick={resetChat}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-700 dark:text-zinc-200 bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] hover:bg-zinc-100 dark:hover:bg-[#2A2E45] transition-colors cursor-pointer"
+              >
+                <RefreshCcw className="w-3.5 h-3.5" />
+                New Document
+              </button>
+            </div>
           </div>
 
           {/* Chat Messages */}
@@ -410,13 +294,23 @@ export default function ChatWithPdfTool() {
                   {msg.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
                 </div>
 
-                <div className={`max-w-[80%] space-y-1.5 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
-                  <div className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed whitespace-pre-wrap ${
+                <div className={`max-w-[85%] sm:max-w-[80%] space-y-1.5 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
+                  <div className={`group relative p-4 rounded-2xl text-xs sm:text-sm leading-relaxed whitespace-pre-wrap ${
                     msg.sender === 'user'
                       ? 'bg-purple-600 text-white font-medium rounded-tr-none'
                       : 'bg-white dark:bg-[#1B1E2E] text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-[#2A2E45] shadow-xs rounded-tl-none font-normal'
                   }`}>
                     {msg.text}
+
+                    {msg.sender === 'ai' && (
+                      <button
+                        onClick={() => copyMessage(msg.id, msg.text)}
+                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-white bg-zinc-100 dark:bg-zinc-800 rounded-md"
+                        title="Copy Response"
+                      >
+                        {copiedId === msg.id ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                      </button>
+                    )}
                   </div>
 
                   {msg.citation && (
@@ -432,7 +326,7 @@ export default function ChatWithPdfTool() {
             {isProcessing && (
               <div className="flex items-center gap-2 text-xs font-bold text-purple-600 dark:text-purple-400 animate-pulse p-2">
                 <Bot className="w-4 h-4" />
-                <span>AI Assistant is searching document pages...</span>
+                <span>AI Assistant is generating response...</span>
               </div>
             )}
             <div ref={chatBottomRef} />
@@ -445,7 +339,8 @@ export default function ChatWithPdfTool() {
               <button
                 key={idx}
                 onClick={() => handleSendMessage(prompt)}
-                className="shrink-0 text-[11px] font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 dark:hover:bg-purple-900/60 border border-purple-200 dark:border-purple-800 px-3 py-1 rounded-full transition-all cursor-pointer"
+                disabled={isProcessing}
+                className="shrink-0 text-[11px] font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 dark:hover:bg-purple-900/60 border border-purple-200 dark:border-purple-800 px-3 py-1 rounded-full transition-all cursor-pointer disabled:opacity-50"
               >
                 {prompt}
               </button>
@@ -460,7 +355,8 @@ export default function ChatWithPdfTool() {
               onChange={e => setInputQuery(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
               placeholder="Ask a question about this document..."
-              className="flex-1 text-xs sm:text-sm px-4 py-3 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] focus:border-purple-600 dark:focus:border-purple-500 outline-none text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500"
+              disabled={isProcessing}
+              className="flex-1 text-xs sm:text-sm px-4 py-3 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] focus:border-purple-600 dark:focus:border-purple-500 outline-none text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 disabled:opacity-50"
             />
             <button
               onClick={() => handleSendMessage()}
