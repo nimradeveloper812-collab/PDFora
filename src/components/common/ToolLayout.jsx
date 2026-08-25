@@ -32,6 +32,7 @@ import {
   Scissors, ChevronDown, Smartphone, Globe, Video, Music, FileAudio, FileVideo, RefreshCw
 } from 'lucide-react';
 import { TOOLS, TOOLS_CATEGORIES, getToolTheme } from '../../data/toolsData';
+import { useLanguage } from '../../context/LanguageContext';
 
 const iconMap = {
   FileText, Table, Presentation,
@@ -41,6 +42,7 @@ const iconMap = {
 
 export default function ToolLayout({ tool }) {
   const [openFaq, setOpenFaq] = useState(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -204,11 +206,11 @@ export default function ToolLayout({ tool }) {
             to={`/tools?category=${tool.category}`}
             className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
           >
-            {categoryName}
+            {t(tool.category) || categoryName}
           </Link>
           <span aria-hidden="true">/</span>
           <span className="font-bold text-zinc-900 dark:text-white" aria-current="page">
-            {tool.name}
+            {t(tool)}
           </span>
         </nav>
       </div>
@@ -228,7 +230,7 @@ export default function ToolLayout({ tool }) {
             id="tool-heading"
             className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight"
           >
-            {h1Title}
+            {t(tool)}
           </h1>
 
           <p className="text-xs sm:text-sm leading-relaxed max-w-xl mx-auto text-zinc-600 dark:text-zinc-300 font-normal">
@@ -492,7 +494,7 @@ export default function ToolLayout({ tool }) {
                     <Icon className="w-4 h-4" strokeWidth={2} />
                   </div>
                   <h4 className="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors mb-0.5">
-                    {other.name}
+                    {t(other)}
                   </h4>
                   <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed line-clamp-2 font-normal">
                     {other.shortDesc}

@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Search, X, ArrowRight, FileText } from 'lucide-react';
 import { TOOLS, getToolTheme } from '../../data/toolsData';
 import { getCategoryBreadcrumb } from '../../data/categoriesData';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function QuickSearchModal({ isOpen, onClose }) {
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
+  const { t: translate } = useLanguage();
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -92,7 +94,7 @@ export default function QuickSearchModal({ isOpen, onClose }) {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-zinc-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                          {t.name}
+                          {translate(t)}
                         </span>
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
                           {breadcrumb.fullPath}

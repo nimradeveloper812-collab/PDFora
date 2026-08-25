@@ -223,7 +223,7 @@ export default function Header() {
                                       onClick={() => setIsToolsDropdownOpen(false)}
                                       className="block hover:text-purple-600 dark:hover:text-purple-400 truncate py-0.5 transition-colors"
                                     >
-                                      • {tool.name}
+                                      • {t(tool)}
                                     </Link>
                                   </li>
                                 );
@@ -268,7 +268,7 @@ export default function Header() {
                                     onClick={() => setIsToolsDropdownOpen(false)}
                                     className="block hover:text-emerald-600 dark:hover:text-emerald-400 truncate py-0.5 transition-colors font-medium"
                                   >
-                                    • {tool.name}
+                                    • {t(tool)}
                                   </Link>
                                 </li>
                               );
@@ -312,7 +312,7 @@ export default function Header() {
                                     onClick={() => setIsToolsDropdownOpen(false)}
                                     className="block hover:text-blue-600 dark:hover:text-blue-400 truncate py-0.5 transition-colors font-medium"
                                   >
-                                    • {tool.name}
+                                    • {t(tool)}
                                   </Link>
                                 </li>
                               );
@@ -392,7 +392,7 @@ export default function Header() {
                                     onClick={() => setIsMobileMenuOpen(false)}
                                     className="py-1 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-purple-600 dark:hover:text-purple-400 truncate"
                                   >
-                                    • {tool.name}
+                                    • {t(tool)}
                                   </Link>
                                 );
                               })}

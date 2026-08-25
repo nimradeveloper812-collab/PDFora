@@ -64,7 +64,7 @@ export default function Footer() {
                     to={tool.path}
                     className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans truncate block"
                   >
-                    {tool.name}
+                    {t(tool)}
                   </Link>
                 </li>
               ))}
@@ -83,7 +83,7 @@ export default function Footer() {
                     to={tool.path}
                     className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans truncate block"
                   >
-                    {tool.name}
+                    {t(tool)}
                   </Link>
                 </li>
               ))}
@@ -102,7 +102,7 @@ export default function Footer() {
                     to={tool.path}
                     className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans truncate block"
                   >
-                    {tool.name}
+                    {t(tool)}
                   </Link>
                 </li>
               ))}
@@ -112,7 +112,7 @@ export default function Footer() {
                     to={tool.path}
                     className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans truncate block"
                   >
-                    {tool.name}
+                    {t(tool)}
                   </Link>
                 </li>
               ))}

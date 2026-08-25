@@ -30,7 +30,9 @@ export function LanguageProvider({ children }) {
   }, [lang]);
 
   const t = (key) => {
-    return TRANSLATIONS[lang]?.[key] || TRANSLATIONS['en']?.[key] || key;
+    if (!key) return '';
+    const lookupKey = typeof key === 'object' ? key.id : key;
+    return TRANSLATIONS[lang]?.[lookupKey] || TRANSLATIONS['en']?.[lookupKey] || (typeof key === 'object' ? key.name : key);
   };
 
   const currentLanguageObj = LANGUAGES.find(l => l.code === lang) || LANGUAGES[0];

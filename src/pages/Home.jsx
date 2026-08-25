@@ -232,7 +232,7 @@ export default function Home() {
                       {subcategoryName}
                     </span>
                     <h3 className="text-[11px] font-bold text-zinc-900 dark:text-white group-hover:text-purple-600 transition-colors line-clamp-1">
-                      {tool.name}
+                      {t(tool)}
                     </h3>
                     <p className="text-[10px] text-zinc-500 dark:text-zinc-400 line-clamp-2">
                       {tool.shortDesc || tool.description}
@@ -281,7 +281,7 @@ export default function Home() {
                       </div>
                       <div>
                         <h3 className={`text-xs font-extrabold ${isSelected ? 'text-white' : 'text-zinc-900 dark:text-white'}`}>
-                          {cat.name}
+                          {t(cat.id)}
                         </h3>
                         <p className={`text-[10px] mt-0.5 line-clamp-2 ${isSelected ? 'text-purple-100' : 'text-zinc-500 dark:text-zinc-400'}`}>
                           {cat.desc}
@@ -308,9 +308,9 @@ export default function Home() {
                 <div>
                   <div className="flex items-center gap-1.5 text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
                     <span>{t('toolExplorer')}</span><span>/</span>
-                    <span className="text-zinc-900 dark:text-white">{currentCategory.name}</span>
+                    <span className="text-zinc-900 dark:text-white">{t(currentCategory.id)}</span>
                   </div>
-                  <h3 className="text-sm font-black text-zinc-900 dark:text-white">{currentCategory.name} Tools</h3>
+                  <h3 className="text-sm font-black text-zinc-900 dark:text-white">{t(currentCategory.id)}</h3>
                 </div>
                 <select
                   value={selectedCatId}
@@ -318,7 +318,7 @@ export default function Home() {
                   className="text-xs font-bold px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] text-zinc-800 dark:text-zinc-200 outline-none cursor-pointer"
                 >
                   {CATEGORIES_DATA.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
+                    <option key={c.id} value={c.id}>{t(c.id)}</option>
                   ))}
                 </select>
               </div>
@@ -351,7 +351,7 @@ export default function Home() {
                                 </div>
                               </div>
                               <h5 className="text-[11px] font-bold text-zinc-900 dark:text-white group-hover:text-purple-600 transition-colors leading-tight">
-                                {tool.name}
+                                {t(tool)}
                               </h5>
                               <p className="text-[10px] text-zinc-500 dark:text-zinc-400 line-clamp-2">
                                 {tool.shortDesc || tool.description}
