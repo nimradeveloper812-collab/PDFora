@@ -130,14 +130,24 @@ export default function Base64ToPdfTool() {
                   <FileText className="w-4 h-4" />
                   PDF Decoded Successfully!
                 </span>
-                <a
-                  href={pdfBlobUrl}
-                  download="decoded_document.pdf"
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md bg-emerald-600 hover:bg-emerald-700 transition-all"
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    if (e) e.preventDefault();
+                    if (!pdfBlobUrl) return;
+                    const link = document.createElement('a');
+                    link.href = pdfBlobUrl;
+                    link.download = "decoded_document.pdf";
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    setTimeout(() => document.body.removeChild(link), 100);
+                  }}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md bg-emerald-600 hover:bg-emerald-700 transition-all cursor-pointer"
                 >
                   <Download className="w-4 h-4" />
                   Download Decoded PDF
-                </a>
+                </button>
               </div>
               <div className="w-full bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl p-2 border border-zinc-200 dark:border-[#2A2E45] shadow-inner overflow-hidden">
                 <iframe

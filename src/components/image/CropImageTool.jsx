@@ -428,14 +428,24 @@ export default function CropImageTool() {
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-3 max-w-md mx-auto">
-              <a
-                href={resultUrl}
-                download={resultFilename}
-                className="flex-1 min-w-[140px] py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-md"
+              <button
+                type="button"
+                onClick={(e) => {
+                  if (e) e.preventDefault();
+                  if (!resultUrl) return;
+                  const link = document.createElement('a');
+                  link.href = resultUrl;
+                  link.download = resultFilename || 'cropped_image.png';
+                  link.style.display = 'none';
+                  document.body.appendChild(link);
+                  link.click();
+                  setTimeout(() => document.body.removeChild(link), 100);
+                }}
+                className="flex-1 min-w-[140px] py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
               >
                 <Download className="w-4 h-4" />
                 Download Cropped Image
-              </a>
+              </button>
               <button
                 onClick={handleReset}
                 className="px-4 py-3 border border-zinc-200 rounded-xl text-xs font-bold text-zinc-600 hover:bg-zinc-50 flex items-center gap-1.5 cursor-pointer"

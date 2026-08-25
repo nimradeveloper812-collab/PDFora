@@ -364,9 +364,14 @@ export default function Dropzone({ tool }) {
     const link = document.createElement('a');
     link.href = resultBlobUrl;
     link.download = resultFilename || `PDFora_${tool.slug}_output.pdf`;
+    link.style.display = 'none';
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    setTimeout(() => {
+      if (document.body.contains(link)) {
+        document.body.removeChild(link);
+      }
+    }, 100);
   };
 
   const handlePreview = (e) => {
@@ -964,14 +969,10 @@ export default function Dropzone({ tool }) {
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 max-w-md mx-auto">
-              <a
-                href={resultBlobUrl || '#'}
-                download={resultFilename || `PDFora_${tool.slug}_output.pdf`}
+              <button
+                type="button"
                 onClick={handleDownload}
                 className={`w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-sm font-extrabold shadow-md transition-all active:scale-95 cursor-pointer ${theme.btnBg}`}
-                style={{
-                  textDecoration: 'none',
-                }}
                 aria-label="Download converted file"
               >
                 <Download className="w-4 h-4" aria-hidden="true" />
@@ -988,7 +989,7 @@ export default function Dropzone({ tool }) {
                   : resultFilename?.endsWith('.webp')
                   ? 'Download WebP'
                   : 'Download PDF'}
-              </a>
+              </button>
 
               {resultBlobUrl && !resultFilename?.endsWith('.zip') && !resultFilename?.endsWith('.docx') && !resultFilename?.endsWith('.xlsx') && (
                 <button

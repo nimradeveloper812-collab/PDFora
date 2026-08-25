@@ -609,14 +609,24 @@ export default function RotatePdfTool() {
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-3 max-w-md mx-auto">
-              <a
-                href={resultBlobUrl}
-                download={resultFilename}
-                className="flex-1 min-w-[140px] py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-md"
+              <button
+                type="button"
+                onClick={(e) => {
+                  if (e) e.preventDefault();
+                  if (!resultBlobUrl) return;
+                  const link = document.createElement('a');
+                  link.href = resultBlobUrl;
+                  link.download = resultFilename || 'rotated_document.pdf';
+                  link.style.display = 'none';
+                  document.body.appendChild(link);
+                  link.click();
+                  setTimeout(() => document.body.removeChild(link), 100);
+                }}
+                className="flex-1 min-w-[140px] py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
               >
                 <Download className="w-4 h-4" />
                 Download PDF
-              </a>
+              </button>
               {showPreview && (
                 <button
                   onClick={() => setShowPreview(!showPreview)}

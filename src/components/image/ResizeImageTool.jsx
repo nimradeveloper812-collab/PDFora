@@ -138,14 +138,24 @@ export default function ResizeImageTool() {
 
           <div className="pt-2 flex flex-col sm:flex-row justify-between items-center gap-3">
             {resultUrl ? (
-              <a
-                href={resultUrl}
-                download={`${file.name.replace(/\.[^/.]+$/, "")}_resized.${file.type?.split('/')[1] || 'jpg'}`}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md bg-emerald-600 hover:bg-emerald-700 transition-all"
+              <button
+                type="button"
+                onClick={(e) => {
+                  if (e) e.preventDefault();
+                  if (!resultUrl) return;
+                  const link = document.createElement('a');
+                  link.href = resultUrl;
+                  link.download = `${file.name.replace(/\.[^/.]+$/, "")}_resized.${file.type?.split('/')[1] || 'jpg'}`;
+                  link.style.display = 'none';
+                  document.body.appendChild(link);
+                  link.click();
+                  setTimeout(() => document.body.removeChild(link), 100);
+                }}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md bg-emerald-600 hover:bg-emerald-700 transition-all cursor-pointer"
               >
                 <Download className="w-4 h-4" />
                 Download Resized Image ({width}x{height}px)
-              </a>
+              </button>
             ) : (
               <button
                 onClick={handleResize}

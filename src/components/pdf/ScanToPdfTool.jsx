@@ -342,14 +342,24 @@ export default function ScanToPdfTool() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <a
-              href={resultBlobUrl}
-              download={resultFilename}
-              className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-extrabold shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+            <button
+              type="button"
+              onClick={(e) => {
+                if (e) e.preventDefault();
+                if (!resultBlobUrl) return;
+                const link = document.createElement('a');
+                link.href = resultBlobUrl;
+                link.download = resultFilename || 'scanned_document.pdf';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                setTimeout(() => document.body.removeChild(link), 100);
+              }}
+              className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-extrabold shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
             >
               <Download className="w-4 h-4" />
               <span>Download Scanned PDF</span>
-            </a>
+            </button>
             <button
               type="button"
               onClick={() => window.open(resultBlobUrl, '_blank')}
