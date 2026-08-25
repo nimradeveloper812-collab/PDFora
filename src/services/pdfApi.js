@@ -197,6 +197,38 @@ export const pdfApi = {
     return await clientPdfService.scanToPdf(file, options, onProgress);
   },
 
+  async pdfToPowerpoint(file, options, onProgress) {
+    return await clientPdfService.pdfToPowerpoint(file, options, onProgress);
+  },
+
+  async htmlToPdf(file, options, onProgress) {
+    return await clientPdfService.htmlToPdf(file, options, onProgress);
+  },
+
+  async pdfToPdfA(file, options, onProgress) {
+    return await clientPdfService.pdfToPdfA(file, options, onProgress);
+  },
+
+  async signPdf(file, options, onProgress) {
+    return await clientPdfService.signPdf(file, options, onProgress);
+  },
+
+  async redactPdf(file, options, onProgress) {
+    return await clientPdfService.redactPdf(file, options, onProgress);
+  },
+
+  async editPdf(file, options, onProgress) {
+    return await clientPdfService.editPdf(file, options, onProgress);
+  },
+
+  async comparePdf(file, options, onProgress) {
+    return await clientPdfService.comparePdf(file, options, onProgress);
+  },
+
+  async convertPdfToText(file, options, onProgress) {
+    return await clientPdfService.convertPdfToText(file, options, onProgress);
+  },
+
   async pdfForms(file, options, onProgress) {
     return await clientPdfService.pdfForms(file, options, onProgress);
   }

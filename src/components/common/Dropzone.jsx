@@ -328,6 +328,10 @@ export default function Dropzone({ tool }) {
           result = await pdfApi.pdfForms(files[0], optionValues, handleProgress);
           filename = `${firstFileName}_form_filled.pdf`;
           break;
+        case 'pdf-to-text':
+          result = await pdfApi.convertPdfToText(files[0], optionValues, handleProgress);
+          filename = `${firstFileName}.txt`;
+          break;
         default:
           throw new Error('Unknown tool');
       }

@@ -1517,5 +1517,17 @@ export const clientPdfService = {
 
     onProgress?.(100, 'Document text parsing complete!');
     return pages;
+  },
+
+  /* ── 37. PDF to Text ────────────────────────────────────────────── */
+  async convertPdfToText(file, options = {}, onProgress) {
+    onProgress?.(10, 'Extracting document text...');
+    const pages = await this.extractPdfTextPages(file, onProgress);
+    let fullText = `=== PDF Text Export: ${file.name} ===\n\n`;
+    pages.forEach(p => {
+      fullText += `--- Page ${p.pageNum} ---\n${p.text || '[No selectable text on page]'}\n\n`;
+    });
+    onProgress?.(100, 'Text extraction complete!');
+    return new Blob([fullText], { type: 'text/plain;charset=utf-8' });
   }
 };
