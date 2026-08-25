@@ -50,38 +50,38 @@ export default function Header() {
         ref={navRef}
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-150 ${
           scrolled
-            ? 'bg-white/95 dark:bg-[#0D0D14]/95 backdrop-blur-md py-2 border-b border-zinc-200 dark:border-[#2A2E45] shadow-xs'
-            : 'bg-white dark:bg-[#0D0D14] py-2.5 border-b border-zinc-200 dark:border-[#2A2E45]'
+            ? 'bg-white/95 dark:bg-[#0D0D14]/95 backdrop-blur-md py-1.5 border-b border-zinc-200 dark:border-[#2A2E45] shadow-xs'
+            : 'bg-white dark:bg-[#0D0D14] py-1.5 border-b border-zinc-200 dark:border-[#2A2E45]'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4 h-12">
+          <div className="flex items-center justify-between gap-3 h-10">
 
             {/* Brand Logo */}
             <Link
               to="/"
-              className="flex items-center gap-2.5 group shrink-0"
+              className="flex items-center gap-2 group shrink-0"
               aria-label="PDFora home"
             >
               <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-xs transition-transform group-hover:scale-105"
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-white shadow-xs transition-transform group-hover:scale-105"
                 style={{
                   background: 'linear-gradient(135deg, #6C3FFC 0%, #4B24C5 100%)',
                 }}
               >
-                <FileCheck className="w-5 h-5" strokeWidth={2.3} aria-hidden="true" />
+                <FileCheck className="w-4 h-4" strokeWidth={2.3} aria-hidden="true" />
               </div>
-              <span className="text-2xl font-black tracking-tight text-zinc-900 dark:text-white font-heading">
+              <span className="text-lg font-black tracking-tight text-zinc-900 dark:text-white font-heading">
                 PDF<span style={{ color: '#6C3FFC' }}>ora</span>
               </span>
             </Link>
 
             {/* Header Main Links (Desktop) */}
-            <nav className="hidden lg:flex items-center gap-1 font-display" role="navigation">
+            <nav className="hidden lg:flex items-center gap-0.5 font-display" role="navigation">
               
               <Link
                 to="/"
-                className="px-3.5 py-2 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
               >
                 Home
               </Link>
@@ -91,35 +91,35 @@ export default function Header() {
                 <button
                   type="button"
                   onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer ${
                     isToolsDropdownOpen
                       ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300'
                       : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800'
                   }`}
                 >
-                  <Grid className="w-3.5 h-3.5 text-purple-600" />
+                  <Grid className="w-3 h-3 text-purple-600" />
                   <span>Tools &amp; Categories</span>
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-3 h-3 transition-transform ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
               </div>
 
               <Link
                 to="/tools"
-                className="px-3.5 py-2 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
               >
                 All Tools Directory
               </Link>
 
               <Link
                 to="/about"
-                className="px-3.5 py-2 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
               >
                 About
               </Link>
 
               <Link
                 to="/contact"
-                className="px-3.5 py-2 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
               >
                 Support
               </Link>
@@ -127,17 +127,17 @@ export default function Header() {
             </nav>
 
             {/* Right Action Bar */}
-            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               
               {/* Quick Search Button (Desktop & Tablet) */}
               <button
                 type="button"
                 onClick={() => setIsSearchOpen(true)}
-                className="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-300 text-xs font-medium transition-all"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-300 text-xs font-medium transition-all"
               >
-                <Search className="w-3.5 h-3.5 text-purple-600" />
+                <Search className="w-3 h-3 text-purple-600" />
                 <span>Search tools...</span>
-                <kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 text-[10px] font-mono text-zinc-600 dark:text-zinc-300 font-bold">
+                <kbd className="px-1 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 text-[10px] font-mono text-zinc-600 dark:text-zinc-300 font-bold">
                   ⌘K
                 </kbd>
               </button>
@@ -146,10 +146,10 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setIsSearchOpen(true)}
-                className="p-2 rounded-xl text-purple-600 hover:bg-purple-50 dark:hover:bg-zinc-800 sm:hidden transition-colors"
+                className="p-1.5 rounded-lg text-purple-600 hover:bg-purple-50 dark:hover:bg-zinc-800 sm:hidden transition-colors"
                 aria-label="Search tools"
               >
-                <Search className="w-5 h-5" />
+                <Search className="w-4 h-4" />
               </button>
 
               <LanguageSwitcher />
@@ -159,10 +159,10 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 rounded-xl transition-colors text-zinc-900 hover:bg-zinc-100 dark:text-white dark:hover:bg-zinc-800 lg:hidden"
+                className="p-1.5 rounded-lg transition-colors text-zinc-900 hover:bg-zinc-100 dark:text-white dark:hover:bg-zinc-800 lg:hidden"
                 aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
               >
-                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
               </button>
             </div>
 

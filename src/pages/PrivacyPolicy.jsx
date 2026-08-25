@@ -42,10 +42,17 @@ You retain 100% control, ownership, and privacy over your files at all times.`,
     content: `PDFora uses standard cookies and browser storage technologies to maintain platform features and sustain our free service:
 
 • **Strictly Necessary Storage:** Local browser storage to remember interface preferences (such as selected conversion settings or theme preferences).
-• **Google AdSense & Third-Party Cookies:** We display advertisements served by Google AdSense to keep PDFora 100% free. Google and its certified advertising partners use cookies (including the DoubleClick cookie) to serve relevant ads based on prior visits to this and other websites.
+• **Google AdSense & Third-Party Cookies:** We display advertisements served by Google AdSense to keep PDFora 100% free. Google and its certified advertising partners use cookies (including the DoubleClick cookie) to serve relevant ads based on prior visits to this and other websites. Google's use of advertising cookies enables it and its partners to serve ads based on your visit to PDFora and/or other websites on the Internet.
 
 **Managing Your Ad Preferences & Opting Out:**
-You can manage or disable personalized advertising by visiting Google Ad Settings (www.google.com/settings/ads) or through the Digital Advertising Alliance opt-out portal (www.aboutads.info/choices). You can also configure your browser to block third-party cookies at any time.`,
+You can manage or disable personalized advertising at any time using the following official tools:
+
+• **Google Ad Settings:** https://www.google.com/settings/ads
+• **Google Privacy Policy:** https://policies.google.com/technologies/ads
+• **Digital Advertising Alliance (DAA) Opt-Out:** https://www.aboutads.info/choices
+• **Network Advertising Initiative (NAI) Opt-Out:** https://optout.networkadvertising.org/
+
+You can also configure your browser to block or delete third-party cookies at any time. Note that opting out of personalized ads does not remove ads from the site; it means ads you see may be less relevant to your interests.`,
   },
   {
     title: '5. Security Standards',
@@ -133,7 +140,7 @@ export default function PrivacyPolicy() {
             Privacy Policy
           </h1>
           <p className="text-sm text-zinc-500 dark:text-zinc-400 font-sans">
-            Last Updated: <strong className="text-zinc-700 dark:text-zinc-200">August 17, 2026</strong>
+            Last Updated: <strong className="text-zinc-700 dark:text-zinc-200">August 25, 2026</strong>
           </p>
           <p className="text-sm leading-relaxed max-w-xl mx-auto text-zinc-600 dark:text-zinc-300 font-sans">
             At PDFora, your privacy is foundational. We process your documents locally in your browser
@@ -171,13 +178,38 @@ export default function PrivacyPolicy() {
             </h2>
             <div className="text-sm leading-relaxed space-y-3 text-zinc-600 dark:text-zinc-300 font-sans">
               {section.content.split('\n\n').map((para, i) => {
-                const formatted = para.split(/(\*\*.*?\*\*)/g).map((part, pIdx) => {
-                  if (part.startsWith('**') && part.endsWith('**')) {
-                    return <strong key={pIdx} className="text-zinc-900 dark:text-white font-bold">{part.slice(2, -2)}</strong>;
-                  }
-                  return part;
-                });
-                return <p key={i} className="whitespace-pre-line">{formatted}</p>;
+                // Render each paragraph, converting **bold**, URLs, and newlines
+                const renderInline = (text) =>
+                  text.split(/(https?:\/\/[^\s,]+|\*\*.*?\*\*)/g).map((part, pIdx) => {
+                    if (part.startsWith('**') && part.endsWith('**')) {
+                      return (
+                        <strong key={pIdx} className="text-zinc-900 dark:text-white font-bold">
+                          {part.slice(2, -2)}
+                        </strong>
+                      );
+                    }
+                    // Render https:// URLs as real clickable links
+                    if (part.startsWith('http')) {
+                      return (
+                        <a
+                          key={pIdx}
+                          href={part}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-purple-600 dark:text-purple-400 underline underline-offset-2 hover:text-purple-700 dark:hover:text-purple-300 break-all"
+                        >
+                          {part}
+                        </a>
+                      );
+                    }
+                    return part;
+                  });
+
+                return (
+                  <p key={i} className="whitespace-pre-line">
+                    {renderInline(para)}
+                  </p>
+                );
               })}
             </div>
           </div>

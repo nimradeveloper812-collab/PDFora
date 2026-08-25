@@ -7,7 +7,7 @@ import {
 import { pdfApi } from '../../services/pdfApi';
 import { analytics } from '../../services/analytics';
 import { getToolTheme } from '../../data/toolsData';
-import AdBanner from './AdBanner';
+import AdBanner, { AD_SLOTS } from './AdBanner';
 import SplitPdfControls from './SplitPdfControls';
 import RemovePdfControls from './RemovePdfControls';
 
@@ -894,6 +894,22 @@ export default function Dropzone({ tool }) {
             <p className="text-xs" style={{ color: '#A1A1AA' }}>
               This usually takes under 10 seconds…
             </p>
+
+            {/* ── Processing-State Ad Unit ─────────────────────────────
+                 Policy note: This ad appears while the user is WAITING and
+                 there are NO clickable action buttons nearby — zero risk of
+                 accidental clicks. The min-h-[300px] container prevents CLS.
+                 Slot ID comes from VITE_AD_SLOT_TOOL in .env.local.         */}
+            <div
+              className="w-full max-w-md mx-auto min-h-[300px]"
+              style={{ marginTop: '32px', paddingTop: '16px', borderTop: '1px solid #F1F5F9' }}
+            >
+              <AdBanner
+                slot={AD_SLOTS.tool}
+                variant="rectangle"
+                className="my-0"
+              />
+            </div>
           </div>
         )}
 
@@ -1075,9 +1091,41 @@ export default function Dropzone({ tool }) {
               </div>
             )}
 
-            {/* ── High-CPM Download View Ad ── */}
-            <div className="max-w-md mx-auto pt-2">
-              <AdBanner slot="4567890123" className="my-1" />
+            {/* ── Download-View Ad Unit ────────────────────────────────
+                 POLICY: Google "Accidental Clicks" policy requires a clear
+                 visual AND spatial separation between the download CTA and
+                 any ad unit. This section provides:
+                   • 48px margin-top from the button row
+                   • Full-width visual divider line
+                   • Explicit "Advertisement" section label
+                   • min-h-[300px] container to prevent CLS
+                 Slot ID comes from VITE_AD_SLOT_DOWNLOAD in .env.local.    */}
+            <div
+              className="w-full max-w-md mx-auto min-h-[300px]"
+              style={{ marginTop: '48px' }}
+              aria-label="Advertisement section"
+            >
+              {/* Visual divider — makes spatial separation unambiguous to
+                  both users and AdSense policy reviewers */}
+              <div
+                className="w-full flex items-center gap-3 mb-4"
+                aria-hidden="true"
+              >
+                <div className="flex-1 h-px" style={{ background: '#E2E8F0' }} />
+                <span
+                  className="text-[10px] font-semibold uppercase tracking-widest select-none"
+                  style={{ color: '#94A3B8' }}
+                >
+                  Advertisement
+                </span>
+                <div className="flex-1 h-px" style={{ background: '#E2E8F0' }} />
+              </div>
+
+              <AdBanner
+                slot={AD_SLOTS.download}
+                variant="rectangle"
+                className="my-0"
+              />
             </div>
 
             <p className="text-[11px] font-medium text-zinc-400">

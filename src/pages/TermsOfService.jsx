@@ -67,7 +67,11 @@ Our aggregate liability for any dispute shall not exceed $50.00 USD.`,
   },
   {
     title: '8. Third-Party Links & Advertising',
-    content: `PDFora contains advertisements served by Google AdSense and may display links to third-party resources. PDFora does not endorse and is not responsible for the products, services, or privacy practices of external third-party advertisers.`,
+    content: `PDFora contains interest-based advertisements served by Google AdSense and may display links to third-party resources. PDFora does not endorse and is not responsible for the products, services, or privacy practices of external third-party advertisers.
+
+**Interest-Based Advertising:** Google AdSense may use cookies and anonymous identifiers to serve ads based on prior visits to this and other websites. You can opt out of interest-based advertising at any time by visiting https://www.google.com/settings/ads or https://www.aboutads.info/choices.
+
+**Opting Out:** Opting out means you will continue to see ads, but they may not be tailored to your interests.`,
   },
   {
     title: '9. Governing Law',
@@ -121,7 +125,7 @@ export default function TermsOfService() {
             Terms of Service
           </h1>
           <p className="text-sm text-zinc-500 dark:text-zinc-400 font-sans">
-            Last Updated: <strong className="text-zinc-700 dark:text-zinc-200">August 17, 2026</strong>
+            Last Updated: <strong className="text-zinc-700 dark:text-zinc-200">August 25, 2026</strong>
             &nbsp;&middot;&nbsp; Effective immediately
           </p>
           <p className="text-sm leading-relaxed max-w-xl mx-auto text-zinc-600 dark:text-zinc-300 font-sans">

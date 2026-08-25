@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import Dropzone from './Dropzone';
-import AdBanner from './AdBanner';
+import AdBanner, { AD_SLOTS } from './AdBanner';
 import BackgroundRemoverTool from '../image/BackgroundRemoverTool';
 import ImageCompressorTool from '../image/ImageCompressorTool';
 import VideoToAudioTool from '../media/VideoToAudioTool';
@@ -171,6 +171,21 @@ export default function ToolLayout({ tool }) {
         </script>
       </Helmet>
 
+      {/* ── Top Header Leaderboard Ad Unit ───────────────────
+           Policy: Top banner layout is spaced using margins to prevent
+           overlap with menu headers. Spaced to comply with Google layout policies.
+           min-h-[110px] eliminates Cumulative Layout Shift (CLS).
+           Slot ID comes from VITE_AD_SLOT_HEADER in .env.local. */}
+      <div className="w-full border-b border-zinc-100 dark:border-[#2A2E45] bg-[#F8FAFC]/50 dark:bg-[#141622]/30 min-h-[110px]">
+        <div className="max-w-4xl mx-auto px-4 py-2">
+          <AdBanner
+            slot={AD_SLOTS.header}
+            variant="leaderboard"
+            className="my-0"
+          />
+        </div>
+      </div>
+
       {/* ── Breadcrumb ─────────────────────────────────────── */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-1 w-full">
         <nav
@@ -295,8 +310,17 @@ export default function ToolLayout({ tool }) {
           ))}
         </div>
 
-        <div className="max-w-4xl mx-auto mt-6">
-          <AdBanner slot="7890123456" className="my-2" />
+        {/* ── Below-Tool Ad Unit ────────────────────────────
+             Fixed min-h-[300px] pre-reserves space so no CLS occurs
+             when the ad iframe loads. The rectangle variant (280px)
+             is the highest-CPM IAB size for utility tool mid-content
+             placements. Slot ID comes from VITE_AD_SLOT_TOOL in .env.local. */}
+        <div className="max-w-4xl mx-auto mt-6 min-h-[300px]">
+          <AdBanner
+            slot={AD_SLOTS.tool}
+            variant="rectangle"
+            className="my-2"
+          />
         </div>
       </section>
 
