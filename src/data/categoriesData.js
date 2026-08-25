@@ -21,8 +21,8 @@ export const CATEGORIES_DATA = [
       {
         id: 'page-management',
         name: 'Page Management',
-        desc: 'Extract, delete, rotate, or crop PDF pages.',
-        toolIds: ['extract-pages-pdf', 'remove-pages-pdf', 'rotate-pdf', 'crop-pdf']
+        desc: 'Delete, rotate, or crop PDF pages.',
+        toolIds: ['remove-pages-pdf', 'rotate-pdf', 'crop-pdf']
       }
     ]
   },

@@ -346,12 +346,6 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://pdfora.nimradev.site/extract-pages-pdf</loc>
-    <lastmod>2026-08-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://pdfora.nimradev.site/scan-to-pdf</loc>
     <lastmod>2026-08-25</lastmod>
     <changefreq>weekly</changefreq>

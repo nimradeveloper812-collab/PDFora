@@ -44,7 +44,6 @@ const CropPdf = lazy(() => import('./pages/tools/CropPdf'));
 
 const RepairPdf = lazy(() => import('./pages/tools/RepairPdf'));
 const RemovePagesPdf = lazy(() => import('./pages/tools/RemovePagesPdf'));
-const ExtractPagesPdf = lazy(() => import('./pages/tools/ExtractPagesPdf'));
 const ScanToPdf = lazy(() => import('./pages/tools/ScanToPdf'));
 const PdfToPowerpoint = lazy(() => import('./pages/tools/PdfToPowerpoint'));
 const HtmlToPdf = lazy(() => import('./pages/tools/HtmlToPdf'));
@@ -126,8 +125,6 @@ function AppLayout() {
             <Route path="/repair-pdf" element={<RepairPdf />} />
             <Route path="/remove-pages-pdf" element={<RemovePagesPdf />} />
             <Route path="/remove-pages" element={<Navigate to="/remove-pages-pdf" replace />} />
-            <Route path="/extract-pages-pdf" element={<ExtractPagesPdf />} />
-            <Route path="/extract-pages" element={<Navigate to="/extract-pages-pdf" replace />} />
             <Route path="/scan-to-pdf" element={<ScanToPdf />} />
             <Route path="/pdf-to-powerpoint" element={<PdfToPowerpoint />} />
             <Route path="/html-to-pdf" element={<HtmlToPdf />} />

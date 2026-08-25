@@ -123,7 +123,7 @@ export default function Dropzone({ tool }) {
     const totalBytes = valid.reduce((a, f) => a + (f.size || 0), 0);
     analytics.trackFileUpload(tool.id, valid.length, totalBytes);
 
-    if (['split-pdf', 'extract-pages-pdf', 'remove-pages-pdf'].includes(tool.id) && valid[0]) {
+    if (['split-pdf', 'remove-pages-pdf'].includes(tool.id) && valid[0]) {
       (async () => {
         try {
           const { PDFDocument } = await import('pdf-lib');
@@ -133,8 +133,6 @@ export default function Dropzone({ tool }) {
           setSplitTotalPages(count);
           setSplitConfig(prev => ({
             ...prev,
-            mode: tool.id === 'extract-pages-pdf' ? 'extract' : prev.mode,
-            extractMode: tool.id === 'extract-pages-pdf' ? 'select' : prev.extractMode,
             ranges: [{ from: 1, to: count }],
             extractPages: `1-${count}`,
           }));
@@ -300,13 +298,6 @@ export default function Dropzone({ tool }) {
           result = await pdfApi.removePagesPdf(files[0], optionValues, handleProgress);
           filename = `${firstFileName}_pages_removed.pdf`;
           break;
-        case 'extract-pages-pdf': {
-          const configToUse = { ...splitConfig, mode: 'extract' };
-          const res = await pdfApi.splitPdf(files[0], configToUse, handleProgress);
-          result = res.blob;
-          filename = res.isZip ? `${firstFileName}_extracted_pages.zip` : `${firstFileName}_extracted.pdf`;
-          break;
-        }
         case 'scan-to-pdf':
           result = await pdfApi.scanToPdf(files[0], optionValues, handleProgress);
           filename = `${firstFileName}_scanned.pdf`;
@@ -637,7 +628,7 @@ export default function Dropzone({ tool }) {
                           </p>
                           <p className="text-[11px] mt-0.5 font-medium flex items-center gap-1.5 flex-wrap" style={{ color: '#64748B' }}>
                             <span>{fmt(file.size)}</span>
-                            {splitTotalPages > 0 && ['split-pdf', 'extract-pages-pdf', 'remove-pages-pdf'].includes(tool.id) && (
+                            {splitTotalPages > 0 && ['split-pdf', 'remove-pages-pdf'].includes(tool.id) && (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-100 text-blue-700 text-[10px] font-bold border border-blue-200">
                                 📄 {splitTotalPages} Pages Total (Pages 1-{splitTotalPages})
                               </span>
@@ -686,7 +677,7 @@ export default function Dropzone({ tool }) {
                   ))}
                 </div>
 
-                {['split-pdf', 'extract-pages-pdf'].includes(tool.id) ? (
+                {tool.id === 'split-pdf' ? (
                   <SplitPdfControls
                     totalPages={splitTotalPages}
                     config={splitConfig}
