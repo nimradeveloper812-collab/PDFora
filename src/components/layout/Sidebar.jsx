@@ -27,8 +27,8 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
   };
 
   const pdfTools = TOOLS.filter(t => ['compress-pdf', 'merge-pdf', 'split-pdf', 'rotate-pdf', 'protect-pdf', 'unlock-pdf'].includes(t.id));
-  const convertTools = TOOLS.filter(t => t.category === 'documents' || ['jpg-to-pdf', 'pdf-to-jpg', 'powerpoint-to-pdf'].includes(t.id));
-  const mediaTools = TOOLS.filter(t => ['images', 'video', 'audio'].includes(t.category) && !['jpg-to-pdf', 'pdf-to-jpg'].includes(t.id));
+  const convertTools = TOOLS.filter(t => t.category === 'documents' || ['jpg-to-pdf', 'powerpoint-to-pdf'].includes(t.id));
+  const mediaTools = TOOLS.filter(t => ['images', 'video', 'audio'].includes(t.category) && !['jpg-to-pdf'].includes(t.id));
 
   const navContent = (
     <div className="flex flex-col h-full bg-white border-r border-zinc-200 w-60 shrink-0 font-sans">

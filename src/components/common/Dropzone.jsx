@@ -220,12 +220,6 @@ export default function Dropzone({ tool }) {
           result = await pdfApi.convertJpgToPdf(files, handleProgress);
           filename = 'images.pdf';
           break;
-        case 'pdf-to-jpg': {
-          const res = await pdfApi.convertPdfToJpg(files[0], handleProgress);
-          result = res.blob;
-          filename = res.isZip ? 'pages.zip' : 'page_1.jpg';
-          break;
-        }
         case 'pdf-to-word':
           result = await pdfApi.convertPdfToWord(files[0], handleProgress);
           filename = `${firstFileName}.docx`;

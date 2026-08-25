@@ -75,7 +75,7 @@ export function getToolTheme(toolId, category) {
     };
   }
   // Presentation & Image Tools
-  if (toolId === 'powerpoint-to-pdf' || toolId === 'jpg-to-pdf' || toolId === 'pdf-to-jpg') {
+  if (toolId === 'powerpoint-to-pdf' || toolId === 'jpg-to-pdf') {
     return {
       name: 'violet',
       iconBg: 'bg-violet-50 text-violet-600 border-violet-100',
@@ -533,7 +533,6 @@ export const TOOLS = [
     "relatedToolIds": [
       "word-to-pdf",
       "excel-to-pdf",
-      "pdf-to-jpg",
       "merge-pdf"
     ]
   },
@@ -675,125 +674,9 @@ export const TOOLS = [
       "photos to pdf"
     ],
     "relatedToolIds": [
-      "pdf-to-jpg",
       "merge-pdf",
       "image-converter",
       "image-compressor"
-    ]
-  },
-  {
-    "id": "pdf-to-jpg",
-    "name": "PDF to JPG",
-    "slug": "pdf-to-jpg",
-    "path": "/pdf-to-jpg",
-    "category": "pdf",
-    "shortDesc": "Extract all pages or images from a PDF into high-quality JPGs.",
-    "description": "Convert every page of your PDF into high-resolution JPG images, or extract embedded images directly.",
-    "iconName": "FileImage",
-    "badge": "",
-    "acceptedTypes": ".pdf, application/pdf",
-    "acceptedFileLabel": "PDF document",
-    "maxFiles": 1,
-    "options": [
-      {
-        "id": "mode",
-        "label": "Extraction Mode",
-        "type": "select",
-        "default": "entire-page",
-        "choices": [
-          {
-            "value": "entire-page",
-            "label": "Convert Entire PDF Pages to JPG"
-          }
-        ]
-      }
-    ],
-    "features": [
-      "High-DPI 2.0x supersampled rendering for razor-sharp text and graphics",
-      "Multi-page PDFs automatically packaged into a convenient ZIP archive",
-      "Single-page PDFs download directly as standalone JPG files",
-      "Complete multilingual CMap support for international scripts"
-    ],
-    "steps": [
-      "Upload the PDF document you wish to convert to images.",
-      "Click \"Convert to JPG\" to start high-resolution page rendering.",
-      "Download your individual JPG image or ZIP archive containing all pages."
-    ],
-    "overview": "When you need to embed a PDF page into a website, social media post, PowerPoint slide, or graphic design project, converting the PDF into an image is the cleanest solution. PDFora PDF to JPG engine uses high-density 2x canvas supersampling to render vector text, tables, and photos with crisp clarity. International CMap font tables are loaded automatically to ensure Arabic, Urdu, CJK, and Indic characters render without missing glyphs.",
-    "useCases": [
-      {
-        "title": "Social Media & Marketing Graphics",
-        "desc": "Marketers extract PDF report summaries and infographics into JPGs for posting on LinkedIn, Twitter, and Instagram."
-      },
-      {
-        "title": "Website & Blog Article Illustration",
-        "desc": "Content creators convert PDF diagrams and document covers into lightweight web-ready JPG images."
-      },
-      {
-        "title": "Slide Embeds & Keynote Presentations",
-        "desc": "Professionals insert specific PDF report pages directly into PowerPoint or Google Slides as high-res images."
-      },
-      {
-        "title": "Mobile Sharing on Messaging Apps",
-        "desc": "Users convert official certificates and notices into images for instant preview in WhatsApp groups without requiring a PDF reader."
-      }
-    ],
-    "technicalSpecs": [
-      {
-        "label": "Render Engine",
-        "value": "PDF.js High-DPI Canvas Supersampling (2.0x scale)"
-      },
-      {
-        "label": "Output Image Format",
-        "value": "JPEG (High Quality 95% Encoding)"
-      },
-      {
-        "label": "Font & Glyph Support",
-        "value": "Full Unicode CMap & Embedded TrueType/OpenType Rendering"
-      },
-      {
-        "label": "Archive Format",
-        "value": "Standard ZIP for multi-page documents"
-      },
-      {
-        "label": "Security",
-        "value": "In-Browser Execution (Zero remote server storage)"
-      }
-    ],
-    "proTips": [
-      "Single-page PDFs download instantly as single .jpg files without needing unzipping software.",
-      "For multi-page documents, files are named sequentially (e.g., page_1.jpg, page_2.jpg) inside the downloaded ZIP.",
-      "The 2x supersampling ensures text remains readable even when zoomed in on high-resolution Retina displays."
-    ],
-    "faqs": [
-      {
-        "q": "Will the extracted JPG images be blurry?",
-        "a": "No. PDFora renders pages at double resolution (2.0x scale) with anti-aliasing to ensure text and lines remain sharp."
-      },
-      {
-        "q": "How do I access images if my PDF has multiple pages?",
-        "a": "If your PDF contains multiple pages, all converted JPG images are packaged into a single, organized ZIP file."
-      },
-      {
-        "q": "Are password-protected PDFs supported?",
-        "a": "You must unlock password-protected PDFs before conversion so the rendering engine can read the document streams."
-      }
-    ],
-    "metaTitle": "PDF to JPG Converter Online Free — Extract PDF to Images | PDFora",
-    "metaDescription": "Convert PDF pages into high-resolution JPG images online for free. Extract individual pages or full document image archives with zero quality loss.",
-    "h1Title": "PDF to JPG Converter Online",
-    "primaryKeywords": [
-      "pdf to jpg",
-      "convert pdf to jpg online",
-      "pdf to image converter",
-      "extract images from pdf",
-      "pdf to jpeg"
-    ],
-    "relatedToolIds": [
-      "jpg-to-pdf",
-      "image-compressor",
-      "image-converter",
-      "split-pdf"
     ]
   },
   {
@@ -1197,7 +1080,6 @@ export const TOOLS = [
     "relatedToolIds": [
       "merge-pdf",
       "compress-pdf",
-      "pdf-to-jpg",
       "pdf-to-word"
     ]
   },
@@ -1305,8 +1187,7 @@ export const TOOLS = [
     "relatedToolIds": [
       "image-compressor",
       "image-converter",
-      "jpg-to-pdf",
-      "pdf-to-jpg"
+      "jpg-to-pdf"
     ]
   },
   {
@@ -2117,8 +1998,7 @@ export const TOOLS = [
     "relatedToolIds": [
       "image-compressor",
       "image-background-remover",
-      "jpg-to-pdf",
-      "pdf-to-jpg"
+      "jpg-to-pdf"
     ]
   },
   {
@@ -3322,28 +3202,6 @@ export const TOOLS = [
     "metaDescription": "Convert PNG images to PDF online for free. Private, fast PNG to PDF converter.",
     "h1Title": "Convert PNG to PDF Online",
     "primaryKeywords": ["png to pdf", "convert png to pdf free"]
-  },
-  {
-    "id": "pdf-to-png",
-    "name": "PDF to PNG",
-    "slug": "pdf-to-png",
-    "path": "/pdf-to-png",
-    "category": "pdf",
-    "shortDesc": "Extract PDF document pages as PNG images.",
-    "description": "Convert pages of a PDF file into high-quality PNG image files.",
-    "iconName": "FileText",
-    "badge": "",
-    "acceptedTypes": ".pdf, application/pdf",
-    "acceptedFileLabel": "PDF files",
-    "maxFiles": 1,
-    "features": ["Extract pages to PNG", "High resolution image rendering", "Instant client extraction"],
-    "steps": ["Upload PDF document.", "Click Convert to PNG.", "Download PNG images."],
-    "overview": "Save PDF pages as transparent PNG images.",
-    "faqs": [{ "q": "Are PNGs extracted in high quality?", "a": "Yes, rendered with crisp pixel density." }],
-    "metaTitle": "PDF to PNG Converter Online Free | PDFora",
-    "metaDescription": "Convert PDF document pages to PNG images online for free. Private PDF to PNG extractor.",
-    "h1Title": "Convert PDF to PNG Online",
-    "primaryKeywords": ["pdf to png", "convert pdf to png free"]
   },
   {
     "id": "heic-to-png",

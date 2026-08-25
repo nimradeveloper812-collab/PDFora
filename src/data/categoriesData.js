@@ -38,7 +38,7 @@ export const CATEGORIES_DATA = [
         desc: 'Export PDF documents to editable Office files or images.',
         toolIds: [
           'pdf-to-word', 'pdf-to-excel', 'pdf-to-powerpoint',
-          'pdf-to-jpg', 'pdf-to-png', 'pdf-to-text'
+          'pdf-to-text'
         ]
       },
       {

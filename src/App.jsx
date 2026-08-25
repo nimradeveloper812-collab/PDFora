@@ -19,7 +19,6 @@ const WordToPdf = lazy(() => import('./pages/tools/WordToPdf'));
 const ExcelToPdf = lazy(() => import('./pages/tools/ExcelToPdf'));
 const PowerPointToPdf = lazy(() => import('./pages/tools/PowerPointToPdf'));
 const JpgToPdf = lazy(() => import('./pages/tools/JpgToPdf'));
-const PdfToJpg = lazy(() => import('./pages/tools/PdfToJpg'));
 const MergePdf = lazy(() => import('./pages/tools/MergePdf'));
 const CompressPdf = lazy(() => import('./pages/tools/CompressPdf'));
 const SplitPdf = lazy(() => import('./pages/tools/SplitPdf'));
@@ -67,7 +66,6 @@ const JsonFormatter = lazy(() => import('./pages/tools/JsonFormatter'));
 const QrGenerator = lazy(() => import('./pages/tools/QrGenerator'));
 
 const PngToPdf = lazy(() => import('./pages/tools/PngToPdf'));
-const PdfToPng = lazy(() => import('./pages/tools/PdfToPng'));
 const HeicToPng = lazy(() => import('./pages/tools/HeicToPng'));
 const WebpToPng = lazy(() => import('./pages/tools/WebpToPng'));
 const SvgToPng = lazy(() => import('./pages/tools/SvgToPng'));
@@ -112,7 +110,6 @@ function AppLayout() {
             <Route path="/excel-to-pdf" element={<ExcelToPdf />} />
             <Route path="/powerpoint-to-pdf" element={<PowerPointToPdf />} />
             <Route path="/jpg-to-pdf" element={<JpgToPdf />} />
-            <Route path="/pdf-to-jpg" element={<PdfToJpg />} />
             <Route path="/merge-pdf" element={<MergePdf />} />
             <Route path="/compress-pdf" element={<CompressPdf />} />
             <Route path="/split-pdf" element={<SplitPdf />} />
@@ -147,7 +144,6 @@ function AppLayout() {
             <Route path="/qr-generator" element={<QrGenerator />} />
 
             <Route path="/png-to-pdf" element={<PngToPdf />} />
-            <Route path="/pdf-to-png" element={<PdfToPng />} />
             <Route path="/heic-to-png" element={<HeicToPng />} />
             <Route path="/webp-to-png" element={<WebpToPng />} />
             <Route path="/svg-to-png" element={<SvgToPng />} />
@@ -197,7 +193,6 @@ function AppLayout() {
             <Route path="/tools/excel-to-pdf" element={<Navigate to="/excel-to-pdf" replace />} />
             <Route path="/tools/powerpoint-to-pdf" element={<Navigate to="/powerpoint-to-pdf" replace />} />
             <Route path="/tools/jpg-to-pdf" element={<Navigate to="/jpg-to-pdf" replace />} />
-            <Route path="/tools/pdf-to-jpg" element={<Navigate to="/pdf-to-jpg" replace />} />
             <Route path="/tools/merge-pdf" element={<Navigate to="/merge-pdf" replace />} />
             <Route path="/tools/compress-pdf" element={<Navigate to="/compress-pdf" replace />} />
             <Route path="/tools/split-pdf" element={<Navigate to="/split-pdf" replace />} />

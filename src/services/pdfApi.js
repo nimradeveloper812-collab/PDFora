@@ -81,20 +81,6 @@ export const pdfApi = {
     return await clientPdfService.convertJpgToPdf(files, onProgress);
   },
 
-  async convertPdfToJpg(file, onProgress) {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const res = await safeRequest(() => fetch(`${API_BASE}/api/pdf/pdf-to-jpg`, { method: 'POST', body: formData }));
-    if (res) {
-      const contentType = res.headers.get('content-type') || '';
-      const isZip = contentType.includes('zip');
-      return { blob: await res.blob(), isZip };
-    }
-
-    return await clientPdfService.convertPdfToJpg(file, onProgress);
-  },
-
   async mergePdf(files, onProgress) {
     const formData = new FormData();
     files.forEach(f => formData.append('files', f));
