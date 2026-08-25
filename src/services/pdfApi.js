@@ -40,7 +40,7 @@ const safeRequest = async (fetchCall) => {
   return null;
 };
 
-export const pdfApi = {
+const rawPdfApi = {
   async convertWordToPdf(file, onProgress) {
     const formData = new FormData();
     formData.append('file', file);
@@ -233,3 +233,15 @@ export const pdfApi = {
     return await clientPdfService.pdfForms(file, options, onProgress);
   }
 };
+
+export const pdfApi = new Proxy(rawPdfApi, {
+  get(target, prop, receiver) {
+    if (prop in target) {
+      return Reflect.get(target, prop, receiver);
+    }
+    if (clientPdfService && typeof clientPdfService[prop] === 'function') {
+      return clientPdfService[prop].bind(clientPdfService);
+    }
+    return target[prop];
+  }
+});
