@@ -134,7 +134,7 @@ export default function ToolLayout({ tool }) {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-[#0D0D14] pt-20 transition-colors">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-[#0D0D14] pt-14 transition-colors">
       <Helmet>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDesc} />
@@ -172,9 +172,9 @@ export default function ToolLayout({ tool }) {
       </Helmet>
 
       {/* ── Breadcrumb ─────────────────────────────────────── */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 w-full">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-1 w-full">
         <nav
-          className="flex items-center gap-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400"
+          className="flex items-center gap-2 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400"
           aria-label="Breadcrumb"
         >
           <Link
@@ -199,23 +199,23 @@ export default function ToolLayout({ tool }) {
 
       {/* ── Tool Hero ──────────────────────────────────────── */}
       <section
-        className="pt-4 pb-10 px-4 sm:px-6 lg:px-8 text-center bg-[#F8FAFC] dark:bg-[#141622] border-b border-zinc-100 dark:border-[#2A2E45] transition-colors"
+        className="py-3 px-4 sm:px-6 lg:px-8 text-center bg-[#F8FAFC] dark:bg-[#141622] border-b border-zinc-100 dark:border-[#2A2E45] transition-colors"
         aria-labelledby="tool-heading"
       >
-        <div className="max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-            <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" aria-hidden="true" />
+        <div className="max-w-3xl mx-auto space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+            <Sparkles className="w-3 h-3 text-purple-600 dark:text-purple-400" aria-hidden="true" />
             <span>100% Free &amp; Private In-Browser Tool</span>
           </div>
 
           <h1
             id="tool-heading"
-            className="text-2xl sm:text-4xl lg:text-5xl font-black text-zinc-900 dark:text-white tracking-tight"
+            className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight"
           >
             {h1Title}
           </h1>
 
-          <p className="text-sm sm:text-base leading-relaxed max-w-2xl mx-auto text-zinc-600 dark:text-zinc-300 font-normal">
+          <p className="text-xs sm:text-sm leading-relaxed max-w-xl mx-auto text-zinc-600 dark:text-zinc-300 font-normal">
             {tool.description}
           </p>
         </div>
@@ -223,7 +223,7 @@ export default function ToolLayout({ tool }) {
 
       {/* ── Tool Interactive Area ─────────────────────────── */}
       <section
-        className="px-4 sm:px-6 lg:px-8 py-10 bg-white dark:bg-[#0D0D14] border-b border-zinc-200 dark:border-[#2A2E45] transition-colors"
+        className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 bg-white dark:bg-[#0D0D14] border-b border-zinc-200 dark:border-[#2A2E45] transition-colors"
         aria-label={`${tool.name} interactive area`}
       >
         {tool.id === 'image-background-remover' ? (
