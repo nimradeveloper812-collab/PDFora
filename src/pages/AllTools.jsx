@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { TOOLS } from '../data/toolsData';
 import { CATEGORIES_DATA } from '../data/categoriesData';
+import { useLanguage } from '../context/LanguageContext';
 
 const iconMap = {
   FileText, Table, Presentation,
@@ -19,6 +20,7 @@ export default function AllTools() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeCatId = searchParams.get('category') || 'all';
   const [searchQuery, setSearchQuery]   = useState('');
+  const { t } = useLanguage();
 
   const filteredCategories = CATEGORIES_DATA.filter(cat => {
     if (activeCatId !== 'all' && cat.id !== activeCatId) return false;
@@ -40,10 +42,10 @@ export default function AllTools() {
       <section className="pt-4 pb-5 px-4 sm:px-6 lg:px-8 text-center border-b border-zinc-200 dark:border-[#2A2E45] bg-white dark:bg-[#141622] transition-colors">
         <div className="max-w-4xl mx-auto space-y-2">
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
-            All Tools Directory
+            {t('allToolsPageTitle')}
           </h1>
           <p className="text-xs text-zinc-600 dark:text-zinc-300 max-w-sm mx-auto">
-            Browse all 89 document, image, video, and developer tools.
+            {t('allToolsPageDesc')}
           </p>
 
           <div className="max-w-xs mx-auto">
@@ -53,7 +55,7 @@ export default function AllTools() {
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search tools by name..."
+                placeholder={t('searchByName')}
                 className="w-full pl-9 pr-8 py-2 rounded-xl text-xs bg-zinc-50 dark:bg-[#1B1E2E] text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 border border-zinc-200 dark:border-[#2A2E45] focus:outline-none focus:ring-2 focus:ring-purple-600"
               />
               {searchQuery && (
@@ -81,7 +83,7 @@ export default function AllTools() {
                 : 'bg-white dark:bg-[#141622] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45]'
             }`}
           >
-            All Categories ({CATEGORIES_DATA.length})
+            {t('allCategories')} ({CATEGORIES_DATA.length})
           </button>
           {CATEGORIES_DATA.map(cat => {
             const isActive = activeCatId === cat.id;
@@ -105,14 +107,14 @@ export default function AllTools() {
         {activeCatId !== 'all' && (
           <div className="flex items-center justify-between p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-xs">
             <span className="font-bold text-purple-900 dark:text-purple-300">
-              Filter: <span className="underline">{CATEGORIES_DATA.find(c => c.id === activeCatId)?.name || activeCatId}</span>
+              {t('filterLabel')} <span className="underline">{CATEGORIES_DATA.find(c => c.id === activeCatId)?.name || activeCatId}</span>
             </span>
             <button
               type="button"
               onClick={() => setSearchParams({})}
               className="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold transition-all cursor-pointer text-[11px]"
             >
-              Show All ➔
+              {t('showAll')}
             </button>
           </div>
         )}
@@ -127,7 +129,7 @@ export default function AllTools() {
                 <div className="flex items-center justify-between pb-2.5 border-b border-zinc-100 dark:border-[#2A2E45]">
                   <div>
                     <span className="text-[10px] font-extrabold uppercase tracking-wider text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/60 px-2 py-0.5 rounded border border-purple-200 dark:border-purple-800">
-                      Category
+                      {t('categoryLabel')}
                     </span>
                     <h2 className="text-base sm:text-lg font-black text-zinc-900 dark:text-white mt-0.5">
                       {cat.name}
@@ -189,7 +191,7 @@ export default function AllTools() {
                                 </div>
 
                                 <div className="flex items-center justify-between pt-1.5 mt-1.5 border-t border-zinc-200/60 dark:border-[#2A2E45] text-[10px] font-bold text-purple-600 dark:text-purple-400">
-                                  <span>Launch</span>
+                                  <span>{t('launch')}</span>
                                   <ArrowRight className="w-2.5 h-2.5 transition-transform group-hover:translate-x-0.5" />
                                 </div>
                               </Link>

@@ -4,31 +4,34 @@ import { Link } from 'react-router-dom';
 import {
   Sparkles, CheckCircle2, ShieldCheck, Zap, Globe, ArrowRight, Lock, Cpu
 } from 'lucide-react';
-
-const commitments = [
-  {
-    icon: ShieldCheck,
-    title: '100% In-Browser Privacy',
-    desc: 'Files stay on your device. Zero server storage.',
-  },
-  {
-    icon: Cpu,
-    title: 'Fast Client-Side Engine',
-    desc: 'Instant processing powered by WebAssembly.',
-  },
-  {
-    icon: Lock,
-    title: 'No Accounts Needed',
-    desc: 'Free instant access without sign-up.',
-  },
-  {
-    icon: Globe,
-    title: 'Universal Compatibility',
-    desc: 'Runs on Desktop, iOS, and Android browsers.',
-  },
-];
+import { useLanguage } from '../context/LanguageContext';
 
 export default function About() {
+  const { t } = useLanguage();
+
+  const commitments = [
+    {
+      icon: ShieldCheck,
+      title: t('aboutCommitment1Title'),
+      desc: t('aboutCommitment1Desc'),
+    },
+    {
+      icon: Cpu,
+      title: t('aboutCommitment2Title'),
+      desc: t('aboutCommitment2Desc'),
+    },
+    {
+      icon: Lock,
+      title: t('aboutCommitment3Title'),
+      desc: t('aboutCommitment3Desc'),
+    },
+    {
+      icon: Globe,
+      title: t('aboutCommitment4Title'),
+      desc: t('aboutCommitment4Desc'),
+    },
+  ];
+
   return (
     <div className="pt-16 pb-16 min-h-screen bg-zinc-50/50 dark:bg-[#0D0D14] text-zinc-900 dark:text-white font-sans transition-colors">
       <Helmet>
@@ -42,13 +45,13 @@ export default function About() {
         <div className="max-w-2xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
             <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-            <span>Fast · Private · Free</span>
+            <span>{t('aboutBadge')}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-zinc-900 dark:text-white">
-            About PDFora
+            {t('aboutTitle')}
           </h1>
           <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300">
-            PDFora is a fast, free, in-browser document platform designed to keep your files 100% private.
+            {t('aboutDesc')}
           </p>
         </div>
       </section>
@@ -78,7 +81,7 @@ export default function About() {
             to="/tools"
             className="inline-flex items-center gap-2 px-7 py-3 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 transition-colors shadow-md"
           >
-            <span>Explore All PDF Tools</span>
+            <span>{t('exploreAllPdfTools')}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -86,3 +89,4 @@ export default function About() {
     </div>
   );
 }
+

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { TOOLS } from '../data/toolsData';
 import { CATEGORIES_DATA } from '../data/categoriesData';
+import { useLanguage } from '../context/LanguageContext';
 
 const iconComponentMap = {
   Layers, ArrowRightLeft, Edit3, ShieldCheck, Minimize2, Cpu, ImageIcon, Video, FileText
@@ -18,6 +19,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery]     = useState('');
   const [openFaq, setOpenFaq]             = useState(null);
   const explorerRef                       = useRef(null);
+  const { t }                             = useLanguage();
 
   // Selected Category Object
   const currentCategory = useMemo(() => {
@@ -65,22 +67,10 @@ export default function Home() {
   };
 
   const faqs = [
-    {
-      q: 'Are my files kept private and secure?',
-      a: 'Yes, 100%. PDFora processes all files locally inside your browser memory sandbox using client-side WebAssembly and JavaScript engines. Your documents are never uploaded to remote server storage.'
-    },
-    {
-      q: 'Is PDFora completely free to use?',
-      a: 'Yes! There are no subscriptions, no registration required, no credit cards, and no hidden file count limits.'
-    },
-    {
-      q: 'What is the maximum file size supported?',
-      a: 'PDFora supports files up to 50 MB per file, covering standard PDFs, Office documents, high-res photos, audio tracks, and videos.'
-    },
-    {
-      q: 'Does it work on mobile phones and tablets?',
-      a: 'Yes, PDFora is fully responsive and works directly inside modern mobile browsers on iOS and Android with zero app installation needed.'
-    }
+    { q: t('faq1q'), a: t('faq1a') },
+    { q: t('faq2q'), a: t('faq2a') },
+    { q: t('faq3q'), a: t('faq3a') },
+    { q: t('faq4q'), a: t('faq4a') },
   ];
 
   return (
@@ -157,16 +147,16 @@ export default function Home() {
         <div className="max-w-4xl mx-auto space-y-2.5">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
             <Sparkles className="w-3 h-3 text-purple-600 dark:text-purple-400" />
-            <span>Free · Private · In-Browser</span>
+            <span>{t('heroBadge')}</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-white leading-tight">
-            All Your PDF &amp; File Tools{' '}
-            <span className="text-purple-600 dark:text-purple-400">In One Place</span>
+            {t('heroTitle')}{' '}
+            <span className="text-purple-600 dark:text-purple-400">{t('heroTitleHighlight')}</span>
           </h1>
 
           <p className="text-xs text-zinc-600 dark:text-zinc-300 max-w-md mx-auto leading-relaxed">
-            Merge, convert, edit, compress, and secure documents directly in your browser. No uploads needed.
+            {t('heroDesc')}
           </p>
 
           {/* Primary Action Button */}
@@ -176,14 +166,14 @@ export default function Home() {
               onClick={() => scrollToExplorer(selectedCatId)}
               className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow-md shadow-purple-600/20 transition-all cursor-pointer active:scale-95"
             >
-              <span>Explore Tools</span>
+              <span>{t('exploreTools')}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
             <Link
               to="/tools"
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-[#1B1E2E] hover:bg-zinc-200 dark:hover:bg-[#2A2E45] border border-zinc-200 dark:border-[#2A2E45] transition-all"
             >
-              <span>View All Tools</span>
+              <span>{t('viewAllTools')}</span>
             </Link>
           </div>
 
@@ -195,7 +185,7 @@ export default function Home() {
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search tools (merge, compress, jpg)..."
+                placeholder={t('searchToolsHero')}
                 className="w-full pl-9 pr-8 py-2 rounded-xl text-xs bg-zinc-50 dark:bg-[#1B1E2E] text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 border border-zinc-200 dark:border-[#2A2E45] focus:outline-none focus:ring-2 focus:ring-purple-600 focus:bg-white dark:focus:bg-[#141622] transition-all"
                 aria-label="Search tools"
               />
@@ -217,17 +207,17 @@ export default function Home() {
       {searchQuery.trim() ? (
         <section className="py-5 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-3">
           <div className="flex items-center justify-between text-xs font-bold text-zinc-500 dark:text-zinc-400">
-            <span>{searchResults.length} results for "{searchQuery}"</span>
+            <span>{searchResults.length} {t('searchResults')} "{searchQuery}"</span>
             <button onClick={() => setSearchQuery('')} className="text-purple-600 dark:text-purple-400 hover:underline">
-              Clear
+              {t('clearSearch')}
             </button>
           </div>
 
           {searchResults.length === 0 ? (
             <div className="text-center py-8 bg-white dark:bg-[#141622] rounded-xl border border-zinc-200 dark:border-[#2A2E45] p-5 space-y-1.5 max-w-sm mx-auto">
               <Search className="w-6 h-6 text-zinc-400 mx-auto" />
-              <h3 className="text-xs font-bold text-zinc-900 dark:text-white">No tools found</h3>
-              <p className="text-[10px] text-zinc-500">Try "Merge", "JPG", "Compress", or "Convert".</p>
+              <h3 className="text-xs font-bold text-zinc-900 dark:text-white">{t('noToolsFound')}</h3>
+              <p className="text-[10px] text-zinc-500">{t('noToolsHint')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5">
@@ -249,7 +239,7 @@ export default function Home() {
                     </p>
                   </div>
                   <div className="flex items-center justify-between pt-1.5 mt-1.5 border-t border-zinc-100 dark:border-[#2A2E45] text-[10px] font-bold text-purple-600 dark:text-purple-400">
-                    <span>Open</span>
+                    <span>{t('openTool')}</span>
                     <ArrowRight className="w-2.5 h-2.5" />
                   </div>
                 </Link>
@@ -262,7 +252,7 @@ export default function Home() {
           {/* ── 2. CATEGORY CARDS ───────────────────── */}
           <section className="py-5 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-3">
             <h2 className="text-sm font-black text-zinc-900 dark:text-white tracking-tight text-center">
-              Tool Categories
+              {t('toolCategories')}
             </h2>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
@@ -317,7 +307,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-zinc-200 dark:border-[#2A2E45]">
                 <div>
                   <div className="flex items-center gap-1.5 text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
-                    <span>Tool Explorer</span><span>/</span>
+                    <span>{t('toolExplorer')}</span><span>/</span>
                     <span className="text-zinc-900 dark:text-white">{currentCategory.name}</span>
                   </div>
                   <h3 className="text-sm font-black text-zinc-900 dark:text-white">{currentCategory.name} Tools</h3>
@@ -371,7 +361,7 @@ export default function Home() {
                               to={tool.path}
                               className="w-full py-1.5 rounded-lg text-[10px] font-bold text-center text-white bg-purple-600 hover:bg-purple-700 transition-all flex items-center justify-center gap-1"
                             >
-                              Launch <ArrowRight className="w-2.5 h-2.5" />
+                              {t('launch')} <ArrowRight className="w-2.5 h-2.5" />
                             </Link>
                           </div>
                         );
@@ -388,20 +378,20 @@ export default function Home() {
       {/* ── 4. TRUST SECTION ─────────────────── */}
       <section className="py-5 bg-zinc-50/80 dark:bg-[#0D0D14] border-t border-zinc-200 dark:border-[#2A2E45]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
-          <h2 className="text-sm font-black text-zinc-900 dark:text-white text-center">Why PDFora?</h2>
+          <h2 className="text-sm font-black text-zinc-900 dark:text-white text-center">{t('whyPdfora')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
             {[
-              { icon: CheckCircle, color: 'emerald', title: '100% Free', desc: 'No sign-up, no subscriptions, no limits.' },
-              { icon: ShieldCheck, color: 'purple', title: 'Private', desc: 'Files stay in your browser. Nothing uploaded.' },
-              { icon: Zap, color: 'blue', title: 'Fast', desc: 'Instant processing via WebAssembly engine.' },
-            ].map(({ icon: Icon, color, title, desc }) => (
-              <div key={title} className="p-3.5 rounded-xl bg-white dark:bg-[#141622] border border-zinc-200/80 dark:border-[#2A2E45] flex items-center gap-3">
+              { icon: CheckCircle, color: 'emerald', titleKey: 'trust100Free', descKey: 'trust100FreeDesc' },
+              { icon: ShieldCheck, color: 'purple', titleKey: 'trustPrivate', descKey: 'trustPrivateDesc' },
+              { icon: Zap, color: 'blue', titleKey: 'trustFast', descKey: 'trustFastDesc' },
+            ].map(({ icon: Icon, color, titleKey, descKey }) => (
+              <div key={titleKey} className="p-3.5 rounded-xl bg-white dark:bg-[#141622] border border-zinc-200/80 dark:border-[#2A2E45] flex items-center gap-3">
                 <div className={`w-8 h-8 rounded-lg bg-${color}-50 dark:bg-${color}-950/60 text-${color}-600 dark:text-${color}-400 flex items-center justify-center border border-${color}-100 dark:border-${color}-900 shrink-0`}>
                   <Icon className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold text-zinc-900 dark:text-white">{title}</h3>
-                  <p className="text-[10px] text-zinc-500 dark:text-zinc-400">{desc}</p>
+                  <h3 className="text-xs font-bold text-zinc-900 dark:text-white">{t(titleKey)}</h3>
+                  <p className="text-[10px] text-zinc-500 dark:text-zinc-400">{t(descKey)}</p>
                 </div>
               </div>
             ))}
@@ -412,8 +402,8 @@ export default function Home() {
       {/* ── 5. FAQ SECTION ─────────────────── */}
       <section className="py-5 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-3">
-          <h2 className="text-sm font-extrabold text-zinc-900 dark:text-white">Frequently Asked Questions</h2>
-          <p className="text-[10px] text-zinc-500 dark:text-zinc-400">Everything you need to know about PDFora</p>
+          <h2 className="text-sm font-extrabold text-zinc-900 dark:text-white">{t('faqTitle')}</h2>
+          <p className="text-[10px] text-zinc-500 dark:text-zinc-400">{t('faqSubtitle')}</p>
         </div>
         <div className="space-y-1.5">
           {faqs.map((faq, idx) => {

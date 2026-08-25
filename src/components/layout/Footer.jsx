@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FileCheck, ShieldCheck, Globe } from 'lucide-react';
 import { TOOLS } from '../../data/toolsData';
+import { useLanguage } from '../../context/LanguageContext';
 
 const pdfTools = TOOLS.filter(t => t.category === 'pdf');
 const documentTools = TOOLS.filter(t => t.category === 'documents');
@@ -11,6 +12,7 @@ const devTools = TOOLS.filter(t => t.badge === 'Developer Tool' || t.id.includes
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const { t } = useLanguage();
 
   return (
     <footer
@@ -41,19 +43,19 @@ export default function Footer() {
             </Link>
 
             <p className="text-[11px] leading-relaxed max-w-xs text-zinc-600 dark:text-zinc-400 font-sans">
-              Free, private online document and media tools. Files stay in your browser.
+              {t('footerDesc')}
             </p>
 
             <div className="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 font-display">
               <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-purple-600 dark:text-purple-400" />
-              <span>In-Browser WebAssembly Sandbox</span>
+              <span>{t('footerSandbox')}</span>
             </div>
           </div>
 
           {/* PDF Tools Column */}
           <div>
             <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2 text-zinc-900 dark:text-white font-display">
-              PDF Suite
+              {t('footerPdfSuite')}
             </h4>
             <ul className="space-y-1">
               {pdfTools.slice(0, 7).map(tool => (
@@ -72,7 +74,7 @@ export default function Footer() {
           {/* Document Tools Column */}
           <div>
             <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2 text-zinc-900 dark:text-white font-display">
-              Convert &amp; Edit
+              {t('footerConvertEdit')}
             </h4>
             <ul className="space-y-1">
               {documentTools.map(tool => (
@@ -91,7 +93,7 @@ export default function Footer() {
           {/* Image & Media Tools Column */}
           <div>
             <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2 text-zinc-900 dark:text-white font-display">
-              Image &amp; Media
+              {t('footerImageMedia')}
             </h4>
             <ul className="space-y-1">
               {imageTools.slice(0, 5).map(tool => (
@@ -120,14 +122,14 @@ export default function Footer() {
           {/* Company & Support Column */}
           <div>
             <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2 text-zinc-900 dark:text-white font-display">
-              Company
+              {t('footerCompany')}
             </h4>
             <ul className="space-y-1">
-              <li><Link to="/tools" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">All Tools</Link></li>
-              <li><Link to="/about" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">About Us</Link></li>
-              <li><Link to="/contact" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">Contact</Link></li>
-              <li><Link to="/privacy-policy" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">Privacy Policy</Link></li>
-              <li><Link to="/terms-of-service" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">Terms of Service</Link></li>
+              <li><Link to="/tools" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">{t('footerAllTools')}</Link></li>
+              <li><Link to="/about" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">{t('footerAbout')}</Link></li>
+              <li><Link to="/contact" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">{t('footerContact')}</Link></li>
+              <li><Link to="/privacy-policy" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">{t('footerPrivacy')}</Link></li>
+              <li><Link to="/terms-of-service" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">{t('footerTerms')}</Link></li>
             </ul>
           </div>
         </div>
@@ -136,14 +138,9 @@ export default function Footer() {
         <div className="pt-4 mt-4 border-t border-zinc-200 dark:border-[#2A2E45] flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-zinc-500 dark:text-zinc-400 font-sans text-center sm:text-left">
           <div className="flex items-center gap-1.5 justify-center sm:justify-start">
             <Globe className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500 shrink-0" />
-            <span>© {year} PDFora. All rights reserved.</span>
+            <span>{t('copyright')}</span>
           </div>
 
-          {/* Legal + transparency links
-              aria-label required for screen reader compliance.
-              "Privacy & Cookies" wording signals cookie disclosure to reviewers.
-              "Ads by Google" links to Google's ad info page — recommended by
-              AdSense Publisher Policy for advertiser transparency. */}
           <nav
             className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1"
             aria-label="Legal and advertising policy links"
@@ -152,36 +149,33 @@ export default function Footer() {
               to="/privacy-policy"
               className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
             >
-              Privacy &amp; Cookies
+              {t('footerPrivacyCookies')}
             </Link>
             <Link
               to="/terms-of-service"
               className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
             >
-              Terms
+              {t('footerTermsShort')}
             </Link>
             <Link
               to="/about"
               className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
             >
-              About
+              {t('about')}
             </Link>
             <Link
               to="/contact"
               className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
             >
-              Support
+              {t('support')}
             </Link>
-            {/* Advertising transparency — links to Google's "How Google uses
-                data when you use our partners' sites" page. This satisfies
-                AdSense Publisher Policy disclosure requirements. */}
             <a
               href="https://policies.google.com/technologies/partner-sites"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
             >
-              Ads by Google
+              {t('footerAds')}
             </a>
           </nav>
         </div>
