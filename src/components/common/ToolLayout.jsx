@@ -23,6 +23,7 @@ import ProtectPdfTool from '../pdf/ProtectPdfTool';
 import RotatePdfTool from '../pdf/RotatePdfTool';
 import CropPdfTool from '../pdf/CropPdfTool';
 import ScanToPdfTool from '../pdf/ScanToPdfTool';
+import EditPdfTool from '../pdf/EditPdfTool';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
@@ -265,6 +266,8 @@ export default function ToolLayout({ tool }) {
           <CropPdfTool />
         ) : tool.id === 'scan-to-pdf' ? (
           <ScanToPdfTool />
+        ) : tool.id === 'edit-pdf' ? (
+          <EditPdfTool />
         ) : (
           <Dropzone tool={tool} />
         )}
