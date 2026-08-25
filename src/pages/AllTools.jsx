@@ -81,7 +81,7 @@ export default function AllTools() {
                 : 'bg-white dark:bg-[#141622] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45]'
             }`}
           >
-            All Categories (8)
+            All Categories ({CATEGORIES_DATA.length})
           </button>
           {CATEGORIES_DATA.map(cat => {
             const isActive = activeCatId === cat.id;
@@ -101,6 +101,21 @@ export default function AllTools() {
             );
           })}
         </div>
+
+        {activeCatId !== 'all' && (
+          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-xs">
+            <span className="font-bold text-purple-900 dark:text-purple-300">
+              Showing filter: <span className="underline">{CATEGORIES_DATA.find(c => c.id === activeCatId)?.name || activeCatId}</span>
+            </span>
+            <button
+              type="button"
+              onClick={() => setSearchParams({})}
+              className="px-3 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold transition-all cursor-pointer"
+            >
+              Show All Categories &amp; Tools ➔
+            </button>
+          </div>
+        )}
 
         {/* Categories Explorer Render */}
         <div className="space-y-12">
