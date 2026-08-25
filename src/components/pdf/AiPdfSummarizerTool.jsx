@@ -1,12 +1,11 @@
 import React, { useState, useRef } from 'react';
 import {
-  UploadCloud, Sparkles, FileText, CheckCircle2, Copy, Download,
-  RefreshCw, ShieldCheck, AlertCircle, Loader2, Key, Settings,
-  FileCheck, ListChecks, Target, AlignLeft, Check
+  UploadCloud, Sparkles, FileText, Copy, Download,
+  RefreshCw, ShieldCheck, AlertCircle, Loader2,
+  FileCheck, ListChecks, Target, Check
 } from 'lucide-react';
 import { clientPdfService } from '../../services/clientPdfService';
 import { aiService } from '../../services/aiService';
-import ApiKeyModal from '../common/ApiKeyModal';
 
 export default function AiPdfSummarizerTool() {
   const [file, setFile] = useState(null);
@@ -23,7 +22,6 @@ export default function AiPdfSummarizerTool() {
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [isKeyModalOpen, setIsKeyModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const fileInputRef = useRef(null);
@@ -54,7 +52,6 @@ export default function AiPdfSummarizerTool() {
       setTotalWords(totalExtractedWords);
       setExtractedPages(pages);
 
-      // Immediately trigger initial summary
       await generateSummary(pages, uploadedFile.name, summaryType);
     } catch (err) {
       console.error('Failed to parse PDF for summarizer:', err);
@@ -83,7 +80,7 @@ export default function AiPdfSummarizerTool() {
       setSummaryResult(result);
     } catch (err) {
       console.error('Failed to generate AI summary:', err);
-      setErrorMsg(err.message || 'Failed to generate AI summary. Please check your network connection or API settings.');
+      setErrorMsg(err.message || 'Failed to generate AI summary. Please try again.');
     } finally {
       setIsSummarizing(false);
     }
@@ -125,12 +122,8 @@ export default function AiPdfSummarizerTool() {
     setErrorMsg(null);
   };
 
-  const hasApiKey = Boolean(aiService.getEffectiveApiKey());
-
   return (
     <div className="w-full max-w-4xl mx-auto font-sans">
-      <ApiKeyModal isOpen={isKeyModalOpen} onClose={() => setIsKeyModalOpen(false)} />
-
       <input
         ref={fileInputRef}
         type="file"
@@ -140,17 +133,9 @@ export default function AiPdfSummarizerTool() {
       />
 
       {errorMsg && (
-        <div className="mb-4 p-4 rounded-2xl bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-semibold flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{errorMsg}</span>
-          </div>
-          <button
-            onClick={() => setIsKeyModalOpen(true)}
-            className="underline font-bold text-red-800 dark:text-red-200 text-xs cursor-pointer shrink-0"
-          >
-            Check API Key
-          </button>
+        <div className="mb-4 p-4 rounded-2xl bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-semibold flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <span>{errorMsg}</span>
         </div>
       )}
 
@@ -180,7 +165,9 @@ export default function AiPdfSummarizerTool() {
             onDrop={e => {
               e.preventDefault();
               setIsDragging(false);
-              e.dataTransfer.files?.[0] && handleFileUpload(e.dataTransfer.files[0]);
+              if (e.dataTransfer.files?.[0]) {
+                handleFileUpload(e.dataTransfer.files[0]);
+              }
             }}
             onClick={() => fileInputRef.current?.click()}
             className="relative cursor-pointer text-center flex flex-col items-center justify-center p-8 sm:p-12 rounded-3xl border-2 border-dashed transition-all bg-white dark:bg-[#141622] border-zinc-300 dark:border-[#2A2E45] hover:border-purple-500 shadow-xs"
@@ -211,16 +198,8 @@ export default function AiPdfSummarizerTool() {
             <div className="mt-6 flex items-center justify-center gap-4 text-xs font-semibold text-zinc-400 dark:text-zinc-500 flex-wrap">
               <div className="flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                <span>100% In-Browser Privacy</span>
+                <span>100% In-Browser Privacy • Powered by Gemini AI</span>
               </div>
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); setIsKeyModalOpen(true); }}
-                className="flex items-center gap-1 text-purple-600 dark:text-purple-400 hover:underline cursor-pointer font-bold"
-              >
-                <Settings className="w-3.5 h-3.5" />
-                <span>{hasApiKey ? 'Gemini AI Active' : 'Configure Gemini API Key'}</span>
-              </button>
             </div>
           </div>
         </div>
@@ -239,20 +218,13 @@ export default function AiPdfSummarizerTool() {
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium mt-0.5">
                   {pageCount} Page{pageCount > 1 ? 's' : ''} • ~{totalWords.toLocaleString()} Words •{' '}
                   <span className="text-purple-600 dark:text-purple-400 font-bold">
-                    {summaryResult?.source === 'gemini' ? '✨ Gemini AI Engine' : '⚡ Smart NLP Engine'}
+                    ✨ Gemini 2.0 AI Active
                   </span>
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
-              <button
-                onClick={() => setIsKeyModalOpen(true)}
-                className="p-2.5 rounded-xl border border-zinc-200 dark:border-[#2A2E45] hover:bg-zinc-100 dark:hover:bg-[#2A2E45] text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
-                title="AI Key Settings"
-              >
-                <Settings className="w-4 h-4" />
-              </button>
               <button
                 onClick={resetAll}
                 className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-[#1B1E2E] hover:bg-zinc-200 dark:hover:bg-[#2A2E45] border border-zinc-200 dark:border-[#2A2E45] transition-colors cursor-pointer"

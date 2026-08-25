@@ -1,12 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   UploadCloud, MessageSquare, Send, Sparkles, FileText,
-  CheckCircle2, Bot, User, RefreshCcw, ShieldCheck, AlertCircle, Loader2,
-  Settings, Key, Copy, Check
+  Bot, User, RefreshCcw, ShieldCheck, AlertCircle, Loader2,
+  Copy, Check
 } from 'lucide-react';
 import { clientPdfService } from '../../services/clientPdfService';
 import { aiService } from '../../services/aiService';
-import ApiKeyModal from '../common/ApiKeyModal';
 
 export default function ChatWithPdfTool() {
   const [file, setFile] = useState(null);
@@ -21,7 +20,6 @@ export default function ChatWithPdfTool() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [isKeyModalOpen, setIsKeyModalOpen] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
 
   const fileInputRef = useRef(null);
@@ -67,11 +65,8 @@ export default function ChatWithPdfTool() {
       setExtractedPages(pages);
 
       const hasText = totalExtractedWords > 5;
-      const effectiveKey = aiService.getEffectiveApiKey();
-      const aiEngineName = effectiveKey ? 'Gemini 2.0 Flash' : 'Smart NLP';
-
       const initialMessage = hasText
-        ? `Hello! I have loaded "${uploadedFile.name}" (${pages.length} page${pages.length > 1 ? 's' : ''}, ~${totalExtractedWords.toLocaleString()} words). Active AI Engine: ${aiEngineName}.\n\nYou can ask me any question about its contents, query specific terms, or click a suggested prompt below.`
+        ? `Hello! I have loaded "${uploadedFile.name}" (${pages.length} page${pages.length > 1 ? 's' : ''}, ~${totalExtractedWords.toLocaleString()} words). Active AI Engine: Gemini 2.0 Flash.\n\nYou can ask me any question about its contents, query specific terms, or click a suggested prompt below.`
         : `Hello! I loaded "${uploadedFile.name}" (${pages.length} page${pages.length > 1 ? 's' : ''}). Note: Very little selectable text was detected. If this is a scanned image PDF, you can run our OCR PDF tool to extract readable text.`;
 
       setMessages([
@@ -143,12 +138,8 @@ export default function ChatWithPdfTool() {
     setErrorMsg(null);
   };
 
-  const hasApiKey = Boolean(aiService.getEffectiveApiKey());
-
   return (
     <div className="w-full max-w-4xl mx-auto font-sans">
-      <ApiKeyModal isOpen={isKeyModalOpen} onClose={() => setIsKeyModalOpen(false)} />
-
       <input
         ref={fileInputRef}
         type="file"
@@ -158,17 +149,9 @@ export default function ChatWithPdfTool() {
       />
 
       {errorMsg && (
-        <div className="mb-4 p-4 rounded-2xl bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-semibold flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{errorMsg}</span>
-          </div>
-          <button
-            onClick={() => setIsKeyModalOpen(true)}
-            className="underline font-bold text-red-800 dark:text-red-200 text-xs cursor-pointer shrink-0"
-          >
-            Settings
-          </button>
+        <div className="mb-4 p-4 rounded-2xl bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-semibold flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <span>{errorMsg}</span>
         </div>
       )}
 
@@ -230,16 +213,8 @@ export default function ChatWithPdfTool() {
           <div className="mt-6 flex items-center justify-center gap-4 text-xs font-semibold text-zinc-400 dark:text-zinc-500 flex-wrap">
             <div className="flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              <span>100% In-Browser Privacy</span>
+              <span>100% In-Browser Privacy • Powered by Gemini AI</span>
             </div>
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); setIsKeyModalOpen(true); }}
-              className="flex items-center gap-1 text-purple-600 dark:text-purple-400 hover:underline cursor-pointer font-bold"
-            >
-              <Settings className="w-3.5 h-3.5" />
-              <span>{hasApiKey ? 'Gemini AI Active' : 'Configure Gemini API Key'}</span>
-            </button>
           </div>
         </div>
       )}
@@ -257,20 +232,13 @@ export default function ChatWithPdfTool() {
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
                   {pageCount} Page{pageCount > 1 ? 's' : ''} • ~{totalWords.toLocaleString()} Words •{' '}
                   <span className="text-purple-600 dark:text-purple-400 font-bold">
-                    {hasApiKey ? '✨ Gemini AI' : '⚡ Smart NLP AI'}
+                    ✨ Gemini 2.0 AI Active
                   </span>
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsKeyModalOpen(true)}
-                className="p-2 rounded-lg border border-zinc-200 dark:border-[#2A2E45] hover:bg-zinc-100 dark:hover:bg-[#2A2E45] text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
-                title="AI Key Settings"
-              >
-                <Settings className="w-4 h-4" />
-              </button>
               <button
                 onClick={resetChat}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-700 dark:text-zinc-200 bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] hover:bg-zinc-100 dark:hover:bg-[#2A2E45] transition-colors cursor-pointer"
