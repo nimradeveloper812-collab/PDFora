@@ -86,12 +86,70 @@ export default function Home() {
   return (
     <div className="min-h-screen pt-14 font-sans bg-zinc-50/50 dark:bg-[#0D0D14] text-zinc-900 dark:text-white transition-colors">
       <Helmet>
-        <title>PDFora — All Your PDF &amp; Document Tools in One Place</title>
+        <title>PDFora — Free Online PDF Tools | Convert, Merge &amp; Split</title>
         <meta
           name="description"
-          content="Free, fast, and 100% private online PDF platform. Organize, convert, edit, compress, and secure PDFs with clear category-based navigation."
+          content="Fast, secure, and 100% free online PDF suite. Convert, compress, split, and merge files privately in your browser with zero server uploads."
         />
         <link rel="canonical" href="https://pdfora.nimradev.site/" />
+        <script type="application/ld+json">
+          {`
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "WebApplication",
+                "@id": "https://pdfora.nimradev.site/#webapp",
+                "name": "PDFora",
+                "url": "https://pdfora.nimradev.site",
+                "applicationCategory": "UtilitiesApplication",
+                "operatingSystem": "All (Windows, macOS, Linux, iOS, Android)",
+                "browserRequirements": "HTML5, WebAssembly, JavaScript enabled",
+                "description": "Free, privacy-first online PDF tools. Converts, merges, splits, and compresses documents locally inside browser memory sandbox without cloud uploads.",
+                "applicationSubCategory": "PDF Converter & Editor",
+                "offers": {
+                  "@type": "Offer",
+                  "price": "0",
+                  "priceCurrency": "USD"
+                },
+                "features": [
+                  "In-Browser WebAssembly Processing",
+                  "Zero Server Document Storage",
+                  "No Registration Required",
+                  "Word, Excel, PowerPoint & JPG conversions"
+                ],
+                "author": {
+                  "@type": "Organization",
+                  "name": "PDFora Team",
+                  "url": "https://pdfora.nimradev.site"
+                }
+              },
+              {
+                "@type": "FAQPage",
+                "@id": "https://pdfora.nimradev.site/#faq",
+                "mainEntity": [
+                  {
+                    "@type": "Question",
+                    "name": "How does PDFora convert PDFs without uploading them to servers?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "PDFora uses local client-side JavaScript libraries and WebAssembly compiled binaries directly inside your web browser. This executes the entire conversion pipeline locally using your device resources, meaning the file data is never sent over the internet to remote servers."
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "Is PDFora safe for confidential work documents?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "Yes, PDFora is safer than typical cloud-based conversion platforms because it processes all files in a localized client memory sandbox. There are no server-side repositories, zero persistent logs, and files are permanently cleared the moment you close the browser tab."
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+          `}
+        </script>
       </Helmet>
 
       {/* ── 1. HERO SECTION ────────────────────────────────────────── */}
