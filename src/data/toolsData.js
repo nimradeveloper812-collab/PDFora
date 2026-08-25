@@ -12,12 +12,6 @@ export const TOOLS_CATEGORIES = [
     "desc": "Everything you need to merge, split, compress, and organize PDF documents."
   },
   {
-    "id": "pdf-ai",
-    "name": "AI Intelligence & Extraction",
-    "shortName": "AI & Extraction",
-    "desc": "Chat with PDFs, summarize content, extract tables, and run OCR with AI."
-  },
-  {
     "id": "documents",
     "name": "Word & Document Tools",
     "shortName": "Documents",
@@ -3109,29 +3103,6 @@ export const TOOLS = [
     "metaDescription": "Fill out interactive PDF forms and save responses online for free. Private, fast form processing in your browser.",
     "h1Title": "Fill PDF Forms Online",
     "primaryKeywords": ["pdf forms", "fill pdf form free", "pdf form filler online"]
-  },
-  {
-    "id": "ai-resume-reviewer",
-    "name": "AI Resume Reviewer",
-    "slug": "ai-resume-reviewer",
-    "path": "/ai-resume-reviewer",
-    "category": "pdf",
-    "popular": true,
-    "shortDesc": "Get instant ATS compatibility scores and tailored resume improvements.",
-    "description": "Scan your resume PDF against recruiter ATS algorithms to get a score (0-100), missing keywords, and layout feedback.",
-    "iconName": "Sparkles",
-    "badge": "AI Feature",
-    "acceptedTypes": ".pdf, application/pdf",
-    "acceptedFileLabel": "PDF files",
-    "maxFiles": 1,
-    "features": ["Instant ATS compatibility score (0-100)", "Section breakdowns for Impact, Keywords & Formatting", "Actionable recommendations for 2x interview callbacks"],
-    "steps": ["Upload your resume or CV in PDF format.", "View your overall ATS score and metric breakdowns.", "Apply recommendations and missing keywords to boost callbacks."],
-    "overview": "Audit your CV against automated recruiter filters to ensure your application passes ATS screening.",
-    "faqs": [{ "q": "Is my resume kept private?", "a": "Completely! Resume auditing runs in your local browser session without database storage." }],
-    "metaTitle": "AI Resume Reviewer Online Free — ATS Resume Checker | PDFora",
-    "metaDescription": "Audit your resume PDF online for free. Get an instant ATS compatibility score (0-100), missing keyword analysis, and callback improvements.",
-    "h1Title": "AI Resume & CV ATS Reviewer",
-    "primaryKeywords": ["ai resume reviewer", "ats resume checker free", "resume score online"]
   },
   {
     "id": "json-to-csv",

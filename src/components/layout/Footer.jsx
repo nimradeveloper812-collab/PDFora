@@ -7,9 +7,6 @@ const pdfTools = TOOLS.filter(t => t.category === 'pdf');
 const documentTools = TOOLS.filter(t => t.category === 'documents');
 const imageTools = TOOLS.filter(t => t.category === 'images');
 const mediaTools = TOOLS.filter(t => ['video', 'audio'].includes(t.category));
-const aiTools = TOOLS.filter(t => [
-  'ai-resume-reviewer'
-].includes(t.id));
 const devTools = TOOLS.filter(t => t.badge === 'Developer Tool' || t.id.includes('json') || t.id.includes('base64') || t.id.includes('qr'));
 
 export default function Footer() {
@@ -120,24 +117,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* AI Intelligence & Extraction Column */}
-          <div>
-            <h4 className="text-xs font-extrabold uppercase tracking-wider mb-4 text-purple-600 dark:text-purple-400 font-display flex items-center gap-1">
-              <span>AI &amp; Extraction</span>
-            </h4>
-            <ul className="space-y-2">
-              {aiTools.map(tool => (
-                <li key={tool.id}>
-                  <Link
-                    to={tool.path}
-                    className="text-xs text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans truncate block"
-                  >
-                    {tool.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+
 
           {/* Company & Support Column */}
           <div>

@@ -104,22 +104,6 @@ export const CATEGORIES_DATA = [
     ]
   },
   {
-    id: 'pdf-ai',
-    name: 'AI Intelligence & Review',
-    iconName: 'Cpu',
-    desc: 'Review resumes and analyze documents with AI.',
-    subcategories: [
-      {
-        id: 'ai-tools',
-        name: 'AI Assistants',
-        desc: 'Review resumes with AI.',
-        toolIds: [
-          'ai-resume-reviewer'
-        ]
-      }
-    ]
-  },
-  {
     id: 'image-tools',
     name: 'Image Editing & Formats',
     iconName: 'ImageIcon',

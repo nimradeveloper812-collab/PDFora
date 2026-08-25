@@ -10,7 +10,6 @@ import AudioCompressorTool from '../media/AudioCompressorTool';
 import ImageConverterTool from '../media/ImageConverterTool';
 import VideoConverterTool from '../media/VideoConverterTool';
 import VideoCompressorTool from '../media/VideoCompressorTool';
-import AiResumeReviewerTool from '../pdf/AiResumeReviewerTool';
 import JsonToCsvTool from '../pdf/JsonToCsvTool';
 import Base64ToPdfTool from '../pdf/Base64ToPdfTool';
 import CompressToKbTool from '../pdf/CompressToKbTool';
@@ -239,8 +238,6 @@ export default function ToolLayout({ tool }) {
           <VideoConverterTool />
         ) : tool.id === 'video-compressor' ? (
           <VideoCompressorTool />
-        ) : tool.id === 'ai-resume-reviewer' ? (
-          <AiResumeReviewerTool />
         ) : tool.id === 'json-to-csv' ? (
           <JsonToCsvTool />
         ) : tool.id === 'base64-to-pdf' ? (

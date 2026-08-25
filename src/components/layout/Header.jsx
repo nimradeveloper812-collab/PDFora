@@ -103,16 +103,6 @@ export default function Header() {
                 </button>
               </div>
 
-              {/* Direct AI & Extraction Link */}
-              <Link
-                to="/tools?category=pdf-ai"
-                className="px-3.5 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/50 hover:bg-purple-100 dark:hover:bg-purple-900/60 border border-purple-200 dark:border-purple-800 transition-colors"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-                <span>AI &amp; Extraction</span>
-                <span className="px-1.5 py-0.2 text-[9px] font-black uppercase rounded bg-purple-600 text-white">AI</span>
-              </Link>
-
               <Link
                 to="/tools"
                 className="px-3.5 py-2 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
@@ -200,30 +190,19 @@ export default function Header() {
               </div>
 
               <div className="grid grid-cols-4 gap-6 text-xs">
-                {CATEGORIES_DATA.map((cat) => {
-                  const isAiCat = cat.id === 'pdf-ai';
-                  return (
-                    <div
-                      key={cat.id}
-                      className={`space-y-3 p-3 rounded-2xl border transition-all ${
-                        isAiCat
-                          ? 'bg-purple-50/60 dark:bg-purple-950/30 border-purple-300 dark:border-purple-800 shadow-xs'
-                          : 'bg-zinc-50/70 dark:bg-[#1B1E2E]/50 border-zinc-100 dark:border-[#2A2E45]/80'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${isAiCat ? 'bg-purple-600 animate-pulse' : 'bg-purple-600'}`} />
-                          <h4 className="font-extrabold text-xs text-zinc-900 dark:text-white uppercase tracking-wider">
-                            {cat.name}
-                          </h4>
-                        </div>
-                        {isAiCat && (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-purple-600 text-white">
-                            AI
-                          </span>
-                        )}
+                {CATEGORIES_DATA.map((cat) => (
+                  <div
+                    key={cat.id}
+                    className="space-y-3 p-3 rounded-2xl border transition-all bg-zinc-50/70 dark:bg-[#1B1E2E]/50 border-zinc-100 dark:border-[#2A2E45]/80"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-purple-600" />
+                        <h4 className="font-extrabold text-xs text-zinc-900 dark:text-white uppercase tracking-wider">
+                          {cat.name}
+                        </h4>
                       </div>
+                    </div>
 
                       <div className="space-y-2">
                         {cat.subcategories.map((sub) => (
@@ -252,8 +231,7 @@ export default function Header() {
                         ))}
                       </div>
                     </div>
-                  );
-                })}
+                ))}
               </div>
             </div>
           </div>
