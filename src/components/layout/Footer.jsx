@@ -8,8 +8,7 @@ const documentTools = TOOLS.filter(t => t.category === 'documents');
 const imageTools = TOOLS.filter(t => t.category === 'images');
 const mediaTools = TOOLS.filter(t => ['video', 'audio'].includes(t.category));
 const aiTools = TOOLS.filter(t => [
-  'chat-with-pdf', 'ai-resume-reviewer', 'ai-table-extractor',
-  'ai-pdf-summarizer', 'translate-pdf', 'ocr-pdf', 'pdf-metadata-editor'
+  'ai-resume-reviewer'
 ].includes(t.id));
 const devTools = TOOLS.filter(t => t.badge === 'Developer Tool' || t.id.includes('json') || t.id.includes('base64') || t.id.includes('qr'));
 

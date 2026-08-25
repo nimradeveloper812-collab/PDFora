@@ -38,7 +38,7 @@ export const CATEGORIES_DATA = [
         desc: 'Export PDF documents to editable Office files or images.',
         toolIds: [
           'pdf-to-word', 'pdf-to-excel', 'pdf-to-powerpoint',
-          'pdf-to-jpg', 'pdf-to-png', 'pdf-to-text', 'pdf-to-markdown'
+          'pdf-to-jpg', 'pdf-to-png', 'pdf-to-text'
         ]
       },
       {
@@ -105,24 +105,17 @@ export const CATEGORIES_DATA = [
   },
   {
     id: 'pdf-ai',
-    name: 'AI Intelligence & Extraction',
+    name: 'AI Intelligence & Review',
     iconName: 'Cpu',
-    desc: 'Chat with PDFs, summarize content, extract tables, run OCR, and convert to Markdown.',
+    desc: 'Review resumes and analyze documents with AI.',
     subcategories: [
       {
         id: 'ai-tools',
         name: 'AI Assistants',
-        desc: 'Ask questions, review resumes, and translate documents with AI.',
+        desc: 'Review resumes with AI.',
         toolIds: [
-          'chat-with-pdf', 'ai-pdf-summarizer', 'ai-resume-reviewer',
-          'ai-table-extractor', 'translate-pdf'
+          'ai-resume-reviewer'
         ]
-      },
-      {
-        id: 'data-ocr',
-        name: 'OCR & Extraction',
-        desc: 'Recognize scanned text, edit metadata, and extract markdown.',
-        toolIds: ['ocr-pdf', 'pdf-metadata-editor', 'pdf-to-markdown']
       }
     ]
   },

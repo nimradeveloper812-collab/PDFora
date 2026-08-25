@@ -47,7 +47,6 @@ const RemovePagesPdf = lazy(() => import('./pages/tools/RemovePagesPdf'));
 const ExtractPagesPdf = lazy(() => import('./pages/tools/ExtractPagesPdf'));
 const OrganizePdf = lazy(() => import('./pages/tools/OrganizePdf'));
 const ScanToPdf = lazy(() => import('./pages/tools/ScanToPdf'));
-const OcrPdf = lazy(() => import('./pages/tools/OcrPdf'));
 const PdfToPowerpoint = lazy(() => import('./pages/tools/PdfToPowerpoint'));
 const HtmlToPdf = lazy(() => import('./pages/tools/HtmlToPdf'));
 const PdfToPdfA = lazy(() => import('./pages/tools/PdfToPdfA'));
@@ -56,15 +55,9 @@ const RedactPdf = lazy(() => import('./pages/tools/RedactPdf'));
 const EditPdf = lazy(() => import('./pages/tools/EditPdf'));
 const ComparePdf = lazy(() => import('./pages/tools/ComparePdf'));
 const PdfForms = lazy(() => import('./pages/tools/PdfForms'));
-const AiPdfSummarizer = lazy(() => import('./pages/tools/AiPdfSummarizer'));
-const TranslatePdf = lazy(() => import('./pages/tools/TranslatePdf'));
-const PdfToMarkdown = lazy(() => import('./pages/tools/PdfToMarkdown'));
 
-const ChatWithPdf = lazy(() => import('./pages/tools/ChatWithPdf'));
 const AiResumeReviewer = lazy(() => import('./pages/tools/AiResumeReviewer'));
-const AiTableExtractor = lazy(() => import('./pages/tools/AiTableExtractor'));
 
-const PdfMetadataEditor = lazy(() => import('./pages/tools/PdfMetadataEditor'));
 const JsonToCsv = lazy(() => import('./pages/tools/JsonToCsv'));
 const Base64ToPdf = lazy(() => import('./pages/tools/Base64ToPdf'));
 
@@ -140,7 +133,6 @@ function AppLayout() {
             <Route path="/extract-pages" element={<Navigate to="/extract-pages-pdf" replace />} />
             <Route path="/organize-pdf" element={<OrganizePdf />} />
             <Route path="/scan-to-pdf" element={<ScanToPdf />} />
-            <Route path="/ocr-pdf" element={<OcrPdf />} />
             <Route path="/pdf-to-powerpoint" element={<PdfToPowerpoint />} />
             <Route path="/html-to-pdf" element={<HtmlToPdf />} />
             <Route path="/pdf-to-pdfa" element={<PdfToPdfA />} />
@@ -149,14 +141,7 @@ function AppLayout() {
             <Route path="/edit-pdf" element={<EditPdf />} />
             <Route path="/compare-pdf" element={<ComparePdf />} />
             <Route path="/pdf-forms" element={<PdfForms />} />
-            <Route path="/ai-pdf-summarizer" element={<AiPdfSummarizer />} />
-            <Route path="/ai-summarizer" element={<Navigate to="/ai-pdf-summarizer" replace />} />
-            <Route path="/translate-pdf" element={<TranslatePdf />} />
-            <Route path="/pdf-to-markdown" element={<PdfToMarkdown />} />
-            <Route path="/chat-with-pdf" element={<ChatWithPdf />} />
             <Route path="/ai-resume-reviewer" element={<AiResumeReviewer />} />
-            <Route path="/ai-table-extractor" element={<AiTableExtractor />} />
-            <Route path="/pdf-metadata-editor" element={<PdfMetadataEditor />} />
             <Route path="/json-to-csv" element={<JsonToCsv />} />
             <Route path="/base64-to-pdf" element={<Base64ToPdf />} />
 

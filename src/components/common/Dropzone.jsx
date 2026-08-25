@@ -309,10 +309,6 @@ export default function Dropzone({ tool }) {
           result = await pdfApi.scanToPdf(files[0], optionValues, handleProgress);
           filename = `${firstFileName}_scanned.pdf`;
           break;
-        case 'ocr-pdf':
-          result = await pdfApi.ocrPdf(files[0], optionValues, handleProgress);
-          filename = `${firstFileName}_ocr.pdf`;
-          break;
         case 'pdf-to-powerpoint':
           result = await pdfApi.pdfToPowerpoint(files[0], optionValues, handleProgress);
           filename = `${firstFileName}_presentation.zip`;
@@ -344,18 +340,6 @@ export default function Dropzone({ tool }) {
         case 'pdf-forms':
           result = await pdfApi.pdfForms(files[0], optionValues, handleProgress);
           filename = `${firstFileName}_form_filled.pdf`;
-          break;
-        case 'ai-pdf-summarizer':
-          result = await pdfApi.aiPdfSummarizer(files[0], optionValues, handleProgress);
-          filename = `${firstFileName}_summary.txt`;
-          break;
-        case 'translate-pdf':
-          result = await pdfApi.translatePdf(files[0], optionValues, handleProgress);
-          filename = `${firstFileName}_translated.pdf`;
-          break;
-        case 'pdf-to-markdown':
-          result = await pdfApi.pdfToMarkdown(files[0], optionValues, handleProgress);
-          filename = `${firstFileName}.md`;
           break;
         default:
           throw new Error('Unknown tool');

@@ -28,8 +28,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
   };
 
   const aiTools = TOOLS.filter(t => [
-    'chat-with-pdf', 'ai-resume-reviewer', 'ai-table-extractor',
-    'ai-pdf-summarizer', 'translate-pdf', 'ocr-pdf', 'pdf-metadata-editor'
+    'ai-resume-reviewer'
   ].includes(t.id));
   const pdfTools = TOOLS.filter(t => ['compress-pdf', 'merge-pdf', 'split-pdf', 'rotate-pdf', 'protect-pdf', 'unlock-pdf'].includes(t.id));
   const convertTools = TOOLS.filter(t => t.category === 'documents' || ['jpg-to-pdf', 'pdf-to-jpg', 'powerpoint-to-pdf'].includes(t.id));
