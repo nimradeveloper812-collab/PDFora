@@ -173,29 +173,29 @@ export default function Header() {
         {isToolsDropdownOpen && (
           <div
             onMouseLeave={() => setIsToolsDropdownOpen(false)}
-            className="hidden lg:block absolute top-full left-0 right-0 bg-white dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45] shadow-2xl p-6 z-50 animate-fade-in font-sans"
+            className="hidden lg:block absolute top-full left-0 right-0 bg-white dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45] shadow-2xl p-5 z-50 animate-fade-in font-sans max-h-[78vh] overflow-y-auto"
           >
             <div className="max-w-7xl mx-auto space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800 sticky -top-5 bg-white dark:bg-[#141622] z-10 pt-1 -mt-1">
                 <span className="text-xs font-extrabold uppercase tracking-wider text-purple-700 dark:text-purple-400 flex items-center gap-2">
                   <Grid className="w-4 h-4" />
                   <span>Category → Subcategory → Tool Directory</span>
                 </span>
                 <button
                   onClick={() => setIsToolsDropdownOpen(false)}
-                  className="text-xs font-bold text-zinc-400 hover:text-zinc-600 cursor-pointer"
+                  className="text-xs font-bold text-zinc-400 hover:text-zinc-600 cursor-pointer bg-zinc-100 dark:bg-zinc-800 px-2.5 py-1 rounded-md"
                 >
                   Close ✕
                 </button>
               </div>
 
-              <div className="grid grid-cols-4 gap-6 text-xs">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 text-xs">
                 {CATEGORIES_DATA.map((cat) => (
                   <div
                     key={cat.id}
-                    className="space-y-3 p-3 rounded-2xl border transition-all bg-zinc-50/70 dark:bg-[#1B1E2E]/50 border-zinc-100 dark:border-[#2A2E45]/80"
+                    className="space-y-3 p-3.5 rounded-2xl border transition-all bg-zinc-50/70 dark:bg-[#1B1E2E]/50 border-zinc-100 dark:border-[#2A2E45]/80 flex flex-col"
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between pb-1 border-b border-zinc-200/50 dark:border-zinc-800">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-purple-600" />
                         <h4 className="font-extrabold text-xs text-zinc-900 dark:text-white uppercase tracking-wider">
@@ -204,33 +204,33 @@ export default function Header() {
                       </div>
                     </div>
 
-                      <div className="space-y-2">
-                        {cat.subcategories.map((sub) => (
-                          <div key={sub.id} className="space-y-1">
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
-                              {sub.name}
-                            </p>
-                            <ul className="space-y-1 text-[11px] font-medium text-zinc-700 dark:text-zinc-300 pl-1.5 border-l border-zinc-200 dark:border-zinc-700">
-                              {sub.toolIds.map((tId) => {
-                                const tool = TOOLS.find(t => t.id === tId);
-                                if (!tool) return null;
-                                return (
-                                  <li key={tool.id}>
-                                    <Link
-                                      to={tool.path}
-                                      onClick={() => setIsToolsDropdownOpen(false)}
-                                      className="block hover:text-purple-600 dark:hover:text-purple-400 truncate transition-colors py-0.5"
-                                    >
-                                      • {tool.name}
-                                    </Link>
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          </div>
-                        ))}
-                      </div>
+                    <div className="space-y-3 flex-1">
+                      {cat.subcategories.map((sub) => (
+                        <div key={sub.id} className="space-y-1">
+                          <p className="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                            {sub.name}
+                          </p>
+                          <ul className="space-y-1 text-[11px] font-medium text-zinc-700 dark:text-zinc-300 pl-1.5 border-l border-zinc-200 dark:border-zinc-700 max-h-48 overflow-y-auto">
+                            {sub.toolIds.map((tId) => {
+                              const tool = TOOLS.find(t => t.id === tId);
+                              if (!tool) return null;
+                              return (
+                                <li key={tool.id}>
+                                  <Link
+                                    to={tool.path}
+                                    onClick={() => setIsToolsDropdownOpen(false)}
+                                    className="block hover:text-purple-600 dark:hover:text-purple-400 truncate transition-colors py-0.5"
+                                  >
+                                    • {tool.name}
+                                  </Link>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      ))}
                     </div>
+                  </div>
                 ))}
               </div>
             </div>
