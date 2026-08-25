@@ -827,11 +827,19 @@ export const clientPdfService = {
 
     onProgress?.(50, 'Applying page rotations...');
     pages.forEach((page, idx) => {
-      const angleToAdd = pageRotations[idx] || 0;
+      let angleToAdd = 0;
+      if (typeof pageRotations === 'number') {
+        angleToAdd = pageRotations;
+      } else if (typeof pageRotations === 'object' && pageRotations !== null) {
+        angleToAdd = pageRotations[idx] ?? pageRotations[String(idx)] ?? pageRotations.angle ?? 0;
+      }
+
       if (angleToAdd !== 0) {
-        const currentAngle = page.getRotation().angle;
+        const rotObj = page.getRotation();
+        const currentAngle = (rotObj && typeof rotObj.angle === 'number') ? rotObj.angle : 0;
         const newAngle = (currentAngle + angleToAdd) % 360;
-        page.setRotation(degrees(newAngle >= 0 ? newAngle : newAngle + 360));
+        const finalAngle = newAngle >= 0 ? newAngle : newAngle + 360;
+        page.setRotation(degrees(finalAngle));
       }
     });
 

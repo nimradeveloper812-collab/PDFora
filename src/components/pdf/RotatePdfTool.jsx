@@ -187,13 +187,21 @@ export default function RotatePdfTool() {
     await new Promise(resolve => setTimeout(resolve, 80));
 
     try {
-      // Map to page rotations (0-indexed indices to angles)
       const pageRotations = {};
-      pages.forEach(p => {
-        if (p.rotation !== 0) {
-          pageRotations[p.pageIndex] = p.rotation;
-        }
-      });
+      const hasAnyCustomRotation = pages.some(p => p.rotation !== 0);
+
+      if (!hasAnyCustomRotation && rotateMode === 'all') {
+        // Default to +90° for all pages if user clicks Rotate PDF without setting individual angles
+        pages.forEach(p => {
+          pageRotations[p.pageIndex] = 90;
+        });
+      } else {
+        pages.forEach(p => {
+          if (p.rotation !== 0) {
+            pageRotations[p.pageIndex] = p.rotation;
+          }
+        });
+      }
 
       const rotatedBlob = await pdfApi.rotatePdf(file, pageRotations, (pct, text) => {
         setProgress(pct);
@@ -207,7 +215,7 @@ export default function RotatePdfTool() {
       setStatus('completed');
     } catch (err) {
       console.error(err);
-      setErrorMsg('Failed to rotate PDF pages.');
+      setErrorMsg('Failed to rotate PDF pages. ' + (err.message || ''));
       setStatus('ready');
       setProgress(0);
     }
