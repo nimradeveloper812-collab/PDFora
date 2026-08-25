@@ -60,6 +60,11 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Security & CORS Headers
 app.use((req, res, next) => {
+  // Global 301 redirect: nimradev.site/ads.txt -> pdfora.nimradev.site/ads.txt
+  const host = req.headers.host || '';
+  if (host === 'nimradev.site' || host === 'www.nimradev.site') {
+    return res.redirect(301, `https://pdfora.nimradev.site${req.originalUrl}`);
+  }
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
