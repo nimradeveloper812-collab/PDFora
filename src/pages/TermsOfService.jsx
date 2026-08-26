@@ -5,85 +5,102 @@ import { FileText, Sparkles } from 'lucide-react';
 const SECTIONS = [
   {
     title: '1. Acceptance of Terms',
-    content: `By accessing or using the PDFora platform (pdfora.nimradev.site) and its document utilities, you confirm that you are at least 13 years of age and that you have read, understood, and agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please discontinue use of PDFora immediately.
+    content: `By accessing or using the PDFora platform (pdfora.nimradev.site) and its tools, you confirm that you are at least 13 years of age and that you have read, understood, and agree to be bound by these Terms of Service ("Terms") and our Privacy Policy. If you do not agree with any part of these Terms, please discontinue use of PDFora immediately.
 
-PDFora reserves the right to update these Terms periodically. Continued use of the platform following published modifications constitutes acceptance of the revised Terms.`,
+PDFora reserves the right to update these Terms at any time. Continued use of the platform following published modifications constitutes your acceptance of the revised Terms. We will update the "Last Updated" date at the top of this page to reflect any changes.`,
   },
   {
     title: '2. Description of Service',
-    content: `PDFora provides a suite of fast, in-browser document transformation tools including:
+    content: `PDFora provides a comprehensive suite of free, browser-based tools for file conversion, compression, editing, and management, including:
 
 • Converting Word (.docx, .doc), Excel (.xlsx, .xls), and PowerPoint (.pptx, .ppt) files to PDF
-• Converting images (JPG, PNG, WEBP, BMP) to PDF documents
-• Extracting and converting PDF pages to JPG images
-• Merging multiple PDF files into a single unified document
-• Compressing PDF files with adjustable optimization levels
-• Splitting PDF documents into individual pages or custom ranges
+• Converting images (JPG, PNG, WEBP, HEIC, BMP, TIFF, SVG) to and from PDF
+• Merging, splitting, compressing, rotating, watermarking, and editing PDF files
+• Image editing tools: background removal, resizing, cropping, format conversion
+• Video and audio conversion and compression tools
+• Developer utilities: JSON formatter, QR code generator, Base64 converter
 
-The service is provided on an "as is" and "as available" basis without charging subscription fees or requiring user account registrations.`,
+The service is provided on an "as is" and "as available" basis, free of charge and without requiring user account registration.`,
   },
   {
     title: '3. Acceptable Use & Conduct',
-    content: `You agree to use PDFora solely for legitimate and lawful purposes. You must not:
+    content: `You agree to use PDFora solely for legitimate and lawful purposes. You must NOT use PDFora to:
 
-• Process files containing malware, viruses, trojans, or malicious payloads
-• Process documents that infringe copyright, trademarks, or intellectual property of third parties
-• Attempt to reverse-engineer, decompile, or overload PDFora's web infrastructure through automated denial-of-service or scraping attacks
-• Use the service in any manner that violates applicable local, national, or international regulations
+• Upload, process, or distribute files containing malware, viruses, trojans, or any malicious code
+• Process documents that infringe copyright, trademarks, patents, or other intellectual property rights of third parties
+• Distribute, share, or process any illegal, harmful, obscene, defamatory, or abusive content
+• Attempt to reverse-engineer, decompile, hack, or disrupt PDFora's infrastructure through automated attacks or scraping
+• Use automated bots or scripts to make excessive requests that overload or abuse our platform
+• Violate any applicable local, national, or international regulations or laws
 
-PDFora reserves the right to restrict access to users or automated systems violating these principles.`,
+PDFora reserves the right to restrict or terminate access for any user or system found violating these principles, without prior notice.`,
   },
   {
-    title: '4. User File Ownership & Sandbox Processing',
-    content: `You retain 100% ownership and all intellectual property rights to any files you process through PDFora.
+    title: '4. User File Ownership & Intellectual Property',
+    content: `**Your Files:** You retain 100% ownership and all intellectual property rights to any files you upload or process through PDFora. By uploading files, you grant PDFora a temporary, limited license to process those files solely for the purpose of delivering the requested service. This license expires immediately when processing is complete and files are deleted.
 
-**Zero Server File Retention:** Files are processed locally within your browser sandbox. PDFora does not claim any ownership, licence, or copyright over your documents and does not store or copy your files on remote servers.
+**PDFora's IP:** The PDFora brand name, logo, software code, visual design, and trademarks are the exclusive intellectual property of PDFora. You may not reproduce, copy, modify, or distribute any part of our platform without explicit written permission.
 
-The PDFora brand name, software code, visual design, and trademarks remain the exclusive intellectual property of PDFora.`,
+**Zero Server File Retention:** Uploaded files are automatically deleted from our servers immediately after processing. PDFora does not claim any ownership or copyright over your documents.`,
   },
   {
-    title: '5. Free Platform & Usage Guidelines',
-    content: `PDFora is provided free of charge supported by contextual advertising. To maintain high performance for all users, reasonable browser resource limits apply:
+    title: '5. Free Platform & Fair Usage Guidelines',
+    content: `PDFora is provided completely free of charge, supported by contextual advertising. To maintain high performance and reliability for all users, the following fair usage guidelines apply:
 
-• Recommended single file size: Up to 50 MB
-• Maximum batch size: Up to 10–20 files per session (tool specific)
-• Scripted or automated bulk overloading is strictly prohibited without prior written authorisation`,
+• Recommended maximum single file size: Up to 50 MB
+• Maximum batch size: Up to 10–20 files per session (varies by tool)
+• Scripted, automated, or programmatic bulk processing is strictly prohibited without prior written authorization
+• Attempting to circumvent file size or rate limits through any technical means is not permitted
+
+These guidelines ensure a fast, reliable experience for all users of our free platform.`,
   },
   {
     title: '6. Disclaimer of Warranties',
-    content: `PDFora is provided "as is" without warranty of any kind, whether express, statutory, or implied. While our WebAssembly and rendering engines aim for maximum conversion fidelity, PDFora does not warrant that:
+    content: `PDFora is provided "as is" and "as available" without warranty of any kind, whether express, statutory, or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement.
 
-• The service will be 100% error-free or uninterrupted across all complex document layouts
-• Complex proprietary fonts or macros will render identically in all non-standard document versions
-• The service will meet specific commercial or regulatory archiving requirements
+While our processing engines aim for maximum conversion fidelity, PDFora does not warrant that:
 
-Users are advised to retain backup copies of their original source files.`,
+• The service will be 100% error-free or uninterrupted at all times
+• Complex proprietary fonts, macros, or embedded media will render identically in all document versions
+• The service will meet specific commercial, legal, or regulatory archiving requirements
+• Results will always match the quality of dedicated desktop software for complex layouts
+
+**We strongly recommend keeping backup copies of all important files before uploading them to any online service, including PDFora.**`,
   },
   {
     title: '7. Limitation of Liability',
-    content: `To the maximum extent permitted by applicable law, PDFora and its operators shall not be liable for any direct, indirect, incidental, special, or consequential damages resulting from the use or inability to use the service, including data loss or document formatting variations.
+    content: `To the maximum extent permitted by applicable law, PDFora and its operators shall not be liable for any direct, indirect, incidental, special, punitive, or consequential damages resulting from:
 
-Our aggregate liability for any dispute shall not exceed $50.00 USD.`,
+• Your use of or inability to use the service
+• Any errors or interruptions in service
+• Data loss or document formatting variations during processing
+• Unauthorized access to or alteration of your transmissions or data
+
+Our aggregate liability for any dispute arising from use of PDFora shall not exceed $50.00 USD. Some jurisdictions do not allow the exclusion of certain warranties or limitations of liability, so these limitations may not apply to you.`,
   },
   {
     title: '8. Third-Party Links & Advertising',
-    content: `PDFora contains interest-based advertisements served by Google AdSense and may display links to third-party resources. PDFora does not endorse and is not responsible for the products, services, or privacy practices of external third-party advertisers.
+    content: `PDFora displays interest-based advertisements served by **Google AdSense** and may contain links to third-party websites and resources. PDFora does not endorse and is not responsible for the content, products, services, or privacy practices of any external advertiser or linked website.
 
-**Interest-Based Advertising:** Google AdSense may use cookies and anonymous identifiers to serve ads based on prior visits to this and other websites. You can opt out of interest-based advertising at any time by visiting https://www.google.com/settings/ads or https://www.aboutads.info/choices.
+**Interest-Based Advertising:** Google AdSense may use cookies and anonymous identifiers to serve ads based on your prior visits to PDFora and other websites. You can opt out of interest-based advertising by visiting https://www.google.com/settings/ads or https://www.aboutads.info/choices.
 
-**Opting Out:** Opting out means you will continue to see ads, but they may not be tailored to your interests.`,
+**Opting Out:** Opting out means you will continue to see ads, but they may not be tailored to your specific interests.`,
   },
   {
-    title: '9. Governing Law',
-    content: `These Terms shall be interpreted and governed in accordance with universally recognized commercial laws and international web standards. Any legal inquiry should be directed to our legal department at contact@nimradev.site.`,
+    title: '9. Governing Law & Dispute Resolution',
+    content: `These Terms shall be interpreted and governed in accordance with universally recognized commercial and internet law principles. Any legal inquiry or dispute arising from your use of PDFora should first be directed to our support team at contact@nimradev.site for good-faith resolution.
+
+We are committed to resolving any concerns or complaints promptly and fairly.`,
   },
   {
     title: '10. Contact Information',
-    content: `For questions or clarifications regarding these Terms of Service, contact our team:
+    content: `For questions, clarifications, or concerns regarding these Terms of Service, please contact our team:
 
 • **Email:** contact@nimradev.site
-• **Platform:** PDFora Global Legal & Support
-• **Response Window:** 24–48 hours`,
+• **Platform:** PDFora — pdfora.nimradev.site
+• **Response Window:** 24–48 business hours
+
+By using PDFora, you acknowledge that you have read, understood, and agree to these Terms of Service.`,
   },
 ];
 

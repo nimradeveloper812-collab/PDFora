@@ -71,6 +71,7 @@ export default function Home() {
     { q: t('faq2q'), a: t('faq2a') },
     { q: t('faq3q'), a: t('faq3a') },
     { q: t('faq4q'), a: t('faq4a') },
+    { q: t('faq5q'), a: t('faq5a') },
   ];
 
   return (
@@ -399,7 +400,34 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 5. FAQ SECTION ─────────────────── */}
+      {/* ── 5. HOW TO USE SECTION ─────────────────── */}
+      <section className="py-8 bg-white dark:bg-[#141622] border-t border-zinc-200 dark:border-[#2A2E45]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-6">
+            <h2 className="text-sm font-black text-zinc-900 dark:text-white">How to Use PDFora</h2>
+            <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">Get your result in 5 simple steps — no account, no software, no hassle.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            {[
+              { step: '1', title: 'Choose a Tool', desc: 'Browse 70+ tools by category or use the search bar to find exactly what you need.' },
+              { step: '2', title: 'Upload Your File', desc: 'Click the upload area or drag & drop your file. Supports PDF, Word, Excel, JPG, MP4, and more.' },
+              { step: '3', title: 'Adjust Settings', desc: 'Customize options like output quality, compression level, or target format — or use smart defaults.' },
+              { step: '4', title: 'Process', desc: 'Click the action button. Our engine processes your file in seconds using your device\'s power.' },
+              { step: '5', title: 'Download', desc: 'Your result is instantly ready. Click download and save it — no email, no waiting room.' },
+            ].map(({ step, title, desc }) => (
+              <div key={step} className="flex flex-col items-center text-center p-4 rounded-xl bg-zinc-50 dark:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45] space-y-2">
+                <div className="w-8 h-8 rounded-full bg-purple-600 text-white text-xs font-black flex items-center justify-center shrink-0">
+                  {step}
+                </div>
+                <h3 className="text-xs font-bold text-zinc-900 dark:text-white">{title}</h3>
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-400 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 6. FAQ SECTION ─────────────────── */}
       <section className="py-5 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-3">
           <h2 className="text-sm font-extrabold text-zinc-900 dark:text-white">{t('faqTitle')}</h2>

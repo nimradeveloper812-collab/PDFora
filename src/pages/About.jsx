@@ -56,8 +56,30 @@ export default function About() {
         </div>
       </section>
 
+      {/* ── Origin Story ──────────────────────────── */}
+      <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-4">
+        <div className="rounded-2xl p-6 sm:p-8 bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xs space-y-4">
+          <h2 className="text-base sm:text-lg font-extrabold text-zinc-900 dark:text-white">Our Story</h2>
+          <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+            PDFora was born from a simple but powerful frustration — the best productivity tools online shouldn't be locked behind paywalls, forced registrations, or cluttered with unnecessary complexity.
+          </p>
+          <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+            We are a team of passionate developers and designers who believe that the digital tools people rely on every day — converting a PDF, compressing an image, extracting text from a document — should be free, fast, and accessible to absolutely everyone, regardless of their location, device, or technical background.
+          </p>
+          <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+            Starting with essential PDF tools, we have since grown to offer over 70 tools spanning document conversion, image processing, video utilities, audio conversion, and developer tools. Every decision we make is guided by our core values: <strong className="text-zinc-900 dark:text-white">simplicity, speed, security, and accessibility.</strong>
+          </p>
+          <div className="pt-2 border-t border-zinc-100 dark:border-[#2A2E45]">
+            <p className="text-xs font-bold text-purple-600 dark:text-purple-400 italic">
+              "To democratize access to powerful document and file management tools by making them free, fast, private, and universally accessible."
+            </p>
+            <p className="text-[10px] text-zinc-400 mt-1">— Our Mission Statement</p>
+          </div>
+        </div>
+      </section>
+
       {/* ── Core Commitments Grid ─────────────────────────── */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {commitments.map(({ icon: Icon, title, desc }) => (
             <div

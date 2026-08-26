@@ -2203,8 +2203,74 @@ export const TOOLS = [
     "slug": "jpg-to-png",
     "path": "/jpg-to-png",
     "category": "images",
-    "shortDesc": "Convert JPG/JPEG images to lossless PNG format online for free with vibrant color depth.",
-    "iconName": "ImageIcon"
+    "shortDesc": "Convert JPG photos to lossless PNG format online, free. Preserve full quality.",
+    "iconName": "ImageIcon",
+    "description": "Convert JPG or JPEG images to PNG format for lossless quality, transparency support, and wider software compatibility. Fast, private, and no registration required.",
+    "features": [
+  "Converts JPG/JPEG images to lossless PNG with no additional quality degradation",
+  "PNG output supports full alpha transparency for design and web use",
+  "100% private in-browser conversion — your photos never leave your device",
+  "Batch convert up to 10 JPG files simultaneously"
+],
+    "steps": [
+  "Upload your JPG or JPEG image files using drag & drop or the file picker.",
+  "PDFora reads your images and prepares the lossless PNG conversion.",
+  "Click \"Convert to PNG\" — processing completes in seconds.",
+  "Download your PNG files, ready for editing or transparent background work."
+],
+    "overview": "JPG is great for photos, but when you need a lossless format that supports transparency — for logos, UI elements, or high-quality prints — PNG is the better choice. PDFora's JPG to PNG converter produces clean, lossless PNG files from your JPG photos without any additional quality loss. Whether you're preparing images for a design project, adding a transparent background, or simply archiving photos in a higher-quality format, this tool makes the switch effortless.",
+    "useCases": [
+  {
+    "title": "Graphic Design Work",
+    "desc": "Convert JPG photos to PNG for editing in Photoshop or Canva where PNG's lossless format and transparency support are essential."
+  },
+  {
+    "title": "Web Development Assets",
+    "desc": "Convert product photos or UI illustrations to PNG for sharper rendering on websites and in CSS."
+  },
+  {
+    "title": "Screenshot Archiving",
+    "desc": "Save screenshots in lossless PNG format to prevent quality degradation from repeated JPG re-saves."
+  },
+  {
+    "title": "Print & Publishing",
+    "desc": "Convert photos to PNG for higher-fidelity output in desktop publishing software and print workflows."
+  }
+],
+    "faqs": [
+  {
+    "q": "Does converting JPG to PNG improve the original image quality?",
+    "a": "No. Converting from JPG to PNG won't recover quality lost during the original JPG compression. However, PNG prevents any further quality loss on re-saves."
+  },
+  {
+    "q": "Will my PNG file have a transparent background?",
+    "a": "No — transparency depends on the content of your original JPG. Since JPGs don't support transparency, the PNG background will be opaque. Use our Background Remover tool to add transparency."
+  },
+  {
+    "q": "Why is the PNG file larger than my JPG?",
+    "a": "PNG uses lossless compression, which preserves all pixel data and typically results in larger files than JPG. This is the expected trade-off for higher quality."
+  },
+  {
+    "q": "Can I convert multiple JPGs to PNG at once?",
+    "a": "Yes! Upload up to 10 JPG files and convert them all to PNG in a single batch operation."
+  }
+],
+    "metaTitle": "JPG to PNG Converter Online Free — Lossless PNG | PDFora",
+    "metaDescription": "Convert JPG images to PNG online for free. Lossless quality, transparency support. Fast, private JPG to PNG converter — no sign-up.",
+    "h1Title": "Convert JPG to PNG Online Free",
+    "primaryKeywords": [
+  "jpg to png",
+  "convert jpg to png",
+  "jpeg to png online free",
+  "jpg to png converter",
+  "photo to png"
+],
+    "relatedToolIds": [
+  "png-to-jpg",
+  "image-converter",
+  "image-compressor",
+  "image-background-remover"
+]
   },
   {
     "id": "png-to-jpg",
@@ -2212,8 +2278,74 @@ export const TOOLS = [
     "slug": "png-to-jpg",
     "path": "/png-to-jpg",
     "category": "images",
-    "shortDesc": "Convert PNG images to compact JPG format online to reduce file size and increase compatibility.",
-    "iconName": "ImageIcon"
+    "shortDesc": "Convert PNG images to compressed JPG format online, free. Reduce file size.",
+    "iconName": "ImageIcon",
+    "description": "Convert PNG images to JPG format to significantly reduce file size for web use, email sharing, and storage optimization, while maintaining great visual quality.",
+    "features": [
+  "Converts PNG images to compressed JPG with high visual quality output",
+  "Significantly reduces file size — ideal for web and email optimization",
+  "100% private browser-based conversion — PNG files stay on your device",
+  "Batch convert up to 10 PNG files in one session"
+],
+    "steps": [
+  "Upload your PNG image file(s) using drag & drop or the file picker.",
+  "PDFora processes the PNG and prepares the JPG compression.",
+  "Click \"Convert to JPG\" — your image is converted in seconds.",
+  "Download your smaller, web-ready JPG file instantly."
+],
+    "overview": "PNG files are high quality but often unnecessarily large for everyday sharing, web uploads, or email. PDFora's PNG to JPG converter compresses your PNG images into lightweight JPG files that load faster on websites, attach easily to emails, and store more efficiently. The conversion uses intelligent quality optimization to deliver a JPG that looks great while being dramatically smaller — all processed privately in your browser.",
+    "useCases": [
+  {
+    "title": "Website Performance Optimization",
+    "desc": "Convert large PNG graphics to JPG to speed up page load times and improve SEO performance scores."
+  },
+  {
+    "title": "Email Attachment Compression",
+    "desc": "Reduce PNG screenshot and image sizes before attaching them to emails to stay within size limits."
+  },
+  {
+    "title": "Social Media Image Preparation",
+    "desc": "Convert PNG artworks to JPG before uploading to Instagram, Facebook, LinkedIn, and other platforms that prefer JPG."
+  },
+  {
+    "title": "Storage & Cloud Space Saving",
+    "desc": "Convert PNG archives to JPG to free up storage space on drives, phones, and cloud services."
+  }
+],
+    "faqs": [
+  {
+    "q": "How much smaller will my file be after converting PNG to JPG?",
+    "a": "Typically 60–90% smaller, depending on image content. A 2 MB PNG photo might become a 200–400 KB JPG."
+  },
+  {
+    "q": "Will transparency be preserved when I convert PNG to JPG?",
+    "a": "No. JPG does not support transparency. Any transparent areas in your PNG will be filled with a white background in the output JPG."
+  },
+  {
+    "q": "Is the JPG output quality still good enough to use?",
+    "a": "Yes. PDFora applies high-quality JPG compression settings. The output looks excellent for web, social, and general sharing purposes."
+  },
+  {
+    "q": "Are my PNG files safe when I use this tool?",
+    "a": "Yes. All processing happens locally in your browser. Your image files are never uploaded to or stored on any server."
+  }
+],
+    "metaTitle": "PNG to JPG Converter Online Free — Compress PNG | PDFora",
+    "metaDescription": "Convert PNG images to JPG online for free. Reduce file size dramatically. Fast, private PNG to JPG converter — no sign-up required.",
+    "h1Title": "Convert PNG to JPG Online Free",
+    "primaryKeywords": [
+  "png to jpg",
+  "convert png to jpg",
+  "png to jpeg online free",
+  "png to jpg converter",
+  "compress png to jpg"
+],
+    "relatedToolIds": [
+  "jpg-to-png",
+  "image-converter",
+  "image-compressor",
+  "png-to-pdf"
+]
   },
   {
     "id": "webp-to-jpg",
@@ -2221,8 +2353,74 @@ export const TOOLS = [
     "slug": "webp-to-jpg",
     "path": "/webp-to-jpg",
     "category": "images",
-    "shortDesc": "Convert modern WebP images to standard JPG format for compatibility with all devices.",
-    "iconName": "ImageIcon"
+    "shortDesc": "Convert WebP web images to standard JPG format online, free. No sign-up.",
+    "iconName": "ImageIcon",
+    "description": "Convert WebP images to JPG format for compatibility with apps, editors, and platforms that require standard photo formats. Fast and 100% private.",
+    "features": [
+  "Converts WebP images to high-quality JPG with minimal compression artifacts",
+  "Dramatically reduces storage requirements compared to lossless WebP",
+  "100% private in-browser conversion — WebP files stay on your device",
+  "Supports batch conversion of up to 10 WebP files at once"
+],
+    "steps": [
+  "Upload your WebP image file(s) using drag & drop or the file picker.",
+  "PDFora decodes the WebP data and prepares the JPG output.",
+  "Click \"Convert to JPG\" — the conversion completes in seconds.",
+  "Download your JPG file, compatible with any image viewer or platform."
+],
+    "overview": "WebP is an efficient web image format, but it's not always accepted by older software, email clients, or platforms that require standard JPG photos. PDFora's WebP to JPG converter solves this instantly — upload your WebP image and get a standard JPG that works everywhere. The conversion produces high-quality JPG output that looks excellent while being smaller than PNG, making it perfect for web sharing and everyday use.",
+    "useCases": [
+  {
+    "title": "Software & App Compatibility",
+    "desc": "Convert WebP images to JPG to open them in image editors and applications that don't support the WebP format."
+  },
+  {
+    "title": "Email & Messaging Sharing",
+    "desc": "Convert WebP to JPG before attaching to emails or sharing via messaging apps that may not display WebP properly."
+  },
+  {
+    "title": "Legacy Platform Uploads",
+    "desc": "Convert WebP images to JPG for uploading to older websites and CMSes that only accept standard image formats."
+  },
+  {
+    "title": "Document Insertion",
+    "desc": "Insert converted JPG images into Word documents, PowerPoint presentations, and PDF reports."
+  }
+],
+    "faqs": [
+  {
+    "q": "Why can't I open my WebP file in some programs?",
+    "a": "WebP is a newer format not yet supported by all applications. Converting to JPG gives you a universally recognized format that works everywhere."
+  },
+  {
+    "q": "Is WebP to JPG conversion lossy?",
+    "a": "Yes, JPG is a lossy format. However, PDFora applies high-quality compression settings, so quality loss is minimal and acceptable for general use."
+  },
+  {
+    "q": "Can I batch convert multiple WebP files to JPG?",
+    "a": "Yes! Upload up to 10 WebP files and convert them all to JPG in a single session."
+  },
+  {
+    "q": "Are my WebP image files transmitted to a server?",
+    "a": "No. All conversion happens locally in your browser. Your files never leave your device."
+  }
+],
+    "metaTitle": "WebP to JPG Converter Online Free — Instant Conversion | PDFora",
+    "metaDescription": "Convert WebP images to JPG online for free. Universal compatibility, high quality. Fast, private WebP to JPG image converter.",
+    "h1Title": "Convert WebP to JPG Online Free",
+    "primaryKeywords": [
+  "webp to jpg",
+  "convert webp to jpg",
+  "webp to jpeg online free",
+  "webp image to jpg",
+  "webp converter"
+],
+    "relatedToolIds": [
+  "webp-to-png",
+  "image-converter",
+  "image-compressor",
+  "jpg-to-png"
+]
   },
   {
     "id": "jpg-to-webp",
@@ -2230,8 +2428,74 @@ export const TOOLS = [
     "slug": "jpg-to-webp",
     "path": "/jpg-to-webp",
     "category": "images",
-    "shortDesc": "Convert JPG to modern WebP format to reduce file sizes by 30-40% for faster loading.",
-    "iconName": "ImageIcon"
+    "shortDesc": "Convert JPG photos to modern WebP format for faster web performance, free.",
+    "iconName": "ImageIcon",
+    "description": "Convert JPG images to WebP format to reduce web page load times and save bandwidth, while maintaining excellent visual quality.",
+    "features": [
+  "Converts JPG to modern WebP format with superior compression efficiency",
+  "Typically 25–35% smaller than equivalent JPG at the same visual quality",
+  "100% private in-browser conversion — your photos never leave your device",
+  "Ideal for web developers and content creators optimizing web performance"
+],
+    "steps": [
+  "Upload your JPG or JPEG image file(s) via drag & drop or file picker.",
+  "PDFora reads the JPG data and prepares the WebP compression.",
+  "Click \"Convert to WebP\" — the process completes in seconds.",
+  "Download your optimized WebP images, ready for web deployment."
+],
+    "overview": "WebP is Google's next-generation image format that delivers superior compression compared to JPG — meaning faster-loading web pages and less bandwidth consumption, without sacrificing visual quality. PDFora's JPG to WebP converter is the tool of choice for web developers, bloggers, and e-commerce stores looking to improve their Google PageSpeed Insights scores and Core Web Vitals. Convert your product photos, blog images, or banner graphics to WebP in seconds.",
+    "useCases": [
+  {
+    "title": "Web Performance Optimization",
+    "desc": "Convert website images from JPG to WebP to improve Google PageSpeed scores and Core Web Vitals metrics."
+  },
+  {
+    "title": "E-Commerce Product Images",
+    "desc": "Serve WebP versions of product photos to reduce bandwidth costs and speed up product page loading for customers."
+  },
+  {
+    "title": "Blog & CMS Image Optimization",
+    "desc": "Convert blog post images to WebP before uploading to WordPress, Ghost, or other CMS platforms that support WebP."
+  },
+  {
+    "title": "CDN Asset Optimization",
+    "desc": "Prepare smaller WebP image assets for content delivery networks to reduce global transfer costs."
+  }
+],
+    "faqs": [
+  {
+    "q": "How much smaller will WebP be compared to my JPG?",
+    "a": "Typically 25–35% smaller at equivalent quality. For a 500 KB JPG, you can expect around 325–375 KB WebP output."
+  },
+  {
+    "q": "Is WebP supported by all browsers?",
+    "a": "WebP is supported by Chrome, Firefox, Edge, Safari (iOS 14+, macOS 11+), and Opera — covering over 95% of global browser usage."
+  },
+  {
+    "q": "Will converting JPG to WebP visually degrade my images?",
+    "a": "At PDFora's default high-quality settings, the visual difference between the JPG original and the WebP output is negligible for normal viewing."
+  },
+  {
+    "q": "Can I convert multiple JPGs to WebP at the same time?",
+    "a": "Yes. Upload up to 10 JPG files and convert them all to WebP in a single batch operation."
+  }
+],
+    "metaTitle": "JPG to WebP Converter Online Free — Web Image Optimizer | PDFora",
+    "metaDescription": "Convert JPG images to WebP format online for free. Reduce web image size by 30%+. Fast, private JPG to WebP converter.",
+    "h1Title": "Convert JPG to WebP Online Free",
+    "primaryKeywords": [
+  "jpg to webp",
+  "convert jpg to webp",
+  "jpeg to webp online free",
+  "jpg to webp converter",
+  "optimize images for web"
+],
+    "relatedToolIds": [
+  "png-to-webp",
+  "image-converter",
+  "image-compressor",
+  "png-to-jpg"
+]
   },
   {
     "id": "png-to-webp",
@@ -2239,8 +2503,74 @@ export const TOOLS = [
     "slug": "png-to-webp",
     "path": "/png-to-webp",
     "category": "images",
-    "shortDesc": "Convert PNG to WebP format with transparency preservation and smaller file sizes.",
-    "iconName": "ImageIcon"
+    "shortDesc": "Convert PNG images to smaller WebP format for web optimization, free.",
+    "iconName": "ImageIcon",
+    "description": "Convert PNG images to WebP format for faster websites and lower bandwidth usage. Modern, efficient, and 100% private conversion in your browser.",
+    "features": [
+  "Converts PNG to WebP with significant file size reduction — 26%+ smaller on average",
+  "Preserves visual quality with intelligent lossy WebP compression",
+  "100% private in-browser processing — PNG files stay on your device",
+  "Works on all modern browsers and devices without any plugins"
+],
+    "steps": [
+  "Upload your PNG image file(s) using drag & drop or the file picker.",
+  "PDFora processes the PNG data and applies WebP compression.",
+  "Click \"Convert to WebP\" — the process completes in seconds.",
+  "Download your smaller, web-optimized WebP image."
+],
+    "overview": "PNG files are high quality but often unnecessarily large for web delivery. WebP offers excellent compression that can reduce image file sizes by 26% or more compared to PNG, resulting in faster-loading pages and lower server costs. PDFora's PNG to WebP converter makes this optimization effortless — upload your PNG graphics and get back efficient WebP files ready for your website, app, or CDN. All conversion is done privately in your browser.",
+    "useCases": [
+  {
+    "title": "Website Image Optimization",
+    "desc": "Convert PNG website graphics and photos to WebP to significantly improve page load speed and user experience."
+  },
+  {
+    "title": "Logo & Icon Web Export",
+    "desc": "Convert PNG logos and UI icons to WebP for modern web apps and progressive web applications (PWAs)."
+  },
+  {
+    "title": "Next-Gen Image Serving",
+    "desc": "Prepare WebP image assets for serving with the HTML <picture> element for automatic browser-based format selection."
+  },
+  {
+    "title": "Storage & Bandwidth Reduction",
+    "desc": "Convert PNG image libraries to WebP to reduce storage costs and CDN bandwidth consumption."
+  }
+],
+    "faqs": [
+  {
+    "q": "Does PNG to WebP conversion support transparency?",
+    "a": "Yes! WebP supports full alpha transparency. Any transparent areas in your PNG are preserved in the WebP output."
+  },
+  {
+    "q": "How much smaller will my WebP file be compared to PNG?",
+    "a": "On average, WebP is 26% smaller than PNG at similar quality. For large, complex PNGs the savings can be even greater."
+  },
+  {
+    "q": "Which browsers support WebP images?",
+    "a": "WebP is supported by Chrome, Firefox, Edge, Safari (iOS 14+, macOS 11+), and Opera. It covers over 95% of global browser users."
+  },
+  {
+    "q": "Are my PNG files safe when I use this tool?",
+    "a": "Yes. Processing happens entirely in your browser. Your image data is never transmitted to any server."
+  }
+],
+    "metaTitle": "PNG to WebP Converter Online Free — Web Optimizer | PDFora",
+    "metaDescription": "Convert PNG images to WebP format online for free. Reduce file size 26%+. Fast, private PNG to WebP converter.",
+    "h1Title": "Convert PNG to WebP Online Free",
+    "primaryKeywords": [
+  "png to webp",
+  "convert png to webp",
+  "png to webp online free",
+  "optimize png for web",
+  "png webp converter"
+],
+    "relatedToolIds": [
+  "jpg-to-webp",
+  "image-converter",
+  "image-compressor",
+  "png-to-jpg"
+]
   },
   {
     "id": "webp-to-png",
@@ -2248,8 +2578,74 @@ export const TOOLS = [
     "slug": "webp-to-png",
     "path": "/webp-to-png",
     "category": "images",
-    "shortDesc": "Convert Google WebP images to lossless PNG with transparent alpha background support.",
-    "iconName": "ImageIcon"
+    "shortDesc": "Convert WebP web images to standard PNG format with full transparency preserved.",
+    "iconName": "ImageIcon",
+    "description": "Convert Google WebP images to universal PNG format instantly. Perfect for editing, sharing, and using WebP graphics in applications that require standard image formats.",
+    "features": [
+  "Converts WebP images to PNG with full alpha transparency channel preserved",
+  "Outputs lossless PNG files with identical visual quality to the source",
+  "100% private in-browser processing — your files stay on your device",
+  "Fast batch conversion of up to 10 WebP files at once"
+],
+    "steps": [
+  "Upload your WebP image file(s) using drag & drop or the file picker.",
+  "PDFora instantly reads the WebP format and prepares the conversion.",
+  "Click \"Convert to PNG\" — processing completes in seconds.",
+  "Download your standard PNG file, ready for editing or sharing."
+],
+    "overview": "WebP is Google's modern image format that offers excellent compression — but it's not always supported in every image editor, email client, or design tool. PDFora's WebP to PNG converter gives you universal compatibility in seconds. Your WebP images are converted to standard, lossless PNG files that work in Photoshop, Word, presentations, and anywhere else you need them. All processing happens locally in your browser, so your images stay private.",
+    "useCases": [
+  {
+    "title": "Design & Editing Compatibility",
+    "desc": "Convert downloaded WebP graphics to PNG so they can be opened and edited in Photoshop, Illustrator, or Canva."
+  },
+  {
+    "title": "Website Asset Export",
+    "desc": "Convert WebP web graphics to PNG for use in environments that don't support the WebP format."
+  },
+  {
+    "title": "Document & Presentation Embedding",
+    "desc": "Insert converted PNG images into Word documents, PowerPoint slides, or Google Docs without format conflicts."
+  },
+  {
+    "title": "Transparent Image Editing",
+    "desc": "Preserve full alpha transparency when converting WebP logos or icons to PNG for design work."
+  }
+],
+    "faqs": [
+  {
+    "q": "Is the transparency preserved when converting WebP to PNG?",
+    "a": "Yes. PNG supports full alpha transparency. Any transparent areas in your WebP image are perfectly preserved in the output PNG."
+  },
+  {
+    "q": "Will the image quality change after conversion?",
+    "a": "No. The conversion produces a lossless PNG. The visual quality of your image is identical to the original WebP."
+  },
+  {
+    "q": "Why is my WebP image not opening in some programs?",
+    "a": "WebP is a relatively new format and isn't supported by all older applications. Converting to PNG gives you maximum compatibility with all software and devices."
+  },
+  {
+    "q": "Can I convert multiple WebP files at the same time?",
+    "a": "Yes! You can upload and convert up to 10 WebP files in a single batch session."
+  }
+],
+    "metaTitle": "WebP to PNG Converter Online Free — Transparent PNG | PDFora",
+    "metaDescription": "Convert WebP images to PNG online for free. Preserve transparency, full quality. Fast WebP to PNG converter — no sign-up needed.",
+    "h1Title": "Convert WebP to PNG Online Free",
+    "primaryKeywords": [
+  "webp to png",
+  "convert webp to png",
+  "webp to png online free",
+  "webp image converter",
+  "webp to png transparent"
+],
+    "relatedToolIds": [
+  "webp-to-jpg",
+  "image-converter",
+  "image-compressor",
+  "heic-to-png"
+]
   },
   {
     "id": "heic-to-jpg",
@@ -2257,8 +2653,74 @@ export const TOOLS = [
     "slug": "heic-to-jpg",
     "path": "/heic-to-jpg",
     "category": "images",
-    "shortDesc": "Convert Apple iPhone HEIC/HEIF photos to universal JPG format online in seconds.",
-    "iconName": "ImageIcon"
+    "shortDesc": "Convert iPhone HEIC photos to JPG format for universal compatibility, free.",
+    "iconName": "ImageIcon",
+    "description": "Convert Apple HEIC and HEIF photos to standard JPG images that open everywhere. Share your iPhone photos on Windows, Android, and web platforms without restrictions.",
+    "features": [
+  "Converts HEIC/HEIF photos from all iPhone and iPad models to JPG",
+  "Maintains excellent image quality with adjustable JPG compression",
+  "100% private — your iPhone photos are processed locally and never uploaded",
+  "Batch convert up to 10 HEIC photos at once for maximum efficiency"
+],
+    "steps": [
+  "Upload your HEIC or HEIF photo files from your iPhone or Mac.",
+  "PDFora automatically identifies the Apple format and prepares conversion.",
+  "Click \"Convert to JPG\" — the process completes in seconds.",
+  "Download your JPG photos, instantly compatible with any device or platform."
+],
+    "overview": "Apple's HEIC format is great for saving storage space on your iPhone — but it causes headaches when you try to open, share, or edit photos on Windows PCs, Android devices, or most websites. PDFora's HEIC to JPG converter eliminates this friction instantly. Upload your HEIC photos and get back standard JPG files that open in any image viewer, social app, or email client. Since all conversion happens in your browser, your personal photos never leave your device.",
+    "useCases": [
+  {
+    "title": "Windows PC Compatibility",
+    "desc": "Open and view iPhone photos directly on Windows computers without installing HEIC codecs or additional software."
+  },
+  {
+    "title": "Social Media & Website Uploads",
+    "desc": "Convert iPhone photos to JPG before posting on Instagram, Facebook, Twitter, or uploading to your website or blog."
+  },
+  {
+    "title": "Photo Printing Services",
+    "desc": "Most online and in-store photo printing services require JPG format — convert your HEIC photos before ordering prints."
+  },
+  {
+    "title": "Email & Cloud Sharing",
+    "desc": "Send photos as email attachments or upload to cloud services that don't support the HEIC format."
+  }
+],
+    "faqs": [
+  {
+    "q": "Do I lose photo quality when converting HEIC to JPG?",
+    "a": "Minimal quality change occurs since JPG uses lossy compression — but PDFora outputs at high quality settings, so the visual difference is imperceptible in normal use."
+  },
+  {
+    "q": "Can I convert all photos from my iPhone camera roll?",
+    "a": "Yes! Upload up to 10 HEIC photos at once for batch conversion. For larger batches, simply run multiple sessions."
+  },
+  {
+    "q": "Are my private iPhone photos safe with this tool?",
+    "a": "Yes. PDFora converts your photos entirely in your browser. No photo data is transmitted to or stored on any server."
+  },
+  {
+    "q": "Does it work with photos from all iPhone models?",
+    "a": "Yes. HEIC support was introduced in iOS 11 (iPhone 7 and later). PDFora correctly handles HEIC files from all compatible iOS devices."
+  }
+],
+    "metaTitle": "HEIC to JPG Converter Online Free — iPhone Photos | PDFora",
+    "metaDescription": "Convert iPhone HEIC photos to JPG online for free. Open Apple photos on Windows and Android. Batch convert, 100% private.",
+    "h1Title": "Convert HEIC to JPG Online Free",
+    "primaryKeywords": [
+  "heic to jpg",
+  "convert heic to jpg",
+  "iphone photo to jpg",
+  "heic to jpeg online free",
+  "heif to jpg converter"
+],
+    "relatedToolIds": [
+  "heic-to-png",
+  "image-converter",
+  "image-compressor",
+  "jpg-to-pdf"
+]
   },
   {
     "id": "heic-to-png",
@@ -2266,8 +2728,74 @@ export const TOOLS = [
     "slug": "heic-to-png",
     "path": "/heic-to-png",
     "category": "images",
-    "shortDesc": "Convert Apple iPhone HEIC photos to lossless PNG format with transparent background support.",
-    "iconName": "ImageIcon"
+    "shortDesc": "Convert Apple iPhone HEIC and HEIF photos to standard PNG format instantly.",
+    "iconName": "ImageIcon",
+    "description": "Convert iPhone and iPad HEIC/HEIF photos to PNG format for universal compatibility. Share, edit, and upload your Apple photos anywhere without software restrictions.",
+    "features": [
+  "Converts HEIC and HEIF format photos from all iPhone and iPad models",
+  "Outputs standard PNG with full resolution and color accuracy preserved",
+  "100% browser-based — your private photos are never uploaded to a server",
+  "Supports batch conversion of up to 10 HEIC files at once"
+],
+    "steps": [
+  "Upload your HEIC or HEIF photo files using drag & drop or the file picker.",
+  "PDFora automatically detects the Apple HEIC format and prepares conversion.",
+  "Click \"Convert to PNG\" and the process completes in seconds.",
+  "Download your converted PNG files, ready to use anywhere."
+],
+    "overview": "Apple's HEIC format offers excellent image quality at smaller file sizes — but it's not universally supported on Windows PCs, Android devices, or older software. PDFora's HEIC to PNG converter solves this instantly. Simply upload your iPhone photos and get standard PNG files that open in any image viewer, photo editor, or website. No software installation needed, and because processing happens entirely in your browser, your private photos stay on your device.",
+    "useCases": [
+  {
+    "title": "Sharing iPhone Photos on Windows",
+    "desc": "Convert HEIC photos taken on your iPhone so they open perfectly in Windows Photos, Paint, and other Windows applications."
+  },
+  {
+    "title": "Web & Social Media Uploads",
+    "desc": "Convert HEIC images to PNG before uploading to websites, social platforms, or cloud storage that don't accept HEIC."
+  },
+  {
+    "title": "Design & Editing Software",
+    "desc": "Make your iPhone photos compatible with Photoshop, GIMP, Canva, and other graphic design tools that require standard formats."
+  },
+  {
+    "title": "Email & Document Attachments",
+    "desc": "Send photos that recipients on any device or platform can open without needing special software."
+  }
+],
+    "faqs": [
+  {
+    "q": "What is a HEIC file and why can't some programs open it?",
+    "a": "HEIC (High Efficiency Image Container) is Apple's proprietary photo format used on iPhones. While efficient, it's not natively supported on Windows or Android. Converting to PNG ensures universal compatibility."
+  },
+  {
+    "q": "Will converting HEIC to PNG reduce my photo quality?",
+    "a": "No. PNG is a lossless format, meaning zero quality is lost during conversion. Your photos will look identical to the originals."
+  },
+  {
+    "q": "Can I convert multiple HEIC files at once?",
+    "a": "Yes! Upload up to 10 HEIC photos at once and convert them all to PNG in a single batch operation."
+  },
+  {
+    "q": "Are my private iPhone photos safe when I use this tool?",
+    "a": "Yes, completely. All conversion happens locally in your browser. Your photos are never transmitted to or stored on any external server."
+  }
+],
+    "metaTitle": "HEIC to PNG Converter Online Free — iPhone Photos | PDFora",
+    "metaDescription": "Convert iPhone HEIC and HEIF photos to PNG online for free. Batch convert Apple photos. 100% private, no app download needed.",
+    "h1Title": "Convert HEIC to PNG Online Free",
+    "primaryKeywords": [
+  "heic to png",
+  "convert heic to png",
+  "heic to png online free",
+  "iphone photo to png",
+  "heif to png converter"
+],
+    "relatedToolIds": [
+  "heic-to-jpg",
+  "image-converter",
+  "image-compressor",
+  "webp-to-png"
+]
   },
   {
     "id": "svg-to-png",
@@ -2275,8 +2803,74 @@ export const TOOLS = [
     "slug": "svg-to-png",
     "path": "/svg-to-png",
     "category": "images",
-    "shortDesc": "Convert vector SVG graphics into high-resolution transparent PNG images.",
-    "iconName": "ImageIcon"
+    "shortDesc": "Rasterize SVG vector graphics to high-resolution PNG images online, free.",
+    "iconName": "ImageIcon",
+    "description": "Convert SVG vector files to crisp, high-resolution PNG raster images. Perfect for exporting logos, icons, and illustrations for web, print, or social media use.",
+    "features": [
+  "Rasterizes SVG vector paths and shapes to high-resolution PNG with no quality loss",
+  "Supports all standard SVG features including gradients, masks, and text",
+  "100% private browser-based processing — your vector files stay local",
+  "Instant conversion — most SVG files convert in under a second"
+],
+    "steps": [
+  "Upload your SVG vector file using drag & drop or the file picker.",
+  "PDFora parses the SVG and renders it at full resolution.",
+  "Click \"Convert to PNG\" — the rasterization completes instantly.",
+  "Download your high-resolution PNG image, ready for any platform."
+],
+    "overview": "SVG is the go-to format for scalable logos, icons, and vector illustrations — but many platforms, apps, and tools require raster images like PNG. PDFora's SVG to PNG converter rasterizes your vector graphics at full quality with zero visual degradation. Whether you need a PNG version of your company logo for social media, a website thumbnail, or an email signature, PDFora delivers a crisp, ready-to-use result in seconds — all privately in your browser.",
+    "useCases": [
+  {
+    "title": "Logo & Brand Asset Export",
+    "desc": "Export SVG brand logos to PNG for use on social media profiles, email signatures, and website thumbnails."
+  },
+  {
+    "title": "Icon Libraries",
+    "desc": "Convert SVG icon sets to PNG format for use in mobile apps, presentations, and design templates."
+  },
+  {
+    "title": "Print & Marketing Materials",
+    "desc": "Rasterize SVG illustrations to PNG for use in Word, PowerPoint, or print-ready marketing documents."
+  },
+  {
+    "title": "Platform Uploads",
+    "desc": "Convert SVG to PNG to upload your vector artwork to platforms that only accept raster image formats."
+  }
+],
+    "faqs": [
+  {
+    "q": "Will SVG text and fonts render correctly in the PNG?",
+    "a": "Yes. PDFora renders all SVG text elements using the browser's built-in rendering engine, preserving fonts, sizes, and positioning."
+  },
+  {
+    "q": "What resolution is the output PNG?",
+    "a": "The output PNG is rendered at the SVG's native viewport dimensions. For best results, ensure your SVG has a sufficient width and height defined."
+  },
+  {
+    "q": "Are SVG gradients and transparency effects supported?",
+    "a": "Yes. Linear gradients, radial gradients, masks, opacity layers, and all standard SVG visual effects are fully supported."
+  },
+  {
+    "q": "Is there a file size limit for SVG files?",
+    "a": "PDFora handles standard SVG files efficiently. Very large or complex SVGs with thousands of path nodes may take a few extra seconds to process."
+  }
+],
+    "metaTitle": "SVG to PNG Converter Online Free — Export SVG as PNG | PDFora",
+    "metaDescription": "Convert SVG vector files to PNG images online for free. Export logos, icons, illustrations. Fast, private SVG to PNG converter.",
+    "h1Title": "Convert SVG to PNG Online Free",
+    "primaryKeywords": [
+  "svg to png",
+  "convert svg to png",
+  "svg to png online free",
+  "svg to raster",
+  "vector to png converter"
+],
+    "relatedToolIds": [
+  "png-to-svg",
+  "image-converter",
+  "image-compressor",
+  "png-to-jpg"
+]
   },
   {
     "id": "avif-to-jpg",
@@ -2284,8 +2878,74 @@ export const TOOLS = [
     "slug": "avif-to-jpg",
     "path": "/avif-to-jpg",
     "category": "images",
-    "shortDesc": "Convert next-generation AVIF images to standard universal JPG format.",
-    "iconName": "ImageIcon"
+    "shortDesc": "Convert modern AVIF images to standard JPG format for universal compatibility.",
+    "iconName": "ImageIcon",
+    "description": "Convert AVIF next-generation image files to standard JPG format. Ensure your AVIF images open everywhere, from legacy software to mobile devices.",
+    "features": [
+  "Converts AVIF (AV1 Image File Format) images to universally compatible JPG",
+  "High-quality JPG output preserving the visual detail from AVIF source files",
+  "100% private browser-based conversion — your AVIF files stay local",
+  "Instant single-file conversion for quick format compatibility fixes"
+],
+    "steps": [
+  "Upload your AVIF file using the drag & drop area or file picker.",
+  "PDFora decodes the AVIF image and prepares the JPG conversion.",
+  "Click \"Convert to JPG\" — the process completes in seconds.",
+  "Download your standard JPG image, compatible with any viewer or editor."
+],
+    "overview": "AVIF is one of the newest and most efficient image formats — it delivers remarkable image quality at very small file sizes. However, many image editors, older browsers, and software applications don't yet fully support AVIF. PDFora's AVIF to JPG converter makes your AVIF images universally accessible by converting them to the globally recognized JPG format, which opens in every image viewer, editor, and platform.",
+    "useCases": [
+  {
+    "title": "Legacy Software Compatibility",
+    "desc": "Convert AVIF images to JPG to open and edit them in Photoshop, Windows Photo Viewer, and other tools that don't support AVIF."
+  },
+  {
+    "title": "Email & Document Sharing",
+    "desc": "Ensure your images can be opened by all recipients by converting AVIF to the universally supported JPG format."
+  },
+  {
+    "title": "Social Media Uploads",
+    "desc": "Convert AVIF images to JPG before uploading to social platforms that require standard photo formats."
+  },
+  {
+    "title": "Cross-Platform Distribution",
+    "desc": "Share images across devices and operating systems without worrying about AVIF format support."
+  }
+],
+    "faqs": [
+  {
+    "q": "What is an AVIF file?",
+    "a": "AVIF (AV1 Image File Format) is a next-generation image format derived from the AV1 video codec. It offers exceptional quality at small file sizes but isn't yet universally supported."
+  },
+  {
+    "q": "Will converting AVIF to JPG reduce quality significantly?",
+    "a": "Minimal quality reduction occurs. PDFora uses high-quality JPG encoding settings to preserve as much visual detail as possible from the AVIF source."
+  },
+  {
+    "q": "Why can't I open my AVIF file in Photoshop or Windows?",
+    "a": "AVIF support is still being added to many applications. Older versions of Photoshop and Windows may not natively open AVIF — converting to JPG solves this instantly."
+  },
+  {
+    "q": "Are my AVIF files transmitted to a server during conversion?",
+    "a": "No. All AVIF to JPG conversion happens locally in your browser. Your files never leave your device."
+  }
+],
+    "metaTitle": "AVIF to JPG Converter Online Free — Universal Compatibility | PDFora",
+    "metaDescription": "Convert AVIF images to JPG online for free. Open AVIF files everywhere. Fast, private AVIF to JPG image converter.",
+    "h1Title": "Convert AVIF to JPG Online Free",
+    "primaryKeywords": [
+  "avif to jpg",
+  "convert avif to jpg",
+  "avif to jpeg online free",
+  "avif image converter",
+  "open avif file"
+],
+    "relatedToolIds": [
+  "avif-to-png",
+  "image-converter",
+  "image-compressor",
+  "webp-to-jpg"
+]
   },
   {
     "id": "avif-to-png",
@@ -2293,8 +2953,74 @@ export const TOOLS = [
     "slug": "avif-to-png",
     "path": "/avif-to-png",
     "category": "images",
-    "shortDesc": "Convert next-gen AVIF images to lossless PNG with transparent background support.",
-    "iconName": "ImageIcon"
+    "shortDesc": "Convert AVIF images to lossless PNG format online, free. No sign-up needed.",
+    "iconName": "ImageIcon",
+    "description": "Convert AVIF next-generation image files to standard PNG format for lossless quality preservation and universal compatibility in design tools and applications.",
+    "features": [
+  "Converts AVIF files to lossless PNG for maximum quality preservation",
+  "PNG output supports full alpha transparency for design and web use",
+  "100% private in-browser processing — AVIF files are never uploaded",
+  "Fast conversion with high-fidelity rendering of AVIF visual content"
+],
+    "steps": [
+  "Upload your AVIF file using the drag & drop area or file picker.",
+  "PDFora decodes the AVIF image and renders it for PNG output.",
+  "Click \"Convert to PNG\" — the conversion completes in seconds.",
+  "Download your lossless PNG file for editing or universal use."
+],
+    "overview": "AVIF's exceptional compression efficiency makes it ideal for web delivery, but its limited software support can make it challenging to use in design workflows and applications. PDFora's AVIF to PNG converter solves this by outputting a lossless PNG from your AVIF source — giving you a universally compatible, high-quality file ready for editing in any graphic design software, embedding in documents, or uploading to any platform.",
+    "useCases": [
+  {
+    "title": "Design Software Editing",
+    "desc": "Convert AVIF images to PNG for editing in Photoshop, GIMP, Affinity Photo, and other design tools."
+  },
+  {
+    "title": "Transparent Background Work",
+    "desc": "Get a PNG with full alpha transparency from your AVIF source for use in compositions and designs."
+  },
+  {
+    "title": "High-Quality Archiving",
+    "desc": "Archive AVIF images as lossless PNG for long-term storage without quality degradation."
+  },
+  {
+    "title": "Document & Presentation Embedding",
+    "desc": "Convert AVIF to PNG for embedding in Word, PowerPoint, or Google Slides documents."
+  }
+],
+    "faqs": [
+  {
+    "q": "Does converting AVIF to PNG preserve image quality?",
+    "a": "Yes. PNG is a lossless format, so the visual quality of your AVIF image is fully preserved in the PNG output."
+  },
+  {
+    "q": "Why is my PNG larger than the original AVIF?",
+    "a": "AVIF uses highly advanced compression. PNG is lossless and stores all pixel data uncompressed, resulting in larger file sizes. This is expected and normal."
+  },
+  {
+    "q": "Does the PNG preserve transparency from AVIF?",
+    "a": "Yes. If your AVIF source file contains alpha transparency, it is fully preserved in the PNG output."
+  },
+  {
+    "q": "Are my files safe during this conversion?",
+    "a": "Yes. All conversion is done locally in your browser. Your AVIF files are never sent to any server."
+  }
+],
+    "metaTitle": "AVIF to PNG Converter Online Free — Lossless Quality | PDFora",
+    "metaDescription": "Convert AVIF images to PNG online for free. Lossless quality, transparency support. Fast, private AVIF to PNG converter.",
+    "h1Title": "Convert AVIF to PNG Online Free",
+    "primaryKeywords": [
+  "avif to png",
+  "convert avif to png",
+  "avif to png online free",
+  "avif image converter",
+  "avif to lossless png"
+],
+    "relatedToolIds": [
+  "avif-to-jpg",
+  "image-converter",
+  "image-compressor",
+  "webp-to-png"
+]
   },
   {
     "id": "gif-to-png",
@@ -2302,8 +3028,74 @@ export const TOOLS = [
     "slug": "gif-to-png",
     "path": "/gif-to-png",
     "category": "images",
-    "shortDesc": "Convert GIF images and animations into high-quality PNG pictures.",
-    "iconName": "ImageIcon"
+    "shortDesc": "Convert GIF images to high-quality PNG format online, free. No sign-up.",
+    "iconName": "ImageIcon",
+    "description": "Convert GIF format images to standard PNG for better color depth, quality, and compatibility in design tools and publishing software.",
+    "features": [
+  "Converts GIF images to PNG with full color depth upgrade from 256 to 16 million colors",
+  "PNG output preserves GIF transparency as full alpha channel support",
+  "100% private browser-based conversion — your GIF files stay on your device",
+  "Ideal for upgrading GIF graphics for modern design and publishing workflows"
+],
+    "steps": [
+  "Upload your GIF file using the drag & drop area or file picker.",
+  "PDFora decodes the GIF frame data and prepares the PNG output.",
+  "Click \"Convert to PNG\" — conversion completes in seconds.",
+  "Download your high-quality PNG file, ready for any application."
+],
+    "overview": "GIF is a classic web format great for simple animations and graphics — but its 256-color limitation and older compression make it unsuitable for high-quality static images. PDFora's GIF to PNG converter upgrades your GIF graphics to PNG, giving you full 24-bit color depth, improved quality, and true alpha transparency. Perfect for extracting frames, upgrading old logos, and getting GIF graphics ready for modern design workflows.",
+    "useCases": [
+  {
+    "title": "Logo & Icon Upgrade",
+    "desc": "Convert old GIF logos to PNG for better color reproduction and proper transparency in modern design software."
+  },
+  {
+    "title": "Static Frame Extraction",
+    "desc": "Extract the first frame of an animated GIF as a high-quality PNG still image for thumbnails and previews."
+  },
+  {
+    "title": "Design Tool Compatibility",
+    "desc": "Convert GIF images to PNG for importing into Photoshop, Illustrator, or Canva with full color fidelity."
+  },
+  {
+    "title": "Web Asset Modernization",
+    "desc": "Upgrade legacy GIF website graphics to PNG for better quality and smaller file sizes where animation isn't needed."
+  }
+],
+    "faqs": [
+  {
+    "q": "Does GIF to PNG conversion preserve transparency?",
+    "a": "Yes. GIF supports binary transparency (a pixel is either fully transparent or opaque). PDFora converts this to PNG's full alpha channel transparency."
+  },
+  {
+    "q": "Will converting a GIF animation give me all frames?",
+    "a": "The converter processes the first frame of animated GIFs. For animation work, you would need a dedicated animation tool."
+  },
+  {
+    "q": "Why does my PNG have better colors than the original GIF?",
+    "a": "GIF is limited to 256 colors. PNG supports over 16 million colors, so the PNG version shows the full color spectrum more accurately."
+  },
+  {
+    "q": "Are my GIF files transmitted to a server?",
+    "a": "No. All conversion is performed locally in your browser. Your files never leave your device."
+  }
+],
+    "metaTitle": "GIF to PNG Converter Online Free — Upgrade GIF Quality | PDFora",
+    "metaDescription": "Convert GIF images to PNG online for free. Better color depth, transparency support. Fast, private GIF to PNG converter.",
+    "h1Title": "Convert GIF to PNG Online Free",
+    "primaryKeywords": [
+  "gif to png",
+  "convert gif to png",
+  "gif to png online free",
+  "gif image converter",
+  "extract gif frame png"
+],
+    "relatedToolIds": [
+  "image-converter",
+  "image-compressor",
+  "png-to-jpg",
+  "webp-to-png"
+]
   },
   {
     "id": "bmp-to-jpg",
@@ -2311,8 +3103,74 @@ export const TOOLS = [
     "slug": "bmp-to-jpg",
     "path": "/bmp-to-jpg",
     "category": "images",
-    "shortDesc": "Convert uncompressed Windows Bitmap BMP files to lightweight JPG format.",
-    "iconName": "ImageIcon"
+    "shortDesc": "Convert large uncompressed BMP bitmap files to lightweight JPG format online, free.",
+    "iconName": "ImageIcon",
+    "description": "Instantly convert Windows BMP bitmap files to compressed JPG images. Dramatically reduce file size while maintaining great visual quality for sharing and web use.",
+    "features": [
+  "Compresses oversized BMP files to a fraction of their original size as JPG",
+  "High-quality JPG output with configurable compression for optimal balance",
+  "100% private in-browser conversion — BMP files stay on your device",
+  "Fast batch conversion — process up to 10 BMP files at once"
+],
+    "steps": [
+  "Upload your BMP file(s) using the drag & drop area or file picker.",
+  "PDFora reads the BMP bitmap data and prepares JPG compression.",
+  "Click \"Convert to JPG\" — your file is processed instantly.",
+  "Download your lightweight JPG image, ready for sharing or uploading."
+],
+    "overview": "BMP (Bitmap) files are uncompressed, which means they capture every pixel precisely — but they also produce enormous file sizes. A simple screenshot or graphic saved as BMP can be 10–50 times larger than the same image as a JPG. PDFora's BMP to JPG converter solves this instantly: upload your BMP file and download a compressed JPG that's a fraction of the size, ready for email, web uploads, or sharing — all processed privately in your browser.",
+    "useCases": [
+  {
+    "title": "Screenshot Compression",
+    "desc": "Convert large BMP screenshots taken in Windows to compact JPG files for easy email attachment or upload."
+  },
+  {
+    "title": "Legacy Graphics Migration",
+    "desc": "Convert old BMP graphics from legacy Windows software to modern JPG format for web and digital use."
+  },
+  {
+    "title": "Web & Social Media Optimization",
+    "desc": "Reduce BMP image sizes dramatically before uploading to websites, social media, or CMS platforms."
+  },
+  {
+    "title": "Email & Document Attachments",
+    "desc": "Compress BMP images to JPG to keep email attachment sizes within provider limits."
+  }
+],
+    "faqs": [
+  {
+    "q": "How much smaller will my file be after converting BMP to JPG?",
+    "a": "Typically 90–97% smaller. A 5 MB BMP file often becomes a 150–500 KB JPG, depending on the image content and quality setting."
+  },
+  {
+    "q": "Is any visual quality lost when converting BMP to JPG?",
+    "a": "JPG uses lossy compression, so there is a minor quality trade-off. However, PDFora uses high-quality settings that make any difference invisible at normal viewing sizes."
+  },
+  {
+    "q": "Can I convert multiple BMP files at once?",
+    "a": "Yes. Upload up to 10 BMP files for batch conversion and download all your JPG files in one session."
+  },
+  {
+    "q": "Are my BMP files safe when I use this tool?",
+    "a": "Yes. All conversion happens locally in your browser. Your bitmap files are never uploaded to any server."
+  }
+],
+    "metaTitle": "BMP to JPG Converter Online Free — Compress Bitmap | PDFora",
+    "metaDescription": "Convert BMP bitmap files to JPG online for free. Dramatically reduce file size. Fast, private BMP to JPG image converter.",
+    "h1Title": "Convert BMP to JPG Online Free",
+    "primaryKeywords": [
+  "bmp to jpg",
+  "convert bmp to jpg",
+  "bmp to jpeg online free",
+  "bitmap to jpg converter",
+  "reduce bmp file size"
+],
+    "relatedToolIds": [
+  "image-converter",
+  "image-compressor",
+  "png-to-jpg",
+  "tiff-to-jpg"
+]
   },
   {
     "id": "tiff-to-jpg",
@@ -2320,8 +3178,74 @@ export const TOOLS = [
     "slug": "tiff-to-jpg",
     "path": "/tiff-to-jpg",
     "category": "images",
-    "shortDesc": "Convert large scanner and photography TIFF/TIF files to standard JPG photos.",
-    "iconName": "ImageIcon"
+    "shortDesc": "Convert uncompressed TIFF scanner images to compact JPG format online, free.",
+    "iconName": "ImageIcon",
+    "description": "Convert large TIFF image files — commonly produced by scanners and digital cameras — to compact, web-friendly JPG format. No software required.",
+    "features": [
+  "Converts TIFF files from scanners, cameras, and professional imaging software to JPG",
+  "High-quality JPG output preserving detail from professional multi-layer TIFF files",
+  "100% private browser-based processing — TIFF files stay on your device",
+  "Handles multi-page and multi-layer TIFF files cleanly"
+],
+    "steps": [
+  "Upload your TIFF or TIF file using the drag & drop area or file picker.",
+  "PDFora reads the TIFF image data, handling all standard TIFF variants.",
+  "Click \"Convert to JPG\" — processing completes in seconds.",
+  "Download your compact JPG image, ready for web use or sharing."
+],
+    "overview": "TIFF files are the standard in professional photography, medical imaging, and document scanning because they store every pixel without compression — resulting in exceptional quality but very large file sizes. These oversized files are impractical for email, web uploads, and everyday sharing. PDFora's TIFF to JPG converter bridges this gap, converting your bulky TIFF files into lightweight, universally compatible JPG images in seconds, all within your browser.",
+    "useCases": [
+  {
+    "title": "Scanner Output Conversion",
+    "desc": "Convert TIFF scans from flatbed and document scanners to compact JPG files for archiving, emailing, and sharing."
+  },
+  {
+    "title": "Professional Photo Archiving",
+    "desc": "Convert camera RAW-derived TIFF masters to JPG for web gallery display or social media sharing without losing your TIFF originals."
+  },
+  {
+    "title": "Medical & Scientific Imaging",
+    "desc": "Convert TIFF images from scientific instruments or medical systems to JPG for reports, presentations, and publications."
+  },
+  {
+    "title": "Graphic Design Asset Export",
+    "desc": "Export TIFF design files to JPG for client previews, website use, and email delivery."
+  }
+],
+    "faqs": [
+  {
+    "q": "What types of TIFF files are supported?",
+    "a": "PDFora supports standard RGB, RGBA, grayscale, and CMYK TIFF files. Both single-layer .tif and .tiff file extensions are accepted."
+  },
+  {
+    "q": "How much smaller will the JPG file be compared to my TIFF?",
+    "a": "Typically 85–98% smaller. Professional TIFF files can be many MB in size, while the equivalent JPG is usually under 1 MB."
+  },
+  {
+    "q": "Are my scanner or camera TIFF files transmitted to a server?",
+    "a": "No. All conversion is done locally in your browser. Your TIFF images never leave your device."
+  },
+  {
+    "q": "Does converting TIFF to JPG significantly reduce quality?",
+    "a": "At PDFora's default high-quality settings, the difference is minimal for normal viewing. For archival purposes, always keep your original TIFF files."
+  }
+],
+    "metaTitle": "TIFF to JPG Converter Online Free — Compress TIFF | PDFora",
+    "metaDescription": "Convert TIFF scanner images to JPG online for free. Reduce large TIFF file sizes. Fast, private TIFF to JPG image converter.",
+    "h1Title": "Convert TIFF to JPG Online Free",
+    "primaryKeywords": [
+  "tiff to jpg",
+  "convert tiff to jpg",
+  "tiff to jpeg online free",
+  "tif to jpg converter",
+  "scanner tiff to jpg"
+],
+    "relatedToolIds": [
+  "bmp-to-jpg",
+  "image-converter",
+  "image-compressor",
+  "heic-to-jpg"
+]
   },
   {
     "id": "mp4-to-mp3",
@@ -2329,8 +3253,74 @@ export const TOOLS = [
     "slug": "mp4-to-mp3",
     "path": "/mp4-to-mp3",
     "category": "video",
-    "shortDesc": "Extract high-quality audio tracks from MP4 video files and save as 320kbps MP3.",
-    "iconName": "FileVideo"
+    "shortDesc": "Extract MP3 audio from MP4 video files online, free. No sign-up needed.",
+    "iconName": "FileVideo",
+    "description": "Extract the audio track from any MP4 video and download it as an MP3 file. Perfect for saving music, podcasts, lectures, and soundtracks from video content.",
+    "features": [
+  "Extracts full-quality MP3 audio from MP4, MKV, MOV, and other video formats",
+  "No video re-encoding — audio is extracted directly for maximum quality",
+  "100% private in-browser processing — your video files are never uploaded",
+  "Fast extraction — even long videos process in seconds"
+],
+    "steps": [
+  "Upload your MP4 video file using drag & drop or the file picker.",
+  "PDFora reads the video and prepares the audio extraction.",
+  "Click \"Extract MP3\" — the audio track is extracted in seconds.",
+  "Download your MP3 audio file, ready for playback on any device."
+],
+    "overview": "Whether you want to save a song from a music video, extract a podcast episode from a video recording, or capture lecture audio from an educational video, PDFora's MP4 to MP3 converter makes it effortless. The tool extracts the audio track directly from your video without re-encoding, preserving the original audio quality as closely as possible. All processing happens locally in your browser — your video files never touch a server.",
+    "useCases": [
+  {
+    "title": "Music Extraction",
+    "desc": "Extract the audio from music videos, concert recordings, or DJ sets to save as MP3 files for your music library."
+  },
+  {
+    "title": "Podcast & Lecture Audio",
+    "desc": "Convert video lecture recordings, webinar recordings, or podcast video episodes to MP3 for listening on the go."
+  },
+  {
+    "title": "Background Music & Soundtracks",
+    "desc": "Extract background music or sound effects from video projects for use in other audio or video productions."
+  },
+  {
+    "title": "Voice Recording Extraction",
+    "desc": "Extract the audio from video interviews, testimonials, or voice messages for transcription or audio archiving."
+  }
+],
+    "faqs": [
+  {
+    "q": "What audio quality will the MP3 have?",
+    "a": "PDFora extracts the audio at the highest quality available in the source video. The MP3 output quality depends on the original video's audio bitrate."
+  },
+  {
+    "q": "Can I extract audio from videos other than MP4?",
+    "a": "Yes! PDFora also supports audio extraction from MKV, MOV, AVI, WebM, and other common video formats."
+  },
+  {
+    "q": "Is there a video file size or duration limit?",
+    "a": "For optimal in-browser performance, videos up to 500 MB are recommended. Larger files may take longer to process depending on your device's capabilities."
+  },
+  {
+    "q": "Are my video files safe when I use this tool?",
+    "a": "Yes. All processing happens in your browser. Your video files are never uploaded to or stored on any server."
+  }
+],
+    "metaTitle": "MP4 to MP3 Converter Online Free — Extract Audio | PDFora",
+    "metaDescription": "Extract MP3 audio from MP4 videos online for free. Save music, podcasts, lectures. Fast, private MP4 to MP3 converter.",
+    "h1Title": "Convert MP4 to MP3 Online Free",
+    "primaryKeywords": [
+  "mp4 to mp3",
+  "extract audio from video",
+  "mp4 to mp3 online free",
+  "video to audio converter",
+  "mp4 audio extractor"
+],
+    "relatedToolIds": [
+  "video-to-audio",
+  "audio-compressor",
+  "video-compressor",
+  "video-converter"
+]
   },
   {
     "id": "mp4-to-gif",
@@ -2338,8 +3328,74 @@ export const TOOLS = [
     "slug": "mp4-to-gif",
     "path": "/mp4-to-gif",
     "category": "video",
-    "shortDesc": "Convert video clips into animated GIF memes and lightweight reaction animations.",
-    "iconName": "FileVideo"
+    "shortDesc": "Convert MP4 video clips to animated GIF images online, free. No sign-up.",
+    "iconName": "FileVideo",
+    "description": "Convert short MP4 video clips to animated GIFs for social media sharing, messaging, website embeds, and anywhere that supports GIF animations.",
+    "features": [
+  "Converts MP4 video clips to animated GIF with configurable frame rate",
+  "Optimized GIF output for social media, messaging apps, and web embeds",
+  "100% private browser-based conversion — your videos never leave your device",
+  "Ideal for reaction GIFs, product demos, tutorial highlights, and memes"
+],
+    "steps": [
+  "Upload your MP4 video clip using drag & drop or the file picker.",
+  "Select the video section or use the full clip for GIF creation.",
+  "Click \"Convert to GIF\" — PDFora generates your animated GIF.",
+  "Download your animated GIF ready to share on any platform."
+],
+    "overview": "Animated GIFs are perfect for sharing short, looping clips — reaction GIFs, product demonstrations, tutorial highlights, or funny moments — without needing video player support. PDFora's MP4 to GIF converter turns your video clips into shareable GIFs that play automatically in social media feeds, messaging apps, and websites. Processing runs locally in your browser for complete privacy.",
+    "useCases": [
+  {
+    "title": "Social Media Content",
+    "desc": "Create looping GIFs from video highlights for engaging posts on Twitter, Reddit, Tumblr, and other social platforms."
+  },
+  {
+    "title": "Product Demos & Tutorials",
+    "desc": "Convert short product feature demonstrations or tutorial clips to GIFs for embedding on websites and landing pages."
+  },
+  {
+    "title": "Reaction & Meme GIFs",
+    "desc": "Clip and convert funny video moments to GIF format for sharing in chats, forums, and messaging apps."
+  },
+  {
+    "title": "Email & Newsletter Embeds",
+    "desc": "Add animated GIF visuals to email newsletters and marketing campaigns where video embedding isn't supported."
+  }
+],
+    "faqs": [
+  {
+    "q": "What is the ideal video length for converting to GIF?",
+    "a": "GIFs work best with short clips of 2–15 seconds. Longer clips produce very large GIF file sizes that may load slowly."
+  },
+  {
+    "q": "Will the GIF have sound?",
+    "a": "No. GIF is a silent format and does not support audio. Only the visual content of your video is included in the output GIF."
+  },
+  {
+    "q": "How large will the output GIF be?",
+    "a": "GIF file sizes vary depending on clip length, frame rate, and visual complexity. Short, simple clips produce smaller files than long or complex ones."
+  },
+  {
+    "q": "Is my video file safe when using this tool?",
+    "a": "Yes. All conversion runs locally in your browser. Your video file is never transmitted to any external server."
+  }
+],
+    "metaTitle": "MP4 to GIF Converter Online Free — Animated GIF Maker | PDFora",
+    "metaDescription": "Convert MP4 video clips to animated GIF online for free. Create social media GIFs instantly. Fast, private MP4 to GIF converter.",
+    "h1Title": "Convert MP4 to GIF Online Free",
+    "primaryKeywords": [
+  "mp4 to gif",
+  "convert mp4 to gif",
+  "video to gif online free",
+  "mp4 to animated gif",
+  "make gif from video"
+],
+    "relatedToolIds": [
+  "video-converter",
+  "video-compressor",
+  "video-to-audio",
+  "gif-to-png"
+]
   },
   {
     "id": "mov-to-mp4",
@@ -2347,8 +3403,74 @@ export const TOOLS = [
     "slug": "mov-to-mp4",
     "path": "/mov-to-mp4",
     "category": "video",
-    "shortDesc": "Convert Apple QuickTime MOV videos to universal H.264 MP4 format online for free.",
-    "iconName": "FileVideo"
+    "shortDesc": "Convert Apple QuickTime MOV videos to universal MP4 format online, free.",
+    "iconName": "FileVideo",
+    "description": "Convert MOV files from iPhone, Mac, and QuickTime to widely compatible MP4 format. Share your Apple videos on Windows, Android, and any platform.",
+    "features": [
+  "Converts MOV/QuickTime files to H.264 MP4 with excellent quality retention",
+  "Universal MP4 output compatible with Windows, Android, and all media players",
+  "100% private browser-based conversion — your MOV files stay on your device",
+  "Works for iPhone screen recordings, Mac QuickTime captures, and camera MOV files"
+],
+    "steps": [
+  "Upload your MOV or QuickTime video file using drag & drop or the file picker.",
+  "PDFora reads the MOV container and prepares the MP4 conversion.",
+  "Click \"Convert to MP4\" — processing completes depending on video length.",
+  "Download your universal MP4 video file, playable on any device."
+],
+    "overview": "MOV is Apple's native QuickTime format — great on Mac and iOS, but not always playable on Windows media players, Android devices, or video editing software. PDFora's MOV to MP4 converter translates your Apple videos to the universally supported MP4 format in your browser. Whether it's an iPhone video, Mac screen recording, or a QuickTime export, you'll get an MP4 that plays everywhere without installing codecs.",
+    "useCases": [
+  {
+    "title": "iPhone Video Sharing on Windows",
+    "desc": "Convert iPhone-recorded MOV files to MP4 so they play in Windows Media Player and other Windows applications."
+  },
+  {
+    "title": "Video Editing Compatibility",
+    "desc": "Convert MOV footage to MP4 for importing into video editors and software that prefer the MP4 container format."
+  },
+  {
+    "title": "Social Media & Platform Uploads",
+    "desc": "Convert MOV to MP4 before uploading to YouTube, Instagram, Facebook, or other platforms that prefer H.264 MP4."
+  },
+  {
+    "title": "Android & Cross-Device Playback",
+    "desc": "Share MOV videos converted to MP4 with friends and colleagues on Android devices and non-Apple platforms."
+  }
+],
+    "faqs": [
+  {
+    "q": "Will converting MOV to MP4 reduce the video quality?",
+    "a": "PDFora's conversion maintains excellent visual quality. Minor re-encoding quality change may occur, but output is indistinguishable from the original in normal viewing."
+  },
+  {
+    "q": "Does it work with iPhone video recordings?",
+    "a": "Yes. MOV is the default format for iPhone video recordings. PDFora converts them to MP4 perfectly."
+  },
+  {
+    "q": "Can I convert large MOV files from my Mac camera?",
+    "a": "Yes. The tool handles MOV files up to the browser's available memory. Larger files may take more time to process."
+  },
+  {
+    "q": "Is my video file transmitted to a server?",
+    "a": "No. All conversion happens in your browser. Your MOV video file never leaves your device."
+  }
+],
+    "metaTitle": "MOV to MP4 Converter Online Free — QuickTime to MP4 | PDFora",
+    "metaDescription": "Convert MOV QuickTime files to MP4 online for free. Share iPhone & Mac videos on any platform. Fast, private MOV to MP4 converter.",
+    "h1Title": "Convert MOV to MP4 Online Free",
+    "primaryKeywords": [
+  "mov to mp4",
+  "convert mov to mp4",
+  "quicktime to mp4 online free",
+  "iphone video to mp4",
+  "mov converter"
+],
+    "relatedToolIds": [
+  "video-converter",
+  "video-compressor",
+  "mp4-to-mov",
+  "avi-to-mp4"
+]
   },
   {
     "id": "webm-to-mp4",
@@ -2356,8 +3478,74 @@ export const TOOLS = [
     "slug": "webm-to-mp4",
     "path": "/webm-to-mp4",
     "category": "video",
-    "shortDesc": "Convert HTML5 WebM browser screen recordings to standard MP4 video format.",
-    "iconName": "FileVideo"
+    "shortDesc": "Convert WebM web videos to universal MP4 format online, free.",
+    "iconName": "FileVideo",
+    "description": "Convert WebM video files to widely compatible MP4 format for playback on Windows, iOS, media players, and platforms that don't support WebM.",
+    "features": [
+  "Converts WebM (VP8/VP9) videos to H.264 MP4 with excellent quality",
+  "Universal MP4 output compatible with all devices, players, and platforms",
+  "100% private browser-based conversion — your video files stay local",
+  "Handles WebM files from web browsers, screen recorders, and game captures"
+],
+    "steps": [
+  "Upload your WebM video file using drag & drop or the file picker.",
+  "PDFora reads the WebM container and prepares the MP4 transcoding.",
+  "Click \"Convert to MP4\" — processing completes based on video length.",
+  "Download your MP4 file, playable universally on any device or app."
+],
+    "overview": "WebM is the open-source video format used by Chrome, Firefox, and many web recording tools — but it doesn't always play on iOS devices, Windows Media Player, or older Android apps. PDFora's WebM to MP4 converter translates your web videos into the universally supported MP4 format, making them playable on every device and platform. Whether it's a browser recording, a game capture, or a downloaded web video, converting to MP4 ensures maximum compatibility.",
+    "useCases": [
+  {
+    "title": "Browser Screen Recording Conversion",
+    "desc": "Convert WebM screen recordings from Chrome or Firefox to MP4 for sharing with Windows and iOS users."
+  },
+  {
+    "title": "iOS Compatibility",
+    "desc": "Convert WebM videos to MP4 so they can be played and shared on iPhone and iPad devices."
+  },
+  {
+    "title": "Video Editing Import",
+    "desc": "Convert WebM footage to MP4 for importing into Adobe Premiere, DaVinci Resolve, and other video editors."
+  },
+  {
+    "title": "Social Media Uploads",
+    "desc": "Convert WebM videos to MP4 before uploading to YouTube, Instagram, and other platforms that prefer MP4."
+  }
+],
+    "faqs": [
+  {
+    "q": "Why doesn't my WebM video play on my iPhone?",
+    "a": "iOS doesn't natively support WebM. Converting to MP4 ensures your video plays on all Apple devices."
+  },
+  {
+    "q": "Does converting WebM to MP4 change the video quality?",
+    "a": "PDFora transcodes at high quality settings. Minor re-encoding quality change is normal, but output looks excellent for all standard uses."
+  },
+  {
+    "q": "Can I convert large WebM screen recording files?",
+    "a": "Yes. The converter handles files up to the browser's available memory. Larger files take proportionally more time."
+  },
+  {
+    "q": "Is my WebM file ever uploaded to a server?",
+    "a": "No. All conversion is done locally in your browser. Your video file never leaves your device."
+  }
+],
+    "metaTitle": "WebM to MP4 Converter Online Free — Universal Video | PDFora",
+    "metaDescription": "Convert WebM videos to MP4 online for free. Fix WebM playback on iOS & Windows. Fast, private WebM to MP4 video converter.",
+    "h1Title": "Convert WebM to MP4 Online Free",
+    "primaryKeywords": [
+  "webm to mp4",
+  "convert webm to mp4",
+  "webm to mp4 online free",
+  "webm converter",
+  "fix webm video"
+],
+    "relatedToolIds": [
+  "video-converter",
+  "mp4-to-webm",
+  "mov-to-mp4",
+  "avi-to-mp4"
+]
   },
   {
     "id": "avi-to-mp4",
@@ -2365,8 +3553,74 @@ export const TOOLS = [
     "slug": "avi-to-mp4",
     "path": "/avi-to-mp4",
     "category": "video",
-    "shortDesc": "Convert legacy AVI video files into universal H.264 MP4 format with high clarity.",
-    "iconName": "FileVideo"
+    "shortDesc": "Convert AVI video files to modern MP4 format online, free. No software needed.",
+    "iconName": "FileVideo",
+    "description": "Modernize old AVI video files by converting to MP4 for better compatibility, smaller file sizes, and streaming support across all devices and platforms.",
+    "features": [
+  "Converts legacy AVI video files to modern H.264 MP4 format",
+  "Typically reduces file size compared to uncompressed AVI",
+  "100% private in-browser conversion — your videos never leave your device",
+  "Handles AVI files from camcorders, screen recorders, and legacy software"
+],
+    "steps": [
+  "Upload your AVI video file using drag & drop or the file picker.",
+  "PDFora reads the AVI container and prepares the MP4 conversion.",
+  "Click \"Convert to MP4\" — processing time varies with video length.",
+  "Download your modern MP4 file, ready for any player or platform."
+],
+    "overview": "AVI is one of the oldest video formats and while it's still widely recorded by camcorders and screen capture software, its large file sizes and limited streaming support make it awkward in the modern world. PDFora's AVI to MP4 converter modernizes your AVI video library by transcoding to the efficient, universally supported MP4 format — smaller files, better streaming, and compatible with every device, media player, and platform.",
+    "useCases": [
+  {
+    "title": "Old Camcorder Video Conversion",
+    "desc": "Convert legacy AVI footage from older digital camcorders to modern MP4 for sharing and archiving."
+  },
+  {
+    "title": "Mobile & Streaming Compatibility",
+    "desc": "Convert AVI files to MP4 for smooth streaming and playback on smartphones, smart TVs, and streaming apps."
+  },
+  {
+    "title": "Social Media & Online Uploads",
+    "desc": "Convert AVI to MP4 before uploading to YouTube, Vimeo, or social media platforms that prefer the MP4 format."
+  },
+  {
+    "title": "Video Editing Projects",
+    "desc": "Import AVI footage into modern video editors as MP4 for better codec compatibility and performance."
+  }
+],
+    "faqs": [
+  {
+    "q": "Will the video quality be preserved when converting AVI to MP4?",
+    "a": "PDFora converts at high quality settings. The MP4 output looks excellent and may actually be smaller in file size than the original AVI."
+  },
+  {
+    "q": "Why is my AVI file not playing on modern devices?",
+    "a": "Some AVI files use codec combinations that modern devices don't natively support. MP4 with H.264 is the universal standard that plays on everything."
+  },
+  {
+    "q": "Can I convert old DivX or Xvid AVI files?",
+    "a": "PDFora handles standard AVI files. Compatibility with heavily encoded AVI variants depends on the browser's media support capabilities."
+  },
+  {
+    "q": "Is my AVI video transmitted to any server?",
+    "a": "No. All processing is done locally in your browser. Your video never leaves your device."
+  }
+],
+    "metaTitle": "AVI to MP4 Converter Online Free — Modernize AVI Files | PDFora",
+    "metaDescription": "Convert AVI videos to MP4 online for free. Smaller files, universal playback. Fast, private AVI to MP4 video converter.",
+    "h1Title": "Convert AVI to MP4 Online Free",
+    "primaryKeywords": [
+  "avi to mp4",
+  "convert avi to mp4",
+  "avi to mp4 online free",
+  "avi converter",
+  "convert old avi video"
+],
+    "relatedToolIds": [
+  "video-converter",
+  "mp4-to-avi",
+  "webm-to-mp4",
+  "mkv-to-mp4"
+]
   },
   {
     "id": "mkv-to-mp4",
@@ -2374,8 +3628,74 @@ export const TOOLS = [
     "slug": "mkv-to-mp4",
     "path": "/mkv-to-mp4",
     "category": "video",
-    "shortDesc": "Convert Matroska MKV videos into universal MP4 files for editing and streaming.",
-    "iconName": "FileVideo"
+    "shortDesc": "Convert MKV video files to universal MP4 format online, free. No installation.",
+    "iconName": "FileVideo",
+    "description": "Convert MKV (Matroska) video files to MP4 for universal playback support on iOS, streaming services, and devices that don't natively support MKV.",
+    "features": [
+  "Converts MKV to MP4 with high video and audio quality retention",
+  "Extracts the primary video and audio streams into a universally compatible MP4",
+  "100% private browser-based processing — MKV files stay on your device",
+  "Handles MKV files from movie rips, recordings, and downloads"
+],
+    "steps": [
+  "Upload your MKV video file using drag & drop or the file picker.",
+  "PDFora reads the MKV container and selects the primary video and audio streams.",
+  "Click \"Convert to MP4\" — processing time depends on video size.",
+  "Download your universal MP4 file ready for playback on any device."
+],
+    "overview": "MKV (Matroska Video) is a popular container format for high-definition movies and TV shows because it supports multiple audio and subtitle tracks. However, it's not natively supported on iOS, many streaming devices, or some smart TVs. PDFora's MKV to MP4 converter remuxes your MKV videos into the universally compatible MP4 container, maintaining video and audio quality while ensuring playback everywhere.",
+    "useCases": [
+  {
+    "title": "iOS & Apple Device Playback",
+    "desc": "Convert MKV videos to MP4 for playback on iPhone, iPad, and Apple TV that don't support MKV natively."
+  },
+  {
+    "title": "Smart TV & Media Player Compatibility",
+    "desc": "Convert MKV files to MP4 for Chromecast, Roku, Fire TV Stick, and other streaming devices that require MP4."
+  },
+  {
+    "title": "Social Media Uploads",
+    "desc": "Convert MKV to MP4 before uploading video content to YouTube, Instagram, or other platforms."
+  },
+  {
+    "title": "Video Editing Workflow",
+    "desc": "Import MKV footage as MP4 into video editors for better codec performance and compatibility."
+  }
+],
+    "faqs": [
+  {
+    "q": "Will all audio tracks and subtitles be included in the MP4?",
+    "a": "The primary audio track is included. MKV's multiple audio tracks and external subtitles are not fully supported in the browser-based converter."
+  },
+  {
+    "q": "Why won't my MKV file play on my iPhone?",
+    "a": "iOS doesn't natively support the MKV container format. Converting to MP4 ensures perfect playback on all Apple devices."
+  },
+  {
+    "q": "Does the video quality change during MKV to MP4 conversion?",
+    "a": "PDFora attempts to remux streams where possible, preserving original quality. Some transcoding may occur for browser compatibility."
+  },
+  {
+    "q": "Is my MKV file ever sent to a server?",
+    "a": "No. All conversion is done locally in your browser. Your video file is never transmitted to any external server."
+  }
+],
+    "metaTitle": "MKV to MP4 Converter Online Free — Universal Playback | PDFora",
+    "metaDescription": "Convert MKV videos to MP4 online for free. Play MKV on iPhone, TV, and any device. Fast, private MKV to MP4 video converter.",
+    "h1Title": "Convert MKV to MP4 Online Free",
+    "primaryKeywords": [
+  "mkv to mp4",
+  "convert mkv to mp4",
+  "mkv to mp4 online free",
+  "mkv converter",
+  "play mkv on iphone"
+],
+    "relatedToolIds": [
+  "video-converter",
+  "avi-to-mp4",
+  "webm-to-mp4",
+  "video-compressor"
+]
   },
   {
     "id": "mp4-to-webm",
@@ -2383,8 +3703,74 @@ export const TOOLS = [
     "slug": "mp4-to-webm",
     "path": "/mp4-to-webm",
     "category": "video",
-    "shortDesc": "Convert MP4 videos into lightweight HTML5 WebM videos using VP9 and Opus audio.",
-    "iconName": "FileVideo"
+    "shortDesc": "Convert MP4 videos to WebM format for efficient web delivery, free.",
+    "iconName": "FileVideo",
+    "description": "Convert MP4 videos to open-source WebM format for use in web applications, video backgrounds, and HTML5 video elements that prefer WebM.",
+    "features": [
+  "Converts MP4 to VP9 WebM with excellent web-optimized compression",
+  "Smaller file sizes than MP4 for the same visual quality in web delivery",
+  "100% private browser-based conversion — your MP4 files stay local",
+  "Ideal for HTML5 video elements, web apps, and open-source platforms"
+],
+    "steps": [
+  "Upload your MP4 video file using drag & drop or the file picker.",
+  "PDFora reads the MP4 and prepares the WebM encoding.",
+  "Click \"Convert to WebM\" — processing time scales with video length.",
+  "Download your WebM file ready for web deployment."
+],
+    "overview": "WebM is the open-source video format of choice for web applications, HTML5 video, and platforms that avoid proprietary codecs. PDFora's MP4 to WebM converter makes your videos ready for open web delivery — smaller file sizes, efficient VP9 compression, and full compatibility with Chrome, Firefox, and Edge. Perfect for web developers serving video backgrounds, product demos, and embedded content.",
+    "useCases": [
+  {
+    "title": "HTML5 Website Video Backgrounds",
+    "desc": "Convert MP4 video backgrounds to WebM for serving with the <source> element for optimal cross-browser support."
+  },
+  {
+    "title": "Open-Source Platform Uploads",
+    "desc": "Convert MP4 to WebM for uploading to open-source video platforms, wikis, or Mastodon-compatible services."
+  },
+  {
+    "title": "Bandwidth Optimization",
+    "desc": "Serve WebM versions of videos in Chrome and Firefox for smaller file sizes and faster load times."
+  },
+  {
+    "title": "Video Element Multi-Format Support",
+    "desc": "Provide MP4 and WebM versions of the same video for the broadest browser compatibility in HTML5."
+  }
+],
+    "faqs": [
+  {
+    "q": "Is WebM supported by all browsers?",
+    "a": "WebM is supported by Chrome, Firefox, and Edge. Safari now supports WebM in newer versions (iOS 16+, macOS). Always provide an MP4 fallback for maximum compatibility."
+  },
+  {
+    "q": "How does WebM compare to MP4 in file size?",
+    "a": "WebM with VP9 typically achieves similar or slightly smaller file sizes than H.264 MP4 at the same visual quality level."
+  },
+  {
+    "q": "Can I use the WebM output directly in an HTML5 <video> tag?",
+    "a": "Yes! WebM is one of the primary formats for HTML5 video. Your converted WebM file works directly in web page video elements."
+  },
+  {
+    "q": "Are my MP4 files safe during conversion?",
+    "a": "Yes. All processing happens locally in your browser. Your video files are never transmitted to any server."
+  }
+],
+    "metaTitle": "MP4 to WebM Converter Online Free — Web Video Format | PDFora",
+    "metaDescription": "Convert MP4 videos to WebM format online for free. Optimize for web delivery, HTML5 video. Fast, private MP4 to WebM converter.",
+    "h1Title": "Convert MP4 to WebM Online Free",
+    "primaryKeywords": [
+  "mp4 to webm",
+  "convert mp4 to webm",
+  "mp4 to webm online free",
+  "video to webm converter",
+  "html5 video webm"
+],
+    "relatedToolIds": [
+  "webm-to-mp4",
+  "video-converter",
+  "video-compressor",
+  "mp4-to-gif"
+]
   },
   {
     "id": "mp4-to-mov",
@@ -2392,8 +3778,74 @@ export const TOOLS = [
     "slug": "mp4-to-mov",
     "path": "/mp4-to-mov",
     "category": "video",
-    "shortDesc": "Convert MP4 videos to Apple QuickTime MOV format for Final Cut Pro and Mac editing.",
-    "iconName": "FileVideo"
+    "shortDesc": "Convert MP4 videos to Apple QuickTime MOV format online, free.",
+    "iconName": "FileVideo",
+    "description": "Convert MP4 video files to MOV QuickTime format for use in iMovie, Final Cut Pro, and Apple workflows that prefer the MOV container.",
+    "features": [
+  "Converts MP4 to QuickTime MOV for seamless integration with Apple software",
+  "Maintains video quality for professional editing workflows on Mac",
+  "100% private browser-based conversion — your videos stay on your device",
+  "Ideal for iMovie, Final Cut Pro, and other Apple-centric video tools"
+],
+    "steps": [
+  "Upload your MP4 video file using drag & drop or the file picker.",
+  "PDFora reads the MP4 and prepares the QuickTime MOV conversion.",
+  "Click \"Convert to MOV\" — processing completes based on video length.",
+  "Download your MOV file ready for Apple software and workflows."
+],
+    "overview": "While MP4 is universal, some Mac applications and Apple professional workflows prefer the QuickTime MOV container for better integration. PDFora's MP4 to MOV converter wraps your MP4 video in the QuickTime container format without quality loss, making it immediately compatible with iMovie, Final Cut Pro, and other Apple-ecosystem tools. All conversion is done privately in your browser.",
+    "useCases": [
+  {
+    "title": "iMovie Editing Projects",
+    "desc": "Convert MP4 footage to MOV for smooth importing and editing in Apple iMovie on Mac and iPad."
+  },
+  {
+    "title": "Final Cut Pro Workflows",
+    "desc": "Prepare MP4 source material as MOV files for professional post-production in Final Cut Pro."
+  },
+  {
+    "title": "QuickTime Player Compatibility",
+    "desc": "Convert MP4 videos to MOV for playback in QuickTime Player with full feature support."
+  },
+  {
+    "title": "Apple Ecosystem File Exchange",
+    "desc": "Share videos in MOV format with colleagues working in Mac-based professional media workflows."
+  }
+],
+    "faqs": [
+  {
+    "q": "Is MOV the same as MP4?",
+    "a": "Both MOV and MP4 can contain H.264 video, but they use different container formats. MOV is Apple's QuickTime format while MP4 is an ISO standard. Some Apple apps prefer MOV."
+  },
+  {
+    "q": "Will quality be lost when converting MP4 to MOV?",
+    "a": "Minimal or no quality loss occurs when remuxing MP4 to MOV using the same H.264 codec. The output MOV looks identical to the source MP4."
+  },
+  {
+    "q": "Does the converted MOV file work in Final Cut Pro?",
+    "a": "Yes. The output MOV file uses standard H.264 encoding compatible with Final Cut Pro, iMovie, and QuickTime Player."
+  },
+  {
+    "q": "Are my video files safe during this conversion?",
+    "a": "Yes. All processing is done locally in your browser. Your MP4 files are never transmitted to any server."
+  }
+],
+    "metaTitle": "MP4 to MOV Converter Online Free — Apple QuickTime | PDFora",
+    "metaDescription": "Convert MP4 videos to MOV QuickTime format online for free. Use in iMovie, Final Cut Pro. Fast, private MP4 to MOV converter.",
+    "h1Title": "Convert MP4 to MOV Online Free",
+    "primaryKeywords": [
+  "mp4 to mov",
+  "convert mp4 to mov",
+  "mp4 to quicktime online free",
+  "mp4 to mov converter",
+  "imovie mov format"
+],
+    "relatedToolIds": [
+  "mov-to-mp4",
+  "video-converter",
+  "video-compressor",
+  "mp4-to-webm"
+]
   },
   {
     "id": "mp4-to-avi",
@@ -2401,8 +3853,74 @@ export const TOOLS = [
     "slug": "mp4-to-avi",
     "path": "/mp4-to-avi",
     "category": "video",
-    "shortDesc": "Convert modern MP4 files into legacy AVI container format with XviD/MPEG-4 encoding.",
-    "iconName": "FileVideo"
+    "shortDesc": "Convert MP4 videos to AVI format for legacy software compatibility, free.",
+    "iconName": "FileVideo",
+    "description": "Convert MP4 video files to AVI format for compatibility with older media players, software, and systems that require the legacy AVI container.",
+    "features": [
+  "Converts modern MP4 to AVI format for legacy software and device support",
+  "Maintains good video quality in the AVI container output",
+  "100% private browser-based conversion — your videos never leave your device",
+  "Useful for embedded systems, DVD software, and older media players"
+],
+    "steps": [
+  "Upload your MP4 video file using drag & drop or the file picker.",
+  "PDFora reads the MP4 and prepares the AVI container output.",
+  "Click \"Convert to AVI\" — processing completes depending on file size.",
+  "Download your AVI file compatible with legacy players and software."
+],
+    "overview": "While AVI is a legacy format, some older devices, embedded systems, DVD authoring software, and specialized industrial systems still require it. PDFora's MP4 to AVI converter gives you a compatible AVI output from your modern MP4 source files, ensuring backward compatibility with systems and software that haven't yet moved to MP4.",
+    "useCases": [
+  {
+    "title": "Legacy Media Player Compatibility",
+    "desc": "Convert MP4 to AVI for playback on older Windows Media Player versions and legacy DVD players that require AVI."
+  },
+  {
+    "title": "DVD Authoring Software",
+    "desc": "Import MP4 footage as AVI into DVD burning and authoring software that requires the legacy container format."
+  },
+  {
+    "title": "Embedded System Requirements",
+    "desc": "Convert MP4 to AVI for use in industrial displays, point-of-sale systems, or embedded devices with AVI-only support."
+  },
+  {
+    "title": "Legacy Editing Software",
+    "desc": "Import MP4 footage as AVI into older video editing software versions that don't support modern MP4."
+  }
+],
+    "faqs": [
+  {
+    "q": "Why would I convert MP4 to AVI when AVI is older?",
+    "a": "Some specialized software, embedded systems, and legacy devices specifically require AVI input and cannot process modern MP4 files."
+  },
+  {
+    "q": "Will the AVI file be larger than my MP4?",
+    "a": "Yes, AVI files are typically larger because AVI uses less efficient compression than modern H.264 MP4. This is expected behavior."
+  },
+  {
+    "q": "Does the converted AVI play in Windows Media Player?",
+    "a": "Yes. AVI is one of the most natively supported formats in Windows Media Player on all Windows versions."
+  },
+  {
+    "q": "Is my MP4 file safe when I use this tool?",
+    "a": "Yes. All conversion happens in your browser. Your video files are never transmitted to any external server."
+  }
+],
+    "metaTitle": "MP4 to AVI Converter Online Free — Legacy Format | PDFora",
+    "metaDescription": "Convert MP4 videos to AVI format online for free. Legacy software compatibility. Fast, private MP4 to AVI video converter.",
+    "h1Title": "Convert MP4 to AVI Online Free",
+    "primaryKeywords": [
+  "mp4 to avi",
+  "convert mp4 to avi",
+  "mp4 to avi online free",
+  "video to avi converter",
+  "mp4 avi legacy"
+],
+    "relatedToolIds": [
+  "avi-to-mp4",
+  "video-converter",
+  "video-compressor",
+  "mov-to-mp4"
+]
   },
   {
     "id": "mute-video",
@@ -2410,8 +3928,74 @@ export const TOOLS = [
     "slug": "mute-video",
     "path": "/mute-video",
     "category": "video",
-    "shortDesc": "Remove soundtrack, background noise, and speech from any video clip instantly.",
-    "iconName": "FileVideo"
+    "shortDesc": "Remove audio from any video file online, free. Silent video in seconds.",
+    "iconName": "FileVideo",
+    "description": "Instantly remove the audio track from any video file to create a silent version. Perfect for removing background noise, music, or unwanted sound from recordings.",
+    "features": [
+  "Removes audio track from MP4, MOV, WebM, AVI, and other video formats",
+  "Silent MP4 output — no audio track, full original video quality preserved",
+  "100% private browser-based processing — your videos never leave your device",
+  "Instant processing — no re-encoding of video data, just audio removal"
+],
+    "steps": [
+  "Upload your video file using drag & drop or the file picker.",
+  "PDFora identifies the audio tracks in your video container.",
+  "Click \"Remove Audio\" — the silent video is created in seconds.",
+  "Download your muted video file with all visuals perfectly intact."
+],
+    "overview": "Sometimes you need your video content without its original audio — to replace it with new music, narration, or sound effects in a video editor, or simply to create a clean silent version for looping video backgrounds on websites. PDFora's Mute Video tool strips the audio track from your video instantly, without re-encoding the video stream. This means no quality loss and extremely fast processing.",
+    "useCases": [
+  {
+    "title": "Background Music Replacement",
+    "desc": "Mute a video's original audio before importing into a video editor to add new background music or a voiceover track."
+  },
+  {
+    "title": "Silent Website Video Backgrounds",
+    "desc": "Create muted MP4 video loops for website hero sections and backgrounds where autoplay requires silent video."
+  },
+  {
+    "title": "Privacy & Confidentiality",
+    "desc": "Remove sensitive audio conversations or personal information from screen recordings before sharing."
+  },
+  {
+    "title": "Social Media GIF-Style Videos",
+    "desc": "Create silent video loops for social media posts and stories that play with sound off by default."
+  }
+],
+    "faqs": [
+  {
+    "q": "Does removing the audio affect the video quality?",
+    "a": "No. PDFora strips only the audio track without re-encoding the video stream. The visual quality remains completely unchanged."
+  },
+  {
+    "q": "Can I mute videos in formats other than MP4?",
+    "a": "Yes! PDFora supports audio removal from MP4, MOV, WebM, AVI, MKV, and other common video formats."
+  },
+  {
+    "q": "How fast is the muting process?",
+    "a": "Extremely fast — since only the audio track is removed (no video re-encoding), even long videos are processed in seconds."
+  },
+  {
+    "q": "Are my video files ever uploaded to a server?",
+    "a": "No. All processing is done entirely in your browser. Your video files never leave your device."
+  }
+],
+    "metaTitle": "Mute Video Online Free — Remove Audio from Video | PDFora",
+    "metaDescription": "Remove audio from any video online for free. Create silent MP4 videos instantly. Fast, private video muting tool — no sign-up.",
+    "h1Title": "Mute Video — Remove Audio Online Free",
+    "primaryKeywords": [
+  "mute video",
+  "remove audio from video",
+  "silent video maker",
+  "remove sound from mp4",
+  "mute video online free"
+],
+    "relatedToolIds": [
+  "video-to-audio",
+  "video-compressor",
+  "video-converter",
+  "mp4-to-mp3"
+]
   },
   {
     "id": "rotate-pdf",
@@ -3187,21 +4771,78 @@ export const TOOLS = [
     "slug": "png-to-pdf",
     "path": "/png-to-pdf",
     "category": "pdf",
-    "shortDesc": "Convert PNG images into clean PDF documents.",
-    "description": "Combine PNG images into a single PDF file.",
+    "shortDesc": "Convert PNG images to professional PDF documents online, free and privately.",
+    "description": "Turn one or multiple PNG image files into a single, clean PDF document. Ideal for sharing illustrations, screenshots, and graphics in a universally readable format.",
     "iconName": "FileImage",
     "badge": "",
     "acceptedTypes": ".png, image/png",
     "acceptedFileLabel": "PNG files",
     "maxFiles": 10,
-    "features": ["Convert PNG to PDF", "Combine multiple PNGs", "In-browser speed"],
-    "steps": ["Upload PNG images.", "Click Convert.", "Download PDF."],
-    "overview": "Save PNG screenshots and graphic designs as PDF files.",
-    "faqs": [{ "q": "Can I combine multiple PNGs?", "a": "Yes, upload up to 10 PNGs." }],
-    "metaTitle": "PNG to PDF Converter Online Free | PDFora",
-    "metaDescription": "Convert PNG images to PDF online for free. Private, fast PNG to PDF converter.",
-    "h1Title": "Convert PNG to PDF Online",
-    "primaryKeywords": ["png to pdf", "convert png to pdf free"]
+    "features": [
+  "Combine multiple PNG files into a single ordered PDF document",
+  "Preserves full PNG image resolution and color depth in the output PDF",
+  "100% private client-side processing — your images never leave your device",
+  "Works on any device: Windows, Mac, iOS, and Android browsers"
+],
+    "steps": [
+  "Upload one or more PNG images using the drag-and-drop area or file picker.",
+  "Arrange the order of your images if you are combining multiple files.",
+  "Click \"Convert to PDF\" and wait a few seconds for processing.",
+  "Download your ready-to-share PDF document instantly."
+],
+    "overview": "PDFora's PNG to PDF converter is the fastest way to package your PNG images into a professionally formatted PDF document. Whether you are sharing a single screenshot, a set of illustrations, or a collection of infographics, this tool bundles everything into one clean, universally readable PDF. Processing happens entirely in your browser — your images are never uploaded to a remote server — making PDFora the safest choice for sensitive or personal visuals.",
+    "faqs": [
+  {
+    "q": "Can I combine multiple PNG files into one PDF?",
+    "a": "Yes! Upload as many as 10 PNG files at once. PDFora arranges them in your chosen order and compiles them into a single PDF document."
+  },
+  {
+    "q": "Will image quality be reduced in the PDF?",
+    "a": "No. PDFora embeds your PNG images at their original resolution. The output PDF retains full visual quality with no compression artifacts."
+  },
+  {
+    "q": "Is my image data safe when I use this tool?",
+    "a": "Absolutely. All processing happens locally in your browser. Your PNG files are never uploaded to or stored on any server."
+  },
+  {
+    "q": "Does this tool work on iPhones and Android phones?",
+    "a": "Yes. PDFora is fully responsive and optimized for mobile browsers on both iOS and Android devices — no app required."
+  }
+],
+    "metaTitle": "PNG to PDF Converter Online Free — Combine PNGs | PDFora",
+    "metaDescription": "Convert PNG images to PDF online for free. Combine multiple PNGs into one PDF document. 100% private, fast, no sign-up needed.",
+    "h1Title": "Convert PNG to PDF Online Free",
+    "primaryKeywords": [
+  "png to pdf",
+  "convert png to pdf",
+  "png to pdf online free",
+  "combine png to pdf",
+  "png images to pdf converter"
+],
+    "useCases": [
+  {
+    "title": "Screenshots & Reports",
+    "desc": "Compile multiple workflow screenshots or dashboard captures into a single shareable PDF report."
+  },
+  {
+    "title": "Graphic Design Portfolios",
+    "desc": "Bundle a series of PNG artwork files into one PDF portfolio for client presentations."
+  },
+  {
+    "title": "Scanned Document Packaging",
+    "desc": "Group scanned PNG pages of a physical document into one organized PDF file."
+  },
+  {
+    "title": "Print-Ready Layouts",
+    "desc": "Convert PNG layouts and design mockups into print-ready PDF documents."
+  }
+],
+    "relatedToolIds": [
+  "jpg-to-pdf",
+  "image-compressor",
+  "merge-pdf",
+  "compress-pdf"
+]
   },
   {
     "id": "heic-to-png",
@@ -3341,21 +4982,54 @@ export const TOOLS = [
     "slug": "jfif-to-jpeg",
     "path": "/jfif-to-jpeg",
     "category": "images",
-    "shortDesc": "Convert JFIF image files to standard JPEG format.",
-    "description": "Convert web JFIF files into standard JPEG photos.",
+    "shortDesc": "Convert JFIF image files to standard JPEG format for universal compatibility.",
+    "description": "Fix JFIF image opening errors by converting to standard JPEG format. Instantly compatible with all image viewers, editors, and platforms.",
     "iconName": "Image",
     "badge": "",
     "acceptedTypes": ".jfif",
     "acceptedFileLabel": "JFIF files",
     "maxFiles": 10,
-    "features": ["Convert JFIF to JPEG", "Fix image opening errors", "Instant conversion"],
-    "steps": ["Upload JFIF file.", "Click Convert.", "Download JPEG."],
-    "overview": "Fix JFIF image file compatibility issues on Windows.",
-    "faqs": [{ "q": "Why convert JFIF to JPEG?", "a": "JPEG opens universally in all image viewers." }],
-    "metaTitle": "JFIF to JPEG Converter Online Free | PDFora",
-    "metaDescription": "Convert JFIF files to standard JPEG online for free. Fast JFIF image converter.",
-    "h1Title": "Convert JFIF to JPEG Online",
-    "primaryKeywords": ["jfif to jpeg", "convert jfif to jpeg free"]
+    "features": [
+  "Converts JFIF (JPEG File Interchange Format) files to universally compatible JPEG",
+  "Preserves full image quality since both formats use the same underlying compression",
+  "100% private — your image files are processed locally and never uploaded",
+  "Instant single-click conversion for quick file format fixes"
+],
+    "steps": [
+  "Upload your JFIF file using the drag & drop area or file picker.",
+  "PDFora identifies the JFIF format and prepares the conversion to JPEG.",
+  "Click \"Convert to JPEG\" — the process is near-instant.",
+  "Download your standard JPEG file that opens in every image application."
+],
+    "overview": "JFIF stands for JPEG File Interchange Format — it's technically the same compression as JPEG, but the file extension causes issues with many Windows programs, mobile apps, and websites that don't recognize it. When you try to open a .jfif file and get an error, or try to upload it and get a format rejection, PDFora's JFIF to JPEG converter is the instant fix. The conversion is lossless in terms of quality — you're simply changing the container to a universally accepted JPEG file.",
+    "faqs": [
+  {
+    "q": "What is the difference between JFIF and JPEG?",
+    "a": "JFIF is technically a subtype of JPEG — they use identical compression. The difference is only in the file extension and header. Converting JFIF to JPEG simply makes the file universally recognized without changing image data."
+  },
+  {
+    "q": "Will my image quality change during conversion?",
+    "a": "No. Since JFIF and JPEG are the same underlying format, the conversion is effectively lossless. Your image quality remains identical."
+  },
+  {
+    "q": "Why does my JFIF file not open in Windows?",
+    "a": "Older Windows applications and some photo viewers don't recognize the .jfif file extension even though the data is identical to JPEG. Converting to .jpg or .jpeg solves this immediately."
+  },
+  {
+    "q": "Is there any risk to my image data when using this tool?",
+    "a": "No. PDFora processes JFIF files entirely in your browser. No image data is ever transmitted to or stored on any server."
+  }
+],
+    "metaTitle": "JFIF to JPEG Converter Online Free — Fix JFIF Files | PDFora",
+    "metaDescription": "Convert JFIF files to standard JPEG online for free. Fix file opening errors instantly. Fast, private JFIF to JPEG image converter.",
+    "h1Title": "Convert JFIF to JPEG Online Free",
+    "primaryKeywords": [
+  "jfif to jpeg",
+  "convert jfif to jpeg",
+  "jfif to jpg online",
+  "jfif file converter",
+  "fix jfif image"
+]
   }
 ];
 
@@ -3374,6 +5048,30 @@ export const FAQS = [
   },
   {
     "question": "Can I use PDFora on mobile devices?",
-    "answer": "Yes! PDFora is fully responsive and optimized for touch interactions on smartphones and tablets, allowing you to convert and organize documents on the go."
+    "answer": "Yes! PDFora is fully responsive and optimized for touch interactions on smartphones and tablets, allowing you to convert and organize documents on the go.",
+    "useCases": [
+  {
+    "title": "Fix File Opening Errors",
+    "desc": "Resolve \"cannot open file\" errors in Windows Photo Viewer, Paint, and other applications that don't recognize the JFIF extension."
+  },
+  {
+    "title": "Website & CMS Uploads",
+    "desc": "Convert JFIF files to JPEG before uploading to websites, WordPress, or social media platforms that require standard JPEG format."
+  },
+  {
+    "title": "Email & Document Compatibility",
+    "desc": "Ensure your image attachments open without issues for every recipient regardless of their device or operating system."
+  },
+  {
+    "title": "Design Software Integration",
+    "desc": "Import photos into Photoshop, Canva, or other design tools that may not accept the JFIF extension."
+  }
+],
+    "relatedToolIds": [
+  "image-converter",
+  "bmp-to-jpg",
+  "tiff-to-jpg",
+  "heic-to-jpg"
+]
   }
 ];
