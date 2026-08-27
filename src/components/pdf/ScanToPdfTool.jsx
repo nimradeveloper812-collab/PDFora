@@ -42,7 +42,15 @@ export default function ScanToPdfTool() {
       }
     } catch (err) {
       console.error('Camera access error:', err);
-      setErrorMsg('Could not access camera. Please allow camera permissions or upload images instead.');
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        setErrorMsg('Camera access was denied. Please click the camera icon in your browser address bar and allow camera access, then try again. You can also use "Upload Photos / Scans" instead.');
+      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        setErrorMsg('No camera found on this device. Please use the "Upload Photos / Scans" button to add images.');
+      } else if (err.name === 'NotSupportedError' || err.name === 'InsecureContextError') {
+        setErrorMsg('Camera requires a secure (HTTPS) connection. Please use "Upload Photos / Scans" instead.');
+      } else {
+        setErrorMsg('Could not access camera. Please use "Upload Photos / Scans" to add your images instead.');
+      }
     }
   };
 
@@ -442,9 +450,17 @@ export default function ScanToPdfTool() {
 
           {/* ── Error Message ─────────────────────────────────────── */}
           {errorMsg && (
-            <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-xs text-red-700 dark:text-red-300 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
-              <span>{errorMsg}</span>
+            <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-xs text-red-700 dark:text-red-300 flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-500 mt-0.5" />
+              <span className="flex-1">{errorMsg}</span>
+              <button
+                type="button"
+                onClick={() => setErrorMsg('')}
+                className="shrink-0 text-red-400 hover:text-red-700 dark:hover:text-red-200 transition-colors font-bold text-sm leading-none cursor-pointer"
+                title="Dismiss"
+              >
+                ✕
+              </button>
             </div>
           )}
 
