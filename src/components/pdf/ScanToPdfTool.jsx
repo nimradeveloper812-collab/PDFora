@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Camera, Upload, RefreshCw, Trash2, Download, Eye, Sparkles,
-  Sliders, MoveUp, MoveDown, Check, AlertCircle, FileText, ArrowRight, Zap, ShieldCheck
+  Sliders, MoveUp, MoveDown, Check, FileText, ArrowRight, Zap, ShieldCheck
 } from 'lucide-react';
 import { PDFDocument } from 'pdf-lib';
 
@@ -17,7 +17,7 @@ export default function ScanToPdfTool() {
   const [resultBlobUrl, setResultBlobUrl] = useState(null);
   const [resultFilename, setResultFilename] = useState('');
   const [resultSize, setResultSize] = useState(0);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [infoMsg, setInfoMsg] = useState(''); // soft info note (not error)
 
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -30,7 +30,7 @@ export default function ScanToPdfTool() {
   }, []);
 
   const startCamera = async () => {
-    setErrorMsg('');
+    setInfoMsg('');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
@@ -42,14 +42,15 @@ export default function ScanToPdfTool() {
       }
     } catch (err) {
       console.error('Camera access error:', err);
-      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-        setErrorMsg('Camera access was denied. Please click the camera icon in your browser address bar and allow camera access, then try again. You can also use "Upload Photos / Scans" instead.');
-      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-        setErrorMsg('No camera found on this device. Please use the "Upload Photos / Scans" button to add images.');
-      } else if (err.name === 'NotSupportedError' || err.name === 'InsecureContextError') {
-        setErrorMsg('Camera requires a secure (HTTPS) connection. Please use "Upload Photos / Scans" instead.');
+      // Auto-open file upload as a seamless fallback
+      setTimeout(() => {
+        if (fileInputRef.current) fileInputRef.current.click();
+      }, 150);
+      // Show soft blue info note instead of alarming red error
+      if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        setInfoMsg('No camera detected on this device. Your upload window has opened — select your photos or scans to continue.');
       } else {
-        setErrorMsg('Could not access camera. Please use "Upload Photos / Scans" to add your images instead.');
+        setInfoMsg('Camera is unavailable in this browser. Your photo upload window has opened — select images to convert them into a scanned PDF.');
       }
     }
   };
@@ -448,15 +449,15 @@ export default function ScanToPdfTool() {
             />
           </div>
 
-          {/* ── Error Message ─────────────────────────────────────── */}
-          {errorMsg && (
-            <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-xs text-red-700 dark:text-red-300 flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-red-500 mt-0.5" />
-              <span className="flex-1">{errorMsg}</span>
+          {/* ── Info Note (soft blue, shown on camera fallback) ───── */}
+          {infoMsg && (
+            <div className="p-3.5 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-xs text-blue-700 dark:text-blue-300 flex items-start gap-2">
+              <Upload className="w-4 h-4 shrink-0 text-blue-500 mt-0.5" />
+              <span className="flex-1">{infoMsg}</span>
               <button
                 type="button"
-                onClick={() => setErrorMsg('')}
-                className="shrink-0 text-red-400 hover:text-red-700 dark:hover:text-red-200 transition-colors font-bold text-sm leading-none cursor-pointer"
+                onClick={() => setInfoMsg('')}
+                className="shrink-0 text-blue-400 hover:text-blue-700 dark:hover:text-blue-200 transition-colors font-bold text-sm leading-none cursor-pointer"
                 title="Dismiss"
               >
                 ✕
