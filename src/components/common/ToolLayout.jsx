@@ -174,21 +174,6 @@ export default function ToolLayout({ tool }) {
         </script>
       </Helmet>
 
-      {/* ── Top Header Leaderboard Ad Unit ───────────────────
-           Policy: Top banner layout is spaced using margins to prevent
-           overlap with menu headers. Spaced to comply with Google layout policies.
-           min-h-[110px] eliminates Cumulative Layout Shift (CLS).
-           Slot ID comes from VITE_AD_SLOT_HEADER in .env.local. */}
-      <div className="w-full border-b border-zinc-100 dark:border-[#2A2E45] bg-[#F8FAFC]/50 dark:bg-[#141622]/30 min-h-[110px]">
-        <div className="max-w-4xl mx-auto px-4 py-2">
-          <AdBanner
-            slot={AD_SLOTS.header}
-            variant="leaderboard"
-            className="my-0"
-          />
-        </div>
-      </div>
-
       {/* ── Breadcrumb ─────────────────────────────────────── */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-1 w-full">
         <nav
@@ -217,7 +202,7 @@ export default function ToolLayout({ tool }) {
 
       {/* ── Tool Hero ──────────────────────────────────────── */}
       <section
-        className="py-3 px-4 sm:px-6 lg:px-8 text-center bg-[#F8FAFC] dark:bg-[#141622] border-b border-zinc-100 dark:border-[#2A2E45] transition-colors"
+        className="py-2 sm:py-3 px-4 sm:px-6 lg:px-8 text-center bg-[#F8FAFC] dark:bg-[#141622] border-b border-zinc-100 dark:border-[#2A2E45] transition-colors"
         aria-labelledby="tool-heading"
       >
         <div className="max-w-3xl mx-auto space-y-1.5">
@@ -293,7 +278,7 @@ export default function ToolLayout({ tool }) {
         )}
 
         {/* Trust highlights below dropzone */}
-        <div className="max-w-4xl mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="max-w-4xl mx-auto mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { icon: Zap,        title: 'Fast Processing',   sub: 'In-browser engine'   },
             { icon: Sparkles,   title: 'High Quality',      sub: 'Original accuracy'   },
@@ -316,15 +301,15 @@ export default function ToolLayout({ tool }) {
         </div>
 
         {/* ── Below-Tool Ad Unit ────────────────────────────
-             Fixed min-h-[300px] pre-reserves space so no CLS occurs
+             Fixed min-h-[270px] sm:min-h-[300px] pre-reserves space so no CLS occurs
              when the ad iframe loads. The rectangle variant (280px)
              is the highest-CPM IAB size for utility tool mid-content
              placements. Slot ID comes from VITE_AD_SLOT_TOOL in .env.local. */}
-        <div className="max-w-4xl mx-auto mt-6 min-h-[300px]">
+        <div className="max-w-4xl mx-auto mt-4 sm:mt-6 min-h-[270px] sm:min-h-[300px]">
           <AdBanner
             slot={AD_SLOTS.tool}
             variant="rectangle"
-            className="my-2"
+            className="my-1 sm:my-2"
           />
         </div>
       </section>
@@ -333,7 +318,7 @@ export default function ToolLayout({ tool }) {
 
       {/* ── How to Use ─────────────────────────────────────── */}
       <section
-        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
+        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8"
         aria-labelledby="how-to-use-heading"
       >
         <div className="text-center mb-8 space-y-1">
@@ -373,7 +358,7 @@ export default function ToolLayout({ tool }) {
       {/* ── Real-World Use Cases ───────────────────────────── */}
       {tool.useCases?.length > 0 && (
         <section
-          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
+          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8"
           aria-labelledby="usecases-heading"
         >
           <div className="text-center mb-8 space-y-1">
@@ -409,7 +394,7 @@ export default function ToolLayout({ tool }) {
       {/* ── Tool FAQs ──────────────────────────────────────── */}
       {tool.faqs?.length > 0 && (
         <section
-          className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
+          className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8"
           aria-labelledby="tool-faq-heading"
         >
           <div className="text-center mb-8 space-y-1">
@@ -459,7 +444,7 @@ export default function ToolLayout({ tool }) {
 
       {/* ── Related Tools ──────────────────────────────────── */}
       <section
-        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
+        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8"
         aria-labelledby="related-tools-heading"
       >
         <div className="flex items-center justify-between mb-6 pb-2 border-b border-zinc-200 dark:border-[#2A2E45]">

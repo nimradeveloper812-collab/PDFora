@@ -70,6 +70,14 @@ export default function AdBanner({
   const insRef    = useRef(null);   // ref to the <ins> element
   const pushedRef = useRef(false);  // guard: push only once per mount
   const [adVisible, setAdVisible] = useState(false); // has observer fired?
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Map legacy string slots to real environment keys
   let finalSlot = slot;
@@ -77,8 +85,10 @@ export default function AdBanner({
     finalSlot = AD_SLOTS.tool;
   }
 
-  // Determine reserved height for this slot variant
-  const reservedHeight = SLOT_HEIGHTS[variant] ?? SLOT_HEIGHTS.rectangle;
+  // Determine reserved height for this slot variant (leaderboard is 50px on mobile, 90px on desktop)
+  const reservedHeight = variant === 'leaderboard'
+    ? (isMobile ? 50 : 90)
+    : (SLOT_HEIGHTS[variant] ?? SLOT_HEIGHTS.rectangle);
 
   // A slot is real when it's a non-empty numeric string that isn't a known
   // placeholder. The regex accepts 9–12 digit strings matching AdSense format.
