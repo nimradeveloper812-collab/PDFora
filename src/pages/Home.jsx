@@ -263,39 +263,41 @@ export default function Home() {
                 const isSelected = selectedCatId === cat.id;
 
                 return (
-                  <div
+                  <button
                     key={cat.id}
+                    type="button"
                     onClick={() => scrollToExplorer(cat.id)}
-                    className={`group cursor-pointer p-3.5 rounded-xl border transition-all duration-200 flex flex-col justify-between ${
+                    aria-label={`Explore ${t(cat.id)} category tools`}
+                    className={`group cursor-pointer text-left p-3.5 rounded-xl border transition-all duration-200 flex flex-col justify-between ${
                       isSelected
                         ? 'bg-purple-600 text-white border-purple-600 shadow-md shadow-purple-600/20'
                         : 'bg-white dark:bg-[#141622] border-zinc-200/80 dark:border-[#2A2E45] hover:border-purple-500 hover:shadow-md'
                     }`}
                   >
-                    <div className="space-y-1.5">
+                    <div className="space-y-1.5 w-full">
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${
                         isSelected
                           ? 'bg-white/20 text-white border-white/30'
                           : 'bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border-purple-100 dark:border-purple-900 group-hover:bg-purple-600 group-hover:text-white'
                       } transition-colors`}>
-                        <Icon className="w-4 h-4" strokeWidth={2} />
+                        <Icon className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
                       </div>
                       <div>
                         <h3 className={`text-xs font-extrabold ${isSelected ? 'text-white' : 'text-zinc-900 dark:text-white'}`}>
                           {t(cat.id)}
                         </h3>
-                        <p className={`text-[10px] mt-0.5 line-clamp-2 ${isSelected ? 'text-purple-100' : 'text-zinc-500 dark:text-zinc-400'}`}>
+                        <p className={`text-[10px] mt-0.5 line-clamp-2 ${isSelected ? 'text-purple-50' : 'text-zinc-600 dark:text-zinc-400'}`}>
                           {cat.desc}
                         </p>
                       </div>
                     </div>
-                    <div className="pt-2 mt-2 border-t border-white/20 dark:border-[#2A2E45] flex items-center justify-between">
+                    <div className="pt-2 mt-2 border-t border-white/20 dark:border-[#2A2E45] flex items-center justify-between w-full">
                       <span className={`text-[10px] font-bold ${isSelected ? 'text-white' : 'text-purple-600 dark:text-purple-400'}`}>
                         {totalTools} Tools
                       </span>
-                      <ChevronRight className={`w-3 h-3 group-hover:translate-x-1 transition-transform ${isSelected ? 'text-white' : 'text-purple-600 dark:text-purple-400'}`} />
+                      <ChevronRight className={`w-3 h-3 group-hover:translate-x-1 transition-transform ${isSelected ? 'text-white' : 'text-purple-600 dark:text-purple-400'}`} aria-hidden="true" />
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -314,6 +316,8 @@ export default function Home() {
                   <h3 className="text-sm font-black text-zinc-900 dark:text-white">{t(currentCategory.id)}</h3>
                 </div>
                 <select
+                  id="tool-category-select"
+                  aria-label="Select tool category"
                   value={selectedCatId}
                   onChange={e => setSelectedCatId(e.target.value)}
                   className="text-xs font-bold px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] text-zinc-800 dark:text-zinc-200 outline-none cursor-pointer"

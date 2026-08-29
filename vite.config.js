@@ -22,13 +22,32 @@ export default defineConfig({
     allowedHosts: true,
   },
   build: {
-    chunkSizeWarningLimit: 3000,
+    chunkSizeWarningLimit: 2000,
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('pdf-lib') || id.includes('pdfjs-dist') || id.includes('xlsx') || id.includes('mammoth') || id.includes('jszip')) {
-              return 'pdf-vendor';
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom') || id.includes('react-helmet-async')) {
+              return 'react-core';
+            }
+            if (id.includes('lucide-react')) {
+              return 'icons';
+            }
+            if (id.includes('@imgly') || id.includes('onnxruntime-web')) {
+              return 'ai-bg-removal';
+            }
+            if (
+              id.includes('pdf-lib') ||
+              id.includes('@pdf-lib') ||
+              id.includes('@pdfsmaller') ||
+              id.includes('docx') ||
+              id.includes('xlsx') ||
+              id.includes('mammoth') ||
+              id.includes('jszip') ||
+              id.includes('archiver') ||
+              id.includes('sharp')
+            ) {
+              return 'pdf-heavy';
             }
             return 'vendor';
           }

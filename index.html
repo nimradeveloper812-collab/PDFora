@@ -62,13 +62,26 @@
     <meta name="twitter:description" content="Fast, secure, in-browser PDF platform. Convert Word, Excel, PowerPoint & images to PDF for free." />
     <meta name="twitter:image" content="https://pdfora.nimradev.site/og-image.jpg" />
 
-    <!-- Google Fonts: Sora, Space Grotesk, Inter & Multilingual Noto Fonts -->
+    <!-- Google Fonts: Non-blocking High-Performance Loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&family=Noto+Sans+Arabic:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Sora:wght@600;700;800&display=swap"
     />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Sora:wght@600;700;800&family=Space+Grotesk:wght@600;700&family=Noto+Nastaliq+Urdu:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Noto+Sans+Devanagari:wght@400;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Sora:wght@600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+      />
+    </noscript>
 
     <!-- Favicon & Search Icons (Blue Theme) -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=blue2" />
