@@ -30,10 +30,37 @@ if (!fs.existsSync(mediaTempDir)) {
   fs.mkdirSync(mediaTempDir, { recursive: true });
 }
 
-// Memory upload for small images
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
+// Keep Sharp memory footprint minimal (disables memory caching & restricts thread pool)
+sharp.cache(false);
+sharp.concurrency(1);
+
+// Background Auto-Cleaner: Deletes orphaned temporary files older than 15 minutes to guarantee disk never fills up
+function cleanOrphanedTempFiles() {
+  try {
+    if (!fs.existsSync(mediaTempDir)) return;
+    const files = fs.readdirSync(mediaTempDir);
+    const now = Date.now();
+    const maxAge = 15 * 60 * 1000; // 15 mins
+    for (const file of files) {
+      try {
+        const filePath = path.join(mediaTempDir, file);
+        const stats = fs.statSync(filePath);
+        if (now - stats.mtimeMs > maxAge) {
+          fs.unlinkSync(filePath);
+        }
+      } catch {}
+    }
+  } catch (err) {
+    console.warn('Temp cleaner notice:', err?.message);
+  }
+}
+cleanOrphanedTempFiles();
+setInterval(cleanOrphanedTempFiles, 15 * 60 * 1000);
+
+// Disk upload for images to guarantee 0% RAM buffer bloat
+const imageUpload = multer({
+  dest: mediaTempDir,
+  limits: { fileSize: 35 * 1024 * 1024 }, // 35MB
   fileFilter: (req, file, cb) => {
     const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/avif', 'image/tiff', 'image/gif', 'image/bmp', 'image/svg+xml'];
     if (allowedMimes.includes(file.mimetype.toLowerCase()) || file.mimetype.startsWith('image/')) {
@@ -57,8 +84,8 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.use(compression());
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
 // Security & CORS Headers
 app.use((req, res, next) => {
@@ -81,16 +108,20 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
-// Image Compression API (Sharp)
+// Image Compression API (Sharp - Streamed via Disk to protect RAM)
 app.post('/api/image/compress', (req, res) => {
-  upload.single('file')(req, res, async (err) => {
+  imageUpload.single('file')(req, res, async (err) => {
     if (err) {
       return res.status(400).json({ error: err.message || 'File upload failed.' });
     }
 
-    if (!req.file || !req.file.buffer) {
+    if (!req.file || !req.file.path) {
       return res.status(400).json({ error: 'No image file uploaded.' });
     }
+
+    const inputPath = req.file.path;
+    const originalSize = req.file.size;
+    let outputPath = null;
 
     try {
       const { preset = 'balanced', quality, format = 'original', maxWidth } = req.body;
@@ -101,7 +132,7 @@ app.post('/api/image/compress', (req, res) => {
       else if (preset === 'max') qualityNum = 42;
       else if (quality) qualityNum = Math.max(10, Math.min(100, parseInt(quality, 10) || 75));
 
-      let pipeline = sharp(req.file.buffer);
+      let pipeline = sharp(inputPath);
       const metadata = await pipeline.metadata();
 
       if (maxWidth && parseInt(maxWidth, 10) > 0 && metadata.width > parseInt(maxWidth, 10)) {
@@ -140,9 +171,11 @@ app.post('/api/image/compress', (req, res) => {
         }
       }
 
-      const outputBuffer = await pipeline.toBuffer();
-      const originalSize = req.file.size || req.file.buffer.length;
-      const compressedSize = outputBuffer.length;
+      outputPath = path.join(mediaTempDir, `out_img_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${targetExt}`);
+      await pipeline.toFile(outputPath);
+
+      const stats = fs.statSync(outputPath);
+      const compressedSize = stats.size;
       const savedBytes = Math.max(0, originalSize - compressedSize);
       const savedPercent = originalSize > 0 ? ((savedBytes / originalSize) * 100).toFixed(1) : '0.0';
 
@@ -151,14 +184,21 @@ app.post('/api/image/compress', (req, res) => {
       const outFilename = `${baseName}_compressed.${targetExt}`;
 
       res.setHeader('Content-Type', targetMime);
-      res.setHeader('Content-Disposition', `attachment; filename="${outFilename}"`);
+      res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(outFilename)}"`);
       res.setHeader('X-Original-Size', originalSize);
       res.setHeader('X-Compressed-Size', compressedSize);
       res.setHeader('X-Saved-Percent', savedPercent);
 
-      return res.send(outputBuffer);
+      const readStream = fs.createReadStream(outputPath);
+      readStream.pipe(res);
+      readStream.on('close', () => {
+        try { if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath); } catch {}
+        try { if (outputPath && fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
+      });
     } catch (processErr) {
       console.error('Image compression error:', processErr);
+      try { if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath); } catch {}
+      try { if (outputPath && fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
       return res.status(500).json({ error: 'Failed to compress image file. File may be corrupted.' });
     }
   });
@@ -443,18 +483,21 @@ app.post('/api/pdf/word-to-pdf', (req, res) => {
   });
 });
 
-// ── 3. Image Conversion API (Sharp) ──────────────────────────────────
+// ── 3. Image Conversion API (Sharp - Streamed via Disk to protect RAM) ──
 app.post('/api/media/convert-image', (req, res) => {
-  upload.single('file')(req, res, async (err) => {
+  imageUpload.single('file')(req, res, async (err) => {
     if (err) return res.status(400).json({ error: err.message || 'File upload failed.' });
-    if (!req.file || !req.file.buffer) return res.status(400).json({ error: 'No image uploaded.' });
+    if (!req.file || !req.file.path) return res.status(400).json({ error: 'No image uploaded.' });
+
+    const inputPath = req.file.path;
+    let outputPath = null;
 
     try {
       const { format = 'webp', quality = 80, lossless = 'false' } = req.body;
       const qualityNum = Math.max(10, Math.min(100, parseInt(quality, 10) || 80));
       const isLossless = lossless === 'true' || lossless === true;
 
-      let pipeline = sharp(req.file.buffer);
+      let pipeline = sharp(inputPath);
       const targetExt = (format || 'webp').toLowerCase();
       let targetMime = 'image/webp';
 
@@ -481,16 +524,27 @@ app.post('/api/media/convert-image', (req, res) => {
         targetMime = 'image/png';
       }
 
-      const outBuffer = await pipeline.toBuffer();
       const baseName = (req.file.originalname || 'image').replace(/\.[^/.]+$/, '');
       const outFilename = `${baseName}.${targetExt}`;
+      outputPath = path.join(mediaTempDir, `out_conv_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${targetExt}`);
+
+      await pipeline.toFile(outputPath);
+      const stats = fs.statSync(outputPath);
 
       res.setHeader('Content-Type', targetMime);
       res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(outFilename)}"`);
-      res.setHeader('X-Output-Size', outBuffer.length);
-      return res.send(outBuffer);
+      res.setHeader('X-Output-Size', stats.size);
+
+      const readStream = fs.createReadStream(outputPath);
+      readStream.pipe(res);
+      readStream.on('close', () => {
+        try { if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath); } catch {}
+        try { if (outputPath && fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
+      });
     } catch (imgErr) {
       console.error('Image convert error:', imgErr);
+      try { if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath); } catch {}
+      try { if (outputPath && fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
       return res.status(500).json({ error: 'Failed to convert image format.' });
     }
   });
