@@ -255,7 +255,7 @@ export default function Header() {
                       {cat.subcategories.map(sub => (
                         <div key={sub.id} className="p-3 rounded-xl bg-white dark:bg-[#1B1E2E] border border-emerald-100/80 dark:border-[#2A2E45] space-y-2">
                           <p className="font-extrabold text-[11px] text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
-                            ✨ {sub.name}
+                            {sub.name}
                           </p>
                           <ul className="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] text-zinc-700 dark:text-zinc-300 max-h-48 overflow-y-auto">
                             {sub.toolIds.map(tId => {
@@ -299,7 +299,7 @@ export default function Header() {
                       {cat.subcategories.map(sub => (
                         <div key={sub.id} className="p-3 rounded-xl bg-white dark:bg-[#1B1E2E] border border-blue-100/80 dark:border-[#2A2E45] space-y-2">
                           <p className="font-extrabold text-[11px] text-blue-700 dark:text-blue-400 uppercase tracking-wider">
-                            🎵 {sub.name}
+                            {sub.name}
                           </p>
                           <ul className="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] text-zinc-700 dark:text-zinc-300 max-h-48 overflow-y-auto">
                             {sub.toolIds.map(tId => {
