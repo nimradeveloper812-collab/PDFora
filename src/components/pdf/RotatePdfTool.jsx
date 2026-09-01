@@ -1,663 +1,966 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { RefreshCw, Download, RotateCcw, AlertCircle, FileText, Sparkles, Eye, File, Trash2, ArrowRight } from 'lucide-react';
-import { pdfApi } from '../../services/pdfApi';
+import {
+  UploadCloud, File, X, Plus, CheckCircle2, Download,
+  RotateCcw, Sparkles, ArrowRight, ShieldCheck, FileText,
+  AlertCircle, Trash2, RotateCw, Check,
+  RefreshCw, Eye, Undo, Redo
+} from 'lucide-react';
+import { PDFDocument, degrees } from 'pdf-lib';
+import JSZip from 'jszip';
+import { analytics } from '../../services/analytics';
+
+// PDF.js dynamic loader for page thumbnails
+const loadPdfJs = () => {
+  return new Promise((resolve, reject) => {
+    if (window.pdfjsLib) {
+      resolve(window.pdfjsLib);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js';
+    script.onload = () => {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+      resolve(window.pdfjsLib);
+    };
+    script.onerror = () => reject(new Error('Failed to load PDF preview engine.'));
+    document.body.appendChild(script);
+  });
+};
+
+function parsePageNumbers(str, total) {
+  if (!str || !str.trim()) return new Set();
+  const set = new Set();
+  const parts = str.split(',');
+  for (const p of parts) {
+    const trimmed = p.trim();
+    if (trimmed.includes('-')) {
+      const [startStr, endStr] = trimmed.split('-');
+      const start = parseInt(startStr, 10);
+      const end = parseInt(endStr, 10);
+      if (!isNaN(start) && !isNaN(end)) {
+        for (let i = Math.min(start, end); i <= Math.max(start, end); i++) {
+          if (i >= 1 && i <= total) set.add(i);
+        }
+      }
+    } else {
+      const val = parseInt(trimmed, 10);
+      if (!isNaN(val) && val >= 1 && val <= total) {
+        set.add(val);
+      }
+    }
+  }
+  return set;
+}
 
 export default function RotatePdfTool() {
-  const [file, setFile] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [status, setStatus] = useState('idle'); // 'idle' | 'loading_pdf' | 'ready' | 'processing' | 'completed'
+  const [items, setItems] = useState([]); // Array of { id, file, name, size, pageCount, pages: [{ pageNum, rotation, thumbnail }] }
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [activeViewMode, setActiveViewMode] = useState('documents'); // 'documents' (file cards) or 'pages' (granular page cards if 1 file)
+  const [specificPagesText, setSpecificPagesText] = useState('');
+
+  // Processing & Results
+  const [status, setStatus] = useState('idle'); // 'idle' | 'loading_files' | 'processing' | 'completed'
   const [progress, setProgress] = useState(0);
   const [progressText, setProgressText] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-  const [pages, setPages] = useState([]); // Array of { pageIndex, rotation: 0, thumbnail: null }
+
   const [resultBlobUrl, setResultBlobUrl] = useState(null);
   const [resultFilename, setResultFilename] = useState('');
   const [resultSize, setResultSize] = useState(0);
-  const [showPreview, setShowPreview] = useState(true);
-  const [rotateMode, setRotateMode] = useState('all'); // 'all' | 'specific'
-  const [specificPagesInput, setSpecificPagesInput] = useState('');
+  const [isResultZip, setIsResultZip] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
-  const parsePageNumbers = (str, total) => {
-    if (!str || !str.trim()) return new Set();
-    const set = new Set();
-    const parts = str.split(',');
-    for (const p of parts) {
-      const trimmed = p.trim();
-      if (trimmed.includes('-')) {
-        const [startStr, endStr] = trimmed.split('-');
-        const start = parseInt(startStr, 10);
-        const end = parseInt(endStr, 10);
-        if (!isNaN(start) && !isNaN(end)) {
-          for (let i = Math.min(start, end); i <= Math.max(start, end); i++) {
-            if (i >= 1 && i <= total) set.add(i - 1); // 0-indexed
-          }
-        }
-      } else {
-        const val = parseInt(trimmed, 10);
-        if (!isNaN(val) && val >= 1 && val <= total) {
-          set.add(val - 1); // 0-indexed
-        }
-      }
-    }
-    return set;
-  };
+  const fileInputRef = useRef(null);
+  const addMoreInputRef = useRef(null);
 
-  const applySpecificRotation = (delta = 90) => {
-    const targetSet = parsePageNumbers(specificPagesInput, pages.length);
-    if (targetSet.size === 0) return;
-    setPages(prev => prev.map(p => {
-      if (targetSet.has(p.pageIndex)) {
-        const nextRot = (p.rotation + delta) % 360;
-        return { ...p, rotation: nextRot >= 0 ? nextRot : nextRot + 360 };
-      }
-      return p;
-    }));
-  };
+  /* ── Clean up Blob URLs on unmount ────────────────────── */
+  useEffect(() => {
+    return () => {
+      if (resultBlobUrl) URL.revokeObjectURL(resultBlobUrl);
+    };
+  }, [resultBlobUrl]);
 
-  const resetSpecificRotation = () => {
-    const targetSet = parsePageNumbers(specificPagesInput, pages.length);
-    if (targetSet.size === 0) return;
-    setPages(prev => prev.map(p => {
-      if (targetSet.has(p.pageIndex)) {
-        return { ...p, rotation: 0 };
-      }
-      return p;
-    }));
-  };
-
-  const applyPresetSpecificPages = (preset) => {
-    const total = pages.length;
-    if (preset === 'first') setSpecificPagesInput('1');
-    else if (preset === 'last') setSpecificPagesInput(`${total}`);
-    else if (preset === 'odd') {
-      const odd = Array.from({ length: total }, (_, i) => i + 1).filter(p => p % 2 !== 0);
-      setSpecificPagesInput(odd.join(', '));
-    } else if (preset === 'even') {
-      const even = Array.from({ length: total }, (_, i) => i + 1).filter(p => p % 2 === 0);
-      setSpecificPagesInput(even.join(', '));
-    } else if (preset === 'clear') {
-      setSpecificPagesInput('');
-    }
-  };
-
-  const formatBytes = (bytes) => {
-    if (!bytes) return '0 KB';
+  /* ── Format Bytes ─────────────────────────────────────── */
+  const fmt = (bytes) => {
+    if (!bytes || isNaN(bytes)) return '0 KB';
     const k = 1024, s = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / k ** i).toFixed(1)) + ' ' + s[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + s[i];
   };
 
-  const loadPdfJs = () => {
-    return new Promise((resolve, reject) => {
-      if (window.pdfjsLib) {
-        resolve(window.pdfjsLib);
-        return;
-      }
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js';
-      script.onload = () => {
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-        resolve(window.pdfjsLib);
-      };
-      script.onerror = () => reject(new Error('Failed to load PDF library.'));
-      document.body.appendChild(script);
-    });
-  };
-
-  const handleFileSelect = async (incomingFile) => {
-    if (!incomingFile) return;
-    setErrorMsg('');
-    if (incomingFile.type !== 'application/pdf' && !incomingFile.name.endsWith('.pdf')) {
-      setErrorMsg('Please select a valid PDF document.');
-      return;
-    }
-
-    setFile(incomingFile);
-    setStatus('loading_pdf');
-
+  /* ── Process incoming PDF file ────────────────────────── */
+  const processPdfItem = async (itemObj) => {
     try {
-      const arrayBuffer = await incomingFile.arrayBuffer();
-      const pdfjs = await loadPdfJs();
-      const loadingTask = pdfjs.getDocument({ data: new Uint8Array(arrayBuffer) });
-      const pdfDoc = await loadingTask.promise;
-      const count = pdfDoc.numPages;
+      const arrayBuffer = await itemObj.file.arrayBuffer();
+      const doc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+      const count = doc.getPageCount();
 
-      const newPages = Array.from({ length: count }, (_, i) => ({
-        pageIndex: i,
+      const initialPages = Array.from({ length: count }, (_, i) => ({
+        pageNum: i + 1,
         rotation: 0,
-        thumbnail: null,
+        thumbnail: null
       }));
-      setPages(newPages);
-      setStatus('ready');
 
-      // Async render thumbnails one by one
-      for (let i = 0; i < count; i++) {
-        try {
-          const page = await pdfDoc.getPage(i + 1);
-          const viewport = page.getViewport({ scale: 0.3 });
-          const canvas = document.createElement('canvas');
-          const context = canvas.getContext('2d');
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
-          await page.render({ canvasContext: context, viewport }).promise;
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      setItems(prev => prev.map(it => it.id === itemObj.id ? { ...it, pageCount: count, pages: initialPages } : it));
 
-          setPages(prev => prev.map(p => p.pageIndex === i ? { ...p, thumbnail: dataUrl } : p));
-        } catch (thumbErr) {
-          console.warn('Thumbnail generation failed for page:', i + 1, thumbErr);
+      // PDF.js Thumbnails
+      try {
+        const pdfjs = await loadPdfJs();
+        const loadingTask = pdfjs.getDocument({ data: new Uint8Array(arrayBuffer) });
+        const pdfDoc = await loadingTask.promise;
+
+        // Render thumbnails for each page (or at least page 1)
+        for (let i = 1; i <= count; i++) {
+          try {
+            const page = await pdfDoc.getPage(i);
+            const viewport = page.getViewport({ scale: 0.35 });
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+
+            await page.render({ canvasContext: ctx, viewport }).promise;
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+            setItems(prev => prev.map(it => {
+              if (it.id !== itemObj.id) return it;
+              const nextPages = (it.pages || []).map(p => p.pageNum === i ? { ...p, thumbnail: dataUrl } : p);
+              return { ...it, pages: nextPages, mainThumbnail: i === 1 ? dataUrl : it.mainThumbnail };
+            }));
+          } catch (pErr) {
+            console.warn(`Thumbnail error for page ${i}:`, pErr);
+          }
         }
+      } catch (pdfjsErr) {
+        console.warn('PDF.js renderer notice:', pdfjsErr);
       }
     } catch (err) {
-      console.error(err);
-      setErrorMsg(err.message || 'Failed to load PDF document.');
-      setFile(null);
-      setStatus('idle');
+      console.error('File parsing error:', err);
     }
   };
 
-  const rotatePage = (index, delta = 90) => {
-    setPages(prev => prev.map(p => {
-      if (p.pageIndex === index) {
-        const nextRot = (p.rotation + delta) % 360;
-        return { ...p, rotation: nextRot >= 0 ? nextRot : nextRot + 360 };
+  /* ── Add PDF Files ────────────────────────────────────── */
+  const addPdfFiles = (incomingFiles) => {
+    setErrorMsg('');
+    if (!incomingFiles || incomingFiles.length === 0) return;
+
+    const validItems = [];
+    for (const f of incomingFiles) {
+      const isPdf = f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
+      if (!isPdf) {
+        setErrorMsg(`"${f.name}" is not a PDF. Please select PDF documents only.`);
+        return;
       }
-      return p;
+      if (f.size > 80 * 1024 * 1024) {
+        setErrorMsg(`"${f.name}" exceeds the 80 MB limit.`);
+        return;
+      }
+
+      const item = {
+        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        file: f,
+        name: f.name,
+        size: f.size,
+        pageCount: 1,
+        rotation: 0, // doc-level rotation
+        mainThumbnail: null,
+        pages: []
+      };
+      validItems.push(item);
+    }
+
+    if (validItems.length > 0) {
+      setItems(prev => [...prev, ...validItems]);
+      validItems.forEach(item => processPdfItem(item));
+    }
+  };
+
+  /* ── Rotation Controls (iLovePDF Style) ───────────────── */
+  const rotateDoc = (id, delta = 90) => {
+    setItems(prev => prev.map(it => {
+      if (it.id === id) {
+        const nextRot = (it.rotation + delta) % 360;
+        const normalized = nextRot >= 0 ? nextRot : nextRot + 360;
+        // Also sync all child pages if individual
+        const nextPages = (it.pages || []).map(p => ({
+          ...p,
+          rotation: (p.rotation + delta) % 360 >= 0 ? (p.rotation + delta) % 360 : (p.rotation + delta) % 360 + 360
+        }));
+        return { ...it, rotation: normalized, pages: nextPages };
+      }
+      return it;
     }));
   };
 
-  const rotateAll = (delta = 90) => {
-    setPages(prev => prev.map(p => {
-      const nextRot = (p.rotation + delta) % 360;
-      return { ...p, rotation: nextRot >= 0 ? nextRot : nextRot + 360 };
+  const rotatePage = (docId, pageNum, delta = 90) => {
+    setItems(prev => prev.map(it => {
+      if (it.id === docId) {
+        const nextPages = (it.pages || []).map(p => {
+          if (p.pageNum === pageNum) {
+            const nextRot = (p.rotation + delta) % 360;
+            return { ...p, rotation: nextRot >= 0 ? nextRot : nextRot + 360 };
+          }
+          return p;
+        });
+        return { ...it, pages: nextPages };
+      }
+      return it;
+    }));
+  };
+
+  const rotateAllLeft = () => {
+    // -90 degrees (or 270 clockwise)
+    setItems(prev => prev.map(it => {
+      const nextDocRot = (it.rotation - 90 + 360) % 360;
+      const nextPages = (it.pages || []).map(p => ({
+        ...p,
+        rotation: (p.rotation - 90 + 360) % 360
+      }));
+      return { ...it, rotation: nextDocRot, pages: nextPages };
+    }));
+  };
+
+  const rotateAllRight = () => {
+    // +90 degrees clockwise
+    setItems(prev => prev.map(it => {
+      const nextDocRot = (it.rotation + 90) % 360;
+      const nextPages = (it.pages || []).map(p => ({
+        ...p,
+        rotation: (p.rotation + 90) % 360
+      }));
+      return { ...it, rotation: nextDocRot, pages: nextPages };
     }));
   };
 
   const resetAllRotations = () => {
-    setPages(prev => prev.map(p => ({ ...p, rotation: 0 })));
+    setItems(prev => prev.map(it => ({
+      ...it,
+      rotation: 0,
+      pages: (it.pages || []).map(p => ({ ...p, rotation: 0 }))
+    })));
+    setSpecificPagesText('');
   };
 
+  const removeItem = (id) => {
+    setItems(prev => prev.filter(it => it.id !== id));
+  };
+
+  /* ── Specific Pages Preset ────────────────────────────── */
+  const applySpecificPagesPreset = (preset) => {
+    if (items.length !== 1) return;
+    const doc = items[0];
+    const total = doc.pageCount || 1;
+    if (preset === 'all') {
+      setSpecificPagesText(`1-${total}`);
+    } else if (preset === 'odd') {
+      const odd = Array.from({ length: total }, (_, i) => i + 1).filter(p => p % 2 !== 0);
+      setSpecificPagesText(odd.join(', '));
+    } else if (preset === 'even') {
+      const even = Array.from({ length: total }, (_, i) => i + 1).filter(p => p % 2 === 0);
+      setSpecificPagesText(even.join(', '));
+    } else if (preset === 'clear') {
+      setSpecificPagesText('');
+    }
+  };
+
+  const applyRotationToSpecificPages = (delta = 90) => {
+    if (items.length !== 1) return;
+    const doc = items[0];
+    const targetSet = parsePageNumbers(specificPagesText, doc.pageCount || 1);
+    if (targetSet.size === 0) return;
+
+    setItems(prev => prev.map(it => {
+      if (it.id === doc.id) {
+        const nextPages = (it.pages || []).map(p => {
+          if (targetSet.has(p.pageNum)) {
+            const nextRot = (p.rotation + delta) % 360;
+            return { ...p, rotation: nextRot >= 0 ? nextRot : nextRot + 360 };
+          }
+          return p;
+        });
+        return { ...it, pages: nextPages };
+      }
+      return it;
+    }));
+  };
+
+  /* ── Core Rotate PDF Execution ────────────────────────── */
   const handleRotatePdf = async () => {
-    if (!file) return;
+    if (items.length === 0) return;
+
     setStatus('processing');
-    setProgress(20);
-    setProgressText('Preparing document...');
+    setProgress(10);
+    setProgressText('Preparing document rotation...');
     setErrorMsg('');
 
-    // Yield for React render
-    await new Promise(resolve => setTimeout(resolve, 80));
-
     try {
-      const pageRotations = {};
-      const hasAnyCustomRotation = pages.some(p => p.rotation !== 0);
+      // Case 1: Single PDF File
+      if (items.length === 1) {
+        const item = items[0];
+        setProgress(30);
+        setProgressText('Rotating pages in document...');
 
-      if (!hasAnyCustomRotation && rotateMode === 'all') {
-        // Default to +90° for all pages if user clicks Rotate PDF without setting individual angles
-        pages.forEach(p => {
-          pageRotations[p.pageIndex] = 90;
-        });
-      } else {
-        pages.forEach(p => {
-          if (p.rotation !== 0) {
-            pageRotations[p.pageIndex] = p.rotation;
+        const arrayBuffer = await item.file.arrayBuffer();
+        const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+        const pages = pdfDoc.getPages();
+
+        pages.forEach((page, idx) => {
+          const pNum = idx + 1;
+          const pageConfig = (item.pages || []).find(p => p.pageNum === pNum);
+          const customRot = pageConfig ? pageConfig.rotation : item.rotation;
+
+          // If no custom page rotation set but document rotation is non-zero, use item.rotation
+          const rotationToApply = customRot !== 0 ? customRot : item.rotation;
+
+          if (rotationToApply !== 0) {
+            const currentAngle = page.getRotation().angle;
+            page.setRotation(degrees((currentAngle + rotationToApply) % 360));
           }
         });
+
+        setProgress(85);
+        setProgressText('Saving rotated PDF file...');
+
+        const outBytes = await pdfDoc.save({ useObjectStreams: true });
+        const blob = new Blob([outBytes], { type: 'application/pdf' });
+        const blobUrl = URL.createObjectURL(blob);
+
+        const baseName = item.name.replace(/\.pdf$/i, '');
+        const outName = `${baseName}_rotated.pdf`;
+
+        setResultBlobUrl(blobUrl);
+        setResultFilename(outName);
+        setResultSize(blob.size);
+        setIsResultZip(false);
+        setProgress(100);
+        setStatus('completed');
+        triggerDownload(blobUrl, outName);
+        return;
       }
 
-      const rotatedBlob = await pdfApi.rotatePdf(file, pageRotations, (pct, text) => {
-        setProgress(pct);
-        if (text) setProgressText(text);
-      });
+      // Case 2: Multiple PDF Files -> Batch rotate and package in ZIP
+      setProgress(20);
+      setProgressText(`Rotating ${items.length} PDF documents...`);
+      const zip = new JSZip();
 
-      const url = URL.createObjectURL(rotatedBlob);
-      setResultBlobUrl(url);
-      setResultFilename(file.name.replace(/\.[^/.]+$/, '') + '_rotated.pdf');
-      setResultSize(rotatedBlob.size);
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        const pct = 20 + Math.round(((i + 1) / items.length) * 65);
+        setProgress(pct);
+        setProgressText(`Rotating file ${i + 1} of ${items.length}: "${item.name}"...`);
+
+        const arrayBuffer = await item.file.arrayBuffer();
+        const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+        const pages = pdfDoc.getPages();
+
+        pages.forEach((page, idx) => {
+          const pNum = idx + 1;
+          const pageConfig = (item.pages || []).find(p => p.pageNum === pNum);
+          const rotationToApply = pageConfig && pageConfig.rotation !== 0 ? pageConfig.rotation : item.rotation;
+
+          if (rotationToApply !== 0) {
+            const currentAngle = page.getRotation().angle;
+            page.setRotation(degrees((currentAngle + rotationToApply) % 360));
+          }
+        });
+
+        const outBytes = await pdfDoc.save({ useObjectStreams: true });
+        const baseName = item.name.replace(/\.pdf$/i, '');
+        zip.file(`${baseName}_rotated.pdf`, outBytes);
+      }
+
+      setProgress(90);
+      setProgressText('Creating ZIP archive...');
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      const blobUrl = URL.createObjectURL(zipBlob);
+      const outName = `pdfora_rotated_files.zip`;
+
+      setResultBlobUrl(blobUrl);
+      setResultFilename(outName);
+      setResultSize(zipBlob.size);
+      setIsResultZip(true);
+      setProgress(100);
       setStatus('completed');
+      triggerDownload(blobUrl, outName);
+
     } catch (err) {
-      console.error(err);
-      setErrorMsg('Failed to rotate PDF pages. ' + (err.message || ''));
-      setStatus('ready');
-      setProgress(0);
+      console.error('Rotate PDF error:', err);
+      setErrorMsg(err.message || 'An error occurred while rotating PDF documents.');
+      setStatus('idle');
     }
+  };
+
+  const triggerDownload = (url, filename) => {
+    analytics.trackToolExecution('rotate-pdf', true, { filename });
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleReset = () => {
-    setFile(null);
-    setPages([]);
+    if (resultBlobUrl) URL.revokeObjectURL(resultBlobUrl);
+    setItems([]);
+    setResultBlobUrl(null);
+    setResultFilename('');
+    setResultSize(0);
     setStatus('idle');
     setProgress(0);
     setProgressText('');
+    setSpecificPagesText('');
     setErrorMsg('');
-    if (resultBlobUrl) {
-      URL.revokeObjectURL(resultBlobUrl);
-      setResultBlobUrl(null);
-    }
-    setResultFilename('');
-    setResultSize(0);
-    setShowPreview(true);
-    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const totalPagesSum = items.reduce((sum, it) => sum + (it.pageCount || 1), 0);
+  const totalSizeSum = items.reduce((sum, it) => sum + it.size, 0);
+
   return (
-    <div className="w-full max-w-5xl mx-auto font-sans space-y-6">
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".pdf, application/pdf"
-        className="hidden"
-        onChange={e => e.target.files?.[0] && handleFileSelect(e.target.files[0])}
-      />
+    <div className="w-full max-w-7xl mx-auto space-y-6">
 
-      <div className="rounded-3xl bg-white dark:bg-[#141622] border border-blue-200 dark:border-[#2A2E45] shadow-xl p-6 sm:p-8">
-        {errorMsg && (
-          <div className="mb-4 flex items-start gap-3 p-4 rounded-2xl bg-red-50 border border-red-200">
-            <AlertCircle className="w-4.5 h-4.5 mt-0.5 shrink-0 text-red-600" />
-            <div className="flex-1 text-left">
-              <p className="text-xs font-bold text-red-700">Rotation Error</p>
-              <p className="text-xs text-red-600 mt-0.5">{errorMsg}</p>
-            </div>
-          </div>
-        )}
-
-        {status === 'idle' && (
-          <div
-            onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
-            onDragLeave={() => setIsDragging(false)}
-            onDrop={e => { e.preventDefault(); setIsDragging(false); if (e.dataTransfer.files?.[0]) handleFileSelect(e.dataTransfer.files[0]); }}
-            onClick={() => fileInputRef.current?.click()}
-            className="cursor-pointer text-center flex flex-col items-center justify-center p-12 rounded-2xl border-2 border-dashed border-blue-300 hover:border-purple-500 bg-linear-to-b from-white to-zinc-50 dark:to-zinc-950/20 min-h-[260px] transition-all"
+      {/* ── Error Banner ──────────────────────────────────── */}
+      {errorMsg && (
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-400 text-xs font-semibold animate-shake">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <p className="flex-1">{errorMsg}</p>
+          <button
+            onClick={() => setErrorMsg('')}
+            className="p-1 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-md transition-colors cursor-pointer"
           >
-            <div className="w-16 h-16 rounded-2xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 flex items-center justify-center mb-4">
-              <RefreshCw className="w-8 h-8" />
-            </div>
-            <h3 className="text-lg font-bold text-zinc-950 dark:text-white mb-2">
-              Select PDF file to rotate
-            </h3>
-            <p className="text-xs text-zinc-500 mb-6">Drop your file here, or click to browse</p>
-            <button
-              type="button"
-              className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md transition-all active:scale-95"
-            >
-              Choose PDF File
-            </button>
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* ── 1. INITIAL UPLOAD SCREEN (iLovePDF Style) ───────── */}
+      {status === 'idle' && items.length === 0 && (
+        <div
+          onDragOver={(e) => { e.preventDefault(); setIsDraggingOver(true); }}
+          onDragLeave={(e) => { e.preventDefault(); setIsDraggingOver(false); }}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDraggingOver(false);
+            if (e.dataTransfer.files.length) {
+              addPdfFiles(Array.from(e.dataTransfer.files));
+            }
+          }}
+          className={`relative border-2 border-dashed rounded-3xl p-10 sm:p-16 text-center transition-all flex flex-col items-center justify-center min-h-[360px] cursor-pointer ${
+            isDraggingOver
+              ? 'border-red-500 bg-red-50/50 dark:bg-red-950/20 scale-[1.01]'
+              : 'border-zinc-300 dark:border-[#2A2E45] bg-[#F8FAFC]/60 dark:bg-[#141622]/60 hover:border-red-400 dark:hover:border-red-600'
+          }`}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf,application/pdf"
+            multiple
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files?.length) {
+                addPdfFiles(Array.from(e.target.files));
+              }
+            }}
+          />
+
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-red-500 text-white flex items-center justify-center shadow-xl shadow-red-500/25 mb-6 group-hover:scale-105 transition-transform">
+            <RefreshCw className="w-10 h-10 sm:w-12 sm:h-12" />
           </div>
-        )}
 
-        {status === 'loading_pdf' && (
-          <div className="py-12 text-center space-y-4">
-            <div className="w-12 h-12 border-4 border-purple-100 border-t-purple-600 rounded-full animate-spin mx-auto" />
-            <p className="text-xs text-zinc-500 font-bold">Loading PDF pages orientation...</p>
+          <button
+            type="button"
+            className="px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-lg sm:text-xl shadow-lg shadow-red-600/30 transition-all flex items-center gap-3 cursor-pointer"
+          >
+            <span>Select PDF files</span>
+            <UploadCloud className="w-6 h-6" />
+          </button>
+
+          <p className="mt-4 text-xs sm:text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+            or drop PDFs here
+          </p>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-[11px] text-zinc-400 dark:text-zinc-500 font-medium">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              100% Private In-Browser Rotation
+            </span>
+            <span>•</span>
+            <span>Rotate Entire Files or Individual Pages</span>
+            <span>•</span>
+            <span>Zero File Limits</span>
           </div>
-        )}
+        </div>
+      )}
 
-        {status === 'ready' && file && (
-          <div className="space-y-6 text-left animate-fade-in">
-            {/* Header controls */}
-            <div className="pb-4 border-b border-zinc-100 dark:border-[#2A2E45] flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white truncate max-w-[200px] sm:max-w-md">{file.name}</h4>
-                  <p className="text-[11px] text-zinc-400 mt-0.5">{pages.length} Pages · {formatBytes(file.size)}</p>
-                </div>
-              </div>
+      {/* ── 2. INTERACTIVE ROTATE WORKSPACE (iLovePDF Style) ── */}
+      {status === 'idle' && items.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-fade-in">
 
+          {/* ── LEFT: INTERACTIVE CARDS CANVAS (8 Cols) ──────── */}
+          <div className="lg:col-span-8 space-y-4">
+            
+            {/* Top Toolbar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xs">
               <div className="flex items-center gap-2">
-                <button
-                  onClick={resetAllRotations}
-                  className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-600 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 transition-colors cursor-pointer"
-                >
-                  Reset All Rotations
-                </button>
-                <button
-                  onClick={handleReset}
-                  className="p-1.5 rounded-lg text-red-500 hover:bg-red-50 transition-colors"
-                  title="Remove document"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                <span className="text-xs font-black text-zinc-900 dark:text-white uppercase tracking-wider">
+                  {items.length === 1 && items[0].pageCount > 1 && activeViewMode === 'pages'
+                    ? 'Individual Pages Canvas'
+                    : 'Documents Canvas'}
+                </span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-zinc-100 dark:bg-[#1B1E2E] text-zinc-600 dark:text-zinc-300">
+                  {items.length} {items.length === 1 ? 'file' : 'files'} • {totalPagesSum} pages
+                </span>
               </div>
-            </div>
 
-            {/* ── Mode Selection Tabs ────────────────────────────────────────── */}
-            <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700">
-              <button
-                type="button"
-                onClick={() => setRotateMode('all')}
-                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                  rotateMode === 'all'
-                    ? 'bg-white dark:bg-purple-950 dark:text-purple-200 text-purple-700 shadow-sm border border-purple-200'
-                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
-                }`}
-              >
-                <RefreshCw className="w-4 h-4" />
-                <span>Rotate All Pages</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setRotateMode('specific')}
-                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                  rotateMode === 'specific'
-                    ? 'bg-white dark:bg-purple-950 dark:text-purple-200 text-purple-700 shadow-sm border border-purple-200'
-                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
-                }`}
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>Rotate Specific Pages</span>
-              </button>
-            </div>
-
-            {/* ── Panel 1: Rotate All Controls ──────────────────────────────── */}
-            {rotateMode === 'all' && (
-              <div className="p-4 rounded-xl bg-purple-50/70 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900/50 space-y-3">
-                <div className="text-xs font-bold text-purple-900 dark:text-purple-300">
-                  Quick Angle Options for All {pages.length} Pages:
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => rotateAll(90)}
-                    className="px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" />
-                    Rotate All +90° Clockwise
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => rotateAll(180)}
-                    className="px-3.5 py-2 bg-purple-100 text-purple-800 hover:bg-purple-200 text-xs font-bold rounded-xl border border-purple-300 transition-all cursor-pointer"
-                  >
-                    Rotate All 180°
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => rotateAll(270)}
-                    className="px-3.5 py-2 bg-purple-100 text-purple-800 hover:bg-purple-200 text-xs font-bold rounded-xl border border-purple-300 transition-all cursor-pointer"
-                  >
-                    Rotate All +270° (90° CCW)
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* ── Panel 2: Rotate Specific Pages Controls ──────────────────── */}
-            {rotateMode === 'specific' && (
-              <div className="p-4 rounded-xl bg-purple-50/70 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900/50 space-y-3">
-                <div className="space-y-1.5 text-left">
-                  <label className="block text-xs font-bold text-purple-950 dark:text-purple-300">
-                    Specific Pages to Rotate (e.g. 1, 3, 5-7)
-                  </label>
-                  <input
-                    type="text"
-                    value={specificPagesInput}
-                    placeholder={`e.g. 1, 3, 5-${pages.length}`}
-                    onChange={(e) => setSpecificPagesInput(e.target.value)}
-                    className="w-full text-xs sm:text-sm rounded-xl px-3.5 py-2.5 border border-purple-300 bg-white dark:bg-zinc-900 font-bold text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                </div>
-
-                {/* Quick Presets */}
-                <div className="flex items-center gap-1.5 flex-wrap text-left">
-                  <span className="text-[11px] font-semibold text-zinc-500 mr-1">Quick Presets:</span>
-                  <button
-                    type="button"
-                    onClick={() => applyPresetSpecificPages('first')}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-zinc-800 hover:bg-purple-100 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer border border-zinc-200 dark:border-zinc-700"
-                  >
-                    First Page (1)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyPresetSpecificPages('last')}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-zinc-800 hover:bg-purple-100 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer border border-zinc-200 dark:border-zinc-700"
-                  >
-                    Last Page ({pages.length})
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyPresetSpecificPages('odd')}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-zinc-800 hover:bg-purple-100 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer border border-zinc-200 dark:border-zinc-700"
-                  >
-                    Odd Pages (1, 3...)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyPresetSpecificPages('even')}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-zinc-800 hover:bg-purple-100 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer border border-zinc-200 dark:border-zinc-700"
-                  >
-                    Even Pages (2, 4...)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyPresetSpecificPages('clear')}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors cursor-pointer"
-                  >
-                    Clear Selection
-                  </button>
-                </div>
-
-                {/* Specific Rotation Action Buttons */}
-                <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => applySpecificRotation(90)}
-                    className="px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" />
-                    Rotate Selected +90°
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applySpecificRotation(180)}
-                    className="px-3.5 py-2 bg-purple-100 text-purple-800 hover:bg-purple-200 text-xs font-bold rounded-xl border border-purple-300 transition-all cursor-pointer"
-                  >
-                    Rotate Selected 180°
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applySpecificRotation(270)}
-                    className="px-3.5 py-2 bg-purple-100 text-purple-800 hover:bg-purple-200 text-xs font-bold rounded-xl border border-purple-300 transition-all cursor-pointer"
-                  >
-                    Rotate Selected +270°
-                  </button>
-                  <button
-                    type="button"
-                    onClick={resetSpecificRotation}
-                    className="px-3.5 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-bold rounded-xl border border-zinc-300 transition-all cursor-pointer"
-                  >
-                    Reset Selected
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Pages Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 py-4 max-h-[500px] overflow-y-auto pr-1">
-              {pages.map((p, idx) => {
-                const targetSet = parsePageNumbers(specificPagesInput, pages.length);
-                const isTargeted = rotateMode === 'specific' && targetSet.has(p.pageIndex);
-                return (
-                  <div
-                    key={p.pageIndex}
-                    className={`group relative rounded-xl border p-3 flex flex-col items-center justify-between space-y-3 transition-all ${
-                      isTargeted
-                        ? 'bg-purple-50/90 dark:bg-purple-950/40 border-purple-400 ring-2 ring-purple-400/50 shadow-md'
-                        : 'bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 shadow-xs'
-                    }`}
-                  >
-                    {/* Rotate Trigger Overlay */}
+              {/* View Switcher if single multi-page PDF */}
+              <div className="flex items-center gap-2">
+                {items.length === 1 && (items[0].pageCount || 1) > 1 && (
+                  <div className="flex items-center gap-1 bg-zinc-100 dark:bg-[#1B1E2E] p-1 rounded-xl text-xs font-bold">
                     <button
-                      onClick={() => {
-                        rotatePage(p.pageIndex, 90);
-                        if (rotateMode === 'specific') {
-                          const currentSet = new Set(targetSet);
-                          currentSet.add(p.pageIndex);
-                          const sorted = Array.from(currentSet).map(n => n + 1).sort((a, b) => a - b);
-                          setSpecificPagesInput(sorted.join(', '));
-                        }
-                      }}
-                      className="absolute top-2 right-2 z-10 p-1.5 bg-purple-600 text-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 cursor-pointer"
-                      title="Rotate 90° Clockwise"
+                      type="button"
+                      onClick={() => setActiveViewMode('documents')}
+                      className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                        activeViewMode === 'documents' ? 'bg-white dark:bg-[#2A2E45] text-red-600 shadow-xs' : 'text-zinc-500'
+                      }`}
                     >
-                      <RefreshCw className="w-3 h-3" />
+                      Entire Document
                     </button>
-
-                    {/* Thumbnail area */}
-                    <div
-                      onClick={() => {
-                        rotatePage(p.pageIndex, 90);
-                        if (rotateMode === 'specific') {
-                          const currentSet = new Set(targetSet);
-                          currentSet.add(p.pageIndex);
-                          const sorted = Array.from(currentSet).map(n => n + 1).sort((a, b) => a - b);
-                          setSpecificPagesInput(sorted.join(', '));
-                        }
-                      }}
-                      className="w-full h-32 flex items-center justify-center cursor-pointer overflow-hidden rounded-lg bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 relative"
+                    <button
+                      type="button"
+                      onClick={() => setActiveViewMode('pages')}
+                      className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                        activeViewMode === 'pages' ? 'bg-white dark:bg-[#2A2E45] text-red-600 shadow-xs' : 'text-zinc-500'
+                      }`}
                     >
-                      {p.thumbnail ? (
-                        <img
-                          src={p.thumbnail}
-                          alt={`Page ${idx + 1}`}
-                          style={{
-                            transform: `rotate(${p.rotation}deg)`,
-                            transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                          }}
-                          className="max-w-full max-h-full object-contain pointer-events-none"
-                        />
-                      ) : (
-                        <div className="w-6 h-6 border-2 border-purple-100 border-t-purple-600 rounded-full animate-spin" />
-                      )}
+                      Page by Page
+                    </button>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => addMoreInputRef.current?.click()}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/40 border border-red-200 dark:border-red-900/50 transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add More</span>
+                </button>
+              </div>
+            </div>
+
+            <input
+              ref={addMoreInputRef}
+              type="file"
+              accept=".pdf,application/pdf"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files?.length) {
+                  addPdfFiles(Array.from(e.target.files));
+                }
+              }}
+            />
+
+            {/* ── VIEW A: DOCUMENTS LEVEL CARDS GRID ────────── */}
+            {activeViewMode === 'documents' && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4 rounded-3xl bg-zinc-100/50 dark:bg-[#141622]/40 border border-zinc-200/80 dark:border-[#2A2E45] max-h-[72vh] overflow-y-auto">
+                {items.map((item, idx) => (
+                  <div
+                    key={item.id}
+                    className="group relative rounded-2xl bg-white dark:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45] hover:border-red-400 dark:hover:border-red-500 p-3 flex flex-col items-center justify-between shadow-xs hover:shadow-md transition-all select-none"
+                  >
+                    {/* Index Badge */}
+                    <div className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full bg-zinc-900/80 text-white text-[10px] font-black backdrop-blur-sm shadow-xs">
+                      {idx + 1}
                     </div>
 
-                    {/* Label */}
-                    <div className="text-center">
-                      <p className="text-xs font-bold text-zinc-700 dark:text-zinc-300">Page {idx + 1}</p>
-                      <p className={`text-[10px] mt-0.5 font-semibold ${p.rotation !== 0 ? 'text-purple-600 dark:text-purple-400 font-bold' : 'text-zinc-400'}`}>
-                        {p.rotation !== 0 ? `${p.rotation}° Rotated` : 'Default 0°'}
+                    {/* Top Right Quick Actions */}
+                    <div className="absolute top-2 right-2 z-10 flex items-center gap-1">
+                      {item.rotation !== 0 && (
+                        <div className="px-1.5 py-0.5 rounded text-[9px] font-black bg-red-600 text-white shadow-xs">
+                          {item.rotation}°
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeItem(item.id)}
+                        className="p-1.5 rounded-lg bg-white/90 dark:bg-[#1B1E2E]/90 hover:bg-red-50 text-zinc-400 hover:text-red-600 shadow-xs transition-colors cursor-pointer"
+                        title="Remove PDF"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    {/* PDF Thumbnail Canvas with Hover Rotate Button */}
+                    <div className="w-full aspect-[3/4] rounded-xl overflow-hidden bg-zinc-50 dark:bg-[#141622] flex items-center justify-center my-2 relative border border-zinc-100 dark:border-[#2A2E45]/40 group">
+                      {item.mainThumbnail ? (
+                        <div
+                          className="w-full h-full flex items-center justify-center transition-transform duration-200"
+                          style={{ transform: `rotate(${item.rotation}deg)` }}
+                        >
+                          <img
+                            src={item.mainThumbnail}
+                            alt={item.name}
+                            className="max-w-full max-h-full object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          className="flex flex-col items-center justify-center text-zinc-400 gap-1 transition-transform duration-200"
+                          style={{ transform: `rotate(${item.rotation}deg)` }}
+                        >
+                          <FileText className="w-10 h-10 text-red-500/60" />
+                          <span className="text-[10px] font-bold">PDF</span>
+                        </div>
+                      )}
+
+                      {/* Prominent Center Hover Rotate Button (iLovePDF Style) */}
+                      <button
+                        type="button"
+                        onClick={() => rotateDoc(item.id, 90)}
+                        className="absolute inset-0 m-auto w-12 h-12 rounded-full bg-red-600/90 hover:bg-red-600 text-white flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all cursor-pointer backdrop-blur-xs"
+                        title="Rotate 90° Clockwise"
+                      >
+                        <RotateCw className="w-6 h-6" />
+                      </button>
+                    </div>
+
+                    {/* Document Meta */}
+                    <div className="w-full text-center space-y-0.5">
+                      <p className="text-xs font-bold text-zinc-800 dark:text-zinc-200 truncate" title={item.name}>
+                        {item.name}
+                      </p>
+                      <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
+                        {item.pageCount} {item.pageCount === 1 ? 'page' : 'pages'} • {fmt(item.size)}
                       </p>
                     </div>
+
+                    {/* Bottom Rotate Trigger */}
+                    <button
+                      type="button"
+                      onClick={() => rotateDoc(item.id, 90)}
+                      className="mt-2 w-full py-1.5 rounded-lg bg-zinc-100 dark:bg-[#141622] hover:bg-red-50 dark:hover:bg-red-950/40 text-zinc-700 dark:text-zinc-300 hover:text-red-600 text-[11px] font-bold transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                    >
+                      <RotateCw className="w-3.5 h-3.5" />
+                      <span>Rotate</span>
+                    </button>
                   </div>
-                );
-              })}
-            </div>
-
-            {/* Bottom panel */}
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-100 dark:border-[#2A2E45]">
-              <button
-                onClick={handleReset}
-                className="px-5 py-2.5 border border-zinc-200 rounded-xl text-xs font-bold text-zinc-500 hover:bg-zinc-50 transition-all"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleRotatePdf}
-                className="px-7 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-extrabold shadow-md flex items-center gap-1.5 transition-all cursor-pointer"
-              >
-                Rotate PDF
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {status === 'processing' && (
-          <div className="py-12 text-center space-y-6">
-            <div className="w-16 h-16 rounded-full border-4 border-purple-100 border-t-purple-600 animate-spin mx-auto flex items-center justify-center">
-              <RefreshCw className="w-6 h-6 text-purple-600 animate-pulse" />
-            </div>
-            <div className="space-y-1">
-              <h4 className="text-sm font-bold text-zinc-900 dark:text-white">Rotating PDF Pages</h4>
-              <p className="text-xs text-zinc-400">{progressText}</p>
-            </div>
-            <div className="max-w-xs mx-auto space-y-2">
-              <div className="progress-track">
-                <div className="progress-fill" style={{ width: `${progress}%` }} />
+                ))}
               </div>
-              <span className="text-[10px] font-bold text-purple-600">{progress}% completed</span>
-            </div>
+            )}
+
+            {/* ── VIEW B: INDIVIDUAL PAGES GRID (Single PDF) ─── */}
+            {activeViewMode === 'pages' && items.length === 1 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4 rounded-3xl bg-zinc-100/50 dark:bg-[#141622]/40 border border-zinc-200/80 dark:border-[#2A2E45] max-h-[72vh] overflow-y-auto">
+                {(items[0].pages || []).map((page) => (
+                  <div
+                    key={page.pageNum}
+                    className="group relative rounded-2xl bg-white dark:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45] hover:border-red-400 p-3 flex flex-col items-center justify-between shadow-xs hover:shadow-md transition-all select-none"
+                  >
+                    <div className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full bg-zinc-900/80 text-white text-[10px] font-black backdrop-blur-sm shadow-xs">
+                      Page {page.pageNum}
+                    </div>
+
+                    {page.rotation !== 0 && (
+                      <div className="absolute top-2 right-2 z-10 px-1.5 py-0.5 rounded text-[9px] font-black bg-red-600 text-white shadow-xs">
+                        {page.rotation}°
+                      </div>
+                    )}
+
+                    <div className="w-full aspect-[3/4] rounded-xl overflow-hidden bg-zinc-50 dark:bg-[#141622] flex items-center justify-center my-2 relative border border-zinc-100 dark:border-[#2A2E45]/40 group">
+                      {page.thumbnail ? (
+                        <div
+                          className="w-full h-full flex items-center justify-center transition-transform duration-200"
+                          style={{ transform: `rotate(${page.rotation}deg)` }}
+                        >
+                          <img
+                            src={page.thumbnail}
+                            alt={`Page ${page.pageNum}`}
+                            className="max-w-full max-h-full object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          className="flex flex-col items-center justify-center text-zinc-400 gap-1"
+                          style={{ transform: `rotate(${page.rotation}deg)` }}
+                        >
+                          <FileText className="w-8 h-8 text-red-500/60" />
+                          <span className="text-[10px] font-bold">Page {page.pageNum}</span>
+                        </div>
+                      )}
+
+                      {/* Center Hover Rotate Button */}
+                      <button
+                        type="button"
+                        onClick={() => rotatePage(items[0].id, page.pageNum, 90)}
+                        className="absolute inset-0 m-auto w-10 h-10 rounded-full bg-red-600/90 hover:bg-red-600 text-white flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all cursor-pointer backdrop-blur-xs"
+                        title="Rotate Page 90°"
+                      >
+                        <RotateCw className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => rotatePage(items[0].id, page.pageNum, 90)}
+                      className="mt-1 w-full py-1.5 rounded-lg bg-zinc-100 dark:bg-[#141622] hover:bg-red-50 text-zinc-700 dark:text-zinc-300 hover:text-red-600 text-[11px] font-bold transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                    >
+                      <RotateCw className="w-3.5 h-3.5" />
+                      <span>Rotate Page</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
           </div>
-        )}
 
-        {status === 'completed' && (
-          <div className="py-8 text-center space-y-6 animate-scale-in">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto shadow-md">
-              <RefreshCw className="w-8 h-8" />
-            </div>
-
-            <div className="space-y-1">
-              <h3 className="text-xl font-bold text-zinc-950 dark:text-white">PDF Rotated Successfully!</h3>
-              <p className="text-xs text-zinc-500">Your rotated document has been processed and is ready for download.</p>
-            </div>
-
-            <div className="max-w-md mx-auto p-4 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-between text-left">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+          {/* ── RIGHT: ILovePDF-STYLE OPTIONS SIDEBAR (4 Cols) ─ */}
+          <div className="lg:col-span-4 space-y-5 sticky top-20">
+            
+            {/* Batch Info Card */}
+            <div className="p-4 rounded-2xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xs flex items-center justify-between">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
                   <File className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold truncate max-w-[200px] sm:max-w-xs">{resultFilename}</p>
-                  <p className="text-[10px] text-zinc-400 mt-0.5">{formatBytes(resultSize)}</p>
+                  <p className="text-xs font-bold text-zinc-900 dark:text-white truncate">
+                    {items.length === 1 ? items[0].name : `${items.length} PDF Documents`}
+                  </p>
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                    {totalPagesSum} total pages • {fmt(totalSizeSum)}
+                  </p>
                 </div>
               </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-md border border-emerald-200">
-                Rotated
-              </span>
-            </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3 max-w-md mx-auto">
               <button
                 type="button"
-                onClick={(e) => {
-                  if (e) e.preventDefault();
-                  if (!resultBlobUrl) return;
-                  const link = document.createElement('a');
-                  link.href = resultBlobUrl;
-                  link.download = resultFilename || 'rotated_document.pdf';
-                  link.style.display = 'none';
-                  document.body.appendChild(link);
-                  link.click();
-                  setTimeout(() => document.body.removeChild(link), 100);
-                }}
-                className="flex-1 min-w-[140px] py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
-              >
-                <Download className="w-4 h-4" />
-                Download PDF
-              </button>
-              {showPreview && (
-                <button
-                  onClick={() => setShowPreview(!showPreview)}
-                  className="px-4 py-3 border border-zinc-200 rounded-xl text-xs font-bold text-zinc-600 hover:bg-zinc-50"
-                >
-                  <Eye className="w-4 h-4" />
-                </button>
-              )}
-              <button
                 onClick={handleReset}
-                className="px-4 py-3 border border-zinc-200 rounded-xl text-xs font-bold text-zinc-600 hover:bg-zinc-50 flex items-center gap-1.5"
+                className="p-1.5 text-zinc-400 hover:text-red-600 rounded-lg hover:bg-zinc-100 dark:hover:bg-[#1B1E2E] transition-colors cursor-pointer"
+                title="Clear all"
               >
                 <RotateCcw className="w-4 h-4" />
-                Rotate Another
               </button>
             </div>
 
-            {resultBlobUrl && showPreview && (
-              <div className="w-full mt-6 pt-6 border-t border-zinc-100 dark:border-[#2A2E45]">
-                <div className="w-full bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl p-2 border border-zinc-200 dark:border-[#2A2E45] shadow-inner overflow-hidden">
-                  <iframe
-                    src={resultBlobUrl}
-                    title="PDF Preview"
-                    className="w-full h-[450px] rounded-xl border-0 bg-white"
-                  />
-                </div>
+            {/* Rotation Controls Card */}
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-sm space-y-5">
+              
+              <div>
+                <h4 className="text-xs font-black text-zinc-900 dark:text-white uppercase tracking-wider mb-1">
+                  Rotation Controls
+                </h4>
+                <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                  Rotate all documents together or click individual cards on the left.
+                </p>
               </div>
+
+              {/* Big Global Rotate Left / Right Buttons */}
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={rotateAllLeft}
+                  className="py-3.5 px-3 rounded-2xl bg-zinc-100 hover:bg-red-50 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-zinc-800 dark:text-zinc-200 hover:text-red-600 border border-zinc-200 dark:border-[#2A2E45] transition-all flex flex-col items-center justify-center gap-1.5 font-bold text-xs cursor-pointer shadow-xs active:scale-95"
+                >
+                  <Undo className="w-5 h-5 text-red-600" />
+                  <span>Rotate Left (-90°)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={rotateAllRight}
+                  className="py-3.5 px-3 rounded-2xl bg-zinc-100 hover:bg-red-50 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-zinc-800 dark:text-zinc-200 hover:text-red-600 border border-zinc-200 dark:border-[#2A2E45] transition-all flex flex-col items-center justify-center gap-1.5 font-bold text-xs cursor-pointer shadow-xs active:scale-95"
+                >
+                  <Redo className="w-5 h-5 text-red-600" />
+                  <span>Rotate Right (+90°)</span>
+                </button>
+              </div>
+
+              {/* Granular Page Rotation Selector (if single PDF) */}
+              {items.length === 1 && (items[0].pageCount || 1) > 1 && (
+                <div className="pt-3 border-t border-zinc-100 dark:border-[#2A2E45] space-y-3">
+                  <div className="space-y-1 text-left">
+                    <label className="text-[11px] font-bold text-zinc-700 dark:text-zinc-300">
+                      Rotate specific pages:
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={specificPagesText}
+                        placeholder={`e.g. 1, 3, 5-${items[0].pageCount}`}
+                        onChange={(e) => setSpecificPagesText(e.target.value)}
+                        className="flex-1 text-xs rounded-xl px-3 py-2 border border-zinc-300 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] font-bold text-zinc-900 dark:text-white focus:ring-2 focus:ring-red-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => applyRotationToSpecificPages(90)}
+                        className="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-black text-white text-xs font-bold transition-colors cursor-pointer"
+                      >
+                        +90°
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Presets */}
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[10px] font-semibold text-zinc-400">Presets:</span>
+                    <button
+                      type="button"
+                      onClick={() => applySpecificPagesPreset('odd')}
+                      className="px-2 py-0.5 rounded text-[10px] font-bold bg-zinc-100 hover:bg-red-50 text-zinc-600 hover:text-red-600 dark:bg-[#1B1E2E] transition-colors cursor-pointer"
+                    >
+                      Odd
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applySpecificPagesPreset('even')}
+                      className="px-2 py-0.5 rounded text-[10px] font-bold bg-zinc-100 hover:bg-red-50 text-zinc-600 hover:text-red-600 dark:bg-[#1B1E2E] transition-colors cursor-pointer"
+                    >
+                      Even
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applySpecificPagesPreset('clear')}
+                      className="px-2 py-0.5 rounded text-[10px] font-bold bg-zinc-100 hover:bg-red-50 text-zinc-600 hover:text-red-600 dark:bg-[#1B1E2E] transition-colors cursor-pointer"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Reset Rotations Action */}
+              <button
+                type="button"
+                onClick={resetAllRotations}
+                className="w-full py-2 text-xs font-bold text-zinc-500 hover:text-red-600 transition-colors cursor-pointer"
+              >
+                Reset all angles to 0°
+              </button>
+
+              {/* Big Prominent Action Button */}
+              <button
+                type="button"
+                onClick={handleRotatePdf}
+                className="w-full py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-base shadow-lg shadow-red-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>Rotate PDF</span>
+                <ArrowRight className="w-5 h-5" />
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
+      {/* ── 3. PROCESSING STATE ────────────────────────────── */}
+      {status === 'processing' && (
+        <div className="rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] p-10 sm:p-16 text-center space-y-6 shadow-sm">
+          <div className="relative w-20 h-20 mx-auto">
+            <div className="w-20 h-20 rounded-full border-4 border-red-100 dark:border-red-950 border-t-red-600 animate-spin" />
+            <div className="absolute inset-0 flex items-center justify-center text-xs font-black text-zinc-900 dark:text-white">
+              {progress}%
+            </div>
+          </div>
+
+          <div className="space-y-2 max-w-md mx-auto">
+            <h3 className="text-base sm:text-lg font-black text-zinc-900 dark:text-white">
+              Rotating your PDF documents...
+            </h3>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+              {progressText || 'Saving new orientation angles...'}
+            </p>
+          </div>
+
+          <div className="max-w-md mx-auto w-full bg-zinc-100 dark:bg-[#1B1E2E] h-2.5 rounded-full overflow-hidden">
+            <div
+              className="bg-red-600 h-full transition-all duration-300 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ── 4. COMPLETION & DOWNLOAD SCREEN ────────────────── */}
+      {status === 'completed' && (
+        <div className="rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] p-8 sm:p-14 text-center space-y-6 shadow-sm animate-scale-up">
+          
+          <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center shadow-lg shadow-emerald-500/20">
+            <CheckCircle2 className="w-10 h-10" />
+          </div>
+
+          <div className="space-y-2 max-w-lg mx-auto">
+            <h2 className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white">
+              PDFs have been rotated!
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+              The new orientation angles have been permanently applied to your document.
+            </p>
+          </div>
+
+          {/* Details Pill */}
+          <div className="inline-flex flex-wrap items-center justify-center gap-3 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-[#1B1E2E] text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            <span className="truncate max-w-xs">{resultFilename}</span>
+            <span>•</span>
+            <span>{isResultZip ? 'Multiple files in ZIP' : 'Standard PDF'}</span>
+            <span>•</span>
+            <span>{fmt(resultSize)}</span>
+          </div>
+
+          {/* Download & Preview Actions */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto pt-2">
+            <a
+              href={resultBlobUrl}
+              download={resultFilename}
+              className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-base shadow-xl shadow-red-600/30 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+            >
+              <Download className="w-5 h-5" />
+              <span>{isResultZip ? 'Download ZIP Archive' : 'Download Rotated PDF'}</span>
+            </a>
+
+            {!isResultZip && (
+              <button
+                type="button"
+                onClick={() => setShowPreview(!showPreview)}
+                className="w-full sm:w-auto px-5 py-4 rounded-2xl bg-zinc-100 dark:bg-[#1B1E2E] hover:bg-zinc-200 dark:hover:bg-[#252A3D] text-zinc-700 dark:text-zinc-200 font-bold text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Eye className="w-4 h-4" />
+                <span>{showPreview ? 'Hide Preview' : 'Preview'}</span>
+              </button>
             )}
           </div>
-        )}
-      </div>
+
+          {/* Preview Iframe */}
+          {showPreview && !isResultZip && resultBlobUrl && (
+            <div className="mt-6 rounded-2xl overflow-hidden border border-zinc-200 dark:border-[#2A2E45] shadow-inner max-w-3xl mx-auto">
+              <iframe
+                src={`${resultBlobUrl}#toolbar=0`}
+                title="Rotated PDF Preview"
+                className="w-full h-[480px] bg-zinc-800"
+              />
+            </div>
+          )}
+
+          {/* Start Over */}
+          <div className="pt-4">
+            <button
+              type="button"
+              onClick={handleReset}
+              className="inline-flex items-center gap-2 text-xs font-bold text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Rotate more PDF files</span>
+            </button>
+          </div>
+
+        </div>
+      )}
+
     </div>
   );
 }
