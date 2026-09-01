@@ -25,6 +25,7 @@ import CropPdfTool from '../pdf/CropPdfTool';
 import ScanToPdfTool from '../pdf/ScanToPdfTool';
 import EditPdfTool from '../pdf/EditPdfTool';
 import SignPdfTool from '../pdf/SignPdfTool';
+import MergePdfTool from '../pdf/MergePdfTool';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
@@ -273,6 +274,8 @@ export default function ToolLayout({ tool }) {
           <EditPdfTool />
         ) : tool.id === 'sign-pdf' ? (
           <SignPdfTool />
+        ) : tool.id === 'merge-pdf' ? (
+          <MergePdfTool />
         ) : (
           <Dropzone tool={tool} />
         )}
