@@ -1,653 +1,874 @@
-import React, { useState, useRef } from 'react';
-import { Crop, Download, RotateCcw, AlertCircle, FileText, Sparkles, File, Trash2, ArrowRight, Check, Sliders } from 'lucide-react';
-import { pdfApi } from '../../services/pdfApi';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import {
+  UploadCloud, File, X, CheckCircle2, Download,
+  RotateCcw, Sparkles, ArrowRight, ShieldCheck, FileText,
+  AlertCircle, Crop, ChevronLeft, ChevronRight, ZoomIn, ZoomOut,
+  Maximize2, Sliders, Eye
+} from 'lucide-react';
+import { PDFDocument } from 'pdf-lib';
+import { analytics } from '../../services/analytics';
+
+// PDF.js dynamic loader for high-res page rendering
+const loadPdfJs = () => {
+  return new Promise((resolve, reject) => {
+    if (window.pdfjsLib) {
+      resolve(window.pdfjsLib);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js';
+    script.onload = () => {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+      resolve(window.pdfjsLib);
+    };
+    script.onerror = () => reject(new Error('Failed to load PDF rendering engine.'));
+    document.body.appendChild(script);
+  });
+};
+
+function parsePageNumbers(str, total) {
+  if (!str || !str.trim()) return new Set();
+  const set = new Set();
+  const parts = str.split(',');
+  for (const p of parts) {
+    const trimmed = p.trim();
+    if (trimmed.includes('-')) {
+      const [startStr, endStr] = trimmed.split('-');
+      const start = parseInt(startStr, 10);
+      const end = parseInt(endStr, 10);
+      if (!isNaN(start) && !isNaN(end)) {
+        for (let i = Math.min(start, end); i <= Math.max(start, end); i++) {
+          if (i >= 1 && i <= total) set.add(i);
+        }
+      }
+    } else {
+      const val = parseInt(trimmed, 10);
+      if (!isNaN(val) && val >= 1 && val <= total) {
+        set.add(val);
+      }
+    }
+  }
+  return set;
+}
 
 export default function CropPdfTool() {
   const [file, setFile] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [status, setStatus] = useState('idle'); // 'idle' | 'loading_pdf' | 'ready' | 'processing' | 'completed'
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
+
+  // Normalized Crop Box Percentages (0 to 100)
+  // x, y = top-left corner in % of page width/height; w, h = width/height in %
+  const [cropBox, setCropBox] = useState({ x: 10, y: 10, w: 80, h: 80 });
+  const [isDraggingBox, setIsDraggingBox] = useState(false);
+  const [activeHandle, setActiveHandle] = useState(null);
+  const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0 });
+  const [initialCropBox, setInitialCropBox] = useState({ x: 10, y: 10, w: 80, h: 80 });
+
+  // Crop Scope
+  const [cropScope, setCropScope] = useState('all'); // 'all' | 'current' | 'custom'
+  const [customPagesText, setCustomPagesText] = useState('1');
+
+  // Processing & Results
+  const [status, setStatus] = useState('idle'); // 'idle' | 'loading_file' | 'processing' | 'completed'
   const [progress, setProgress] = useState(0);
   const [progressText, setProgressText] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-  const [pages, setPages] = useState([]); // Array of { pageIndex, thumbnail: null }
-  
-  // Crop settings
-  const [cropScope, setCropScope] = useState('all'); // 'all' | 'specific'
-  const [pagesToCropInput, setPagesToCropInput] = useState('');
-  const [marginTop, setMarginTop] = useState(10);
-  const [marginBottom, setMarginBottom] = useState(10);
-  const [marginLeft, setMarginLeft] = useState(10);
-  const [marginRight, setMarginRight] = useState(10);
 
   const [resultBlobUrl, setResultBlobUrl] = useState(null);
   const [resultFilename, setResultFilename] = useState('');
   const [resultSize, setResultSize] = useState(0);
-  const [showPreview, setShowPreview] = useState(true);
-  const fileInputRef = useRef(null);
+  const [showPreview, setShowPreview] = useState(false);
 
-  const formatBytes = (bytes) => {
-    if (!bytes) return '0 KB';
+  const fileInputRef = useRef(null);
+  const canvasRef = useRef(null);
+  const canvasContainerRef = useRef(null);
+  const pdfDocRef = useRef(null);
+
+  /* ── Clean up Blob URLs on unmount ────────────────────── */
+  useEffect(() => {
+    return () => {
+      if (resultBlobUrl) URL.revokeObjectURL(resultBlobUrl);
+    };
+  }, [resultBlobUrl]);
+
+  /* ── Format Bytes ─────────────────────────────────────── */
+  const fmt = (bytes) => {
+    if (!bytes || isNaN(bytes)) return '0 KB';
     const k = 1024, s = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / k ** i).toFixed(1)) + ' ' + s[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + s[i];
   };
 
-  const loadPdfJs = () => {
-    return new Promise((resolve, reject) => {
-      if (window.pdfjsLib) {
-        resolve(window.pdfjsLib);
-        return;
-      }
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js';
-      script.onload = () => {
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-        resolve(window.pdfjsLib);
-      };
-      script.onerror = () => reject(new Error('Failed to load PDF engine.'));
-      document.body.appendChild(script);
-    });
-  };
+  /* ── Render Active PDF Page on Canvas ─────────────────── */
+  const renderCurrentPage = useCallback(async (doc, pageNum, zoom) => {
+    if (!doc || !canvasRef.current) return;
+    try {
+      const page = await doc.getPage(pageNum);
+      const viewport = page.getViewport({ scale: 1.2 * zoom });
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
 
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      await page.render({ canvasContext: ctx, viewport }).promise;
+    } catch (err) {
+      console.warn('Page render warning:', err);
+    }
+  }, []);
+
+  /* ── Load Document ────────────────────────────────────── */
   const handleFileSelect = async (incomingFile) => {
     if (!incomingFile) return;
     setErrorMsg('');
-    if (incomingFile.type !== 'application/pdf' && !incomingFile.name.endsWith('.pdf')) {
-      setErrorMsg('Please select a valid PDF document.');
+
+    const isPdf = incomingFile.type === 'application/pdf' || incomingFile.name.toLowerCase().endsWith('.pdf');
+    if (!isPdf) {
+      setErrorMsg('Please upload a valid PDF document.');
+      return;
+    }
+    if (incomingFile.size > 80 * 1024 * 1024) {
+      setErrorMsg('File size exceeds 80 MB limit.');
       return;
     }
 
     setFile(incomingFile);
-    setStatus('loading_pdf');
+    setStatus('loading_file');
+    setProgressText('Loading PDF page...');
 
     try {
       const arrayBuffer = await incomingFile.arrayBuffer();
       const pdfjs = await loadPdfJs();
       const loadingTask = pdfjs.getDocument({ data: new Uint8Array(arrayBuffer) });
-      const pdfDoc = await loadingTask.promise;
-      const count = pdfDoc.numPages;
+      const doc = await loadingTask.promise;
 
-      const newPages = Array.from({ length: count }, (_, i) => ({
-        pageIndex: i,
-        thumbnail: null,
-      }));
-      setPages(newPages);
-      setPagesToCropInput(`1-${count}`);
-      setStatus('ready');
+      pdfDocRef.current = doc;
+      setTotalPages(doc.numPages);
+      setCurrentPage(1);
+      setCustomPagesText(`1-${doc.numPages}`);
+      setCropBox({ x: 8, y: 8, w: 84, h: 84 });
+      setStatus('idle');
 
-      // Async render thumbnails
-      for (let i = 0; i < count; i++) {
-        try {
-          const page = await pdfDoc.getPage(i + 1);
-          const viewport = page.getViewport({ scale: 0.3 });
-          const canvas = document.createElement('canvas');
-          const context = canvas.getContext('2d');
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
-          await page.render({ canvasContext: context, viewport }).promise;
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      setTimeout(() => {
+        renderCurrentPage(doc, 1, zoomLevel);
+      }, 50);
 
-          setPages(prev => prev.map(p => p.pageIndex === i ? { ...p, thumbnail: dataUrl } : p));
-        } catch (thumbErr) {
-          console.warn('Thumbnail generation failed for page:', i + 1, thumbErr);
-        }
-      }
     } catch (err) {
-      console.error(err);
-      setErrorMsg(err.message || 'Failed to load PDF document.');
+      console.error('PDF load error:', err);
+      setErrorMsg('Failed to open PDF document. The file might be corrupted or protected.');
       setFile(null);
       setStatus('idle');
     }
   };
 
-  const parsePageNumbers = (str, total) => {
-    if (!str || !str.trim()) return new Set();
-    const set = new Set();
-    const parts = str.split(',');
-    for (const p of parts) {
-      const trimmed = p.trim();
-      if (trimmed.includes('-')) {
-        const [startStr, endStr] = trimmed.split('-');
-        const start = parseInt(startStr, 10);
-        const end = parseInt(endStr, 10);
-        if (!isNaN(start) && !isNaN(end)) {
-          for (let i = Math.min(start, end); i <= Math.max(start, end); i++) {
-            if (i >= 1 && i <= total) set.add(i - 1);
-          }
-        }
-      } else {
-        const val = parseInt(trimmed, 10);
-        if (!isNaN(val) && val >= 1 && val <= total) {
-          set.add(val - 1);
-        }
+  // Re-render when page or zoom changes
+  useEffect(() => {
+    if (pdfDocRef.current && status === 'idle' && file) {
+      renderCurrentPage(pdfDocRef.current, currentPage, zoomLevel);
+    }
+  }, [currentPage, zoomLevel, renderCurrentPage, status, file]);
+
+  /* ── Interactive Crop Box Mouse / Touch Dragging ──────── */
+  const handleMouseDownBox = (e) => {
+    e.preventDefault();
+    setIsDraggingBox(true);
+    setDragStartPos({ x: e.clientX, y: e.clientY });
+    setInitialCropBox({ ...cropBox });
+  };
+
+  const handleMouseDownHandle = (e, handleName) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setActiveHandle(handleName);
+    setDragStartPos({ x: e.clientX, y: e.clientY });
+    setInitialCropBox({ ...cropBox });
+  };
+
+  const handleMouseMove = useCallback((e) => {
+    if (!isDraggingBox && !activeHandle) return;
+    if (!canvasContainerRef.current) return;
+
+    const rect = canvasContainerRef.current.getBoundingClientRect();
+    const deltaXPercent = ((e.clientX - dragStartPos.x) / rect.width) * 100;
+    const deltaYPercent = ((e.clientY - dragStartPos.y) / rect.height) * 100;
+
+    if (isDraggingBox) {
+      // Move whole box
+      let nextX = Math.max(0, Math.min(100 - initialCropBox.w, initialCropBox.x + deltaXPercent));
+      let nextY = Math.max(0, Math.min(100 - initialCropBox.h, initialCropBox.y + deltaYPercent));
+      setCropBox(prev => ({ ...prev, x: nextX, y: nextY }));
+      return;
+    }
+
+    if (activeHandle) {
+      let { x, y, w, h } = initialCropBox;
+
+      if (activeHandle.includes('e')) { // Right
+        w = Math.max(10, Math.min(100 - x, initialCropBox.w + deltaXPercent));
       }
+      if (activeHandle.includes('s')) { // Bottom
+        h = Math.max(10, Math.min(100 - y, initialCropBox.h + deltaYPercent));
+      }
+      if (activeHandle.includes('w')) { // Left
+        const maxDelta = initialCropBox.w - 10;
+        const clampedDelta = Math.min(maxDelta, Math.max(-initialCropBox.x, deltaXPercent));
+        x = initialCropBox.x + clampedDelta;
+        w = initialCropBox.w - clampedDelta;
+      }
+      if (activeHandle.includes('n')) { // Top
+        const maxDelta = initialCropBox.h - 10;
+        const clampedDelta = Math.min(maxDelta, Math.max(-initialCropBox.y, deltaYPercent));
+        y = initialCropBox.y + clampedDelta;
+        h = initialCropBox.h - clampedDelta;
+      }
+
+      setCropBox({ x, y, w, h });
     }
-    return set;
-  };
+  }, [isDraggingBox, activeHandle, dragStartPos, initialCropBox]);
 
-  const targetPageSet = cropScope === 'all'
-    ? new Set(pages.map(p => p.pageIndex))
-    : parsePageNumbers(pagesToCropInput, pages.length);
+  const handleMouseUp = useCallback(() => {
+    setIsDraggingBox(false);
+    setActiveHandle(null);
+  }, []);
 
-  const togglePageSelection = (idx) => {
-    if (cropScope === 'all') return;
-    const newSet = new Set(targetPageSet);
-    if (newSet.has(idx)) {
-      newSet.delete(idx);
-    } else {
-      newSet.add(idx);
+  useEffect(() => {
+    if (isDraggingBox || activeHandle) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      };
     }
-    const sorted = Array.from(newSet).map(n => n + 1).sort((a, b) => a - b);
-    setPagesToCropInput(sorted.join(', '));
-  };
+  }, [isDraggingBox, activeHandle, handleMouseMove, handleMouseUp]);
 
-  const applyPresetPages = (preset) => {
-    const total = pages.length;
-    if (preset === 'first') setPagesToCropInput('1');
-    else if (preset === 'last') setPagesToCropInput(`${total}`);
-    else if (preset === 'odd') {
-      const odd = Array.from({ length: total }, (_, i) => i + 1).filter(p => p % 2 !== 0);
-      setPagesToCropInput(odd.join(', '));
-    } else if (preset === 'even') {
-      const even = Array.from({ length: total }, (_, i) => i + 1).filter(p => p % 2 === 0);
-      setPagesToCropInput(even.join(', '));
-    } else if (preset === 'clear') {
-      setPagesToCropInput('');
+  /* ── Presets ─────────────────────────────────────────── */
+  const applyPreset = (presetName) => {
+    if (presetName === 'auto_trim') {
+      setCropBox({ x: 5, y: 5, w: 90, h: 90 });
+    } else if (presetName === 'letter_center') {
+      setCropBox({ x: 12, y: 8, w: 76, h: 84 });
+    } else if (presetName === 'square') {
+      setCropBox({ x: 15, y: 20, w: 70, h: 60 });
+    } else if (presetName === 'full') {
+      setCropBox({ x: 0, y: 0, w: 100, h: 100 });
     }
   };
 
-  const applyMarginPreset = (top, bottom, left, right) => {
-    setMarginTop(top);
-    setMarginBottom(bottom);
-    setMarginLeft(left);
-    setMarginRight(right);
-  };
-
+  /* ── Core Crop Execution with PDF-Lib ────────────────── */
   const handleCropPdf = async () => {
-    if (!file) return;
+    if (!file || totalPages === 0) return;
+
     setStatus('processing');
-    setProgress(20);
-    setProgressText('Cropping page margins...');
+    setProgress(15);
+    setProgressText('Preparing crop coordinates...');
     setErrorMsg('');
 
-    await new Promise(resolve => setTimeout(resolve, 80));
-
     try {
-      const options = {
-        cropScope,
-        pagesToCrop: pagesToCropInput,
-        marginTop,
-        marginBottom,
-        marginLeft,
-        marginRight,
-      };
+      const arrayBuffer = await file.arrayBuffer();
+      const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+      const pages = pdfDoc.getPages();
 
-      const croppedBlob = await pdfApi.cropPdf(file, options, (pct, text) => {
-        setProgress(pct);
-        if (text) setProgressText(text);
+      let targetPagesSet = new Set();
+      if (cropScope === 'all') {
+        for (let i = 1; i <= totalPages; i++) targetPagesSet.add(i);
+      } else if (cropScope === 'current') {
+        targetPagesSet.add(currentPage);
+      } else {
+        targetPagesSet = parsePageNumbers(customPagesText, totalPages);
+      }
+
+      if (targetPagesSet.size === 0) {
+        throw new Error('Please select at least one page to crop.');
+      }
+
+      setProgress(40);
+      setProgressText(`Applying crop box to ${targetPagesSet.size} pages...`);
+
+      // cropBox is in percentages: x, y, w, h
+      // Note: PDF coordinate system has (0,0) at bottom-left!
+      pages.forEach((page, idx) => {
+        const pNum = idx + 1;
+        if (targetPagesSet.has(pNum)) {
+          const { width, height } = page.getSize();
+
+          const cropX = (cropBox.x / 100) * width;
+          const cropW = (cropBox.w / 100) * width;
+          // In PDF, Y=0 is bottom, so top-left y% translates to:
+          const cropH = (cropBox.h / 100) * height;
+          const cropY = height - ((cropBox.y / 100) * height) - cropH;
+
+          // Set both CropBox and MediaBox to ensure universal viewer clipping
+          page.setCropBox(cropX, Math.max(0, cropY), cropW, cropH);
+          page.setMediaBox(cropX, Math.max(0, cropY), cropW, cropH);
+        }
       });
 
-      const url = URL.createObjectURL(croppedBlob);
-      setResultBlobUrl(url);
-      setResultFilename(file.name.replace(/\.[^/.]+$/, '') + '_cropped.pdf');
-      setResultSize(croppedBlob.size);
+      setProgress(85);
+      setProgressText('Packaging cropped PDF document...');
+
+      const outBytes = await pdfDoc.save({ useObjectStreams: true });
+      const blob = new Blob([outBytes], { type: 'application/pdf' });
+      const blobUrl = URL.createObjectURL(blob);
+
+      const baseName = file.name.replace(/\.pdf$/i, '');
+      const outName = `${baseName}_cropped.pdf`;
+
+      setResultBlobUrl(blobUrl);
+      setResultFilename(outName);
+      setResultSize(blob.size);
+      setProgress(100);
       setStatus('completed');
+
+      // Auto Download
+      analytics.trackToolExecution('crop-pdf', true, { filename: outName });
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = outName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
     } catch (err) {
-      console.error(err);
-      setErrorMsg('Failed to crop PDF document.');
-      setStatus('ready');
-      setProgress(0);
+      console.error('Crop PDF error:', err);
+      setErrorMsg(err.message || 'Failed to crop PDF document.');
+      setStatus('idle');
     }
   };
 
   const handleReset = () => {
+    if (resultBlobUrl) URL.revokeObjectURL(resultBlobUrl);
     setFile(null);
-    setPages([]);
+    setTotalPages(0);
+    setCurrentPage(1);
+    setResultBlobUrl(null);
+    setResultFilename('');
+    setResultSize(0);
     setStatus('idle');
     setProgress(0);
     setProgressText('');
+    setCropBox({ x: 8, y: 8, w: 84, h: 84 });
     setErrorMsg('');
-    if (resultBlobUrl) {
-      URL.revokeObjectURL(resultBlobUrl);
-      setResultBlobUrl(null);
-    }
-    setResultFilename('');
-    setResultSize(0);
-    setShowPreview(true);
-    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto font-sans space-y-6">
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".pdf, application/pdf"
-        className="hidden"
-        onChange={e => e.target.files?.[0] && handleFileSelect(e.target.files[0])}
-      />
+    <div className="w-full max-w-7xl mx-auto space-y-6">
 
-      <div className="rounded-3xl bg-white dark:bg-[#141622] border border-blue-200 dark:border-[#2A2E45] shadow-xl p-6 sm:p-8">
-        {errorMsg && (
-          <div className="mb-4 flex items-start gap-3 p-4 rounded-2xl bg-red-50 border border-red-200">
-            <AlertCircle className="w-4.5 h-4.5 mt-0.5 shrink-0 text-red-600" />
-            <div className="flex-1 text-left">
-              <p className="text-xs font-bold text-red-700">Crop Error</p>
-              <p className="text-xs text-red-600 mt-0.5">{errorMsg}</p>
-            </div>
-          </div>
-        )}
-
-        {status === 'idle' && (
-          <div
-            onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
-            onDragLeave={() => setIsDragging(false)}
-            onDrop={e => { e.preventDefault(); setIsDragging(false); if (e.dataTransfer.files?.[0]) handleFileSelect(e.dataTransfer.files[0]); }}
-            onClick={() => fileInputRef.current?.click()}
-            className="cursor-pointer text-center flex flex-col items-center justify-center p-12 rounded-2xl border-2 border-dashed border-blue-300 hover:border-purple-500 bg-linear-to-b from-white to-zinc-50 dark:to-zinc-950/20 min-h-[260px] transition-all"
+      {/* ── Error Banner ──────────────────────────────────── */}
+      {errorMsg && (
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-400 text-xs font-semibold animate-shake">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <p className="flex-1">{errorMsg}</p>
+          <button
+            onClick={() => setErrorMsg('')}
+            className="p-1 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-md transition-colors cursor-pointer"
           >
-            <div className="w-16 h-16 rounded-2xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 flex items-center justify-center mb-4">
-              <Crop className="w-8 h-8" />
-            </div>
-            <h3 className="text-lg font-bold text-zinc-950 dark:text-white mb-2">
-              Select PDF file to crop
-            </h3>
-            <p className="text-xs text-zinc-500 mb-6">Drop your PDF file here, or click to browse</p>
-            <button
-              type="button"
-              className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
-            >
-              Choose PDF File
-            </button>
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* ── 1. INITIAL UPLOAD SCREEN (iLovePDF Style) ───────── */}
+      {status === 'idle' && !file && (
+        <div
+          onDragOver={(e) => { e.preventDefault(); setIsDraggingOver(true); }}
+          onDragLeave={(e) => { e.preventDefault(); setIsDraggingOver(false); }}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDraggingOver(false);
+            if (e.dataTransfer.files.length) {
+              handleFileSelect(e.dataTransfer.files[0]);
+            }
+          }}
+          className={`relative border-2 border-dashed rounded-3xl p-10 sm:p-16 text-center transition-all flex flex-col items-center justify-center min-h-[360px] cursor-pointer ${
+            isDraggingOver
+              ? 'border-red-500 bg-red-50/50 dark:bg-red-950/20 scale-[1.01]'
+              : 'border-zinc-300 dark:border-[#2A2E45] bg-[#F8FAFC]/60 dark:bg-[#141622]/60 hover:border-red-400 dark:hover:border-red-600'
+          }`}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf,application/pdf"
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files?.length) {
+                handleFileSelect(e.target.files[0]);
+              }
+            }}
+          />
+
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-red-500 text-white flex items-center justify-center shadow-xl shadow-red-500/25 mb-6 group-hover:scale-105 transition-transform">
+            <Crop className="w-10 h-10 sm:w-12 sm:h-12" />
           </div>
-        )}
 
-        {status === 'loading_pdf' && (
-          <div className="py-12 text-center space-y-4">
-            <div className="w-12 h-12 border-4 border-purple-100 border-t-purple-600 rounded-full animate-spin mx-auto" />
-            <p className="text-xs text-zinc-500 font-bold">Analyzing PDF page dimensions...</p>
+          <button
+            type="button"
+            className="px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-lg sm:text-xl shadow-lg shadow-red-600/30 transition-all flex items-center gap-3 cursor-pointer"
+          >
+            <span>Select PDF file</span>
+            <UploadCloud className="w-6 h-6" />
+          </button>
+
+          <p className="mt-4 text-xs sm:text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+            or drop PDF here
+          </p>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-[11px] text-zinc-400 dark:text-zinc-500 font-medium">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              100% Private In-Browser Crop
+            </span>
+            <span>•</span>
+            <span>Visual Draggable Crop Box</span>
+            <span>•</span>
+            <span>Zero Server Uploads</span>
           </div>
-        )}
+        </div>
+      )}
 
-        {status === 'ready' && file && (
-          <div className="space-y-6 text-left animate-fade-in">
-            {/* Header controls */}
-            <div className="pb-4 border-b border-zinc-100 dark:border-[#2A2E45] flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white truncate max-w-[200px] sm:max-w-md">{file.name}</h4>
-                  <p className="text-[11px] text-zinc-400 mt-0.5">{pages.length} Pages · {formatBytes(file.size)}</p>
-                </div>
-              </div>
+      {/* ── 2. LOADING STATE ───────────────────────────────── */}
+      {status === 'loading_file' && (
+        <div className="rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] p-12 text-center space-y-4 shadow-sm">
+          <div className="w-12 h-12 rounded-full border-4 border-red-200 border-t-red-600 animate-spin mx-auto" />
+          <p className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
+            {progressText || 'Reading PDF pages...'}
+          </p>
+        </div>
+      )}
 
+      {/* ── 3. INTERACTIVE CROP WORKSPACE (iLovePDF Style) ─── */}
+      {status === 'idle' && file && totalPages > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-fade-in">
+
+          {/* ── LEFT: INTERACTIVE CROP VIEWER CANVAS (8 Cols) ─ */}
+          <div className="lg:col-span-8 space-y-3">
+            
+            {/* Page Navigation & Zoom Toolbar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xs">
+              
+              {/* Page Navigator */}
               <div className="flex items-center gap-2">
                 <button
-                  onClick={handleReset}
-                  className="p-1.5 rounded-lg text-red-500 hover:bg-red-50 transition-colors"
-                  title="Remove document"
+                  type="button"
+                  disabled={currentPage <= 1}
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  className="p-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-[#1B1E2E] dark:hover:bg-[#252A3D] text-zinc-700 dark:text-zinc-300 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
+                  title="Previous Page"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                <div className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+                  Page <span className="text-red-600 font-black">{currentPage}</span> of {totalPages}
+                </div>
+
+                <button
+                  type="button"
+                  disabled={currentPage >= totalPages}
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  className="p-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-[#1B1E2E] dark:hover:bg-[#252A3D] text-zinc-700 dark:text-zinc-300 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
+                  title="Next Page"
+                >
+                  <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
-            </div>
 
-            {/* ── Mode Selection Tabs: Crop All vs Crop Specific ──────────── */}
-            <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700">
-              <button
-                type="button"
-                onClick={() => setCropScope('all')}
-                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                  cropScope === 'all'
-                    ? 'bg-white dark:bg-purple-950 dark:text-purple-200 text-purple-700 shadow-sm border border-purple-200'
-                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
-                }`}
-              >
-                <Crop className="w-4 h-4" />
-                <span>Crop All Pages</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setCropScope('specific')}
-                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                  cropScope === 'specific'
-                    ? 'bg-white dark:bg-purple-950 dark:text-purple-200 text-purple-700 shadow-sm border border-purple-200'
-                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
-                }`}
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>Crop Specific Pages</span>
-              </button>
-            </div>
-
-            {/* ── Specific Pages Selector Input (when cropScope === 'specific') ── */}
-            {cropScope === 'specific' && (
-              <div className="p-4 rounded-xl bg-purple-50/70 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900/50 space-y-3">
-                <div className="space-y-1.5 text-left">
-                  <label className="block text-xs font-bold text-purple-950 dark:text-purple-300">
-                    Specific Pages to Crop (e.g. 1, 3, 5-7)
-                  </label>
-                  <input
-                    type="text"
-                    value={pagesToCropInput}
-                    placeholder={`e.g. 1, 3, 5-${pages.length}`}
-                    onChange={(e) => setPagesToCropInput(e.target.value)}
-                    className="w-full text-xs sm:text-sm rounded-xl px-3.5 py-2.5 border border-purple-300 bg-white dark:bg-zinc-900 font-bold text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                </div>
-
-                <div className="flex items-center gap-1.5 flex-wrap text-left">
-                  <span className="text-[11px] font-semibold text-zinc-500 mr-1">Quick Presets:</span>
-                  <button
-                    type="button"
-                    onClick={() => applyPresetPages('first')}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-zinc-800 hover:bg-purple-100 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer border border-zinc-200 dark:border-zinc-700"
-                  >
-                    First Page (1)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyPresetPages('last')}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-zinc-800 hover:bg-purple-100 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer border border-zinc-200 dark:border-zinc-700"
-                  >
-                    Last Page ({pages.length})
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyPresetPages('odd')}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-zinc-800 hover:bg-purple-100 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer border border-zinc-200 dark:border-zinc-700"
-                  >
-                    Odd Pages (1, 3...)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyPresetPages('even')}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-zinc-800 hover:bg-purple-100 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer border border-zinc-200 dark:border-zinc-700"
-                  >
-                    Even Pages (2, 4...)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyPresetPages('clear')}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors cursor-pointer"
-                  >
-                    Clear Selection
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* ── 4-Side Independent Margin Controls ──────────────────────── */}
-            <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-purple-700 dark:text-purple-400 flex items-center gap-1.5">
-                  <Sliders className="w-4 h-4" />
-                  Crop Margins (All 4 Sides):
+              {/* Zoom Controls */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setZoomLevel(prev => Math.max(0.7, prev - 0.15))}
+                  className="p-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-[#1B1E2E] text-zinc-700 dark:text-zinc-300 text-xs font-bold cursor-pointer"
+                  title="Zoom Out"
+                >
+                  <ZoomOut className="w-4 h-4" />
+                </button>
+                <span className="text-[11px] font-mono text-zinc-500 w-12 text-center">
+                  {Math.round(zoomLevel * 100)}%
                 </span>
-
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <button
-                    type="button"
-                    onClick={() => applyMarginPreset(10, 10, 10, 10)}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-zinc-800 hover:bg-purple-100 text-zinc-700 dark:text-zinc-300 border border-zinc-200 cursor-pointer"
-                  >
-                    Equal 10%
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyMarginPreset(15, 15, 0, 0)}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-zinc-800 hover:bg-purple-100 text-zinc-700 dark:text-zinc-300 border border-zinc-200 cursor-pointer"
-                  >
-                    Header/Footer (15%)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyMarginPreset(0, 0, 15, 15)}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-zinc-800 hover:bg-purple-100 text-zinc-700 dark:text-zinc-300 border border-zinc-200 cursor-pointer"
-                  >
-                    Side Margins (15%)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyMarginPreset(0, 0, 0, 0)}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-zinc-200 hover:bg-zinc-300 text-zinc-800 cursor-pointer"
-                  >
-                    Reset (0%)
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setZoomLevel(prev => Math.min(1.6, prev + 0.15))}
+                  className="p-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-[#1B1E2E] text-zinc-700 dark:text-zinc-300 text-xs font-bold cursor-pointer"
+                  title="Zoom In"
+                >
+                  <ZoomIn className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setZoomLevel(1)}
+                  className="px-2 py-1 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-[#1B1E2E] text-[10px] font-bold text-zinc-600 dark:text-zinc-300 cursor-pointer"
+                >
+                  Reset
+                </button>
               </div>
 
-              {/* Grid of 4 Margins */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-1">
-                {/* Top Margin */}
-                <div className="p-3 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-bold text-zinc-800 dark:text-zinc-200">
-                    <span>⬆️ Top Margin</span>
-                    <span className="text-purple-600 font-black">{marginTop}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="40"
-                    value={marginTop}
-                    onChange={(e) => setMarginTop(parseInt(e.target.value, 10))}
-                    className="w-full accent-purple-600 cursor-pointer"
-                  />
-                </div>
-
-                {/* Bottom Margin */}
-                <div className="p-3 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-bold text-zinc-800 dark:text-zinc-200">
-                    <span>⬇️ Bottom Margin</span>
-                    <span className="text-purple-600 font-black">{marginBottom}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="40"
-                    value={marginBottom}
-                    onChange={(e) => setMarginBottom(parseInt(e.target.value, 10))}
-                    className="w-full accent-purple-600 cursor-pointer"
-                  />
-                </div>
-
-                {/* Left Margin */}
-                <div className="p-3 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-bold text-zinc-800 dark:text-zinc-200">
-                    <span>⬅️ Left Margin</span>
-                    <span className="text-purple-600 font-black">{marginLeft}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="40"
-                    value={marginLeft}
-                    onChange={(e) => setMarginLeft(parseInt(e.target.value, 10))}
-                    className="w-full accent-purple-600 cursor-pointer"
-                  />
-                </div>
-
-                {/* Right Margin */}
-                <div className="p-3 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-bold text-zinc-800 dark:text-zinc-200">
-                    <span>➡️ Right Margin</span>
-                    <span className="text-purple-600 font-black">{marginRight}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="40"
-                    value={marginRight}
-                    onChange={(e) => setMarginRight(parseInt(e.target.value, 10))}
-                    className="w-full accent-purple-600 cursor-pointer"
-                  />
-                </div>
-              </div>
             </div>
 
-            {/* ── Pages Grid with Visual Crop Rectangles Overlay ───────────── */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                <span>Visual Crop Preview ({targetPageSet.size} of {pages.length} pages will be cropped):</span>
-                <span className="text-[11px] text-purple-600 font-medium">Click thumbnail to toggle page selection</span>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 py-2 max-h-[460px] overflow-y-auto pr-1">
-                {pages.map((p, idx) => {
-                  const isCropped = targetPageSet.has(p.pageIndex);
-                  return (
-                    <div
-                      key={p.pageIndex}
-                      onClick={() => togglePageSelection(p.pageIndex)}
-                      className={`group relative rounded-xl border p-3 flex flex-col items-center justify-between space-y-3 transition-all cursor-pointer ${
-                        isCropped
-                          ? 'bg-purple-50/90 dark:bg-purple-950/40 border-purple-400 ring-2 ring-purple-400/50 shadow-md'
-                          : 'bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 opacity-60'
-                      }`}
-                    >
-                      {/* Selection Badge */}
-                      <span className={`absolute top-2 right-2 z-10 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                        isCropped ? 'bg-purple-600 text-white shadow-xs' : 'bg-zinc-200 text-zinc-500'
-                      }`}>
-                        {isCropped ? <Check className="w-3 h-3 stroke-[3]" /> : idx + 1}
-                      </span>
-
-                      {/* Thumbnail with visual Crop Box overlay */}
-                      <div className="w-full h-36 flex items-center justify-center overflow-hidden rounded-lg bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 relative">
-                        {p.thumbnail ? (
-                          <div className="relative max-w-full max-h-full flex items-center justify-center">
-                            <img
-                              src={p.thumbnail}
-                              alt={`Page ${idx + 1}`}
-                              className="max-w-full max-h-36 object-contain pointer-events-none"
-                            />
-                            {/* Crop Box Overlay */}
-                            {isCropped && (
-                              <div
-                                className="absolute border-2 border-dashed border-purple-600 bg-purple-500/15 pointer-events-none transition-all"
-                                style={{
-                                  top: `${marginTop}%`,
-                                  bottom: `${marginBottom}%`,
-                                  left: `${marginLeft}%`,
-                                  right: `${marginRight}%`,
-                                }}
-                              />
-                            )}
-                          </div>
-                        ) : (
-                          <div className="w-6 h-6 border-2 border-purple-100 border-t-purple-600 rounded-full animate-spin" />
-                        )}
-                      </div>
-
-                      {/* Label */}
-                      <div className="text-center">
-                        <p className="text-xs font-bold text-zinc-800 dark:text-zinc-200">Page {idx + 1}</p>
-                        <p className={`text-[10px] mt-0.5 font-semibold ${isCropped ? 'text-purple-600 dark:text-purple-400 font-bold' : 'text-zinc-400'}`}>
-                          {isCropped ? 'Cropped' : 'Unchanged'}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Bottom Action Panel */}
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-100 dark:border-[#2A2E45]">
-              <button
-                onClick={handleReset}
-                className="px-5 py-2.5 border border-zinc-200 rounded-xl text-xs font-bold text-zinc-500 hover:bg-zinc-50 transition-all cursor-pointer"
+            {/* Main Interactive Canvas & Draggable Crop Overlay Area */}
+            <div className="p-4 sm:p-6 rounded-3xl bg-zinc-100/70 dark:bg-[#141622]/60 border border-zinc-200 dark:border-[#2A2E45] flex items-center justify-center min-h-[500px] overflow-auto select-none">
+              
+              <div
+                ref={canvasContainerRef}
+                className="relative shadow-2xl bg-white rounded-lg overflow-hidden border border-zinc-300 dark:border-zinc-700 inline-block"
               >
-                Cancel
-              </button>
-              <button
-                onClick={handleCropPdf}
-                className="px-7 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-extrabold shadow-md flex items-center gap-1.5 transition-all cursor-pointer"
-              >
-                Crop PDF
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
+                {/* Real High-Res Rendered PDF Canvas */}
+                <canvas ref={canvasRef} className="block max-w-full h-auto" />
 
-        {status === 'processing' && (
-          <div className="py-12 text-center space-y-6">
-            <div className="w-16 h-16 rounded-full border-4 border-purple-100 border-t-purple-600 animate-spin mx-auto flex items-center justify-center">
-              <Crop className="w-6 h-6 text-purple-600 animate-pulse" />
-            </div>
-            <div className="space-y-1">
-              <h4 className="text-sm font-bold text-zinc-900 dark:text-white">Cropping PDF Pages</h4>
-              <p className="text-xs text-zinc-400">{progressText}</p>
-            </div>
-            <div className="max-w-xs mx-auto space-y-2">
-              <div className="progress-track">
-                <div className="progress-fill" style={{ width: `${progress}%` }} />
+                {/* Darkened Mask Outside Crop Box */}
+                <div
+                  className="absolute inset-0 bg-black/40 pointer-events-none"
+                  style={{
+                    clipPath: `polygon(
+                      0% 0%, 100% 0%, 100% 100%, 0% 100%,
+                      0% 0%,
+                      ${cropBox.x}% ${cropBox.y}%,
+                      ${cropBox.x}% ${cropBox.y + cropBox.h}%,
+                      ${cropBox.x + cropBox.w}% ${cropBox.y + cropBox.h}%,
+                      ${cropBox.x + cropBox.w}% ${cropBox.y}%,
+                      ${cropBox.x}% ${cropBox.y}%
+                    )`
+                  }}
+                />
+
+                {/* ── DRAGGABLE & RESIZABLE CROP BOX OVERLAY ── */}
+                <div
+                  onMouseDown={handleMouseDownBox}
+                  className="absolute border-2 border-red-500 shadow-sm cursor-move group"
+                  style={{
+                    left: `${cropBox.x}%`,
+                    top: `${cropBox.y}%`,
+                    width: `${cropBox.w}%`,
+                    height: `${cropBox.h}%`
+                  }}
+                >
+                  {/* Grid Lines (Rule of Thirds) */}
+                  <div className="w-full h-full grid grid-cols-3 grid-rows-3 pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity">
+                    <div className="border-r border-b border-white/60 border-dashed" />
+                    <div className="border-r border-b border-white/60 border-dashed" />
+                    <div className="border-b border-white/60 border-dashed" />
+                    <div className="border-r border-b border-white/60 border-dashed" />
+                    <div className="border-r border-b border-white/60 border-dashed" />
+                    <div className="border-b border-white/60 border-dashed" />
+                    <div className="border-r border-white/60 border-dashed" />
+                    <div className="border-r border-white/60 border-dashed" />
+                    <div />
+                  </div>
+
+                  {/* 8 Resize Handles */}
+                  {/* NW */}
+                  <div
+                    onMouseDown={(e) => handleMouseDownHandle(e, 'nw')}
+                    className="absolute -top-1.5 -left-1.5 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-nwse-resize shadow-md"
+                  />
+                  {/* N */}
+                  <div
+                    onMouseDown={(e) => handleMouseDownHandle(e, 'n')}
+                    className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-ns-resize shadow-md"
+                  />
+                  {/* NE */}
+                  <div
+                    onMouseDown={(e) => handleMouseDownHandle(e, 'ne')}
+                    className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-nesw-resize shadow-md"
+                  />
+                  {/* E */}
+                  <div
+                    onMouseDown={(e) => handleMouseDownHandle(e, 'e')}
+                    className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-ew-resize shadow-md"
+                  />
+                  {/* SE */}
+                  <div
+                    onMouseDown={(e) => handleMouseDownHandle(e, 'se')}
+                    className="absolute -bottom-1.5 -right-1.5 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-nwse-resize shadow-md"
+                  />
+                  {/* S */}
+                  <div
+                    onMouseDown={(e) => handleMouseDownHandle(e, 's')}
+                    className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-ns-resize shadow-md"
+                  />
+                  {/* SW */}
+                  <div
+                    onMouseDown={(e) => handleMouseDownHandle(e, 'sw')}
+                    className="absolute -bottom-1.5 -left-1.5 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-nesw-resize shadow-md"
+                  />
+                  {/* W */}
+                  <div
+                    onMouseDown={(e) => handleMouseDownHandle(e, 'w')}
+                    className="absolute top-1/2 -translate-y-1/2 -left-1.5 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-ew-resize shadow-md"
+                  />
+
+                  {/* Dimensions Tag */}
+                  <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/80 text-white text-[9px] font-mono font-bold backdrop-blur-xs pointer-events-none">
+                    {Math.round(cropBox.w)}% × {Math.round(cropBox.h)}%
+                  </div>
+                </div>
+
               </div>
-              <span className="text-[10px] font-bold text-purple-600">{progress}% completed</span>
+
             </div>
+
           </div>
-        )}
 
-        {status === 'completed' && (
-          <div className="py-8 text-center space-y-6 animate-scale-in">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto shadow-md">
-              <Crop className="w-8 h-8" />
-            </div>
-
-            <div className="space-y-1">
-              <h3 className="text-xl font-bold text-zinc-950 dark:text-white">PDF Cropped Successfully!</h3>
-              <p className="text-xs text-zinc-500">Your cropped PDF document is ready for download.</p>
-            </div>
-
-            <div className="max-w-md mx-auto p-4 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-between text-left">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+          {/* ── RIGHT: ILovePDF-STYLE OPTIONS SIDEBAR (4 Cols) ─ */}
+          <div className="lg:col-span-4 space-y-5 sticky top-20">
+            
+            {/* File Info */}
+            <div className="p-4 rounded-2xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xs flex items-center justify-between">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
                   <File className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold truncate max-w-[200px] sm:max-w-xs">{resultFilename}</p>
-                  <p className="text-[10px] text-zinc-400 mt-0.5">{formatBytes(resultSize)}</p>
+                  <p className="text-xs font-bold text-zinc-900 dark:text-white truncate" title={file.name}>
+                    {file.name}
+                  </p>
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                    {totalPages} pages • {fmt(file.size)}
+                  </p>
                 </div>
               </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-md border border-emerald-200">
-                Cropped
-              </span>
-            </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3 max-w-md mx-auto">
               <button
                 type="button"
-                onClick={(e) => {
-                  if (e) e.preventDefault();
-                  if (!resultBlobUrl) return;
-                  const link = document.createElement('a');
-                  link.href = resultBlobUrl;
-                  link.download = resultFilename || 'cropped_document.pdf';
-                  link.style.display = 'none';
-                  document.body.appendChild(link);
-                  link.click();
-                  setTimeout(() => document.body.removeChild(link), 100);
-                }}
-                className="flex-1 min-w-[140px] py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
-              >
-                <Download className="w-4 h-4" />
-                Download PDF
-              </button>
-              <button
                 onClick={handleReset}
-                className="px-4 py-3 border border-zinc-200 rounded-xl text-xs font-bold text-zinc-600 hover:bg-zinc-50 flex items-center gap-1.5 cursor-pointer"
+                className="p-1.5 text-zinc-400 hover:text-red-600 rounded-lg hover:bg-zinc-100 dark:hover:bg-[#1B1E2E] transition-colors cursor-pointer"
+                title="Change PDF file"
               >
                 <RotateCcw className="w-4 h-4" />
-                Crop Another
               </button>
             </div>
+
+            {/* Crop Settings Card */}
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-sm space-y-5">
+              
+              <div>
+                <h4 className="text-xs font-black text-zinc-900 dark:text-white uppercase tracking-wider mb-1">
+                  Crop Options
+                </h4>
+                <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                  Drag handles on the canvas or pick a preset below.
+                </p>
+              </div>
+
+              {/* Quick Presets */}
+              <div className="space-y-1.5 text-left">
+                <label className="text-[11px] font-bold text-zinc-700 dark:text-zinc-300">
+                  Crop Presets:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => applyPreset('auto_trim')}
+                    className="py-2 px-2.5 rounded-xl bg-zinc-50 hover:bg-red-50 text-zinc-700 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold border border-zinc-200 dark:border-[#2A2E45] transition-colors cursor-pointer"
+                  >
+                    Trim Margins
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => applyPreset('letter_center')}
+                    className="py-2 px-2.5 rounded-xl bg-zinc-50 hover:bg-red-50 text-zinc-700 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold border border-zinc-200 dark:border-[#2A2E45] transition-colors cursor-pointer"
+                  >
+                    Center Fit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => applyPreset('square')}
+                    className="py-2 px-2.5 rounded-xl bg-zinc-50 hover:bg-red-50 text-zinc-700 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold border border-zinc-200 dark:border-[#2A2E45] transition-colors cursor-pointer"
+                  >
+                    Square Crop
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => applyPreset('full')}
+                    className="py-2 px-2.5 rounded-xl bg-zinc-50 hover:bg-red-50 text-zinc-700 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold border border-zinc-200 dark:border-[#2A2E45] transition-colors cursor-pointer"
+                  >
+                    Reset Full
+                  </button>
+                </div>
+              </div>
+
+              {/* Crop Scope (All pages vs Current vs Custom) */}
+              <div className="space-y-2 pt-2 border-t border-zinc-100 dark:border-[#2A2E45] text-left">
+                <label className="text-[11px] font-bold text-zinc-700 dark:text-zinc-300">
+                  Apply crop to:
+                </label>
+
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2.5 p-2.5 rounded-xl bg-zinc-50 dark:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45] cursor-pointer">
+                    <input
+                      type="radio"
+                      name="cropScope"
+                      checked={cropScope === 'all'}
+                      onChange={() => setCropScope('all')}
+                      className="w-4 h-4 text-red-600 focus:ring-red-500"
+                    />
+                    <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+                      All pages in document ({totalPages} pages)
+                    </span>
+                  </label>
+
+                  <label className="flex items-center gap-2.5 p-2.5 rounded-xl bg-zinc-50 dark:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45] cursor-pointer">
+                    <input
+                      type="radio"
+                      name="cropScope"
+                      checked={cropScope === 'current'}
+                      onChange={() => setCropScope('current')}
+                      className="w-4 h-4 text-red-600 focus:ring-red-500"
+                    />
+                    <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+                      Current page only (Page {currentPage})
+                    </span>
+                  </label>
+
+                  <label className="flex items-center gap-2.5 p-2.5 rounded-xl bg-zinc-50 dark:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45] cursor-pointer">
+                    <input
+                      type="radio"
+                      name="cropScope"
+                      checked={cropScope === 'custom'}
+                      onChange={() => setCropScope('custom')}
+                      className="w-4 h-4 text-red-600 focus:ring-red-500"
+                    />
+                    <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+                      Custom page selection
+                    </span>
+                  </label>
+                </div>
+
+                {cropScope === 'custom' && (
+                  <div className="pt-2">
+                    <input
+                      type="text"
+                      value={customPagesText}
+                      placeholder={`e.g. 1, 3, 5-${totalPages}`}
+                      onChange={(e) => setCustomPagesText(e.target.value)}
+                      className="w-full text-xs rounded-xl px-3 py-2 border border-zinc-300 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] font-bold text-zinc-900 dark:text-white focus:ring-2 focus:ring-red-500"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Big Prominent Action Button */}
+              <button
+                type="button"
+                onClick={handleCropPdf}
+                className="w-full py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-base shadow-lg shadow-red-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>Crop PDF</span>
+                <ArrowRight className="w-5 h-5" />
+              </button>
+
+            </div>
+
           </div>
-        )}
-      </div>
+
+        </div>
+      )}
+
+      {/* ── 4. PROCESSING STATE ────────────────────────────── */}
+      {status === 'processing' && (
+        <div className="rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] p-10 sm:p-16 text-center space-y-6 shadow-sm">
+          <div className="relative w-20 h-20 mx-auto">
+            <div className="w-20 h-20 rounded-full border-4 border-red-100 dark:border-red-950 border-t-red-600 animate-spin" />
+            <div className="absolute inset-0 flex items-center justify-center text-xs font-black text-zinc-900 dark:text-white">
+              {progress}%
+            </div>
+          </div>
+
+          <div className="space-y-2 max-w-md mx-auto">
+            <h3 className="text-base sm:text-lg font-black text-zinc-900 dark:text-white">
+              Cropping PDF document...
+            </h3>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+              {progressText || 'Recalculating page bounding boxes...'}
+            </p>
+          </div>
+
+          <div className="max-w-md mx-auto w-full bg-zinc-100 dark:bg-[#1B1E2E] h-2.5 rounded-full overflow-hidden">
+            <div
+              className="bg-red-600 h-full transition-all duration-300 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ── 5. COMPLETION & DOWNLOAD SCREEN ────────────────── */}
+      {status === 'completed' && (
+        <div className="rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] p-8 sm:p-14 text-center space-y-6 shadow-sm animate-scale-up">
+          
+          <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center shadow-lg shadow-emerald-500/20">
+            <CheckCircle2 className="w-10 h-10" />
+          </div>
+
+          <div className="space-y-2 max-w-lg mx-auto">
+            <h2 className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white">
+              PDF has been cropped!
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+              The selected crop area has been permanently applied to your document pages.
+            </p>
+          </div>
+
+          {/* Details Pill */}
+          <div className="inline-flex flex-wrap items-center justify-center gap-3 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-[#1B1E2E] text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            <span className="truncate max-w-xs">{resultFilename}</span>
+            <span>•</span>
+            <span>{totalPages} pages</span>
+            <span>•</span>
+            <span>{fmt(resultSize)}</span>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto pt-2">
+            <a
+              href={resultBlobUrl}
+              download={resultFilename}
+              className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-base shadow-xl shadow-red-600/30 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+            >
+              <Download className="w-5 h-5" />
+              <span>Download Cropped PDF</span>
+            </a>
+
+            <button
+              type="button"
+              onClick={() => setShowPreview(!showPreview)}
+              className="w-full sm:w-auto px-5 py-4 rounded-2xl bg-zinc-100 dark:bg-[#1B1E2E] hover:bg-zinc-200 dark:hover:bg-[#252A3D] text-zinc-700 dark:text-zinc-200 font-bold text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Eye className="w-4 h-4" />
+              <span>{showPreview ? 'Hide Preview' : 'Preview'}</span>
+            </button>
+          </div>
+
+          {/* Preview Iframe */}
+          {showPreview && resultBlobUrl && (
+            <div className="mt-6 rounded-2xl overflow-hidden border border-zinc-200 dark:border-[#2A2E45] shadow-inner max-w-3xl mx-auto">
+              <iframe
+                src={`${resultBlobUrl}#toolbar=0`}
+                title="Cropped PDF Preview"
+                className="w-full h-[480px] bg-zinc-800"
+              />
+            </div>
+          )}
+
+          {/* Start Over */}
+          <div className="pt-4">
+            <button
+              type="button"
+              onClick={handleReset}
+              className="inline-flex items-center gap-2 text-xs font-bold text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Crop another PDF document</span>
+            </button>
+          </div>
+
+        </div>
+      )}
+
     </div>
   );
 }
