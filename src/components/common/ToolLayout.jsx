@@ -28,6 +28,7 @@ import SignPdfTool from '../pdf/SignPdfTool';
 import MergePdfTool from '../pdf/MergePdfTool';
 import SplitPdfTool from '../pdf/SplitPdfTool';
 import RemovePagesPdfTool from '../pdf/RemovePagesPdfTool';
+import WatermarkPdfTool from '../pdf/WatermarkPdfTool';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
@@ -282,6 +283,8 @@ export default function ToolLayout({ tool }) {
           <SplitPdfTool />
         ) : tool.id === 'remove-pages-pdf' ? (
           <RemovePagesPdfTool />
+        ) : tool.id === 'watermark-pdf' ? (
+          <WatermarkPdfTool />
         ) : (
           <Dropzone tool={tool} />
         )}
