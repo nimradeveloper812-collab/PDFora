@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
-  FileText, Download, Upload, Trash2, Plus, Check, RefreshCw, AlertCircle,
+  FileText, Download, UploadCloud, Trash2, Plus, Check, RefreshCw, AlertCircle,
   Eye, Edit3, Type, Image as ImageIcon, Calendar, CheckSquare, Sparkles,
   ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2, Copy, Layers,
-  RotateCw, ArrowRight, X, Lock, Move, MoveHorizontal
+  RotateCw, ArrowRight, X, Lock, Move, MoveHorizontal, RotateCcw, ShieldCheck
 } from 'lucide-react';
 import { PDFDocument, degrees } from 'pdf-lib';
+import { analytics } from '../../services/analytics';
 
-// Fonts list for typed signatures
+// Fonts list for typed handwriting signatures
 const HANDWRITING_FONTS = [
   { name: 'Dancing Script', family: "'Dancing Script', cursive" },
   { name: 'Great Vibes', family: "'Great Vibes', cursive" },
@@ -26,6 +27,7 @@ export default function SignPdfTool() {
   const [pagesMeta, setPagesMeta] = useState([]); // [{ width, height }]
   const [pageThumbnails, setPageThumbnails] = useState([]);
   const [zoom, setZoom] = useState(1.0);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   // Saved palette items
   const [savedSignatures, setSavedSignatures] = useState([]);
@@ -52,7 +54,7 @@ export default function SignPdfTool() {
   const [typedColor, setTypedColor] = useState('#000000');
 
   // Text & Date field options
-  const [customText, setCustomText] = useState('Confidential');
+  const [customText, setCustomText] = useState('Approved');
   const [textColor, setTextColor] = useState('#000000');
   const [dateStr, setDateStr] = useState(new Date().toISOString().split('T')[0]);
 
@@ -66,6 +68,7 @@ export default function SignPdfTool() {
   const [resultBlobUrl, setResultBlobUrl] = useState(null);
   const [resultFilename, setResultFilename] = useState('');
   const [resultSize, setResultSize] = useState(0);
+  const [showPreview, setShowPreview] = useState(false);
 
   // Refs
   const fileInputRef = useRef(null);
@@ -92,6 +95,13 @@ export default function SignPdfTool() {
     }
   }, []);
 
+  /* ── Clean up Blob URLs on unmount ────────────────────── */
+  useEffect(() => {
+    return () => {
+      if (resultBlobUrl) URL.revokeObjectURL(resultBlobUrl);
+    };
+  }, [resultBlobUrl]);
+
   // Helper to load pdf.js from CDN
   const loadPdfJs = () => {
     return new Promise((resolve, reject) => {
@@ -102,7 +112,9 @@ export default function SignPdfTool() {
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js';
       script.onload = () => {
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        try {
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        } catch (e) {}
         resolve(window.pdfjsLib);
       };
       script.onerror = () => reject(new Error('Failed to load PDF viewer engine.'));
@@ -110,93 +122,94 @@ export default function SignPdfTool() {
     });
   };
 
-  const formatBytes = (bytes) => {
+  const fmt = (bytes) => {
     if (!bytes) return '0 KB';
     const k = 1024, s = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / k ** i).toFixed(1)) + ' ' + s[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + s[i];
   };
 
   // Handle PDF file selection
   const handleFileSelect = async (incomingFile) => {
     if (!incomingFile) return;
     setErrorMsg('');
-    if (incomingFile.type !== 'application/pdf' && !incomingFile.name.endsWith('.pdf')) {
+    if (!incomingFile.name.endsWith('.pdf') && incomingFile.type !== 'application/pdf') {
       setErrorMsg('Please select a valid PDF file.');
       return;
     }
 
     setFile(incomingFile);
     setStatus('loading');
-    setProgressText('Loading PDF document...');
+    setProgressText('Opening PDF document...');
 
     try {
-      const arrayBuffer = await incomingFile.arrayBuffer();
+      const buffer = await incomingFile.arrayBuffer();
       const pdfjs = await loadPdfJs();
-      const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
+      const loadingTask = pdfjs.getDocument({ data: new Uint8Array(buffer) });
       const pdfDoc = await loadingTask.promise;
-      pdfjsDocRef.current = pdfDoc;
 
-      const total = pdfDoc.numPages;
-      setNumPages(total);
+      pdfjsDocRef.current = pdfDoc;
+      const count = pdfDoc.numPages;
+      setNumPages(count);
       setCurrentPage(1);
 
-      // Extract metadata & generate page thumbnails
+      // Fetch metadata & dimensions for each page
       const meta = [];
       const thumbs = [];
-
-      for (let i = 1; i <= Math.min(total, 30); i++) {
+      for (let i = 1; i <= count; i++) {
         const page = await pdfDoc.getPage(i);
-        const viewport = page.getViewport({ scale: 0.25 });
-        meta.push({ width: page.view[2] - page.view[0], height: page.view[3] - page.view[1] });
-
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        await page.render({ canvasContext: ctx, viewport }).promise;
-        thumbs.push(canvas.toDataURL('image/png'));
+        const viewport = page.getViewport({ scale: 1.0 });
+        meta.push({ width: viewport.width, height: viewport.height });
+        thumbs.push({ pageNum: i, thumbnail: null });
       }
-
       setPagesMeta(meta);
       setPageThumbnails(thumbs);
       setStatus('ready');
+
+      // Async render thumbnails in background
+      for (let i = 1; i <= count; i++) {
+        try {
+          const page = await pdfDoc.getPage(i);
+          const viewport = page.getViewport({ scale: 0.25 });
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          await page.render({ canvasContext: ctx, viewport }).promise;
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          setPageThumbnails(prev => prev.map(p => p.pageNum === i ? { ...p, thumbnail: dataUrl } : p));
+        } catch (tErr) {}
+      }
     } catch (err) {
       console.error(err);
-      setErrorMsg('Error opening PDF document: ' + (err.message || err));
+      setErrorMsg('Failed to load PDF. ' + (err.message || ''));
       setStatus('idle');
     }
   };
 
-  // Render main active page onto canvas whenever currentPage or zoom changes
-  const renderCurrentPage = useCallback(async () => {
+  // Render active page canvas whenever currentPage or zoom changes
+  const renderPdfPage = useCallback(async () => {
     if (!pdfjsDocRef.current || status !== 'ready') return;
     try {
       const page = await pdfjsDocRef.current.getPage(currentPage);
+      const viewport = page.getViewport({ scale: 1.35 * zoom });
+
       const canvas = pdfCanvasRef.current;
       if (!canvas) return;
-
       const ctx = canvas.getContext('2d');
-      const dpr = window.devicePixelRatio || 1;
-      const viewport = page.getViewport({ scale: zoom });
 
-      canvas.width = Math.floor(viewport.width * dpr);
-      canvas.height = Math.floor(viewport.height * dpr);
-      canvas.style.width = Math.floor(viewport.width) + 'px';
-      canvas.style.height = Math.floor(viewport.height) + 'px';
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
 
-      ctx.scale(dpr, dpr);
       await page.render({ canvasContext: ctx, viewport }).promise;
     } catch (err) {
-      console.error('Page render error:', err);
+      console.warn('Page render error:', err);
     }
   }, [currentPage, zoom, status]);
 
   useEffect(() => {
-    if (status === 'ready') {
-      renderCurrentPage();
-    }
-  }, [status, currentPage, zoom, renderCurrentPage]);
+    renderPdfPage();
+  }, [renderPdfPage]);
 
   // Handle Drawing Canvas logic
   const startDrawing = (e) => {
@@ -284,7 +297,6 @@ export default function SignPdfTool() {
       const r = data[i];
       const g = data[i + 1];
       const b = data[i + 2];
-      // If pixel is white or nearly white, make transparent
       if (r > 210 && g > 210 && b > 210) {
         data[i + 3] = 0;
       }
@@ -302,189 +314,191 @@ export default function SignPdfTool() {
     if (modalTab === 'signature' || modalTab === 'initials') {
       if (sigMode === 'draw') {
         const canvas = sigCanvasRef.current;
-        if (!canvas || !hasDrawn) return;
+        if (!canvas || !hasDrawn) {
+          setErrorMsg('Please draw your signature first.');
+          return;
+        }
         dataUrl = canvas.toDataURL('image/png');
-        label = modalTab === 'signature' ? 'Drawn Signature' : 'Drawn Initial';
       } else if (sigMode === 'type') {
-        if (!typedName.trim()) return;
+        if (!typedName.trim()) {
+          setErrorMsg('Please type your name or initials.');
+          return;
+        }
         dataUrl = generateTypedSignatureDataUrl(typedName, selectedFont, typedColor);
-        label = typedName;
       }
+      label = modalTab === 'signature' ? 'Signature' : 'Initials';
     } else if (modalTab === 'text') {
-      dataUrl = generateTypedSignatureDataUrl(customText, 'sans-serif', textColor);
-      label = customText;
+      if (!customText.trim()) return;
+      const canvas = document.createElement('canvas');
+      canvas.width = 500;
+      canvas.height = 100;
+      const ctx = canvas.getContext('2d');
+      ctx.font = 'bold 36px sans-serif';
+      ctx.fillStyle = textColor;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(customText, 10, 50);
+      dataUrl = canvas.toDataURL('image/png');
+      label = 'Text';
     } else if (modalTab === 'date') {
-      dataUrl = generateTypedSignatureDataUrl(dateStr, 'sans-serif', textColor);
-      label = dateStr;
+      const canvas = document.createElement('canvas');
+      canvas.width = 400;
+      canvas.height = 100;
+      const ctx = canvas.getContext('2d');
+      ctx.font = 'bold 36px sans-serif';
+      ctx.fillStyle = textColor;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(dateStr, 10, 50);
+      dataUrl = canvas.toDataURL('image/png');
+      label = 'Date';
     } else if (modalTab === 'checkmark') {
-      dataUrl = generateTypedSignatureDataUrl('✓', 'sans-serif', '#10B981');
+      const canvas = document.createElement('canvas');
+      canvas.width = 100;
+      canvas.height = 100;
+      const ctx = canvas.getContext('2d');
+      ctx.font = 'bold 70px sans-serif';
+      ctx.fillStyle = '#EF4444';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('✓', 50, 50);
+      dataUrl = canvas.toDataURL('image/png');
       label = 'Checkmark';
     }
 
     if (!dataUrl) return;
 
+    // Save to palette list
     const newItem = {
-      id: Date.now() + Math.random(),
+      id: Date.now(),
       type: modalTab,
-      label,
-      dataUrl
+      dataUrl,
+      label
     };
 
-    if (modalTab === 'initials') {
-      setSavedInitials(prev => [...prev, newItem]);
-    } else {
-      setSavedSignatures(prev => [...prev, newItem]);
+    if (modalTab === 'signature') {
+      setSavedSignatures(prev => [newItem, ...prev.slice(0, 4)]);
+    } else if (modalTab === 'initials') {
+      setSavedInitials(prev => [newItem, ...prev.slice(0, 4)]);
     }
 
-    // Place element on current page
-    placeElementOnPage(newItem);
+    // Directly place on active document page
+    placeItemOnCurrentPage(dataUrl, modalTab);
+
     setIsModalOpen(false);
     clearSigCanvas();
   };
 
-  // Handle uploaded image file
-  const handleImageUpload = (e) => {
-    const imgFile = e.target.files?.[0];
-    if (!imgFile) return;
+  // Place an item from palette or modal directly onto the current page
+  const placeItemOnCurrentPage = (dataUrl, type = 'signature') => {
+    let width = 160;
+    let height = 70;
 
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      const img = new Image();
-      img.onload = () => {
-        let finalDataUrl = evt.target.result;
-        if (removeBg) {
-          finalDataUrl = removeImageWhiteBg(img);
-        }
+    if (type === 'initials') {
+      width = 90;
+      height = 60;
+    } else if (type === 'date' || type === 'text') {
+      width = 140;
+      height = 45;
+    } else if (type === 'checkmark') {
+      width = 45;
+      height = 45;
+    }
 
-        const newItem = {
-          id: Date.now() + Math.random(),
-          type: 'signature',
-          label: 'Uploaded Image',
-          dataUrl: finalDataUrl
-        };
-
-        setSavedSignatures(prev => [...prev, newItem]);
-        placeElementOnPage(newItem);
-        setIsModalOpen(false);
-      };
-      img.src = evt.target.result;
-    };
-    reader.readAsDataURL(imgFile);
-  };
-
-  // Add an item to the current PDF page
-  const placeElementOnPage = (item) => {
-    const pageMeta = pagesMeta[currentPage - 1] || { width: 600, height: 800 };
-    const defaultW = item.type === 'checkmark' ? 50 : item.type === 'initials' ? 100 : 180;
-    const defaultH = item.type === 'checkmark' ? 50 : item.type === 'initials' ? 60 : 70;
-
-    const newElem = {
+    const newElement = {
       id: Date.now() + Math.random(),
       pageNum: currentPage,
-      type: item.type,
-      dataUrl: item.dataUrl,
-      x: (pageMeta.width / 2) - (defaultW / 2),
-      y: (pageMeta.height / 2) - (defaultH / 2),
-      width: defaultW,
-      height: defaultH,
+      type,
+      dataUrl,
+      x: 100,
+      y: 150,
+      width,
+      height,
       rotation: 0
     };
 
-    setPlacedElements(prev => [...prev, newElem]);
-    setSelectedElementId(newElem.id);
+    setPlacedElements(prev => [...prev, newElement]);
+    setSelectedElementId(newElement.id);
   };
 
-  // Dragging & Resizing Overlay Handlers
-  const handleElementMouseDown = (e, elemId, actionType) => {
+  // Element Interaction: Drag & Drop on Canvas
+  const handleElementMouseDown = (e, elemId) => {
     e.stopPropagation();
-    e.preventDefault();
     setSelectedElementId(elemId);
 
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+    const rect = overlay.getBoundingClientRect();
 
     const elem = placedElements.find(el => el.id === elemId);
     if (!elem) return;
 
     dragInfoRef.current = {
+      action: 'move',
       elemId,
-      actionType,
-      startX: clientX,
-      startY: clientY,
-      initialX: elem.x,
-      initialY: elem.y,
+      startX: e.clientX,
+      startY: e.clientY,
+      initialElemX: elem.x,
+      initialElemY: elem.y,
       initialW: elem.width,
       initialH: elem.height
     };
 
-    const handleWindowMouseMove = (evt) => {
-      if (!dragInfoRef.current) return;
-      const currX = evt.touches ? evt.touches[0].clientX : evt.clientX;
-      const currY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+    window.addEventListener('mousemove', handleElementMouseMove);
+    window.addEventListener('mouseup', handleElementMouseUp);
+  };
 
-      const deltaX = (currX - dragInfoRef.current.startX) / zoom;
-      const deltaY = (currY - dragInfoRef.current.startY) / zoom;
+  const handleResizeMouseDown = (e, elemId) => {
+    e.stopPropagation();
+    const elem = placedElements.find(el => el.id === elemId);
+    if (!elem) return;
 
-      const { elemId, actionType, initialX, initialY, initialW, initialH } = dragInfoRef.current;
-
-      setPlacedElements(prev => prev.map(el => {
-        if (el.id !== elemId) return el;
-
-        if (actionType === 'move') {
-          return {
-            ...el,
-            x: Math.max(0, initialX + deltaX),
-            y: Math.max(0, initialY + deltaY)
-          };
-        } else if (actionType === 'se') {
-          return {
-            ...el,
-            width: Math.max(30, initialW + deltaX),
-            height: Math.max(20, initialH + deltaY)
-          };
-        } else if (actionType === 'sw') {
-          const nextW = Math.max(30, initialW - deltaX);
-          return {
-            ...el,
-            x: initialX + (initialW - nextW),
-            width: nextW,
-            height: Math.max(20, initialH + deltaY)
-          };
-        } else if (actionType === 'ne') {
-          const nextH = Math.max(20, initialH - deltaY);
-          return {
-            ...el,
-            y: initialY + (initialH - nextH),
-            width: Math.max(30, initialW + deltaX),
-            height: nextH
-          };
-        } else if (actionType === 'nw') {
-          const nextW = Math.max(30, initialW - deltaX);
-          const nextH = Math.max(20, initialH - deltaY);
-          return {
-            ...el,
-            x: initialX + (initialW - nextW),
-            y: initialY + (initialH - nextH),
-            width: nextW,
-            height: nextH
-          };
-        }
-        return el;
-      }));
+    dragInfoRef.current = {
+      action: 'resize',
+      elemId,
+      startX: e.clientX,
+      startY: e.clientY,
+      initialW: elem.width,
+      initialH: elem.height
     };
 
-    const handleWindowMouseUp = () => {
-      dragInfoRef.current = null;
-      window.removeEventListener('mousemove', handleWindowMouseMove);
-      window.removeEventListener('mouseup', handleWindowMouseUp);
-      window.removeEventListener('touchmove', handleWindowMouseMove);
-      window.removeEventListener('touchend', handleWindowMouseUp);
-    };
+    window.addEventListener('mousemove', handleElementMouseMove);
+    window.addEventListener('mouseup', handleElementMouseUp);
+  };
 
-    window.addEventListener('mousemove', handleWindowMouseMove);
-    window.addEventListener('mouseup', handleWindowMouseUp);
-    window.addEventListener('touchmove', handleWindowMouseMove);
-    window.addEventListener('touchend', handleWindowMouseUp);
+  const handleElementMouseMove = (e) => {
+    if (!dragInfoRef.current) return;
+    const { action, elemId, startX, startY, initialElemX, initialElemY, initialW, initialH } = dragInfoRef.current;
+
+    const deltaX = (e.clientX - startX) / zoom;
+    const deltaY = (e.clientY - startY) / zoom;
+
+    setPlacedElements(prev => prev.map(el => {
+      if (el.id !== elemId) return el;
+
+      if (action === 'move') {
+        return {
+          ...el,
+          x: Math.max(0, initialElemX + deltaX),
+          y: Math.max(0, initialElemY + deltaY)
+        };
+      } else if (action === 'resize') {
+        const newW = Math.max(40, initialW + deltaX);
+        const newH = Math.max(25, initialH + deltaY);
+        return {
+          ...el,
+          width: newW,
+          height: newH
+        };
+      }
+      return el;
+    }));
+  };
+
+  const handleElementMouseUp = () => {
+    dragInfoRef.current = null;
+    window.removeEventListener('mousemove', handleElementMouseMove);
+    window.removeEventListener('mouseup', handleElementMouseUp);
   };
 
   // Duplicate element
@@ -528,16 +542,17 @@ export default function SignPdfTool() {
   // Apply Signatures & Generate Final Signed PDF
   const handleApplySignatureAndDownload = async () => {
     if (placedElements.length === 0) {
-      setErrorMsg('Please add at least one signature or element onto the document first.');
+      setErrorMsg('Please add at least one signature or field onto the document first.');
       return;
     }
 
     setStatus('processing');
     setProgressText('Embedding signatures and compiling PDF...');
+    setErrorMsg('');
 
     try {
       const origArrayBuffer = await file.arrayBuffer();
-      const pdfDoc = await PDFDocument.load(origArrayBuffer);
+      const pdfDoc = await PDFDocument.load(origArrayBuffer, { ignoreEncryption: true });
       const pages = pdfDoc.getPages();
 
       for (let i = 0; i < pages.length; i++) {
@@ -557,7 +572,7 @@ export default function SignPdfTool() {
           const imageBytes = await fetch(elem.dataUrl).then(res => res.arrayBuffer());
           const embeddedImage = await pdfDoc.embedPng(imageBytes);
 
-          // Convert Canvas coordinates (top-left 0,0) to PDF coordinates (bottom-left 0,0)
+          // Convert Canvas coordinates to PDF coordinates
           const scaleX = pdfW / pageMeta.width;
           const scaleY = pdfH / pageMeta.height;
 
@@ -568,7 +583,7 @@ export default function SignPdfTool() {
 
           page.drawImage(embeddedImage, {
             x: elemPdfX,
-            y: elemPdfY,
+            y: Math.max(0, elemPdfY),
             width: elemPdfW,
             height: elemPdfH,
             rotate: degrees(elem.rotation || 0)
@@ -576,14 +591,27 @@ export default function SignPdfTool() {
         }
       }
 
-      const signedPdfBytes = await pdfDoc.save();
+      const signedPdfBytes = await pdfDoc.save({ useObjectStreams: true });
       const blob = new Blob([signedPdfBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
 
+      const baseName = file.name.replace(/\.pdf$/i, '');
+      const outName = `${baseName}_signed.pdf`;
+
       setResultBlobUrl(url);
-      setResultFilename(file.name.replace(/\.pdf$/i, '_signed.pdf'));
+      setResultFilename(outName);
       setResultSize(blob.size);
       setStatus('completed');
+
+      // Auto Download
+      analytics.trackToolExecution('sign-pdf', true, { filename: outName });
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = outName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
     } catch (err) {
       console.error(err);
       setErrorMsg('Failed to sign PDF: ' + (err.message || err));
@@ -591,79 +619,125 @@ export default function SignPdfTool() {
     }
   };
 
+  const handleReset = () => {
+    if (resultBlobUrl) URL.revokeObjectURL(resultBlobUrl);
+    setFile(null);
+    setNumPages(0);
+    setCurrentPage(1);
+    setPlacedElements([]);
+    setSelectedElementId(null);
+    setResultBlobUrl(null);
+    setResultFilename('');
+    setResultSize(0);
+    setStatus('idle');
+    setProgress(0);
+    setProgressText('');
+    setErrorMsg('');
+  };
+
   const currentPlacedElements = placedElements.filter(el => el.pageNum === currentPage);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 font-sans">
-      {/* ── IDLE / FILE DROPZONE STATE ─────────────────────────────────────── */}
-      {status === 'idle' && (
-        <div className="max-w-2xl mx-auto space-y-4 text-center">
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            className="group cursor-pointer p-10 rounded-3xl border-2 border-dashed border-purple-300 dark:border-purple-800/60 bg-purple-50/40 dark:bg-purple-950/20 hover:bg-purple-100/50 dark:hover:bg-purple-950/40 transition-all text-center space-y-4"
+    <div className="w-full max-w-7xl mx-auto space-y-6 font-sans">
+      
+      {/* ── Error Banner ──────────────────────────────────── */}
+      {errorMsg && (
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-400 text-xs font-semibold animate-shake">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <p className="flex-1">{errorMsg}</p>
+          <button
+            onClick={() => setErrorMsg('')}
+            className="p-1 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-md transition-colors cursor-pointer"
           >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="application/pdf"
-              className="hidden"
-              onChange={(e) => handleFileSelect(e.target.files?.[0])}
-            />
-            <div className="w-16 h-16 mx-auto rounded-2xl bg-purple-600 text-white flex items-center justify-center shadow-lg shadow-purple-600/30 group-hover:scale-110 transition-transform">
-              <Edit3 className="w-8 h-8" />
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">
-                Select PDF file to Sign
-              </h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto">
-                Create electronic signatures, add text & dates, and sign your PDF directly in your browser.
-              </p>
-            </div>
-            <button
-              type="button"
-              className="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md transition-all inline-flex items-center gap-2"
-            >
-              <Upload className="w-4 h-4" />
-              Select File
-            </button>
-          </div>
-
-          {errorMsg && (
-            <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-xs font-semibold text-red-600 dark:text-red-300 flex items-center justify-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 
-      {/* ── LOADING STATE ─────────────────────────────────────────────────── */}
+      {/* ── 1. INITIAL UPLOAD SCREEN (iLovePDF Style) ───────── */}
+      {status === 'idle' && (
+        <div
+          onDragOver={(e) => { e.preventDefault(); setIsDraggingOver(true); }}
+          onDragLeave={(e) => { e.preventDefault(); setIsDraggingOver(false); }}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDraggingOver(false);
+            if (e.dataTransfer.files.length) {
+              handleFileSelect(e.dataTransfer.files[0]);
+            }
+          }}
+          className={`relative border-2 border-dashed rounded-3xl p-10 sm:p-16 text-center transition-all flex flex-col items-center justify-center min-h-[360px] cursor-pointer ${
+            isDraggingOver
+              ? 'border-red-500 bg-red-50/50 dark:bg-red-950/20 scale-[1.01]'
+              : 'border-zinc-300 dark:border-[#2A2E45] bg-[#F8FAFC]/60 dark:bg-[#141622]/60 hover:border-red-400 dark:hover:border-red-600'
+          }`}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf,application/pdf"
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files?.length) {
+                handleFileSelect(e.target.files[0]);
+              }
+            }}
+          />
+
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-red-500 text-white flex items-center justify-center shadow-xl shadow-red-500/25 mb-6 group-hover:scale-105 transition-transform">
+            <Edit3 className="w-10 h-10 sm:w-12 sm:h-12" />
+          </div>
+
+          <button
+            type="button"
+            className="px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-lg sm:text-xl shadow-lg shadow-red-600/30 transition-all flex items-center gap-3 cursor-pointer"
+          >
+            <span>Select PDF file</span>
+            <UploadCloud className="w-6 h-6" />
+          </button>
+
+          <p className="mt-4 text-xs sm:text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+            or drop PDF here
+          </p>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-[11px] text-zinc-400 dark:text-zinc-500 font-medium">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              100% Private In-Browser Electronic Signatures
+            </span>
+            <span>•</span>
+            <span>Draw, Type or Upload Signatures &amp; Initials</span>
+            <span>•</span>
+            <span>Zero File Limits</span>
+          </div>
+        </div>
+      )}
+
+      {/* ── 2. LOADING STATE ───────────────────────────────── */}
       {(status === 'loading' || status === 'processing') && (
-        <div className="max-w-md mx-auto p-8 rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xl text-center space-y-4">
-          <RefreshCw className="w-10 h-10 text-purple-600 animate-spin mx-auto" />
-          <div className="space-y-1">
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
-              {status === 'loading' ? 'Opening Document...' : 'Signing PDF Document...'}
-            </h3>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">{progressText}</p>
-          </div>
+        <div className="rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] p-12 text-center space-y-4 shadow-sm">
+          <div className="w-12 h-12 rounded-full border-4 border-red-200 border-t-red-600 animate-spin mx-auto" />
+          <p className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
+            {progressText || 'Processing document...'}
+          </p>
         </div>
       )}
 
-      {/* ── READY / INTERACTIVE SIGNING WORKSPACE ───────────────────────────── */}
-      {status === 'ready' && (
-        <div className="space-y-4">
-          {/* Top Control Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-sm">
+      {/* ── 3. INTERACTIVE SIGNING WORKSPACE (iLovePDF Style) ─ */}
+      {status === 'ready' && file && (
+        <div className="space-y-4 animate-fade-in">
+          
+          {/* Top Control Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xs">
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setIsModalOpen(true)}
-                className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md shadow-red-600/20 transition-all flex items-center gap-2 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
-                <span>Add Signature / Field</span>
+                <span>Create Signature / Field</span>
               </button>
             </div>
 
@@ -672,29 +746,28 @@ export default function SignPdfTool() {
               <button
                 disabled={currentPage <= 1}
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                className="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 disabled:opacity-40 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                className="p-1.5 rounded-lg border border-zinc-200 dark:border-[#2A2E45] disabled:opacity-40 cursor-pointer hover:bg-zinc-100 dark:hover:bg-[#1B1E2E]"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <span>
-                Page {currentPage} of {numPages}
+                Page <span className="text-red-600 font-black">{currentPage}</span> of {numPages}
               </span>
               <button
                 disabled={currentPage >= numPages}
                 onClick={() => setCurrentPage(prev => Math.min(numPages, prev + 1))}
-                className="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 disabled:opacity-40 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                className="p-1.5 rounded-lg border border-zinc-200 dark:border-[#2A2E45] disabled:opacity-40 cursor-pointer hover:bg-zinc-100 dark:hover:bg-[#1B1E2E]"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Zoom & Action Button */}
+            {/* Zoom Controls & Sign Button */}
             <div className="flex items-center gap-2">
-              <div className="flex items-center rounded-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden text-xs bg-zinc-50 dark:bg-zinc-800">
+              <div className="flex items-center rounded-xl border border-zinc-200 dark:border-[#2A2E45] overflow-hidden text-xs bg-zinc-50 dark:bg-[#1B1E2E]">
                 <button
-                  onClick={() => setZoom(z => Math.max(0.5, z - 0.25))}
-                  className="p-1.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300"
-                  title="Zoom Out"
+                  onClick={() => setZoom(z => Math.max(0.6, z - 0.2))}
+                  className="p-1.5 hover:bg-zinc-200 dark:hover:bg-[#252A3D] text-zinc-700 dark:text-zinc-300"
                 >
                   <ZoomOut className="w-3.5 h-3.5" />
                 </button>
@@ -702,9 +775,8 @@ export default function SignPdfTool() {
                   {Math.round(zoom * 100)}%
                 </span>
                 <button
-                  onClick={() => setZoom(z => Math.min(2.0, z + 0.25))}
-                  className="p-1.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300"
-                  title="Zoom In"
+                  onClick={() => setZoom(z => Math.min(1.8, z + 0.2))}
+                  className="p-1.5 hover:bg-zinc-200 dark:hover:bg-[#252A3D] text-zinc-700 dark:text-zinc-300"
                 >
                   <ZoomIn className="w-3.5 h-3.5" />
                 </button>
@@ -713,275 +785,352 @@ export default function SignPdfTool() {
               <button
                 type="button"
                 onClick={handleApplySignatureAndDownload}
-                className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-md shadow-red-600/30 transition-all flex items-center gap-2 cursor-pointer"
               >
-                <Check className="w-4 h-4" />
-                <span>Sign & Download</span>
+                <span>Sign PDF</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          {errorMsg && (
-            <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-xs font-semibold text-red-600 dark:text-red-300 flex items-center justify-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
-
-          {/* Main Document View & Sidebar Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-start">
-            {/* Saved Signatures & Thumbnails Sidebar */}
-            <div className="lg:col-span-1 space-y-4">
-              {/* Palette of Saved Signatures */}
-              <div className="p-4 rounded-2xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] space-y-3">
-                <h4 className="text-xs font-extrabold uppercase tracking-wider text-purple-600 dark:text-purple-400 flex items-center justify-between">
-                  <span>Signature Palette</span>
-                  <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="p-1 rounded hover:bg-purple-50 dark:hover:bg-purple-950 text-purple-600"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </h4>
-
-                {savedSignatures.length === 0 && savedInitials.length === 0 ? (
-                  <p className="text-[11px] text-zinc-400 italic text-center py-3">
-                    No saved signatures yet. Click "Add Signature" to create one!
-                  </p>
-                ) : (
-                  <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
-                    {savedSignatures.map(sig => (
-                      <div
-                        key={sig.id}
-                        onClick={() => placeElementOnPage(sig)}
-                        className="group p-2 rounded-xl bg-zinc-50 dark:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45] hover:border-purple-500 cursor-pointer flex items-center justify-between transition-all"
-                      >
-                        <img src={sig.dataUrl} alt={sig.label} className="max-h-8 object-contain" />
-                        <span className="text-[10px] font-bold text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                          + Add
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Page Thumbnails Drawer */}
-              <div className="p-4 rounded-2xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] space-y-3">
-                <h4 className="text-xs font-extrabold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                  Pages ({numPages})
-                </h4>
-                <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
-                  {pageThumbnails.map((thumb, idx) => {
-                    const pNum = idx + 1;
-                    const isCur = currentPage === pNum;
-                    const hasElem = placedElements.some(el => el.pageNum === pNum);
-
-                    return (
-                      <div
-                        key={pNum}
-                        onClick={() => setCurrentPage(pNum)}
-                        className={`relative p-1.5 rounded-xl border cursor-pointer transition-all text-center space-y-1 ${
-                          isCur
-                            ? 'border-purple-600 bg-purple-50/50 dark:bg-purple-950/40'
-                            : 'border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] hover:border-purple-400'
-                        }`}
-                      >
-                        <img src={thumb} alt={`Page ${pNum}`} className="w-full rounded object-contain shadow-xs" />
-                        <div className="flex items-center justify-between px-1 text-[10px] font-bold text-zinc-600 dark:text-zinc-400">
-                          <span>p. {pNum}</span>
-                          {hasElem && <Check className="w-3 h-3 text-emerald-600" />}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            {/* Document Render Viewport & Placement Canvas */}
-            <div className="lg:col-span-3 p-4 rounded-2xl bg-zinc-100 dark:bg-[#141622]/60 border border-zinc-200 dark:border-[#2A2E45] flex justify-center items-start overflow-auto min-h-[500px]">
+          {/* Main 2-Column Signing Workspace */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            {/* ── LEFT: INTERACTIVE SIGNING CANVAS (8 Cols) ───── */}
+            <div className="lg:col-span-8 p-4 sm:p-6 rounded-3xl bg-zinc-100/70 dark:bg-[#141622]/60 border border-zinc-200 dark:border-[#2A2E45] flex items-center justify-center min-h-[540px] overflow-auto select-none">
+              
               <div
-                className="relative shadow-2xl rounded-lg overflow-hidden bg-white select-none"
+                ref={overlayRef}
                 onClick={() => setSelectedElementId(null)}
+                className="relative shadow-2xl bg-white rounded-lg overflow-hidden border border-zinc-300 dark:border-zinc-700 inline-block"
               >
                 {/* PDF Page Canvas */}
-                <canvas ref={pdfCanvasRef} className="block" />
+                <canvas ref={pdfCanvasRef} className="block max-w-full h-auto pointer-events-none" />
 
-                {/* Overlaid Placed Elements Container */}
-                <div
-                  ref={overlayRef}
-                  className="absolute inset-0 pointer-events-auto"
-                  style={{
-                    width: pdfCanvasRef.current ? pdfCanvasRef.current.style.width : 'auto',
-                    height: pdfCanvasRef.current ? pdfCanvasRef.current.style.height : 'auto'
-                  }}
-                >
-                  {currentPlacedElements.map((elem) => {
-                    const isSelected = selectedElementId === elem.id;
+                {/* Placed Interactive Signature Overlay Elements */}
+                {currentPlacedElements.map((elem) => {
+                  const isSelected = selectedElementId === elem.id;
 
-                    return (
-                      <div
-                        key={elem.id}
-                        onMouseDown={(e) => handleElementMouseDown(e, elem.id, 'move')}
-                        onTouchStart={(e) => handleElementMouseDown(e, elem.id, 'move')}
-                        style={{
-                          position: 'absolute',
-                          left: elem.x * zoom,
-                          top: elem.y * zoom,
-                          width: elem.width * zoom,
-                          height: elem.height * zoom,
-                          transform: `rotate(${elem.rotation || 0}deg)`,
-                          cursor: 'move'
-                        }}
-                        className={`group absolute border-2 transition-shadow ${
-                          isSelected
-                            ? 'border-purple-600 shadow-xl ring-2 ring-purple-600/30'
-                            : 'border-transparent hover:border-purple-400/80'
-                        }`}
-                      >
-                        {/* Signature / Element Image */}
-                        <img
-                          src={elem.dataUrl}
-                          alt="signature element"
-                          className="w-full h-full object-contain pointer-events-none"
-                        />
+                  return (
+                    <div
+                      key={elem.id}
+                      onMouseDown={(e) => handleElementMouseDown(e, elem.id)}
+                      className={`absolute group cursor-move select-none p-1 rounded transition-shadow ${
+                        isSelected
+                          ? 'border-2 border-dashed border-red-500 ring-2 ring-red-500/30 bg-white/40 shadow-lg z-20'
+                          : 'border border-transparent hover:border-red-400/80 z-10'
+                      }`}
+                      style={{
+                        left: `${elem.x * zoom}px`,
+                        top: `${elem.y * zoom}px`,
+                        width: `${elem.width * zoom}px`,
+                        height: `${elem.height * zoom}px`,
+                        transform: `rotate(${elem.rotation || 0}deg)`
+                      }}
+                    >
+                      <img
+                        src={elem.dataUrl}
+                        alt={elem.type}
+                        className="w-full h-full object-contain pointer-events-none"
+                      />
 
-                        {/* Interactive Floating Action Toolbar when Selected */}
-                        {isSelected && (
-                          <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-zinc-900 text-white rounded-lg px-2 py-1 flex items-center gap-1.5 shadow-xl text-xs z-30 pointer-events-auto">
+                      {/* Element Action Controls if Selected */}
+                      {isSelected && (
+                        <>
+                          <div className="absolute -top-7 right-0 flex items-center gap-1 bg-zinc-900/90 text-white rounded-md p-1 shadow-md text-[10px] backdrop-blur-xs">
                             <button
-                              title="Duplicate"
+                              type="button"
                               onClick={(e) => { e.stopPropagation(); duplicateElement(elem.id); }}
-                              className="p-1 hover:bg-zinc-700 rounded text-zinc-300 hover:text-white"
+                              className="p-0.5 hover:text-red-400"
+                              title="Duplicate"
                             >
-                              <Copy className="w-3.5 h-3.5" />
+                              <Copy className="w-3 h-3" />
                             </button>
                             <button
-                              title="Apply to All Pages"
+                              type="button"
                               onClick={(e) => { e.stopPropagation(); applyToAllPages(elem.id); }}
-                              className="p-1 hover:bg-zinc-700 rounded text-zinc-300 hover:text-white"
+                              className="p-0.5 hover:text-emerald-400"
+                              title="Apply to all pages"
                             >
-                              <Layers className="w-3.5 h-3.5" />
+                              <Layers className="w-3 h-3" />
                             </button>
                             <button
-                              title="Delete"
+                              type="button"
                               onClick={(e) => { e.stopPropagation(); deleteElement(elem.id); }}
-                              className="p-1 hover:bg-red-600 rounded text-red-400 hover:text-white"
+                              className="p-0.5 hover:text-red-400"
+                              title="Delete"
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
+                              <Trash2 className="w-3 h-3" />
                             </button>
                           </div>
-                        )}
 
-                        {/* Corner Resize Handles when Selected */}
-                        {isSelected && (
-                          <>
-                            <div
-                              onMouseDown={(e) => handleElementMouseDown(e, elem.id, 'nw')}
-                              onTouchStart={(e) => handleElementMouseDown(e, elem.id, 'nw')}
-                              className="w-3 h-3 bg-purple-600 border border-white rounded-full absolute -top-1.5 -left-1.5 cursor-nwse-resize z-20"
-                            />
-                            <div
-                              onMouseDown={(e) => handleElementMouseDown(e, elem.id, 'ne')}
-                              onTouchStart={(e) => handleElementMouseDown(e, elem.id, 'ne')}
-                              className="w-3 h-3 bg-purple-600 border border-white rounded-full absolute -top-1.5 -right-1.5 cursor-nesw-resize z-20"
-                            />
-                            <div
-                              onMouseDown={(e) => handleElementMouseDown(e, elem.id, 'sw')}
-                              onTouchStart={(e) => handleElementMouseDown(e, elem.id, 'sw')}
-                              className="w-3 h-3 bg-purple-600 border border-white rounded-full absolute -bottom-1.5 -left-1.5 cursor-nesw-resize z-20"
-                            />
-                            <div
-                              onMouseDown={(e) => handleElementMouseDown(e, elem.id, 'se')}
-                              onTouchStart={(e) => handleElementMouseDown(e, elem.id, 'se')}
-                              className="w-3 h-3 bg-purple-600 border border-white rounded-full absolute -bottom-1.5 -right-1.5 cursor-nwse-resize z-20"
-                            />
-                          </>
+                          {/* Resize Handle */}
+                          <div
+                            onMouseDown={(e) => handleResizeMouseDown(e, elem.id)}
+                            className="absolute -bottom-1.5 -right-1.5 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-nwse-resize shadow-md"
+                          />
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+
+              </div>
+
+            </div>
+
+            {/* ── RIGHT: SIGNATURE PALETTE & PAGES (4 Cols) ───── */}
+            <div className="lg:col-span-4 space-y-4 sticky top-20">
+              
+              {/* Palette Card */}
+              <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-sm space-y-4">
+                
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-black text-zinc-900 dark:text-white uppercase tracking-wider">
+                    Signatures Palette
+                  </h4>
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(true)}
+                    className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Create New</span>
+                  </button>
+                </div>
+
+                {/* Quick Add Buttons */}
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => { setModalTab('signature'); setIsModalOpen(true); }}
+                    className="p-2.5 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 hover:bg-red-50 text-zinc-800 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold transition-colors flex items-center gap-2 cursor-pointer"
+                  >
+                    <Edit3 className="w-4 h-4 text-red-600" />
+                    <span>Signature</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setModalTab('initials'); setIsModalOpen(true); }}
+                    className="p-2.5 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 hover:bg-red-50 text-zinc-800 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold transition-colors flex items-center gap-2 cursor-pointer"
+                  >
+                    <Type className="w-4 h-4 text-red-600" />
+                    <span>Initials</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setModalTab('date'); setIsModalOpen(true); }}
+                    className="p-2.5 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 hover:bg-red-50 text-zinc-800 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold transition-colors flex items-center gap-2 cursor-pointer"
+                  >
+                    <Calendar className="w-4 h-4 text-red-600" />
+                    <span>Date Stamp</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setModalTab('checkmark'); setIsModalOpen(true); }}
+                    className="p-2.5 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 hover:bg-red-50 text-zinc-800 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold transition-colors flex items-center gap-2 cursor-pointer"
+                  >
+                    <CheckSquare className="w-4 h-4 text-red-600" />
+                    <span>Checkmark</span>
+                  </button>
+                </div>
+
+                {/* Saved Signatures Click to Place */}
+                {savedSignatures.length > 0 && (
+                  <div className="space-y-2 pt-2 border-t border-zinc-100 dark:border-[#2A2E45]">
+                    <span className="text-[10px] uppercase font-bold text-zinc-400">Click to place on Page {currentPage}:</span>
+                    <div className="grid grid-cols-2 gap-2">
+                      {savedSignatures.map(sig => (
+                        <div
+                          key={sig.id}
+                          onClick={() => placeItemOnCurrentPage(sig.dataUrl, 'signature')}
+                          className="p-2 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-white dark:bg-[#1B1E2E] hover:border-red-500 cursor-pointer shadow-2xs group flex items-center justify-center h-14"
+                        >
+                          <img src={sig.dataUrl} alt="Saved Sig" className="max-h-10 max-w-full object-contain" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              </div>
+
+              {/* Pages Navigator Strip */}
+              <div className="p-4 rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-sm space-y-3">
+                <h4 className="text-xs font-black text-zinc-900 dark:text-white uppercase tracking-wider">
+                  Document Pages ({numPages})
+                </h4>
+                <div className="grid grid-cols-4 gap-2 max-h-40 overflow-y-auto pr-1">
+                  {pageThumbnails.map((p) => (
+                    <button
+                      key={p.pageNum}
+                      type="button"
+                      onClick={() => setCurrentPage(p.pageNum)}
+                      className={`p-1.5 rounded-xl border text-center transition-all cursor-pointer ${
+                        currentPage === p.pageNum
+                          ? 'border-red-500 ring-2 ring-red-500/30 bg-red-50/50 dark:bg-red-950/20'
+                          : 'border-zinc-200 dark:border-[#2A2E45] hover:border-zinc-300'
+                      }`}
+                    >
+                      <div className="aspect-[3/4] bg-zinc-100 dark:bg-[#1B1E2E] rounded-lg overflow-hidden mb-1 flex items-center justify-center">
+                        {p.thumbnail ? (
+                          <img src={p.thumbnail} alt={`Page ${p.pageNum}`} className="w-full h-full object-contain" />
+                        ) : (
+                          <span className="text-[9px] font-bold text-zinc-400">P.{p.pageNum}</span>
                         )}
                       </div>
-                    );
-                  })}
+                      <span className="text-[10px] font-bold text-zinc-700 dark:text-zinc-300">
+                        Page {p.pageNum}
+                      </span>
+                    </button>
+                  ))}
                 </div>
               </div>
+
             </div>
+
           </div>
+
         </div>
       )}
 
-      {/* ── CREATE SIGNATURE / ELEMENT MODAL ──────────────────────────────── */}
+      {/* ── 4. COMPLETION & DOWNLOAD SCREEN ────────────────── */}
+      {status === 'completed' && (
+        <div className="rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] p-8 sm:p-14 text-center space-y-6 shadow-sm animate-scale-up">
+          
+          <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center shadow-lg shadow-emerald-500/20">
+            <CheckCircle2 className="w-10 h-10" />
+          </div>
+
+          <div className="space-y-2 max-w-lg mx-auto">
+            <h2 className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white">
+              PDF has been signed!
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+              Your electronic signatures and fields have been securely embedded.
+            </p>
+          </div>
+
+          {/* Details Pill */}
+          <div className="inline-flex flex-wrap items-center justify-center gap-3 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-[#1B1E2E] text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            <span className="truncate max-w-xs">{resultFilename}</span>
+            <span>•</span>
+            <span>{numPages} pages</span>
+            <span>•</span>
+            <span>{fmt(resultSize)}</span>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto pt-2">
+            <a
+              href={resultBlobUrl}
+              download={resultFilename}
+              className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-base shadow-xl shadow-red-600/30 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+            >
+              <Download className="w-5 h-5" />
+              <span>Download Signed PDF</span>
+            </a>
+
+            <button
+              type="button"
+              onClick={() => setShowPreview(!showPreview)}
+              className="w-full sm:w-auto px-5 py-4 rounded-2xl bg-zinc-100 dark:bg-[#1B1E2E] hover:bg-zinc-200 dark:hover:bg-[#252A3D] text-zinc-700 dark:text-zinc-200 font-bold text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Eye className="w-4 h-4" />
+              <span>{showPreview ? 'Hide Preview' : 'Preview'}</span>
+            </button>
+          </div>
+
+          {/* Preview Iframe */}
+          {showPreview && resultBlobUrl && (
+            <div className="mt-6 rounded-2xl overflow-hidden border border-zinc-200 dark:border-[#2A2E45] shadow-inner max-w-3xl mx-auto">
+              <iframe
+                src={`${resultBlobUrl}#toolbar=0`}
+                title="Signed PDF Preview"
+                className="w-full h-[480px] bg-zinc-800"
+              />
+            </div>
+          )}
+
+          {/* Start Over */}
+          <div className="pt-4">
+            <button
+              type="button"
+              onClick={handleReset}
+              className="inline-flex items-center gap-2 text-xs font-bold text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Sign another PDF document</span>
+            </button>
+          </div>
+
+        </div>
+      )}
+
+      {/* ── 5. SIGNATURE CREATION MODAL ────────────────────── */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white dark:bg-[#141622] rounded-3xl max-w-xl w-full border border-zinc-200 dark:border-[#2A2E45] shadow-2xl overflow-hidden space-y-4 p-6">
-            {/* Modal Header & Category Tabs */}
-            <div className="flex items-center justify-between border-b border-zinc-100 dark:border-[#2A2E45] pb-4">
-              <h3 className="text-base font-extrabold text-zinc-900 dark:text-white">
-                Create Signature or Field
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-fade-in">
+          <div className="bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl space-y-4 p-6">
+            
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-[#2A2E45]">
+              <h3 className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-wider">
+                Create Signature / Field
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 rounded-lg text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                className="p-1.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-white rounded-lg hover:bg-zinc-100 dark:hover:bg-[#1B1E2E]"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Modal Primary Type Tabs */}
-            <div className="flex border-b border-zinc-200 dark:border-[#2A2E45]">
-              {[
-                { id: 'signature', label: 'Signature', icon: Edit3 },
-                { id: 'initials', label: 'Initials', icon: Type },
-                { id: 'text', label: 'Text Field', icon: FileText },
-                { id: 'date', label: 'Date', icon: Calendar },
-                { id: 'checkmark', label: 'Checkmark', icon: CheckSquare },
-              ].map(({ id, label, icon: Icon }) => (
+            {/* Modal Tabs */}
+            <div className="grid grid-cols-5 gap-1 p-1 bg-zinc-100 dark:bg-[#1B1E2E] rounded-xl text-xs font-bold">
+              {['signature', 'initials', 'text', 'date', 'checkmark'].map(t => (
                 <button
-                  key={id}
-                  onClick={() => setModalTab(id)}
-                  className={`flex-1 py-2.5 text-xs font-bold border-b-2 flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
-                    modalTab === id
-                      ? 'border-purple-600 text-purple-600 dark:text-purple-400'
-                      : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+                  key={t}
+                  type="button"
+                  onClick={() => setModalTab(t)}
+                  className={`py-1.5 rounded-lg capitalize transition-colors cursor-pointer ${
+                    modalTab === t ? 'bg-white dark:bg-[#2A2E45] text-red-600 shadow-xs' : 'text-zinc-500'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="hidden sm:inline">{label}</span>
+                  {t}
                 </button>
               ))}
             </div>
 
-            {/* SIGNATURE & INITIALS CREATION BODY */}
+            {/* Tab: Signature / Initials */}
             {(modalTab === 'signature' || modalTab === 'initials') && (
-              <div className="space-y-4 pt-2">
-                {/* Sub-mode Tabs: Draw | Type | Upload */}
-                <div className="flex justify-center gap-2 p-1 rounded-xl bg-zinc-100 dark:bg-[#1B1E2E]">
-                  {[
-                    { id: 'draw', label: 'Draw', icon: Edit3 },
-                    { id: 'type', label: 'Type', icon: Type },
-                    { id: 'upload', label: 'Upload Image', icon: ImageIcon },
-                  ].map(({ id, label, icon: Icon }) => (
-                    <button
-                      key={id}
-                      onClick={() => setSigMode(id)}
-                      className={`px-4 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                        sigMode === id
-                          ? 'bg-white dark:bg-[#141622] text-purple-600 dark:text-purple-400 shadow-xs'
-                          : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
-                      }`}
-                    >
-                      <Icon className="w-3.5 h-3.5" />
-                      <span>{label}</span>
-                    </button>
-                  ))}
+              <div className="space-y-4">
+                {/* Mode: Draw vs Type */}
+                <div className="flex items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSigMode('draw')}
+                    className={`px-4 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+                      sigMode === 'draw' ? 'bg-red-50 text-red-600 border-red-300 dark:bg-red-950/40' : 'bg-white dark:bg-[#1B1E2E] border-zinc-200'
+                    }`}
+                  >
+                    ✍️ Draw
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSigMode('type')}
+                    className={`px-4 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+                      sigMode === 'type' ? 'bg-red-50 text-red-600 border-red-300 dark:bg-red-950/40' : 'bg-white dark:bg-[#1B1E2E] border-zinc-200'
+                    }`}
+                  >
+                    ⌨️ Type (Calligraphy)
+                  </button>
                 </div>
 
-                {/* 1. DRAW MODE (CANVAS SIGNATURE PAD) */}
                 {sigMode === 'draw' && (
-                  <div className="space-y-3">
-                    <div className="relative border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-2xl overflow-hidden bg-white">
+                  <div className="space-y-2">
+                    <div className="border-2 border-dashed border-zinc-300 dark:border-[#2A2E45] rounded-2xl bg-zinc-50 dark:bg-[#1B1E2E]/40 overflow-hidden relative">
                       <canvas
                         ref={sigCanvasRef}
-                        width={500}
+                        width={480}
                         height={180}
                         onMouseDown={startDrawing}
                         onMouseMove={draw}
@@ -993,210 +1142,129 @@ export default function SignPdfTool() {
                         className="w-full h-44 cursor-crosshair block"
                       />
                       {!hasDrawn && (
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-zinc-300 text-xs italic font-medium">
-                          Draw signature here using your mouse or touch screen
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-xs text-zinc-400 font-semibold">
+                          Sign here with mouse or touch...
                         </div>
                       )}
                     </div>
 
                     <div className="flex items-center justify-between">
-                      {/* Color Palette */}
                       <div className="flex items-center gap-2">
-                        {['#000000', '#002B7F', '#DC2626', '#047857'].map(c => (
+                        {['#000000', '#2563EB', '#DC2626'].map(c => (
                           <button
                             key={c}
+                            type="button"
                             onClick={() => setPenColor(c)}
                             style={{ backgroundColor: c }}
-                            className={`w-6 h-6 rounded-full border-2 transition-transform ${
-                              penColor === c ? 'border-purple-600 scale-110' : 'border-white'
+                            className={`w-5 h-5 rounded-full border border-white shadow-xs ${
+                              penColor === c ? 'ring-2 ring-red-500 scale-110' : ''
                             }`}
                           />
                         ))}
                       </div>
-
                       <button
                         type="button"
                         onClick={clearSigCanvas}
-                        className="text-xs font-bold text-zinc-500 hover:text-red-600 px-3 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800"
+                        className="text-xs font-bold text-zinc-500 hover:text-red-600"
                       >
-                        Clear
+                        Clear Canvas
                       </button>
                     </div>
                   </div>
                 )}
 
-                {/* 2. TYPE MODE (HANDWRITING FONTS) */}
                 {sigMode === 'type' && (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     <input
                       type="text"
                       value={typedName}
-                      onChange={e => setTypedName(e.target.value)}
-                      placeholder="Type your name or initials..."
-                      className="w-full px-4 py-2.5 rounded-xl text-sm font-bold bg-zinc-50 dark:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45] focus:ring-2 focus:ring-purple-600 outline-none"
+                      placeholder="Type name here..."
+                      onChange={(e) => setTypedName(e.target.value)}
+                      className="w-full text-sm rounded-xl px-3.5 py-2.5 border border-zinc-300 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] font-bold text-zinc-900 dark:text-white focus:ring-2 focus:ring-red-500"
                     />
 
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
-                        Choose Handwriting Style
-                      </label>
-                      <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
-                        {HANDWRITING_FONTS.map(font => (
-                          <div
-                            key={font.name}
-                            onClick={() => setSelectedFont(font.family)}
-                            style={{ fontFamily: font.family }}
-                            className={`p-3 rounded-xl border text-xl text-center cursor-pointer transition-all truncate ${
-                              selectedFont === font.family
-                                ? 'border-purple-600 bg-purple-50/50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300'
-                                : 'border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] hover:border-purple-400'
-                            }`}
-                          >
+                    {/* Handwriting Font Options */}
+                    <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                      {HANDWRITING_FONTS.map(f => (
+                        <div
+                          key={f.name}
+                          onClick={() => setSelectedFont(f.family)}
+                          className={`p-3 rounded-xl border text-center cursor-pointer transition-all ${
+                            selectedFont === f.family
+                              ? 'border-red-500 bg-red-50/50 dark:bg-red-950/30'
+                              : 'border-zinc-200 dark:border-[#2A2E45]'
+                          }`}
+                        >
+                          <span style={{ fontFamily: f.family }} className="text-xl text-zinc-900 dark:text-white block truncate">
                             {typedName || 'Signature'}
-                          </div>
-                        ))}
-                      </div>
+                          </span>
+                          <span className="text-[9px] text-zinc-400 mt-1 block">{f.name}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
-
-                {/* 3. UPLOAD MODE (IMAGE SIGNATURE) */}
-                {sigMode === 'upload' && (
-                  <div className="space-y-3 text-center">
-                    <label className="p-8 border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-2xl block cursor-pointer bg-zinc-50 dark:bg-[#1B1E2E] hover:border-purple-500 transition-colors space-y-2">
-                      <ImageIcon className="w-8 h-8 mx-auto text-purple-600" />
-                      <span className="text-xs font-bold block text-zinc-700 dark:text-zinc-300">
-                        Upload scanned signature (PNG or JPG)
-                      </span>
-                      <input
-                        type="file"
-                        accept="image/png, image/jpeg"
-                        className="hidden"
-                        onChange={handleImageUpload}
-                      />
-                    </label>
-
-                    <label className="flex items-center justify-center gap-2 text-xs font-semibold text-zinc-600 dark:text-zinc-400 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={removeBg}
-                        onChange={e => setRemoveBg(e.target.checked)}
-                        className="rounded text-purple-600 focus:ring-purple-500"
-                      />
-                      <span>Auto-remove white background pixels</span>
-                    </label>
-                  </div>
-                )}
               </div>
             )}
 
-            {/* TEXT FIELD MODAL BODY */}
+            {/* Tab: Text */}
             {modalTab === 'text' && (
-              <div className="space-y-3 pt-2">
-                <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
-                  Custom Text Content
-                </label>
+              <div className="space-y-3 text-left">
+                <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">Custom Text / Notes:</label>
                 <input
                   type="text"
                   value={customText}
-                  onChange={e => setCustomText(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl text-sm font-bold bg-zinc-50 dark:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45] focus:ring-2 focus:ring-purple-600 outline-none"
+                  onChange={(e) => setCustomText(e.target.value)}
+                  className="w-full text-xs rounded-xl px-3.5 py-2.5 border border-zinc-300 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] font-bold text-zinc-900 dark:text-white"
                 />
               </div>
             )}
 
-            {/* DATE MODAL BODY */}
+            {/* Tab: Date */}
             {modalTab === 'date' && (
-              <div className="space-y-3 pt-2">
-                <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
-                  Select Date
-                </label>
+              <div className="space-y-3 text-left">
+                <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">Date Stamp:</label>
                 <input
                   type="date"
                   value={dateStr}
-                  onChange={e => setDateStr(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl text-sm font-bold bg-zinc-50 dark:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45] focus:ring-2 focus:ring-purple-600 outline-none"
+                  onChange={(e) => setDateStr(e.target.value)}
+                  className="w-full text-xs rounded-xl px-3.5 py-2.5 border border-zinc-300 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] font-bold text-zinc-900 dark:text-white"
                 />
               </div>
             )}
 
-            {/* CHECKMARK MODAL BODY */}
+            {/* Tab: Checkmark */}
             {modalTab === 'checkmark' && (
-              <div className="text-center py-6 space-y-2">
-                <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl font-black">
+              <div className="py-6 text-center space-y-2">
+                <div className="w-16 h-16 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mx-auto text-3xl font-black">
                   ✓
                 </div>
-                <p className="text-xs text-zinc-500">Click save to place checkmark on PDF</p>
+                <p className="text-xs text-zinc-500">Insert an approval checkmark on the document.</p>
               </div>
             )}
 
-            {/* Modal Actions Footer */}
-            {sigMode !== 'upload' && (
-              <div className="flex justify-end gap-2 border-t border-zinc-100 dark:border-[#2A2E45] pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 text-zinc-700 dark:text-zinc-300 text-xs font-bold transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSaveSignature}
-                  className="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md transition-all"
-                >
-                  Save & Place
-                </button>
-              </div>
-            )}
+            {/* Modal Bottom Actions */}
+            <div className="pt-2 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-zinc-600 hover:bg-zinc-100 dark:hover:bg-[#1B1E2E]"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveSignature}
+                className="px-6 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md shadow-red-600/30"
+              >
+                Place on Document
+              </button>
+            </div>
+
           </div>
         </div>
       )}
 
-      {/* ── COMPLETED SUCCESS & DOWNLOAD UI ───────────────────────────────── */}
-      {status === 'completed' && (
-        <div className="max-w-xl mx-auto p-8 rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-2xl text-center space-y-6 animate-fade-in">
-          <div className="w-16 h-16 mx-auto rounded-3xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <Check className="w-8 h-8" />
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="text-xl font-black text-zinc-900 dark:text-white">
-              Your PDF is Signed Successfully!
-            </h3>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              Signatures and fields have been burned into the document. File size: {formatBytes(resultSize)}
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-            <a
-              href={resultBlobUrl}
-              download={resultFilename}
-              className="w-full sm:w-auto px-8 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2"
-            >
-              <Download className="w-4 h-4" />
-              <span>Download Signed PDF</span>
-            </a>
-
-            <button
-              type="button"
-              onClick={() => {
-                setStatus('idle');
-                setFile(null);
-                setPlacedElements([]);
-                setSavedSignatures([]);
-              }}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-zinc-100 dark:bg-[#1B1E2E] hover:bg-zinc-200 dark:hover:bg-[#2A2E45] text-zinc-700 dark:text-zinc-300 font-bold text-xs transition-all flex items-center justify-center gap-2"
-            >
-              <RefreshCw className="w-4 h-4" />
-              <span>Sign Another File</span>
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
-
-
