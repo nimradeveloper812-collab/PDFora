@@ -26,6 +26,8 @@ import ScanToPdfTool from '../pdf/ScanToPdfTool';
 import EditPdfTool from '../pdf/EditPdfTool';
 import SignPdfTool from '../pdf/SignPdfTool';
 import MergePdfTool from '../pdf/MergePdfTool';
+import SplitPdfTool from '../pdf/SplitPdfTool';
+import RemovePagesPdfTool from '../pdf/RemovePagesPdfTool';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
@@ -276,6 +278,10 @@ export default function ToolLayout({ tool }) {
           <SignPdfTool />
         ) : tool.id === 'merge-pdf' ? (
           <MergePdfTool />
+        ) : tool.id === 'split-pdf' ? (
+          <SplitPdfTool />
+        ) : tool.id === 'remove-pages-pdf' ? (
+          <RemovePagesPdfTool />
         ) : (
           <Dropzone tool={tool} />
         )}
