@@ -1118,8 +1118,8 @@ export default function Dropzone({ tool }) {
               </div>
 
               <AdBanner
-                slot={AD_SLOTS.download}
-                variant="rectangle"
+                slot={AD_SLOTS.DOWNLOAD_AREA}
+                format="auto"
                 className="my-0"
               />
             </div>

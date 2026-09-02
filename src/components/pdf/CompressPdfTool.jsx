@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { PDFDocument } from 'pdf-lib';
 import JSZip from 'jszip';
+import AdBanner, { AD_SLOTS } from '../common/AdBanner';
 import { analytics } from '../../services/analytics';
 
 // PDF.js dynamic loader for high-res page rendering & thumbnail generation
@@ -697,8 +698,14 @@ export default function CompressPdfTool() {
               className="inline-flex items-center gap-2 text-xs font-bold text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-4 h-4" />
-              <span>Compress more PDF files</span>
+              <span>Compress another PDF</span>
             </button>
+          </div>
+
+          {/* AdSense Unit in Completion Screen */}
+          <div className="mt-8 max-w-xl mx-auto border-t border-zinc-200 dark:border-zinc-800 pt-6 min-h-[120px]">
+             <div className="text-[10px] text-zinc-400 uppercase tracking-widest mb-3">Advertisement</div>
+             <AdBanner slot={AD_SLOTS.DOWNLOAD_AREA} format="auto" className="my-0" />
           </div>
 
         </div>

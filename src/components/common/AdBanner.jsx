@@ -2,10 +2,10 @@ import React, { useEffect, useRef } from 'react';
 
 /** Named ad slot IDs — update with your real AdSense slot IDs from adsense.google.com */
 export const AD_SLOTS = {
-  HOME_HORIZONTAL:    '7219630831',
-  TOOL_BELOW_HEADER:  '4521873096',
-  TOOL_BELOW_CONTENT: '9038172645',
-  SIDEBAR:            '3817264059',
+  HOME_HORIZONTAL:    '2947093463',
+  TOOL_BELOW_CONTENT: '4990802870',
+  DOWNLOAD_AREA:      '4990802870', // Reused for download success screen
+  ABOVE_FOOTER:       '2500370909',
 };
 
 /**

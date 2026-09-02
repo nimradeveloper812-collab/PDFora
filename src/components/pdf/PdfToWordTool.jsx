@@ -7,6 +7,7 @@ import {
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
 import JSZip from 'jszip';
 import { analytics } from '../../services/analytics';
+import AdBanner, { AD_SLOTS } from '../common/AdBanner';
 
 // PDF.js dynamic loader
 const loadPdfJs = () => {
@@ -580,6 +581,12 @@ export default function PdfToWordTool() {
               <RotateCcw className="w-4 h-4" />
               <span>Convert another PDF</span>
             </button>
+          </div>
+
+          {/* AdSense Unit in Completion Screen */}
+          <div className="mt-8 max-w-xl mx-auto border-t border-zinc-200 dark:border-zinc-800 pt-6 min-h-[120px]">
+             <div className="text-[10px] text-zinc-400 uppercase tracking-widest mb-3">Advertisement</div>
+             <AdBanner slot={AD_SLOTS.DOWNLOAD_AREA} format="auto" className="my-0" />
           </div>
 
         </div>

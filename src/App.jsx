@@ -6,6 +6,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import CookieConsent from './components/common/CookieConsent';
+import AdBanner, { AD_SLOTS } from './components/common/AdBanner';
 
 const Home = lazy(() => import('./pages/Home'));
 const AllTools = lazy(() => import('./pages/AllTools'));
@@ -224,6 +225,14 @@ function AppLayout() {
           </Routes>
         </Suspense>
       </main>
+      
+      {/* ABOVE FOOTER AD */}
+      <div className="w-full bg-white dark:bg-[#0D0D14]">
+        <div className="max-w-7xl mx-auto px-4 py-4 border-t border-zinc-200 dark:border-zinc-800">
+           <AdBanner slot={AD_SLOTS.ABOVE_FOOTER} format="horizontal" />
+        </div>
+      </div>
+
       <Footer />
       <CookieConsent />
     </div>
