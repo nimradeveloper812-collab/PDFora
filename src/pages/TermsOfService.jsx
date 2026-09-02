@@ -5,131 +5,149 @@ import { FileText, Sparkles } from 'lucide-react';
 const SECTIONS = [
   {
     title: '1. Acceptance of Terms',
-    content: `By accessing or using the PDFora website (pdfora.com) and its services, you confirm that you are at least 13 years of age and that you have read, understood, and agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please discontinue your use of PDFora immediately.
+    content: `By accessing or using the PDFora platform (pdfora.nimradev.site) and its tools, you confirm that you are at least 13 years of age and that you have read, understood, and agree to be bound by these Terms of Service ("Terms") and our Privacy Policy. If you do not agree with any part of these Terms, please discontinue use of PDFora immediately.
 
-PDFora reserves the right to update these Terms at any time. Continued use of the service after changes constitutes your acceptance of the updated Terms.`,
+PDFora reserves the right to update these Terms at any time. Continued use of the platform following published modifications constitutes your acceptance of the revised Terms. We will update the "Last Updated" date at the top of this page to reflect any changes.`,
   },
   {
     title: '2. Description of Service',
-    content: `PDFora provides a free, browser-based platform for PDF document processing including, but not limited to:
+    content: `PDFora provides a comprehensive suite of free, browser-based tools for file conversion, compression, editing, and management, including:
 
-• Converting office documents (Word, Excel, PowerPoint) to PDF format
-• Converting images (JPG, PNG, WEBP) to PDF format
-• Converting PDFs to image formats (JPG, PNG)
-• Merging multiple PDF documents into one
-• Compressing PDF files to reduce file size
-• Splitting PDF documents into separate pages or ranges
+• Converting Word (.docx, .doc), Excel (.xlsx, .xls), and PowerPoint (.pptx, .ppt) files to PDF
+• Converting images (JPG, PNG, WEBP, HEIC, BMP, TIFF, SVG) to and from PDF
+• Merging, splitting, compressing, rotating, watermarking, and editing PDF files
+• Image editing tools: background removal, resizing, cropping, format conversion
+• Video and audio conversion and compression tools
+• Developer utilities: JSON formatter, QR code generator, Base64 converter
 
-The service is provided on an "as is" and "as available" basis. PDFora does not guarantee uninterrupted or error-free operation.`,
+The service is provided on an "as is" and "as available" basis, free of charge and without requiring user account registration.`,
   },
   {
-    title: '3. Acceptable Use Policy',
-    content: `You agree to use PDFora only for lawful purposes. You must not:
+    title: '3. Acceptable Use & Conduct',
+    content: `You agree to use PDFora solely for legitimate and lawful purposes. You must NOT use PDFora to:
 
-• Upload files containing malware, viruses, or malicious code
-• Process documents that infringe the intellectual property rights of others
-• Use PDFora to process files containing child sexual abuse material (CSAM) or illegal content
-• Attempt to reverse-engineer, scrape, or overload our infrastructure through automated bots or scripts
-• Misrepresent your identity or impersonate any person or organisation
-• Use the service in any way that violates applicable local, national, or international laws
+• Upload, process, or distribute files containing malware, viruses, trojans, or any malicious code
+• Process documents that infringe copyright, trademarks, patents, or other intellectual property rights of third parties
+• Distribute, share, or process any illegal, harmful, obscene, defamatory, or abusive content
+• Attempt to reverse-engineer, decompile, hack, or disrupt PDFora's infrastructure through automated attacks or scraping
+• Use automated bots or scripts to make excessive requests that overload or abuse our platform
+• Violate any applicable local, national, or international regulations or laws
 
-PDFora reserves the right to terminate access for users found in violation of this policy without notice.`,
+PDFora reserves the right to restrict or terminate access for any user or system found violating these principles, without prior notice.`,
   },
   {
-    title: '4. User Content & Intellectual Property',
-    content: `You retain full ownership of any files you upload to PDFora. By uploading files, you grant PDFora a limited, non-exclusive, royalty-free licence solely to process and return the converted output to you.
+    title: '4. User File Ownership & Intellectual Property',
+    content: `**Your Files:** You retain 100% ownership and all intellectual property rights to any files you upload or process through PDFora. By uploading files, you grant PDFora a temporary, limited license to process those files solely for the purpose of delivering the requested service. This license expires immediately when processing is complete and files are deleted.
 
-PDFora does not claim any ownership of your documents. The PDFora name, logo, design, and software are the intellectual property of PDFora and may not be used without explicit written permission.`,
+**PDFora's IP:** The PDFora brand name, logo, software code, visual design, and trademarks are the exclusive intellectual property of PDFora. You may not reproduce, copy, modify, or distribute any part of our platform without explicit written permission.
+
+**Zero Server File Retention:** Uploaded files are automatically deleted from our servers immediately after processing. PDFora does not claim any ownership or copyright over your documents.`,
   },
   {
-    title: '5. Free Service & Fair Use',
-    content: `PDFora is provided free of charge. To maintain fair access for all users, we apply reasonable usage limits including:
+    title: '5. Free Platform & Fair Usage Guidelines',
+    content: `PDFora is provided completely free of charge, supported by contextual advertising. To maintain high performance and reliability for all users, the following fair usage guidelines apply:
 
-• Maximum file size: 50 MB per file
-• Maximum batch size varies per tool (see individual tool pages)
-• Automated or scripted bulk processing is prohibited without prior written consent
+• Recommended maximum single file size: Up to 50 MB
+• Maximum batch size: Up to 10–20 files per session (varies by tool)
+• Scripted, automated, or programmatic bulk processing is strictly prohibited without prior written authorization
+• Attempting to circumvent file size or rate limits through any technical means is not permitted
 
-PDFora may introduce optional paid tiers in the future for enhanced limits. Free tier availability is not guaranteed in perpetuity.`,
+These guidelines ensure a fast, reliable experience for all users of our free platform.`,
   },
   {
     title: '6. Disclaimer of Warranties',
-    content: `PDFora is provided "as is" without any warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement.
+    content: `PDFora is provided "as is" and "as available" without warranty of any kind, whether express, statutory, or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement.
 
-PDFora does not warrant that:
-• The service will be available at all times or without interruption
-• Conversion outputs will be 100% identical to inputs in all edge cases
-• The service is free from bugs, errors, or security vulnerabilities
+While our processing engines aim for maximum conversion fidelity, PDFora does not warrant that:
 
-You use the service at your own risk. Always retain your original source files.`,
+• The service will be 100% error-free or uninterrupted at all times
+• Complex proprietary fonts, macros, or embedded media will render identically in all document versions
+• The service will meet specific commercial, legal, or regulatory archiving requirements
+• Results will always match the quality of dedicated desktop software for complex layouts
+
+**We strongly recommend keeping backup copies of all important files before uploading them to any online service, including PDFora.**`,
   },
   {
     title: '7. Limitation of Liability',
-    content: `To the fullest extent permitted by law, PDFora, its team members, and affiliates shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the service, including but not limited to:
+    content: `To the maximum extent permitted by applicable law, PDFora and its operators shall not be liable for any direct, indirect, incidental, special, punitive, or consequential damages resulting from:
 
-• Loss of data or documents
-• Business interruption
-• Loss of revenue or profits
-• Inaccuracies in conversion output
+• Your use of or inability to use the service
+• Any errors or interruptions in service
+• Data loss or document formatting variations during processing
+• Unauthorized access to or alteration of your transmissions or data
 
-Our total cumulative liability for any claim shall not exceed PKR 10,000 or the total amount paid by you (if any) in the prior 12 months.`,
+Our aggregate liability for any dispute arising from use of PDFora shall not exceed $50.00 USD. Some jurisdictions do not allow the exclusion of certain warranties or limitations of liability, so these limitations may not apply to you.`,
   },
   {
-    title: '8. Third-Party Links',
-    content: `PDFora may contain links to third-party websites for reference. We are not responsible for the content, privacy policies, or practices of any third-party sites. We encourage you to review the privacy policies of any external sites you visit.`,
-  },
-  {
-    title: '9. Governing Law',
-    content: `These Terms shall be governed by and construed in accordance with the laws of the Islamic Republic of Pakistan, without regard to conflict of law principles. Any disputes arising under these Terms shall be subject to the exclusive jurisdiction of the competent courts in Lahore, Pakistan.`,
-  },
-  {
-    title: '10. Contact',
-    content: `For questions about these Terms of Service, please contact us:
+    title: '8. Third-Party Links & Advertising',
+    content: `PDFora displays interest-based advertisements served by **Google AdSense** and may contain links to third-party websites and resources. PDFora does not endorse and is not responsible for the content, products, services, or privacy practices of any external advertiser or linked website.
 
-• **Email:** legal@pdfora.com
-• **Location:** PDFora Operations, Lahore, Punjab, Pakistan 🇵🇰
-• **Response Time:** Within 5 business days`,
+**Interest-Based Advertising:** Google AdSense may use cookies and anonymous identifiers to serve ads based on your prior visits to PDFora and other websites. You can opt out of interest-based advertising by visiting https://www.google.com/settings/ads or https://www.aboutads.info/choices.
+
+**Opting Out:** Opting out means you will continue to see ads, but they may not be tailored to your specific interests.`,
+  },
+  {
+    title: '9. Governing Law & Dispute Resolution',
+    content: `These Terms shall be interpreted and governed in accordance with universally recognized commercial and internet law principles. Any legal inquiry or dispute arising from your use of PDFora should first be directed to our support team at contact@nimradev.site for good-faith resolution.
+
+We are committed to resolving any concerns or complaints promptly and fairly.`,
+  },
+  {
+    title: '10. Contact Information',
+    content: `For questions, clarifications, or concerns regarding these Terms of Service, please contact our team:
+
+• **Email:** contact@nimradev.site
+• **Platform:** PDFora — pdfora.nimradev.site
+• **Response Window:** 24–48 business hours
+
+By using PDFora, you acknowledge that you have read, understood, and agree to these Terms of Service.`,
   },
 ];
 
 export default function TermsOfService() {
   return (
-    <div className="pt-24 pb-20 min-h-screen">
+    <div className="pt-16 pb-20 min-h-screen bg-white dark:bg-[#0D0D14] text-zinc-900 dark:text-white transition-colors">
       <Helmet>
-        <title>Terms of Service — PDFora | Free Online PDF Tools Pakistan</title>
-        <meta name="description" content="Terms of Service for PDFora, Pakistan's free online PDF platform." />
+        <title>Terms of Service — PDFora | Free Online PDF Suite</title>
+        <meta name="description" content="Review the Terms of Service for PDFora. Free, secure, and in-browser online PDF conversion and management utilities." />
+        <link rel="canonical" href="https://pdfora.nimradev.site/terms-of-service" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://pdfora.nimradev.site/terms-of-service" />
+        <meta property="og:title" content="Terms of Service — PDFora" />
+        <meta property="og:description" content="Review the Terms of Service for PDFora. Free, secure, and in-browser online PDF conversion and management utilities." />
+        <meta property="og:image" content="https://pdfora.nimradev.site/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://pdfora.nimradev.site/terms-of-service" />
+        <meta name="twitter:title" content="Terms of Service — PDFora" />
+        <meta name="twitter:description" content="Review the Terms of Service for PDFora." />
+        <meta name="twitter:image" content="https://pdfora.nimradev.site/og-image.jpg" />
       </Helmet>
 
       {/* Hero */}
       <section
-        className="py-12 px-4 sm:px-6 lg:px-8 text-center"
-        style={{
-          background: 'radial-gradient(ellipse 85% 55% at 50% -5%, #FCE7F3 0%, #FFFFFF 68%)',
-          borderBottom: '1px solid #F1D5E3',
-        }}
+        className="py-12 px-4 sm:px-6 lg:px-8 text-center bg-[#F8FAFC] dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45] transition-colors"
         aria-labelledby="tos-heading"
       >
         <div className="max-w-3xl mx-auto space-y-4">
           <div
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold"
-            style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800"
           >
-            <FileText className="w-3.5 h-3.5" aria-hidden="true" />
+            <FileText className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" aria-hidden="true" />
             <span>Legal Agreement</span>
           </div>
           <h1
             id="tos-heading"
-            className="text-3xl sm:text-5xl font-black"
-            style={{ color: '#18181B', letterSpacing: '-0.035em' }}
+            className="text-3xl sm:text-5xl font-black text-zinc-900 dark:text-white font-heading"
           >
             Terms of Service
           </h1>
-          <p className="text-sm" style={{ color: '#71717A' }}>
-            Last Updated: <strong style={{ color: '#3F3F46' }}>July 31, 2026</strong>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 font-sans">
+            Last Updated: <strong className="text-zinc-700 dark:text-zinc-200">August 25, 2026</strong>
             &nbsp;&middot;&nbsp; Effective immediately
           </p>
-          <p className="text-sm leading-relaxed max-w-xl mx-auto" style={{ color: '#52525B' }}>
+          <p className="text-sm leading-relaxed max-w-xl mx-auto text-zinc-600 dark:text-zinc-300 font-sans">
             Please read these Terms carefully before using PDFora. They govern your access
-            and use of all our PDF tools and services.
+            and use of all our free PDF tools and services.
           </p>
         </div>
       </section>
@@ -137,17 +155,15 @@ export default function TermsOfService() {
       {/* Quick Summary Banner */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
         <div
-          className="rounded-2xl p-5 flex items-start gap-3"
-          style={{ background: '#FFF7FB', border: '1px solid #F1D5E3' }}
+          className="rounded-2xl p-5 flex items-start gap-3 bg-zinc-50 dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45]"
         >
-          <Sparkles className="w-5 h-5 mt-0.5 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
+          <Sparkles className="w-5 h-5 mt-0.5 shrink-0 text-purple-600 dark:text-purple-400" aria-hidden="true" />
           <div>
-            <p className="text-sm font-bold" style={{ color: '#18181B' }}>Plain English Summary</p>
-            <p className="text-xs mt-1 leading-relaxed" style={{ color: '#52525B' }}>
-              PDFora is free to use. You own your files. Don't upload illegal content.
-              We can't guarantee 100% uptime. We auto-delete your files within 1 hour.
-              Use the service fairly. Questions? Email{' '}
-              <a href="mailto:legal@pdfora.com" style={{ color: '#E85D9E' }}>legal@pdfora.com</a>.
+            <p className="text-sm font-bold text-zinc-900 dark:text-white font-heading">Plain English Summary</p>
+            <p className="text-xs mt-1 leading-relaxed text-zinc-600 dark:text-zinc-300 font-sans">
+              PDFora is 100% free to use. You own your files. Documents are processed privately in your browser memory without server storage.
+              Use the platform fairly and responsibly. Questions? Contact{' '}
+              <a href="mailto:contact@nimradev.site" className="text-purple-600 dark:text-purple-400 underline">contact@nimradev.site</a>.
             </p>
           </div>
         </div>
@@ -158,17 +174,15 @@ export default function TermsOfService() {
         {SECTIONS.map((section, idx) => (
           <div
             key={idx}
-            className="rounded-2xl p-6 sm:p-7"
-            style={{ background: '#FFFFFF', border: '1px solid #F1D5E3', boxShadow: '0 1px 4px rgba(232,93,158,0.04)' }}
+            className="rounded-2xl p-6 sm:p-7 bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xs"
           >
             <h2
-              className="text-base sm:text-lg font-extrabold mb-4 flex items-start gap-2"
-              style={{ color: '#18181B' }}
+              className="text-base sm:text-lg font-extrabold mb-4 flex items-start gap-2 text-zinc-900 dark:text-white font-heading"
             >
-              <span className="shrink-0" style={{ color: '#E85D9E' }}>{section.title.split('.')[0]}.</span>
+              <span className="shrink-0 text-purple-600 dark:text-purple-400">{section.title.split('.')[0]}.</span>
               <span>{section.title.split('. ').slice(1).join('. ')}</span>
             </h2>
-            <div className="text-sm leading-relaxed space-y-3" style={{ color: '#52525B' }}>
+            <div className="text-sm leading-relaxed space-y-3 text-zinc-600 dark:text-zinc-300 font-sans">
               {section.content.split('\n\n').map((para, i) => (
                 <p key={i} className="whitespace-pre-line">{para.replace(/\*\*(.*?)\*\*/g, '$1')}</p>
               ))}

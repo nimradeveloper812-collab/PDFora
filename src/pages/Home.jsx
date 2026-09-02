@@ -1,834 +1,479 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import {
-  Search, Sparkles, ArrowRight, ShieldCheck, Zap, FileCheck,
-  ChevronDown, FileText, Table, Presentation, Image as ImageIcon,
-  FileImage, Layers, Minimize2, Scissors, HelpCircle, Lock,
-  Globe, Upload, CheckCircle2
+  FileText, Search, Sparkles, ArrowRight, ShieldCheck, Zap,
+  ChevronDown, Layers, ArrowRightLeft, Edit3, Minimize2, Cpu,
+  Image as ImageIcon, Video, CheckCircle, X, ChevronRight
 } from 'lucide-react';
-import { TOOLS, FAQS } from '../data/toolsData';
+import { TOOLS } from '../data/toolsData';
+import { CATEGORIES_DATA } from '../data/categoriesData';
+import { useLanguage } from '../context/LanguageContext';
+import AdBanner, { AD_SLOTS } from '../components/common/AdBanner';
 
-const iconMap = {
-  FileText, Table, Presentation,
-  Image: ImageIcon, FileImage, Layers, Minimize2, Scissors
+
+
+const iconComponentMap = {
+  Layers, ArrowRightLeft, Edit3, ShieldCheck, Minimize2, Cpu, ImageIcon, Video, FileText
 };
 
-// ── Reusable Tool Card ────────────────────────────────────────────────────────
-function ToolCard({ tool }) {
-  const Icon = iconMap[tool.iconName] || FileText;
-  return (
-    <Link
-      to={tool.path}
-      className="group flex flex-col justify-between rounded-2xl p-5 transition-all duration-200"
-      style={{
-        background: '#FFFFFF',
-        border: '1px solid #F1D5E3',
-        boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
-        textDecoration: 'none',
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.borderColor = '#E85D9E';
-        e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,93,158,0.10), 0 2px 8px rgba(0,0,0,0.04)';
-        e.currentTarget.style.transform = 'translateY(-2px)';
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.borderColor = '#F1D5E3';
-        e.currentTarget.style.boxShadow = '0 1px 4px rgba(232,93,158,0.04)';
-        e.currentTarget.style.transform = 'translateY(0)';
-      }}
-    >
-      {/* Top: icon + badge */}
-      <div>
-        <div className="flex items-start justify-between mb-4">
-          <div
-            className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 group-hover:scale-105"
-            style={{ background: '#FCE7F3', color: '#E85D9E' }}
-            aria-hidden="true"
-          >
-            <Icon className="w-5 h-5" strokeWidth={2} />
-          </div>
-          {tool.badge && (
-            <span
-              className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-              style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
-            >
-              {tool.badge}
-            </span>
-          )}
-        </div>
-
-        <h3
-          className="text-sm font-bold mb-1.5 transition-colors duration-150 group-hover:text-pink-600"
-          style={{ color: '#18181B' }}
-        >
-          {tool.name}
-        </h3>
-        <p className="text-xs leading-relaxed line-clamp-2" style={{ color: '#71717A' }}>
-          {tool.shortDesc}
-        </p>
-      </div>
-
-      {/* Bottom: CTA row */}
-      <div
-        className="flex items-center justify-between pt-4 mt-4 text-xs font-bold transition-all duration-150"
-        style={{ borderTop: '1px solid #FFF0F8', color: '#E85D9E' }}
-      >
-        <span>Open Tool</span>
-        <ArrowRight
-          className="w-3.5 h-3.5 transition-transform duration-150 group-hover:translate-x-1"
-          aria-hidden="true"
-        />
-      </div>
-    </Link>
-  );
-}
-
-// ── Category Header ───────────────────────────────────────────────────────────
-function CategoryHeader({ number, title }) {
-  return (
-    <div className="flex items-center gap-3 mb-5 pb-3" style={{ borderBottom: '1px solid #F1D5E3' }}>
-      <span
-        className="w-7 h-7 rounded-lg text-xs font-black flex items-center justify-center shrink-0"
-        style={{ background: '#FCE7F3', color: '#E85D9E' }}
-        aria-hidden="true"
-      >
-        {number}
-      </span>
-      <h3 className="text-base font-bold uppercase tracking-wide" style={{ color: '#18181B' }}>
-        {title}
-      </h3>
-    </div>
-  );
-}
-
-// ── Main Component ────────────────────────────────────────────────────────────
 export default function Home() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [openFaq, setOpenFaq] = useState(null);
+  const [selectedCatId, setSelectedCatId] = useState('pdf-organization');
+  const [searchQuery, setSearchQuery]     = useState('');
+  const [openFaq, setOpenFaq]             = useState(null);
+  const explorerRef                       = useRef(null);
+  const { t }                             = useLanguage();
 
-  const filteredTools = TOOLS.filter(
-    t =>
-      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.shortDesc.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Selected Category Object
+  const currentCategory = useMemo(() => {
+    return CATEGORIES_DATA.find(c => c.id === selectedCatId) || CATEGORIES_DATA[0];
+  }, [selectedCatId]);
 
-  const convertTools  = TOOLS.filter(t => t.category.startsWith('convert'));
-  const organizeTools = TOOLS.filter(t => t.category === 'organize');
-  const optimizeTools = TOOLS.filter(t => t.category === 'optimize');
+  // Search Filtering with Category Path
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase().trim();
+
+    const results = [];
+    CATEGORIES_DATA.forEach(cat => {
+      cat.subcategories.forEach(sub => {
+        sub.toolIds.forEach(tId => {
+          const tool = TOOLS.find(t => t.id === tId);
+          if (tool) {
+            const matches =
+              tool.name.toLowerCase().includes(q) ||
+              tool.shortDesc?.toLowerCase().includes(q) ||
+              tool.description?.toLowerCase().includes(q) ||
+              cat.name.toLowerCase().includes(q) ||
+              sub.name.toLowerCase().includes(q) ||
+              (tool.primaryKeywords || []).some(k => k.toLowerCase().includes(q));
+
+            if (matches) {
+              results.push({
+                tool,
+                categoryName: cat.name,
+                subcategoryName: sub.name,
+              });
+            }
+          }
+        });
+      });
+    });
+    return results;
+  }, [searchQuery]);
+
+  const scrollToExplorer = (catId) => {
+    setSelectedCatId(catId);
+    if (explorerRef.current) {
+      explorerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const faqs = [
+    { q: t('faq1q'), a: t('faq1a') },
+    { q: t('faq2q'), a: t('faq2a') },
+    { q: t('faq3q'), a: t('faq3a') },
+    { q: t('faq4q'), a: t('faq4a') },
+    { q: t('faq5q'), a: t('faq5a') },
+  ];
 
   return (
-    <div className="pt-16 min-h-screen">
+    <div className="min-h-screen pt-14 font-sans bg-zinc-50/50 dark:bg-[#0D0D14] text-zinc-900 dark:text-white transition-colors">
       <Helmet>
-        <title>PDFora — Free Online PDF Tools in Pakistan | Convert, Compress &amp; Merge</title>
-        <meta name="description" content="Pakistan's premier free PDF platform. Convert Word, Excel, PPT &amp; images to PDF. Merge, compress, and split PDFs instantly — fast, private, and 100% free." />
+        <title>PDFora — Free Online PDF Tools | Convert, Merge &amp; Split</title>
+        <meta
+          name="description"
+          content="Fast, secure, and 100% free online PDF suite. Convert, compress, split, and merge files privately in your browser with zero server uploads."
+        />
+        <link rel="canonical" href="https://pdfora.nimradev.site/" />
+        <script type="application/ld+json">
+          {`
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "WebApplication",
+                "@id": "https://pdfora.nimradev.site/#webapp",
+                "name": "PDFora",
+                "url": "https://pdfora.nimradev.site",
+                "applicationCategory": "UtilitiesApplication",
+                "operatingSystem": "All (Windows, macOS, Linux, iOS, Android)",
+                "browserRequirements": "HTML5, WebAssembly, JavaScript enabled",
+                "description": "Free, privacy-first online PDF tools. Converts, merges, splits, and compresses documents locally inside browser memory sandbox without cloud uploads.",
+                "applicationSubCategory": "PDF Converter & Editor",
+                "offers": {
+                  "@type": "Offer",
+                  "price": "0",
+                  "priceCurrency": "USD"
+                },
+                "features": [
+                  "In-Browser WebAssembly Processing",
+                  "Zero Server Document Storage",
+                  "No Registration Required",
+                  "Word, Excel, PowerPoint & JPG conversions"
+                ],
+                "author": {
+                  "@type": "Organization",
+                  "name": "PDFora Team",
+                  "url": "https://pdfora.nimradev.site"
+                }
+              },
+              {
+                "@type": "FAQPage",
+                "@id": "https://pdfora.nimradev.site/#faq",
+                "mainEntity": [
+                  {
+                    "@type": "Question",
+                    "name": "How does PDFora convert PDFs without uploading them to servers?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "PDFora uses local client-side JavaScript libraries and WebAssembly compiled binaries directly inside your web browser. This executes the entire conversion pipeline locally using your device resources, meaning the file data is never sent over the internet to remote servers."
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "Is PDFora safe for confidential work documents?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "Yes, PDFora is safer than typical cloud-based conversion platforms because it processes all files in a localized client memory sandbox. There are no server-side repositories, zero persistent logs, and files are permanently cleared the moment you close the browser tab."
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+          `}
+        </script>
       </Helmet>
 
-      {/* ════════════════════════════════════════════════════
-          HERO SECTION
-          ════════════════════════════════════════════════════ */}
-      <section
-        className="relative pt-14 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
-        style={{
-          background: 'radial-gradient(ellipse 90% 60% at 50% -5%, #FCE7F3 0%, #FFFFFF 70%)',
-          borderBottom: '1px solid #F1D5E3',
-        }}
-      >
-        {/* Subtle decorative blobs */}
-        <div
-          className="absolute top-0 right-0 w-72 h-72 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(232,93,158,0.06) 0%, transparent 70%)' }}
-          aria-hidden="true"
-        />
-        <div
-          className="absolute bottom-0 left-10 w-48 h-48 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(232,93,158,0.04) 0%, transparent 70%)' }}
-          aria-hidden="true"
-        />
+      {/* ── 1. HERO SECTION ────────────────────────────────────────── */}
+      <section className="pt-5 pb-6 px-4 sm:px-6 lg:px-8 text-center bg-white dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45]">
+        <div className="max-w-4xl mx-auto space-y-2.5">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+            <Sparkles className="w-3 h-3 text-purple-600 dark:text-purple-400" />
+            <span>{t('heroBadge')}</span>
+          </div>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center relative">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-white leading-tight">
+            {t('heroTitle')}{' '}
+            <span className="text-purple-600 dark:text-purple-400">{t('heroTitleHighlight')}</span>
+          </h1>
 
-          {/* ── Left: Copy ── */}
-          <div className="lg:col-span-7 space-y-6 text-left">
+          <p className="text-xs text-zinc-600 dark:text-zinc-300 max-w-md mx-auto leading-relaxed">
+            {t('heroDesc')}
+          </p>
 
-            {/* Label pill */}
-            <div
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold"
-              style={{
-                background: '#FCE7F3',
-                color: '#B83A7C',
-                border: '1px solid #F1D5E3',
-                boxShadow: '0 1px 4px rgba(232,93,158,0.08)',
-              }}
+          {/* Primary Action Button */}
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => scrollToExplorer(selectedCatId)}
+              className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow-md shadow-purple-600/20 transition-all cursor-pointer active:scale-95"
             >
-              <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>🇵🇰 Pakistan's #1 Free Online PDF Platform</span>
-            </div>
-
-            {/* H1 */}
-            <h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight"
-              style={{ color: '#18181B', letterSpacing: '-0.035em' }}
+              <span>{t('exploreTools')}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+            <Link
+              to="/tools"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-[#1B1E2E] hover:bg-zinc-200 dark:hover:bg-[#2A2E45] border border-zinc-200 dark:border-[#2A2E45] transition-all"
             >
-              Convert &amp; Organize<br />
-              <span style={{ color: '#E85D9E' }}>Your PDF Documents</span><br />
-              Instantly. 100% Free.
-            </h1>
+              <span>{t('viewAllTools')}</span>
+            </Link>
+          </div>
 
-            {/* Sub-copy */}
-            <p
-              className="text-base sm:text-lg leading-relaxed max-w-xl"
-              style={{ color: '#52525B' }}
-            >
-              Simple, fast, and private PDF tools for students, freelancers, and businesses across Pakistan.
-              Convert Word, Excel, PowerPoint, and images to PDF — or merge, split, and compress PDFs instantly.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-1">
-              <Link
-                to="/tools"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white transition-all duration-200 active:scale-95"
-                style={{
-                  background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                  boxShadow: '0 6px 20px rgba(232, 93, 158, 0.30)',
-                  textDecoration: 'none',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 8px 28px rgba(232, 93, 158, 0.40)')}
-                onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 6px 20px rgba(232, 93, 158, 0.30)')}
-              >
-                Explore All Tools
-                <ArrowRight className="w-4 h-4" aria-hidden="true" />
-              </Link>
-              <a
-                href="#how-it-works"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-all duration-200"
-                style={{
-                  background: '#FFFFFF',
-                  color: '#3F3F46',
-                  border: '1.5px solid #E4E4E7',
-                  textDecoration: 'none',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = '#FFF7FB';
-                  e.currentTarget.style.borderColor = '#F1D5E3';
-                  e.currentTarget.style.color = '#E85D9E';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = '#FFFFFF';
-                  e.currentTarget.style.borderColor = '#E4E4E7';
-                  e.currentTarget.style.color = '#3F3F46';
-                }}
-              >
-                How It Works
-              </a>
-            </div>
-
-            {/* Search Bar */}
-            <div className="relative pt-3 max-w-xl" role="search" aria-label="Search PDF tools">
-              <div
-                className="flex items-center rounded-2xl bg-white p-1.5 transition-all duration-200"
-                style={{ border: '1.5px solid #F1D5E3', boxShadow: '0 2px 8px rgba(232,93,158,0.05)' }}
-                onFocusCapture={e => {
-                  e.currentTarget.style.borderColor = '#E85D9E';
-                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(232,93,158,0.12)';
-                }}
-                onBlurCapture={e => {
-                  e.currentTarget.style.borderColor = '#F1D5E3';
-                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(232,93,158,0.05)';
-                }}
-              >
-                <Search className="w-5 h-5 ml-3 shrink-0" style={{ color: '#A1A1AA' }} aria-hidden="true" />
-                <input
-                  type="search"
-                  placeholder="Search tools — Word to PDF, Compress, Merge…"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  className="flex-1 bg-transparent px-3 py-2 text-sm focus:outline-none"
-                  style={{ color: '#18181B' }}
-                  aria-label="Search PDF tools"
-                />
-                <button
-                  onClick={() => {}}
-                  className="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all duration-150 active:scale-95 shrink-0"
-                  style={{ background: '#E85D9E' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = '#D44D8A')}
-                  onMouseLeave={e => (e.currentTarget.style.background = '#E85D9E')}
-                  aria-label="Search"
-                >
-                  Search
-                </button>
-              </div>
-
-              {/* Live Search Dropdown */}
+          {/* Global Search Bar */}
+          <div className="max-w-sm mx-auto">
+            <div className="relative flex items-center">
+              <Search className="w-3.5 h-3.5 absolute left-3 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder={t('searchToolsHero')}
+                className="w-full pl-9 pr-8 py-2 rounded-xl text-xs bg-zinc-50 dark:bg-[#1B1E2E] text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 border border-zinc-200 dark:border-[#2A2E45] focus:outline-none focus:ring-2 focus:ring-purple-600 focus:bg-white dark:focus:bg-[#141622] transition-all"
+                aria-label="Search tools"
+              />
               {searchQuery && (
-                <div
-                  className="absolute top-full left-0 right-0 mt-2 rounded-2xl p-2 z-30 max-h-72 overflow-y-auto animate-scale-in"
-                  style={{
-                    background: '#FFFFFF',
-                    border: '1px solid #F1D5E3',
-                    boxShadow: '0 20px 48px rgba(232,93,158,0.12), 0 4px 16px rgba(0,0,0,0.06)',
-                  }}
-                  role="listbox"
-                  aria-label="Search results"
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 p-0.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
                 >
-                  {filteredTools.length > 0 ? (
-                    filteredTools.map(t => {
-                      const Icon = iconMap[t.iconName] || FileText;
-                      return (
-                        <Link
-                          key={t.id}
-                          to={t.path}
-                          role="option"
-                          className="flex items-center gap-3 p-2.5 rounded-xl transition-colors duration-100 hover:bg-pink-50"
-                          style={{ textDecoration: 'none' }}
-                          onClick={() => setSearchQuery('')}
-                        >
-                          <div
-                            className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                            style={{ background: '#FCE7F3', color: '#E85D9E' }}
-                            aria-hidden="true"
-                          >
-                            <Icon className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <div className="text-xs font-bold" style={{ color: '#18181B' }}>{t.name}</div>
-                            <div className="text-[11px] line-clamp-1 mt-0.5" style={{ color: '#A1A1AA' }}>{t.shortDesc}</div>
-                          </div>
-                        </Link>
-                      );
-                    })
-                  ) : (
-                    <div className="py-6 text-center">
-                      <p className="text-sm font-medium" style={{ color: '#A1A1AA' }}>
-                        No tools found for &ldquo;{searchQuery}&rdquo;
-                      </p>
-                      <button
-                        onClick={() => setSearchQuery('')}
-                        className="mt-2 text-xs font-bold"
-                        style={{ color: '#E85D9E' }}
-                      >
-                        Clear search
-                      </button>
-                    </div>
-                  )}
-                </div>
+                  <X className="w-3 h-3" />
+                </button>
               )}
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* ── Right: Visual Mockup ── */}
-          <div className="lg:col-span-5 flex justify-center items-center">
-            <div
-              className="w-full max-w-sm relative"
-              style={{
-                background: '#FFFFFF',
-                border: '1px solid #F1D5E3',
-                borderRadius: '1.5rem',
-                padding: '1.5rem',
-                boxShadow: '0 24px 64px rgba(232,93,158,0.12), 0 4px 16px rgba(0,0,0,0.05)',
-              }}
-            >
-              {/* Card header */}
-              <div
-                className="text-center pb-4 mb-5"
-                style={{ borderBottom: '1px solid #F9F0F5' }}
-              >
-                <span
-                  className="text-[10px] font-bold uppercase tracking-widest"
-                  style={{ color: '#E85D9E' }}
-                >
-                  Document Conversion
-                </span>
-                <h4 className="text-sm font-bold mt-1" style={{ color: '#18181B' }}>
-                  How PDFora Works
-                </h4>
-              </div>
+      {/* ── SEARCH RESULTS ─────────────────────────── */}
+      {searchQuery.trim() ? (
+        <section className="py-5 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-3">
+          <div className="flex items-center justify-between text-xs font-bold text-zinc-500 dark:text-zinc-400">
+            <span>{searchResults.length} {t('searchResults')} "{searchQuery}"</span>
+            <button onClick={() => setSearchQuery('')} className="text-purple-600 dark:text-purple-400 hover:underline">
+              {t('clearSearch')}
+            </button>
+          </div>
 
-              {/* Step 1 – Source file */}
-              <div
-                className="flex items-center gap-3 p-3.5 rounded-xl mb-3"
-                style={{ border: '1px solid #F1D5E3', background: '#FAFAFA' }}
-              >
-                <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-black shrink-0"
-                  style={{ background: '#EFF6FF', color: '#3B82F6' }}
-                  aria-label="Word document"
+          {searchResults.length === 0 ? (
+            <div className="text-center py-8 bg-white dark:bg-[#141622] rounded-xl border border-zinc-200 dark:border-[#2A2E45] p-5 space-y-1.5 max-w-sm mx-auto">
+              <Search className="w-6 h-6 text-zinc-400 mx-auto" />
+              <h3 className="text-xs font-bold text-zinc-900 dark:text-white">{t('noToolsFound')}</h3>
+              <p className="text-[10px] text-zinc-500">{t('noToolsHint')}</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5">
+              {searchResults.map(({ tool, categoryName, subcategoryName }) => (
+                <Link
+                  key={tool.id}
+                  to={tool.path}
+                  className="group flex flex-col justify-between p-3 bg-white dark:bg-[#141622] rounded-xl border border-zinc-200/80 dark:border-[#2A2E45] hover:border-purple-500 hover:shadow-md transition-all"
                 >
-                  DOC
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold truncate" style={{ color: '#18181B' }}>report_final.docx</p>
-                  <p className="text-[11px] mt-0.5" style={{ color: '#A1A1AA' }}>3.4 MB · Word Document</p>
-                </div>
-                <div
-                  className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
-                  style={{ background: '#DCFCE7' }}
-                  aria-hidden="true"
-                >
-                  <CheckCircle2 className="w-3.5 h-3.5" style={{ color: '#16A34A' }} />
-                </div>
-              </div>
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-bold px-1 py-0.5 rounded bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 uppercase inline-block truncate max-w-full">
+                      {subcategoryName}
+                    </span>
+                    <h3 className="text-[11px] font-bold text-zinc-900 dark:text-white group-hover:text-purple-600 transition-colors line-clamp-1">
+                      {t(tool)}
+                    </h3>
+                    <p className="text-[10px] text-zinc-500 dark:text-zinc-400 line-clamp-2">
+                      {tool.shortDesc || tool.description}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between pt-1.5 mt-1.5 border-t border-zinc-100 dark:border-[#2A2E45] text-[10px] font-bold text-purple-600 dark:text-purple-400">
+                    <span>{t('openTool')}</span>
+                    <ArrowRight className="w-2.5 h-2.5" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </section>
+      ) : (
+        <>
+          {/* ── 2. CATEGORY CARDS ───────────────────── */}
+          <section className="py-5 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-3">
+            <h2 className="text-sm font-black text-zinc-900 dark:text-white tracking-tight text-center">
+              {t('toolCategories')}
+            </h2>
 
-              {/* Arrow / Processing indicator */}
-              <div className="flex items-center justify-center py-2 gap-2 my-1">
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, #F1D5E3)' }} />
-                <div
-                  className="w-8 h-8 rounded-xl flex items-center justify-center"
-                  style={{ background: '#FCE7F3', color: '#E85D9E' }}
-                  aria-label="Converting"
-                >
-                  <Sparkles className="w-4 h-4" aria-hidden="true" />
-                </div>
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, #F1D5E3, transparent)' }} />
-              </div>
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
+              {CATEGORIES_DATA.map(cat => {
+                const Icon = iconComponentMap[cat.iconName] || Layers;
+                const totalTools = cat.subcategories.reduce((acc, sub) => acc + sub.toolIds.length, 0);
+                const isSelected = selectedCatId === cat.id;
 
-              {/* Step 2 – Result file */}
-              <div
-                className="flex items-center gap-3 p-3.5 rounded-xl mb-4"
-                style={{ border: '1px solid #F1D5E3', background: '#FFF7FB' }}
-              >
-                <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-black text-white shrink-0"
-                  style={{
-                    background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                    boxShadow: '0 3px 8px rgba(232,93,158,0.25)',
-                  }}
-                  aria-label="PDF result"
-                >
-                  PDF
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold truncate" style={{ color: '#18181B' }}>report_final.pdf</p>
-                  <p className="text-[11px] font-semibold mt-0.5" style={{ color: '#E85D9E' }}>
-                    Ready — 1.2 MB
-                  </p>
-                </div>
-                <span
-                  className="text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0"
-                  style={{ background: '#E85D9E', color: '#FFFFFF' }}
-                >
-                  Free
-                </span>
-              </div>
-
-              {/* Trust pills */}
-              <div className="flex items-center justify-center gap-3 flex-wrap">
-                {[
-                  { icon: Lock, text: 'TLS Encrypted' },
-                  { icon: ShieldCheck, text: 'Auto-deleted' },
-                  { icon: Globe, text: 'Works on mobile' },
-                ].map(({ icon: Icon, text }) => (
-                  <span
-                    key={text}
-                    className="inline-flex items-center gap-1.5 text-[11px] font-medium"
-                    style={{ color: '#71717A' }}
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => scrollToExplorer(cat.id)}
+                    aria-label={`Explore ${t(cat.id)} category tools`}
+                    className={`group cursor-pointer text-left p-3.5 rounded-xl border transition-all duration-200 flex flex-col justify-between ${
+                      isSelected
+                        ? 'bg-purple-600 text-white border-purple-600 shadow-md shadow-purple-600/20'
+                        : 'bg-white dark:bg-[#141622] border-zinc-200/80 dark:border-[#2A2E45] hover:border-purple-500 hover:shadow-md'
+                    }`}
                   >
-                    <Icon className="w-3 h-3 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
-                    {text}
-                  </span>
+                    <div className="space-y-1.5 w-full">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${
+                        isSelected
+                          ? 'bg-white/20 text-white border-white/30'
+                          : 'bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border-purple-100 dark:border-purple-900 group-hover:bg-purple-600 group-hover:text-white'
+                      } transition-colors`}>
+                        <Icon className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
+                      </div>
+                      <div>
+                        <h3 className={`text-xs font-extrabold ${isSelected ? 'text-white' : 'text-zinc-900 dark:text-white'}`}>
+                          {t(cat.id)}
+                        </h3>
+                        <p className={`text-[10px] mt-0.5 line-clamp-2 ${isSelected ? 'text-purple-50' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                          {cat.desc}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="pt-2 mt-2 border-t border-white/20 dark:border-[#2A2E45] flex items-center justify-between w-full">
+                      <span className={`text-[10px] font-bold ${isSelected ? 'text-white' : 'text-purple-600 dark:text-purple-400'}`}>
+                        {totalTools} Tools
+                      </span>
+                      <ChevronRight className={`w-3 h-3 group-hover:translate-x-1 transition-transform ${isSelected ? 'text-white' : 'text-purple-600 dark:text-purple-400'}`} aria-hidden="true" />
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* ── Ad Banner ───────────────────────────── */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <AdBanner slot={AD_SLOTS.HOME_HORIZONTAL} format="horizontal" />
+          </div>
+
+          {/* ── 3. TOOL EXPLORER ────────────────────── */}
+          <section ref={explorerRef} className="py-5 bg-white dark:bg-[#141622] border-t border-zinc-200 dark:border-[#2A2E45]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+              
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-zinc-200 dark:border-[#2A2E45]">
+                <div>
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
+                    <span>{t('toolExplorer')}</span><span>/</span>
+                    <span className="text-zinc-900 dark:text-white">{t(currentCategory.id)}</span>
+                  </div>
+                  <h3 className="text-sm font-black text-zinc-900 dark:text-white">{t(currentCategory.id)}</h3>
+                </div>
+                <select
+                  id="tool-category-select"
+                  aria-label="Select tool category"
+                  value={selectedCatId}
+                  onChange={e => setSelectedCatId(e.target.value)}
+                  className="text-xs font-bold px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] text-zinc-800 dark:text-zinc-200 outline-none cursor-pointer"
+                >
+                  {CATEGORIES_DATA.map(c => (
+                    <option key={c.id} value={c.id}>{t(c.id)}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-5">
+                {currentCategory.subcategories.map(sub => (
+                  <div key={sub.id} className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-purple-600" />
+                      <div>
+                        <h4 className="text-xs font-extrabold text-zinc-900 dark:text-white">{sub.name}</h4>
+                        <p className="text-[10px] text-zinc-500 dark:text-zinc-400">{sub.desc}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5">
+                      {sub.toolIds.map(tId => {
+                        const tool = TOOLS.find(t => t.id === tId);
+                        if (!tool) return null;
+                        const Icon = iconComponentMap[currentCategory.iconName] || FileText;
+                        return (
+                          <div
+                            key={tool.id}
+                            className="p-3 rounded-xl bg-zinc-50/70 dark:bg-[#1B1E2E]/60 border border-zinc-200/80 dark:border-[#2A2E45] hover:border-purple-500 hover:bg-white dark:hover:bg-[#1B1E2E] transition-all flex flex-col justify-between space-y-2 group"
+                          >
+                            <div className="space-y-1">
+                              <div className="flex items-center justify-between">
+                                <div className="w-7 h-7 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center border border-purple-100 dark:border-purple-900 group-hover:bg-purple-600 group-hover:text-white transition-all">
+                                  <Icon className="w-3.5 h-3.5" />
+                                </div>
+                              </div>
+                              <h5 className="text-[11px] font-bold text-zinc-900 dark:text-white group-hover:text-purple-600 transition-colors leading-tight">
+                                {t(tool)}
+                              </h5>
+                              <p className="text-[10px] text-zinc-500 dark:text-zinc-400 line-clamp-2">
+                                {tool.shortDesc || tool.description}
+                              </p>
+                            </div>
+                            <Link
+                              to={tool.path}
+                              className="w-full py-1.5 rounded-lg text-[10px] font-bold text-center text-white bg-purple-600 hover:bg-purple-700 transition-all flex items-center justify-center gap-1"
+                            >
+                              {t('launch')} <ArrowRight className="w-2.5 h-2.5" />
+                            </Link>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        </>
+      )}
 
-      {/* ════════════════════════════════════════════════════
-          TRUST STRIP
-          ════════════════════════════════════════════════════ */}
-      <section
-        className="py-10 px-4 sm:px-6 lg:px-8"
-        style={{ background: '#FFFFFF', borderBottom: '1px solid #F1D5E3' }}
-        aria-label="Platform highlights"
-      >
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      {/* ── 4. TRUST SECTION ─────────────────── */}
+      <section className="py-5 bg-zinc-50/80 dark:bg-[#0D0D14] border-t border-zinc-200 dark:border-[#2A2E45]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
+          <h2 className="text-sm font-black text-zinc-900 dark:text-white text-center">{t('whyPdfora')}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
             {[
-              { title: '100% Private',  sub: 'Files auto-deleted',     icon: ShieldCheck },
-              { title: 'TLS Encrypted', sub: 'Secure file transfer',   icon: Lock },
-              { title: 'Instant',       sub: 'No processing queues',   icon: Zap },
-              { title: 'Zero Cost',     sub: 'No account needed',      icon: FileCheck },
-            ].map(({ title, sub, icon: Icon }) => (
-              <div key={title} className="space-y-2">
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto"
-                  style={{ background: '#FCE7F3', color: '#E85D9E' }}
-                  aria-hidden="true"
-                >
-                  <Icon className="w-5 h-5" strokeWidth={2} />
+              { icon: CheckCircle, color: 'emerald', titleKey: 'trust100Free', descKey: 'trust100FreeDesc' },
+              { icon: ShieldCheck, color: 'purple', titleKey: 'trustPrivate', descKey: 'trustPrivateDesc' },
+              { icon: Zap, color: 'blue', titleKey: 'trustFast', descKey: 'trustFastDesc' },
+            ].map(({ icon: Icon, color, titleKey, descKey }) => (
+              <div key={titleKey} className="p-3.5 rounded-xl bg-white dark:bg-[#141622] border border-zinc-200/80 dark:border-[#2A2E45] flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-lg bg-${color}-50 dark:bg-${color}-950/60 text-${color}-600 dark:text-${color}-400 flex items-center justify-center border border-${color}-100 dark:border-${color}-900 shrink-0`}>
+                  <Icon className="w-4 h-4" />
                 </div>
-                <h3 className="text-base font-extrabold" style={{ color: '#18181B' }}>
-                  {title}
-                </h3>
-                <p className="text-xs" style={{ color: '#71717A' }}>{sub}</p>
+                <div>
+                  <h3 className="text-xs font-bold text-zinc-900 dark:text-white">{t(titleKey)}</h3>
+                  <p className="text-[10px] text-zinc-500 dark:text-zinc-400">{t(descKey)}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════
-          TOOLS GRID
-          ════════════════════════════════════════════════════ */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-
-          {/* Section Header */}
-          <div className="text-center max-w-2xl mx-auto mb-14 space-y-2">
-            <span className="section-label">Complete Toolkit</span>
-            <h2
-              className="text-3xl sm:text-4xl font-extrabold"
-              style={{ color: '#18181B', letterSpacing: '-0.03em' }}
-            >
-              Choose a PDF Tool
-            </h2>
-            <p className="text-sm leading-relaxed" style={{ color: '#71717A' }}>
-              Every tool runs on high-speed servers, requires no installation, and produces
-              output files in seconds.
-            </p>
+      {/* ── 5. HOW TO USE SECTION ─────────────────── */}
+      <section className="py-8 bg-white dark:bg-[#141622] border-t border-zinc-200 dark:border-[#2A2E45]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-6">
+            <h2 className="text-sm font-black text-zinc-900 dark:text-white">How to Use PDFora</h2>
+            <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">Get your result in 5 simple steps — no account, no software, no hassle.</p>
           </div>
-
-          <div className="space-y-14">
-
-            {/* Category: Convert */}
-            {convertTools.length > 0 && (
-              <div>
-                <CategoryHeader number="1" title="Convert to &amp; from PDF" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {convertTools.map(tool => <ToolCard key={tool.id} tool={tool} />)}
-                </div>
-              </div>
-            )}
-
-            {/* Category: Organize */}
-            {organizeTools.length > 0 && (
-              <div>
-                <CategoryHeader number="2" title="Organize &amp; Edit PDF" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {organizeTools.map(tool => <ToolCard key={tool.id} tool={tool} />)}
-                </div>
-              </div>
-            )}
-
-            {/* Category: Optimize */}
-            {optimizeTools.length > 0 && (
-              <div>
-                <CategoryHeader number="3" title="Optimize &amp; Compress" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {optimizeTools.map(tool => <ToolCard key={tool.id} tool={tool} />)}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* View All CTA */}
-          <div className="text-center mt-12">
-            <Link
-              to="/tools"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-all duration-200 hover:shadow-md group"
-              style={{
-                border: '1.5px solid #F1D5E3',
-                color: '#E85D9E',
-                textDecoration: 'none',
-                background: '#FFFFFF',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = '#E85D9E';
-                e.currentTarget.style.background = '#FFF7FB';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = '#F1D5E3';
-                e.currentTarget.style.background = '#FFFFFF';
-              }}
-            >
-              View All {TOOLS.length} PDF Tools
-              <ArrowRight
-                className="w-4 h-4 transition-transform group-hover:translate-x-0.5"
-                aria-hidden="true"
-              />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════
-          HOW IT WORKS
-          ════════════════════════════════════════════════════ */}
-      <span id="how-it-works" aria-hidden="true" />
-      <section
-        className="py-20 px-4 sm:px-6 lg:px-8"
-        style={{ background: '#FFF7FB', borderTop: '1px solid #F1D5E3', borderBottom: '1px solid #F1D5E3' }}
-        aria-labelledby="how-it-works-heading"
-      >
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-14 space-y-2">
-            <span className="section-label">Simple Process</span>
-            <h2
-              id="how-it-works-heading"
-              className="text-3xl font-extrabold"
-              style={{ color: '#18181B', letterSpacing: '-0.03em' }}
-            >
-              How PDFora Works
-            </h2>
-            <p className="text-sm" style={{ color: '#71717A' }}>
-              Process your documents in three straightforward steps.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-            {/* Connector lines on desktop */}
-            <div
-              className="hidden md:block absolute top-10 left-[calc(33.33%+1rem)] right-[calc(33.33%+1rem)] h-px"
-              style={{ background: 'linear-gradient(90deg, #F1D5E3 0%, #E85D9E 50%, #F1D5E3 100%)' }}
-              aria-hidden="true"
-            />
-
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
             {[
-              {
-                step: '01',
-                icon: Upload,
-                title: 'Upload Your File',
-                desc: 'Drag and drop your PDF, Word, Excel, PowerPoint, or image into the secure upload box — or tap to browse from your device.',
-              },
-              {
-                step: '02',
-                icon: Sparkles,
-                title: 'PDFora Processes It',
-                desc: 'Configure any options such as compression level or page size, then click convert. Most files complete in under five seconds.',
-              },
-              {
-                step: '03',
-                icon: CheckCircle2,
-                title: 'Download Your Result',
-                desc: 'Your output file is ready to download instantly. Files are permanently deleted from our servers within 60 minutes.',
-              },
-            ].map(({ step, icon: Icon, title, desc }) => (
-              <div
-                key={step}
-                className="relative p-7 rounded-2xl space-y-4 text-left"
-                style={{
-                  background: '#FFFFFF',
-                  border: '1px solid #F1D5E3',
-                  boxShadow: '0 2px 8px rgba(232,93,158,0.05)',
-                }}
-              >
-                {/* Step number */}
-                <span
-                  className="block text-5xl font-black leading-none select-none"
-                  style={{ color: '#FCE7F3', letterSpacing: '-0.05em' }}
-                  aria-hidden="true"
-                >
+              { step: '1', title: 'Choose a Tool', desc: 'Browse 70+ tools by category or use the search bar to find exactly what you need.' },
+              { step: '2', title: 'Upload Your File', desc: 'Click the upload area or drag & drop your file. Supports PDF, Word, Excel, JPG, MP4, and more.' },
+              { step: '3', title: 'Adjust Settings', desc: 'Customize options like output quality, compression level, or target format — or use smart defaults.' },
+              { step: '4', title: 'Process', desc: 'Click the action button. Our engine processes your file in seconds using your device\'s power.' },
+              { step: '5', title: 'Download', desc: 'Your result is instantly ready. Click download and save it — no email, no waiting room.' },
+            ].map(({ step, title, desc }) => (
+              <div key={step} className="flex flex-col items-center text-center p-4 rounded-xl bg-zinc-50 dark:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45] space-y-2">
+                <div className="w-8 h-8 rounded-full bg-purple-600 text-white text-xs font-black flex items-center justify-center shrink-0">
                   {step}
-                </span>
-
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style={{ background: '#FCE7F3', color: '#E85D9E' }}
-                  aria-hidden="true"
-                >
-                  <Icon className="w-5 h-5" strokeWidth={2} />
                 </div>
-
-                <h3 className="text-base font-bold" style={{ color: '#18181B' }}>
-                  {title}
-                </h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#71717A' }}>
-                  {desc}
-                </p>
+                <h3 className="text-xs font-bold text-zinc-900 dark:text-white">{title}</h3>
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-400 leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════
-          WHY PDFORA
-          ════════════════════════════════════════════════════ */}
-      <section
-        className="py-20 px-4 sm:px-6 lg:px-8"
-        aria-labelledby="why-pdfora-heading"
-      >
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-14 space-y-2">
-            <span className="section-label">Platform Values</span>
-            <h2
-              id="why-pdfora-heading"
-              className="text-3xl font-extrabold"
-              style={{ color: '#18181B', letterSpacing: '-0.03em' }}
-            >
-              Why Choose PDFora?
-            </h2>
-            <p className="text-sm" style={{ color: '#71717A' }}>
-              Built around simplicity, speed, and strict privacy — for every type of user.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {[
-              {
-                icon: Zap,
-                title: 'Lightning Fast',
-                desc: 'High-performance servers complete most conversions in under five seconds — no queues, no waiting.',
-              },
-              {
-                icon: FileCheck,
-                title: 'Easy to Use',
-                desc: 'A clean, minimal interface with no unnecessary settings or complex menus. Just upload and convert.',
-              },
-              {
-                icon: Globe,
-                title: 'Works Everywhere',
-                desc: 'Fully responsive design means PDFora works on desktop, tablet, and mobile without installing anything.',
-              },
-              {
-                icon: ShieldCheck,
-                title: 'Privacy First',
-                desc: 'Your files are encrypted in transit, processed in isolated sessions, and auto-deleted within an hour.',
-              },
-            ].map(({ icon: Icon, title, desc }) => (
+      {/* ── 6. FAQ SECTION ─────────────────── */}
+      <section className="py-5 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-3">
+          <h2 className="text-sm font-extrabold text-zinc-900 dark:text-white">{t('faqTitle')}</h2>
+          <p className="text-[10px] text-zinc-500 dark:text-zinc-400">{t('faqSubtitle')}</p>
+        </div>
+        <div className="space-y-1.5">
+          {faqs.map((faq, idx) => {
+            const isOpen = openFaq === idx;
+            return (
               <div
-                key={title}
-                className="p-6 rounded-2xl space-y-3"
-                style={{
-                  background: '#FFFFFF',
-                  border: '1px solid #F1D5E3',
-                  boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
-                }}
+                key={idx}
+                className={`rounded-xl border transition-all overflow-hidden bg-white dark:bg-[#141622] ${
+                  isOpen ? 'border-purple-500 shadow-sm' : 'border-zinc-200 dark:border-[#2A2E45]'
+                }`}
               >
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style={{ background: '#FCE7F3', color: '#E85D9E' }}
-                  aria-hidden="true"
+                <button
+                  type="button"
+                  onClick={() => setOpenFaq(isOpen ? null : idx)}
+                  className="w-full px-4 py-3 text-left flex items-center justify-between gap-3 cursor-pointer"
+                  aria-expanded={isOpen}
                 >
-                  <Icon className="w-5 h-5" strokeWidth={2} />
-                </div>
-                <h3 className="text-sm font-bold" style={{ color: '#18181B' }}>
-                  {title}
-                </h3>
-                <p className="text-xs leading-relaxed" style={{ color: '#71717A' }}>
-                  {desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════
-          FAQ
-          ════════════════════════════════════════════════════ */}
-      <section
-        className="py-20 px-4 sm:px-6 lg:px-8"
-        style={{ background: '#FFF7FB', borderTop: '1px solid #F1D5E3', borderBottom: '1px solid #F1D5E3' }}
-        aria-labelledby="faq-heading"
-      >
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-12 space-y-2">
-            <span className="section-label">FAQ</span>
-            <h2
-              id="faq-heading"
-              className="text-3xl font-extrabold flex items-center justify-center gap-2.5"
-              style={{ color: '#18181B', letterSpacing: '-0.03em' }}
-            >
-              <HelpCircle className="w-7 h-7 shrink-0" style={{ color: '#E85D9E' }} aria-hidden="true" />
-              Frequently Asked Questions
-            </h2>
-            <p className="text-sm" style={{ color: '#71717A' }}>
-              Everything you need to know about PDFora.
-            </p>
-          </div>
-
-          <div className="space-y-3" role="list">
-            {FAQS.map((faq, idx) => {
-              const isOpen = openFaq === idx;
-              return (
-                <div
-                  key={idx}
-                  role="listitem"
-                  className="rounded-2xl overflow-hidden transition-all duration-200"
-                  style={{
-                    background: '#FFFFFF',
-                    border: `1px solid ${isOpen ? '#E85D9E' : '#F1D5E3'}`,
-                    boxShadow: isOpen ? '0 4px 16px rgba(232,93,158,0.08)' : '0 1px 4px rgba(232,93,158,0.03)',
-                  }}
-                >
-                  <button
-                    onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full px-5 sm:px-6 py-4 sm:py-5 text-left flex items-center justify-between gap-4 transition-colors duration-150"
-                    aria-expanded={isOpen}
-                    style={{ color: isOpen ? '#E85D9E' : '#18181B' }}
-                  >
-                    <span className="text-sm font-semibold leading-snug">{faq.question}</span>
-                    <ChevronDown
-                      className={`w-4 h-4 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-                      style={{ color: isOpen ? '#E85D9E' : '#A1A1AA' }}
-                      aria-hidden="true"
-                    />
-                  </button>
-
-                  <div className={`faq-accordion-content ${isOpen ? 'open' : ''}`}>
-                    <div
-                      className="px-5 sm:px-6 pb-5 pt-1 text-sm leading-relaxed"
-                      style={{ color: '#52525B', borderTop: '1px solid #FFF0F8' }}
-                    >
-                      {faq.answer}
-                    </div>
+                  <span className={`text-xs font-bold ${isOpen ? 'text-purple-600 dark:text-purple-400' : 'text-zinc-900 dark:text-white'}`}>
+                    {faq.q}
+                  </span>
+                  <ChevronDown className={`w-3.5 h-3.5 shrink-0 transition-transform ${isOpen ? 'rotate-180 text-purple-600' : 'text-zinc-400'}`} />
+                </button>
+                {isOpen && (
+                  <div className="px-4 pb-3 pt-1 text-[11px] text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-100 dark:border-[#2A2E45]">
+                    {faq.a}
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════
-          FINAL CTA BANNER
-          ════════════════════════════════════════════════════ */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8" aria-label="Get started">
-        <div className="max-w-4xl mx-auto">
-          <div
-            className="relative rounded-3xl p-8 sm:p-14 text-center overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, #E85D9E 0%, #C03978 100%)',
-              boxShadow: '0 24px 56px rgba(232,93,158,0.30)',
-            }}
-          >
-            {/* Decorative orb */}
-            <div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full pointer-events-none"
-              style={{ background: 'rgba(255,255,255,0.06)', filter: 'blur(60px)' }}
-              aria-hidden="true"
-            />
-
-            <div className="relative z-10 space-y-5 max-w-2xl mx-auto">
-              <h2
-                className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white"
-                style={{ letterSpacing: '-0.03em' }}
-              >
-                Simplify Your Document Workflow
-              </h2>
-              <p className="text-sm sm:text-base leading-relaxed" style={{ color: 'rgba(255,255,255,0.85)' }}>
-                No subscriptions. No sign-up. Start converting, merging, and compressing PDFs
-                right now — completely free.
-              </p>
-              <div className="pt-2">
-                <Link
-                  to="/tools"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-all duration-200 active:scale-95 hover:shadow-lg"
-                  style={{
-                    background: '#FFFFFF',
-                    color: '#E85D9E',
-                    textDecoration: 'none',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
-                  }}
-                >
-                  Get Started — It's Free
-                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                </Link>
+                )}
               </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </section>
 

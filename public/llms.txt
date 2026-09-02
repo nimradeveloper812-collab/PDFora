@@ -1,0 +1,25 @@
+﻿# PDFora
+
+> PDFora is a fast, privacy-first, and 100% free online PDF and media conversion suite. It processes documents and files directly in the user's browser using client-side JavaScript and WebAssembly, ensuring complete privacy with zero server uploads.
+
+## Core Tools & Converters
+
+- [Merge PDF](https://pdfora.nimradev.site/merge-pdf): Combine multiple PDF documents into a single unified file.
+- [Compress PDF](https://pdfora.nimradev.site/compress-pdf): Reduce PDF file size with adjustable compression levels.
+- [Split PDF](https://pdfora.nimradev.site/split-pdf): Extract pages or separate a PDF into individual documents.
+- [Word to PDF](https://pdfora.nimradev.site/word-to-pdf): Convert Microsoft Word (.docx) documents to PDF format.
+- [Excel to PDF](https://pdfora.nimradev.site/excel-to-pdf): Convert Excel (.xlsx) spreadsheets to PDF format.
+- [PowerPoint to PDF](https://pdfora.nimradev.site/powerpoint-to-pdf): Convert PowerPoint (.pptx) presentations to PDF.
+- [JPG to PDF](https://pdfora.nimradev.site/jpg-to-pdf): Convert JPEG and JPG images into PDF format.
+- [PNG to PDF](https://pdfora.nimradev.site/png-to-pdf): Convert PNG images into high-quality PDF files.
+- [PDF to Word](https://pdfora.nimradev.site/pdf-to-word): Convert PDF documents into editable Word documents.
+- [Image Background Remover](https://pdfora.nimradev.site/image-background-remover): AI-powered automatic background removal for photos.
+- [Image Compressor](https://pdfora.nimradev.site/image-compressor): Optimize and compress JPG, PNG, and WebP images.
+- [All Tools Directory](https://pdfora.nimradev.site/tools): Full catalog of 70+ online productivity and converter tools.
+
+## Documentation & Policies
+
+- [About PDFora](https://pdfora.nimradev.site/about): Overview of PDFora architecture, client-side processing, and mission.
+- [Privacy Policy](https://pdfora.nimradev.site/privacy-policy): Detailed information about data privacy, cookies, and advertising.
+- [Terms of Service](https://pdfora.nimradev.site/terms-of-service): Terms and legal conditions for using the PDFora platform.
+- [Contact Support](https://pdfora.nimradev.site/contact): Support and contact channels.

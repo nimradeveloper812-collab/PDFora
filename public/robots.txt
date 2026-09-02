@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Allow: /assets/
+Disallow: /api/
 
+# Canonical XML Sitemap
 Sitemap: https://pdfora.nimradev.site/sitemap.xml

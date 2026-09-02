@@ -1,106 +1,69 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
-  Search, ArrowRight, Sparkles, FileText, Table,
-  Presentation, Image as ImageIcon, FileImage,
-  Layers, Minimize2, Scissors, X
+  FileText, Search, Sparkles, ArrowRight, Table, Presentation,
+  Image as ImageIcon, FileImage, Layers, Minimize2, Scissors,
+  Music, FileVideo, RefreshCw, Grid, Code, CheckCircle2, ShieldCheck, X
 } from 'lucide-react';
-import { TOOLS, TOOLS_CATEGORIES } from '../data/toolsData';
+import { TOOLS } from '../data/toolsData';
+import { CATEGORIES_DATA } from '../data/categoriesData';
+import { useLanguage } from '../context/LanguageContext';
 
 const iconMap = {
   FileText, Table, Presentation,
-  Image: ImageIcon, FileImage, Layers, Minimize2, Scissors
+  Image: ImageIcon, FileImage, Layers, Minimize2, Scissors, Sparkles,
+  Music, FileVideo, RefreshCw, Code
 };
 
 export default function AllTools() {
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [searchQuery, setSearchQuery]       = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeCatId = searchParams.get('category') || 'all';
+  const [searchQuery, setSearchQuery]   = useState('');
+  const { t } = useLanguage();
 
-  const filteredTools = TOOLS.filter(tool => {
-    const matchCat    = activeCategory === 'all' || tool.category === activeCategory;
-    const matchSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase())
-                     || tool.shortDesc.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCat && matchSearch;
+  const filteredCategories = CATEGORIES_DATA.filter(cat => {
+    if (activeCatId !== 'all' && cat.id !== activeCatId) return false;
+    return true;
   });
 
   return (
-    <div className="pt-16 pb-20 min-h-screen">
+    <div className="min-h-screen bg-zinc-50/50 dark:bg-[#0D0D14] text-zinc-900 dark:text-white pt-12 font-sans transition-colors">
       <Helmet>
-        <title>All Free PDF Tools — PDFora | Pakistan's PDF Converter Suite</title>
-        <meta name="description" content="Explore all free PDF tools on PDFora. Convert Word, Excel, PPT, images to PDF, merge, compress, and split PDFs instantly." />
+        <title>All Tools Directory — PDFora | Categories &amp; Subcategories</title>
+        <meta
+          name="description"
+          content="Browse all 89 free online PDF, document, image, video, audio, and AI tools organized by clear Categories and Subcategories on PDFora."
+        />
+        <link rel="canonical" href="https://pdfora.nimradev.site/tools" />
       </Helmet>
 
-      {/* ── Hero ──────────────────────────────────────────── */}
-      <section
-        className="py-14 px-4 sm:px-6 lg:px-8 text-center"
-        style={{
-          background: 'radial-gradient(ellipse 85% 55% at 50% -5%, #FCE7F3 0%, #FFFFFF 68%)',
-          borderBottom: '1px solid #F1D5E3',
-        }}
-        aria-labelledby="all-tools-heading"
-      >
-        <div className="max-w-3xl mx-auto space-y-5">
-          <div
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold"
-            style={{
-              background: '#FCE7F3',
-              color: '#B83A7C',
-              border: '1px solid #F1D5E3',
-              boxShadow: '0 1px 4px rgba(232,93,158,0.08)',
-            }}
-          >
-            <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>🇵🇰 Pakistan's Complete PDF Suite</span>
-          </div>
-
-          <h1
-            id="all-tools-heading"
-            className="text-3xl sm:text-5xl font-black"
-            style={{ color: '#18181B', letterSpacing: '-0.035em' }}
-          >
-            All PDF Tools
+      {/* Header Banner */}
+      <section className="pt-4 pb-5 px-4 sm:px-6 lg:px-8 text-center border-b border-zinc-200 dark:border-[#2A2E45] bg-white dark:bg-[#141622] transition-colors">
+        <div className="max-w-4xl mx-auto space-y-2">
+          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
+            {t('allToolsPageTitle')}
           </h1>
-
-          <p className="text-sm sm:text-base leading-relaxed max-w-xl mx-auto" style={{ color: '#52525B' }}>
-            {TOOLS.length} free tools to convert, edit, merge, split, and compress your PDF
-            documents — no installation, no sign-up required.
+          <p className="text-xs text-zinc-600 dark:text-zinc-300 max-w-sm mx-auto">
+            {t('allToolsPageDesc')}
           </p>
 
-          {/* Search Bar */}
-          <div className="max-w-md mx-auto pt-2" role="search" aria-label="Search PDF tools">
-            <div
-              className="flex items-center rounded-2xl bg-white transition-all duration-200"
-              style={{ border: '1.5px solid #F1D5E3', boxShadow: '0 2px 8px rgba(232,93,158,0.05)' }}
-              onFocusCapture={e => {
-                e.currentTarget.style.borderColor = '#E85D9E';
-                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(232,93,158,0.10)';
-              }}
-              onBlurCapture={e => {
-                e.currentTarget.style.borderColor = '#F1D5E3';
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(232,93,158,0.05)';
-              }}
-            >
-              <Search className="w-4 h-4 ml-3.5 shrink-0" style={{ color: '#A1A1AA' }} aria-hidden="true" />
+          <div className="max-w-xs mx-auto">
+            <div className="relative flex items-center">
+              <Search className="w-3.5 h-3.5 absolute left-3 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
               <input
-                type="search"
-                placeholder="Search by tool name or description…"
+                type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="flex-1 px-3 py-3 text-sm bg-transparent focus:outline-none"
-                style={{ color: '#18181B' }}
-                aria-label="Search PDF tools"
+                placeholder={t('searchByName')}
+                className="w-full pl-9 pr-8 py-2 rounded-xl text-xs bg-zinc-50 dark:bg-[#1B1E2E] text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 border border-zinc-200 dark:border-[#2A2E45] focus:outline-none focus:ring-2 focus:ring-purple-600"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="mr-3 text-xs font-bold px-2 py-1 rounded-lg transition-colors"
-                  style={{ color: '#A1A1AA' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#E85D9E')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#A1A1AA')}
-                  aria-label="Clear search"
+                  className="absolute right-2.5 p-0.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
                 >
-                  <X className="w-3.5 h-3.5" aria-hidden="true" />
+                  <X className="w-3 h-3" />
                 </button>
               )}
             </div>
@@ -108,198 +71,142 @@ export default function AllTools() {
         </div>
       </section>
 
-      {/* ── Category Tabs ─────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div
-          className="flex items-center gap-2 overflow-x-auto pb-1 sm:justify-center sm:flex-wrap"
-          role="tablist"
-          aria-label="Filter tools by category"
-          style={{ scrollbarWidth: 'none' }}
-        >
-          {TOOLS_CATEGORIES.map(cat => {
-            const isActive = activeCategory === cat.id;
-            const count    = cat.id === 'all'
-              ? TOOLS.length
-              : TOOLS.filter(t => t.category === cat.id).length;
+      {/* Category Filter Tabs */}
+      <section className="py-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-4">
+        <div className="flex items-center gap-1 overflow-x-auto pb-2 border-b border-zinc-200 dark:border-[#2A2E45] no-scrollbar">
+          <button
+            type="button"
+            onClick={() => setSearchParams({})}
+            className={`px-3 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition-all cursor-pointer ${
+              activeCatId === 'all'
+                ? 'bg-purple-600 text-white shadow-sm'
+                : 'bg-white dark:bg-[#141622] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45]'
+            }`}
+          >
+            {t('allCategories')} ({CATEGORIES_DATA.length})
+          </button>
+          {CATEGORIES_DATA.map(cat => {
+            const isActive = activeCatId === cat.id;
             return (
               <button
                 key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
-                role="tab"
-                aria-selected={isActive}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-150 shrink-0 whitespace-nowrap"
-                style={
+                type="button"
+                onClick={() => setSearchParams({ category: cat.id })}
+                className={`px-3 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition-all cursor-pointer ${
                   isActive
-                    ? {
-                        background: '#E85D9E',
-                        color: '#FFFFFF',
-                        border: '1.5px solid #E85D9E',
-                        boxShadow: '0 3px 10px rgba(232,93,158,0.25)',
-                      }
-                    : {
-                        background: '#FFFFFF',
-                        color: '#52525B',
-                        border: '1.5px solid #F1D5E3',
-                      }
-                }
-                onMouseEnter={e => {
-                  if (!isActive) {
-                    e.currentTarget.style.borderColor = '#E85D9E';
-                    e.currentTarget.style.color = '#E85D9E';
-                    e.currentTarget.style.background = '#FFF7FB';
-                  }
-                }}
-                onMouseLeave={e => {
-                  if (!isActive) {
-                    e.currentTarget.style.borderColor = '#F1D5E3';
-                    e.currentTarget.style.color = '#52525B';
-                    e.currentTarget.style.background = '#FFFFFF';
-                  }
-                }}
+                    ? 'bg-purple-600 text-white shadow-sm'
+                    : 'bg-white dark:bg-[#141622] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45]'
+                }`}
               >
-                {cat.name}
-                <span
-                  className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                  style={
-                    isActive
-                      ? { background: 'rgba(255,255,255,0.25)', color: '#FFFFFF' }
-                      : { background: '#FCE7F3', color: '#B83A7C' }
-                  }
-                >
-                  {count}
-                </span>
+                {t(cat.id)}
               </button>
             );
           })}
         </div>
-      </section>
 
-      {/* ── Tools Grid ────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="PDF tools grid">
-
-        {filteredTools.length > 0 ? (
-          <>
-            {/* Result count */}
-            <p className="text-xs font-medium mb-6" style={{ color: '#A1A1AA' }}>
-              {filteredTools.length === TOOLS.length
-                ? `Showing all ${TOOLS.length} tools`
-                : `${filteredTools.length} tool${filteredTools.length !== 1 ? 's' : ''} found`}
-              {searchQuery && ` for "${searchQuery}"`}
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {filteredTools.map(tool => {
-                const Icon = iconMap[tool.iconName] || FileText;
-                return (
-                  <Link
-                    key={tool.id}
-                    to={tool.path}
-                    className="group flex flex-col justify-between p-5 rounded-2xl transition-all duration-200"
-                    style={{
-                      background: '#FFFFFF',
-                      border: '1px solid #F1D5E3',
-                      boxShadow: '0 1px 4px rgba(232,93,158,0.04)',
-                      textDecoration: 'none',
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.borderColor = '#E85D9E';
-                      e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,93,158,0.10), 0 2px 8px rgba(0,0,0,0.04)';
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.borderColor = '#F1D5E3';
-                      e.currentTarget.style.boxShadow = '0 1px 4px rgba(232,93,158,0.04)';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                    }}
-                  >
-                    <div>
-                      <div className="flex items-start justify-between mb-4">
-                        <div
-                          className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 group-hover:scale-105"
-                          style={{ background: '#FCE7F3', color: '#E85D9E' }}
-                          aria-hidden="true"
-                        >
-                          <Icon className="w-5 h-5" strokeWidth={2} />
-                        </div>
-                        {tool.badge && (
-                          <span
-                            className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                            style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
-                          >
-                            {tool.badge}
-                          </span>
-                        )}
-                      </div>
-
-                      <h3
-                        className="text-sm font-bold mb-1.5 transition-colors group-hover:text-pink-600"
-                        style={{ color: '#18181B' }}
-                      >
-                        {tool.name}
-                      </h3>
-                      <p className="text-xs leading-relaxed line-clamp-2" style={{ color: '#71717A' }}>
-                        {tool.shortDesc}
-                      </p>
-                    </div>
-
-                    <div
-                      className="flex items-center justify-between pt-4 mt-4 text-xs font-bold"
-                      style={{ borderTop: '1px solid #FFF0F8', color: '#E85D9E' }}
-                    >
-                      <span>Open Tool</span>
-                      <ArrowRight
-                        className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5"
-                        aria-hidden="true"
-                      />
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </>
-        ) : (
-          /* Empty State */
-          <div
-            className="max-w-sm mx-auto text-center py-16 px-8 rounded-3xl animate-scale-in"
-            style={{
-              background: '#FFFFFF',
-              border: '1px solid #F1D5E3',
-              boxShadow: '0 4px 16px rgba(232,93,158,0.06)',
-            }}
-            role="status"
-            aria-live="polite"
-          >
-            <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
-              style={{ background: '#FCE7F3', color: '#E85D9E' }}
-              aria-hidden="true"
-            >
-              <Search className="w-7 h-7" />
-            </div>
-            <h4 className="text-base font-bold mb-2" style={{ color: '#18181B' }}>
-              No tools found
-            </h4>
-            <p className="text-sm mb-5 leading-relaxed" style={{ color: '#71717A' }}>
-              {searchQuery
-                ? `No results for "${searchQuery}". Try a different search term.`
-                : 'No tools match the selected category.'}
-            </p>
+        {activeCatId !== 'all' && (
+          <div className="flex items-center justify-between p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-xs">
+            <span className="font-bold text-purple-900 dark:text-purple-300">
+              {t('filterLabel')} <span className="underline">{t(activeCatId) || activeCatId}</span>
+            </span>
             <button
-              onClick={() => { setActiveCategory('all'); setSearchQuery(''); }}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
-              style={{
-                background: '#FCE7F3',
-                color: '#E85D9E',
-                border: '1px solid #F1D5E3',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#F1D5E3')}
-              onMouseLeave={e => (e.currentTarget.style.background = '#FCE7F3')}
+              type="button"
+              onClick={() => setSearchParams({})}
+              className="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold transition-all cursor-pointer text-[11px]"
             >
-              <X className="w-4 h-4" aria-hidden="true" />
-              Clear Filters
+              {t('showAll')}
             </button>
           </div>
         )}
+
+        {/* Categories Explorer Render */}
+        <div className="space-y-5">
+          {filteredCategories.map(cat => {
+            return (
+              <div key={cat.id} className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xs space-y-4">
+                
+                {/* Category Header */}
+                <div className="flex items-center justify-between pb-2.5 border-b border-zinc-100 dark:border-[#2A2E45]">
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/60 px-2 py-0.5 rounded border border-purple-200 dark:border-purple-800">
+                      {t('categoryLabel')}
+                    </span>
+                    <h2 className="text-base sm:text-lg font-black text-zinc-900 dark:text-white mt-0.5">
+                      {t(cat.id)}
+                    </h2>
+                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400">{cat.desc}</p>
+                  </div>
+                </div>
+
+                {/* Subcategories */}
+                <div className="space-y-4">
+                  {cat.subcategories.map(sub => {
+                    const toolsInSub = sub.toolIds
+                      .map(tId => TOOLS.find(t => t.id === tId))
+                      .filter(Boolean)
+                      .filter(tool => {
+                        if (!searchQuery.trim()) return true;
+                        const q = searchQuery.toLowerCase().trim();
+                        return (
+                          tool.name.toLowerCase().includes(q) ||
+                          t(tool).toLowerCase().includes(q) ||
+                          tool.shortDesc?.toLowerCase().includes(q) ||
+                          (tool.primaryKeywords || []).some(k => k.toLowerCase().includes(q))
+                        );
+                      });
+
+                    if (toolsInSub.length === 0) return null;
+
+                    return (
+                      <div key={sub.id} className="space-y-2">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[11px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
+                            ↳ {sub.name}
+                          </span>
+                          <span className="text-[10px] text-zinc-400 dark:text-zinc-500">• {sub.desc}</span>
+                        </div>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5">
+                          {toolsInSub.map(tool => {
+                            const Icon = iconMap[tool.iconName] || FileText;
+
+                            return (
+                              <Link
+                                key={tool.id}
+                                to={tool.path}
+                                className="group flex flex-col justify-between p-3 rounded-xl bg-zinc-50/70 dark:bg-[#1B1E2E]/60 border border-zinc-200/80 dark:border-[#2A2E45] hover:border-purple-500 dark:hover:border-purple-500 hover:bg-white dark:hover:bg-[#1B1E2E] transition-all"
+                              >
+                                <div className="space-y-1.5">
+                                  <div className="flex items-center justify-between">
+                                    <div className="w-7 h-7 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center border border-purple-100 dark:border-purple-900 group-hover:bg-purple-600 group-hover:text-white transition-all">
+                                      <Icon className="w-3.5 h-3.5" />
+                                    </div>
+                                  </div>
+
+                                  <h3 className="text-[11px] font-bold text-zinc-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors leading-tight">
+                                    {t(tool)}
+                                  </h3>
+                                  <p className="text-[10px] text-zinc-500 dark:text-zinc-400 line-clamp-2">
+                                    {tool.shortDesc || tool.description}
+                                  </p>
+                                </div>
+
+                                <div className="flex items-center justify-between pt-1.5 mt-1.5 border-t border-zinc-200/60 dark:border-[#2A2E45] text-[10px] font-bold text-purple-600 dark:text-purple-400">
+                                  <span>{t('launch')}</span>
+                                  <ArrowRight className="w-2.5 h-2.5 transition-transform group-hover:translate-x-0.5" />
+                                </div>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </section>
     </div>
   );

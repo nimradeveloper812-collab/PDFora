@@ -3,74 +3,138 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#3B82F6" />
+
+    <!-- Immediate Theme Initialization -->
+    <script>
+      (function() {
+        try {
+          var stored = localStorage.getItem('pdfora-theme');
+          if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
 
     <!-- SEO Meta -->
     <meta name="google-site-verification" content="kr2-BeOvUXGL6hmuOji60yubfa12at2MSyVypzMLf_8" />
 
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4933513982054789" crossorigin="anonymous"></script>
-    <title>PDFora — Free Online PDF Tools in Pakistan | Convert, Compress, Merge & Split</title>
-    <meta name="description" content="PDFora is Pakistan's premier free online PDF platform. Convert Word, Excel, PowerPoint & images to PDF. Merge, compress, split and edit PDFs instantly — fast, private, and 100% free." />
-    <meta name="keywords" content="PDF converter Pakistan, Word to PDF, Excel to PDF, compress PDF online, merge PDF, split PDF, free PDF tools Pakistan, Lahore PDF converter, Karachi PDF editor" />
-    <meta name="author" content="PDFora Pakistan" />
-    <meta name="robots" content="index, follow" />
-    <meta name="geo.region" content="PK" />
-    <meta name="geo.placename" content="Pakistan" />
+    <!-- Google Analytics 4 (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XSP3S147ZY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XSP3S147ZY', {
+        send_page_view: true
+      });
+    </script>
 
-    <!-- Open Graph -->
+    <!-- Google AdSense Verification & Script -->
+    <meta name="google-adsense-account" content="ca-pub-4933513982054789" />
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4933513982054789" crossorigin="anonymous"></script>
+
+    <!-- NOTE: Monetag scripts removed — running unauthorized ad networks alongside
+         Google AdSense violates Publisher Policy §3 and causes immediate rejection/suspension.
+         AdSense (above) is the only active ad network on this site. -->
+    <title>PDFora — Free Online PDF Tools | Convert, Merge, Compress & Split PDF</title>
+    <meta name="description" content="PDFora is a fast, private, and 100% free online PDF suite. Convert Word, Excel, PowerPoint & images to PDF. Merge, compress, and split documents instantly in your browser with zero file limits." />
+    <meta name="keywords" content="PDF converter online, Word to PDF, Excel to PDF, compress PDF, merge PDF, split PDF, convert JPG to PDF, free PDF tools, PDF editor online, secure PDF converter" />
+    <meta name="author" content="PDFora" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="PDFora — Free Online PDF Tools in Pakistan" />
-    <meta property="og:description" content="Pakistan's fast and secure PDF platform. Convert Word, Excel, PPT & images to PDF for free. No account or installation required." />
+    <meta property="og:title" content="PDFora — Free Online PDF Tools | Convert, Merge & Compress" />
+    <meta property="og:description" content="Fast, secure, in-browser PDF platform. Convert Word, Excel, PowerPoint & images to PDF for free. 100% private with no account required." />
     <meta property="og:site_name" content="PDFora" />
-    <meta property="og:locale" content="en_PK" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://pdfora.nimradev.site/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="PDFora — Free Online PDF Tools in Pakistan" />
-    <meta name="twitter:description" content="Convert Word, Excel, PowerPoint & images to PDF online in Pakistan. Merge, compress, and split PDFs instantly." />
+    <meta name="twitter:title" content="PDFora — Free Online PDF Tools | Convert, Merge & Compress" />
+    <meta name="twitter:description" content="Fast, secure, in-browser PDF platform. Convert Word, Excel, PowerPoint & images to PDF for free." />
+    <meta name="twitter:image" content="https://pdfora.nimradev.site/og-image.jpg" />
 
-    <!-- Google Fonts: Inter -->
+    <!-- Google Fonts: Non-blocking High-Performance Loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Sora:wght@600;700;800&display=swap"
     />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Sora:wght@600;700;800&family=Space+Grotesk:wght@600;700&family=Noto+Nastaliq+Urdu:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Noto+Sans+Devanagari:wght@400;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Sora:wght@600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+      />
+    </noscript>
 
-    <!-- Favicon & Search Icons -->
-    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="shortcut icon" href="/favicon-48.png" />
+    <!-- Favicon & Search Icons (Blue Theme) -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=blue2" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png?v=blue2" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=blue2" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=blue2" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=blue2" />
+    <link rel="shortcut icon" href="/favicon.ico?v=blue2" />
+    <link rel="manifest" href="/site.webmanifest?v=blue2" />
 
-    <!-- Schema.org JSON-LD for Google Search -->
+    <link rel="canonical" href="https://pdfora.nimradev.site/" />
+
+    <!-- Schema.org JSON-LD for Google Search & International WebApplication Indexing -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "PDFora",
-      "url": "https://pdfora.com",
-      "description": "Free online PDF tools for converting, merging, splitting, and compressing documents in Pakistan.",
-      "applicationCategory": "ProductivityApplication",
-      "operatingSystem": "All",
-      "browserRequirements": "Requires JavaScript. Requires HTML5.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "PKR"
-      },
-      "provider": {
-        "@type": "Organization",
-        "name": "PDFora Pakistan",
-        "url": "https://pdfora.com",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Lahore",
-          "addressRegion": "Punjab",
-          "addressCountry": "PK"
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://pdfora.nimradev.site/#website",
+          "name": "PDFora",
+          "url": "https://pdfora.nimradev.site",
+          "description": "Free online PDF suite for converting, merging, splitting, and compressing documents privately in your browser.",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://pdfora.nimradev.site/tools?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://pdfora.nimradev.site/#webapp",
+          "name": "PDFora",
+          "url": "https://pdfora.nimradev.site",
+          "image": "https://pdfora.nimradev.site/pdfora-logo.png",
+          "logo": "https://pdfora.nimradev.site/pdfora-logo.png",
+          "description": "Free online PDF suite for converting, merging, splitting, and compressing documents privately in your browser.",
+          "applicationCategory": "ProductivityApplication",
+          "operatingSystem": "All",
+          "browserRequirements": "Requires JavaScript. Requires HTML5.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "provider": {
+            "@type": "Organization",
+            "name": "PDFora",
+            "url": "https://pdfora.nimradev.site",
+            "logo": "https://pdfora.nimradev.site/pdfora-logo.png"
+          }
         }
-      }
+      ]
     }
     </script>
   </head>
@@ -79,4 +143,3 @@
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
-

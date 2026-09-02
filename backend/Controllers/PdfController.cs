@@ -122,6 +122,11 @@ public class PdfController : ControllerBase
                 return File(bytes, "application/zip", "pages.zip");
             }
         }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning(ex, "PDF to JPG conversion rejected: {Message}", ex.Message);
+            return BadRequest(new { error = ex.Message });
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "PDF to JPG failed");

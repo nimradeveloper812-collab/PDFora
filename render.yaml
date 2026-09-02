@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: pdfora
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: RESEND_API_KEY
+        sync: false
+      - key: TO_EMAIL
+        value: nimra.developer.8122005@gmail.com
+    healthCheckPath: /api/health

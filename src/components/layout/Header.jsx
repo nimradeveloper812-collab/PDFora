@@ -1,480 +1,422 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  FileText, ChevronDown, Menu, X, Sparkles, ArrowRight,
-  FileCheck, Table, Presentation, Image as ImageIcon,
-  FileImage, Layers, Minimize2, Scissors, Grid3x3
+  FileText, ChevronDown, Menu, X, Sparkles,
+  FileCheck, Search, ArrowRight, Grid, ChevronRight
 } from 'lucide-react';
 import { TOOLS } from '../../data/toolsData';
-
-const iconMap = {
-  FileText, Table, Presentation,
-  Image: ImageIcon, FileImage, Layers, Minimize2, Scissors
-};
-
-// Individual nav link component
-function NavLink({ to, children, isActive }) {
-  return (
-    <Link
-      to={to}
-      className={`relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
-        isActive
-          ? 'text-pink-600 bg-pink-50 font-semibold nav-active-indicator'
-          : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
-      }`}
-      style={isActive ? { color: '#E85D9E', backgroundColor: '#FCE7F3' } : {}}
-    >
-      {children}
-    </Link>
-  );
-}
+import { CATEGORIES_DATA } from '../../data/categoriesData';
+import ThemeToggle from '../common/ThemeToggle';
+import QuickSearchModal from '../common/QuickSearchModal';
+import LanguageSwitcher from '../common/LanguageSwitcher';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function Header() {
-  const [isToolsOpen, setIsToolsOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const dropdownRef = useRef(null);
-  const location = useLocation();
+  const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen]       = useState(false);
+  const [mobileExpandedCat, setMobileExpandedCat]     = useState(null);
+  const [isSearchOpen, setIsSearchOpen]               = useState(false);
+  const [scrolled, setScrolled]                       = useState(false);
 
-  // Scroll listener for header shadow
+  const navRef   = useRef(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { t }    = useLanguage();
+
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 16);
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close everything on route change
   useEffect(() => {
-    setIsToolsOpen(false);
+    setIsToolsDropdownOpen(false);
     setIsMobileMenuOpen(false);
-    document.body.classList.remove('menu-open');
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
-  // Body scroll lock when mobile menu open
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.classList.add('menu-open');
-    } else {
-      document.body.classList.remove('menu-open');
-    }
-    return () => document.body.classList.remove('menu-open');
-  }, [isMobileMenuOpen]);
-
-  // Click outside to close dropdown
   useEffect(() => {
     function handleClickOutside(e) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setIsToolsOpen(false);
+      if (navRef.current && !navRef.current.contains(e.target)) {
+        setIsToolsDropdownOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Escape key to close mobile menu / dropdown
-  useEffect(() => {
-    function handleEscape(e) {
-      if (e.key === 'Escape') {
-        setIsToolsOpen(false);
-        setIsMobileMenuOpen(false);
-      }
-    }
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, []);
-
-  const convertTools = TOOLS.filter(t => t.category.startsWith('convert'));
-  const otherTools  = TOOLS.filter(t => !t.category.startsWith('convert'));
-  const isToolsActive = location.pathname.startsWith('/tools');
-
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-white/95 backdrop-blur-md py-3'
-          : 'bg-white/85 backdrop-blur-sm py-4'
-      }`}
-      style={{
-        borderBottom: scrolled
-          ? '1px solid #F1D5E3'
-          : '1px solid rgba(241, 213, 227, 0.4)',
-        boxShadow: scrolled ? '0 1px 16px rgba(232, 93, 158, 0.06)' : 'none',
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-4">
+    <>
+      <header
+        ref={navRef}
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-150 ${
+          scrolled
+            ? 'bg-white/95 dark:bg-[#0D0D14]/95 backdrop-blur-md py-1.5 border-b border-zinc-200 dark:border-[#2A2E45] shadow-xs'
+            : 'bg-white dark:bg-[#0D0D14] py-1.5 border-b border-zinc-200 dark:border-[#2A2E45]'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-3 h-10">
 
-          {/* ── Logo ───────────────────────────────────────────── */}
-          <Link
-            to="/"
-            className="flex items-center gap-2.5 group shrink-0"
-            aria-label="PDFora — Home"
-          >
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
-              style={{
-                background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                boxShadow: '0 4px 12px rgba(232, 93, 158, 0.30)',
-              }}
-            >
-              <FileCheck className="w-5 h-5" strokeWidth={2.3} aria-hidden="true" />
-            </div>
-            <span className="text-xl font-extrabold tracking-tight" style={{ color: '#18181B', letterSpacing: '-0.03em' }}>
-              PDF<span style={{ color: '#E85D9E' }}>ora</span>
-            </span>
-            <span
-              className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold"
-              style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
-              aria-label="Pakistan's free tool"
-            >
-              <span>🇵🇰</span>
-              <span>PAKISTAN</span>
-            </span>
-          </Link>
-
-          {/* ── Desktop Navigation ─────────────────────────────── */}
-          <nav className="hidden md:flex items-center gap-0.5 lg:gap-1" role="navigation" aria-label="Main navigation">
-
-            <NavLink to="/" isActive={location.pathname === '/'}>
-              Home
-            </NavLink>
-
-            {/* Tools Dropdown */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                id="tools-menu-btn"
-                onClick={() => setIsToolsOpen(!isToolsOpen)}
-                aria-haspopup="true"
-                aria-expanded={isToolsOpen}
-                aria-controls="tools-dropdown"
-                className={`px-3 py-2 rounded-lg text-sm font-medium inline-flex items-center gap-1 transition-all duration-150 ${
-                  isToolsActive || isToolsOpen
-                    ? 'font-semibold'
-                    : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
-                }`}
-                style={
-                  isToolsActive || isToolsOpen
-                    ? { color: '#E85D9E', backgroundColor: '#FCE7F3' }
-                    : {}
-                }
-              >
-                <span>PDF Tools</span>
-                <ChevronDown
-                  className={`w-3.5 h-3.5 transition-transform duration-250 ${isToolsOpen ? 'rotate-180' : ''}`}
-                  style={{ color: isToolsOpen ? '#E85D9E' : '#A1A1AA' }}
-                  aria-hidden="true"
-                />
-              </button>
-
-              {/* Mega Dropdown */}
-              {isToolsOpen && (
-                <div
-                  id="tools-dropdown"
-                  role="menu"
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2.5 w-[660px] bg-white rounded-2xl p-5 z-50 animate-slide-in-top"
-                  style={{
-                    border: '1px solid #F1D5E3',
-                    boxShadow: '0 20px 48px rgba(232, 93, 158, 0.12), 0 4px 16px rgba(0,0,0,0.06)',
-                  }}
-                >
-                  {/* Dropdown Header */}
-                  <div className="flex items-center justify-between pb-3 mb-3" style={{ borderBottom: '1px solid #F9F0F5' }}>
-                    <span
-                      className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider"
-                      style={{ color: '#E85D9E' }}
-                    >
-                      <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-                      PDF Tool Suite
-                    </span>
-                    <Link
-                      to="/tools"
-                      onClick={() => setIsToolsOpen(false)}
-                      className="flex items-center gap-1 text-xs font-semibold transition-colors hover:underline group/link"
-                      style={{ color: '#71717A' }}
-                      role="menuitem"
-                    >
-                      View All {TOOLS.length} Tools
-                      <ArrowRight
-                        className="w-3 h-3 transition-transform group-hover/link:translate-x-0.5"
-                        aria-hidden="true"
-                      />
-                    </Link>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Left — Convert */}
-                    <div>
-                      <div
-                        className="px-2 mb-2 text-[10px] font-bold uppercase tracking-wider"
-                        style={{ color: '#A1A1AA' }}
-                      >
-                        Convert PDF
-                      </div>
-                      <div className="space-y-0.5">
-                        {convertTools.slice(0, 4).map(tool => {
-                          const Icon = iconMap[tool.iconName] || FileText;
-                          return (
-                            <Link
-                              key={tool.id}
-                              to={tool.path}
-                              onClick={() => setIsToolsOpen(false)}
-                              role="menuitem"
-                              className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-150 group/item hover:bg-pink-50"
-                              style={{ textDecoration: 'none' }}
-                            >
-                              <div
-                                className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 group-hover/item:scale-105"
-                                style={{ background: '#FCE7F3', color: '#E85D9E' }}
-                              >
-                                <Icon className="w-4 h-4" aria-hidden="true" />
-                              </div>
-                              <div className="min-w-0">
-                                <div
-                                  className="text-xs font-semibold transition-colors group-hover/item:text-pink-600 truncate"
-                                  style={{ color: '#18181B' }}
-                                >
-                                  {tool.name}
-                                </div>
-                                <p
-                                  className="text-[11px] truncate mt-0.5"
-                                  style={{ color: '#A1A1AA' }}
-                                >
-                                  {tool.shortDesc}
-                                </p>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Right — Organize & Optimize */}
-                    <div>
-                      <div
-                        className="px-2 mb-2 text-[10px] font-bold uppercase tracking-wider"
-                        style={{ color: '#A1A1AA' }}
-                      >
-                        Edit &amp; Optimize
-                      </div>
-                      <div className="space-y-0.5">
-                        {[...otherTools, ...convertTools.slice(4)].map(tool => {
-                          const Icon = iconMap[tool.iconName] || FileText;
-                          return (
-                            <Link
-                              key={tool.id}
-                              to={tool.path}
-                              onClick={() => setIsToolsOpen(false)}
-                              role="menuitem"
-                              className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-150 group/item hover:bg-pink-50"
-                              style={{ textDecoration: 'none' }}
-                            >
-                              <div
-                                className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 group-hover/item:scale-105"
-                                style={{ background: '#FCE7F3', color: '#E85D9E' }}
-                              >
-                                <Icon className="w-4 h-4" aria-hidden="true" />
-                              </div>
-                              <div className="min-w-0">
-                                <div
-                                  className="text-xs font-semibold transition-colors group-hover/item:text-pink-600 truncate"
-                                  style={{ color: '#18181B' }}
-                                >
-                                  {tool.name}
-                                </div>
-                                <p
-                                  className="text-[11px] truncate mt-0.5"
-                                  style={{ color: '#A1A1AA' }}
-                                >
-                                  {tool.shortDesc}
-                                </p>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <NavLink to="/tools" isActive={location.pathname === '/tools'}>
-              All Tools
-            </NavLink>
-            <NavLink to="/about" isActive={location.pathname === '/about'}>
-              About
-            </NavLink>
-            <NavLink to="/contact" isActive={location.pathname === '/contact'}>
-              Contact
-            </NavLink>
-          </nav>
-
-          {/* ── Desktop CTA ────────────────────────────────────── */}
-          <div className="hidden md:flex items-center gap-3 shrink-0">
+            {/* Brand Logo */}
             <Link
-              to="/tools"
-              className="inline-flex items-center gap-2 text-sm font-bold text-white rounded-xl px-4 py-2.5 transition-all duration-200 hover:shadow-lg active:scale-95"
-              style={{
-                background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                boxShadow: '0 4px 14px rgba(232, 93, 158, 0.30)',
-                textDecoration: 'none',
-              }}
+              to="/"
+              className="flex items-center gap-2 group shrink-0"
+              aria-label="PDFora home"
             >
-              <Grid3x3 className="w-4 h-4" aria-hidden="true" />
-              <span>Explore Tools</span>
-            </Link>
-          </div>
-
-          {/* ── Mobile Hamburger ───────────────────────────────── */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-xl transition-colors duration-150"
-            style={{
-              color: '#18181B',
-              background: isMobileMenuOpen ? '#FCE7F3' : 'transparent',
-            }}
-            aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-            aria-expanded={isMobileMenuOpen}
-            aria-controls="mobile-nav"
-          >
-            {isMobileMenuOpen
-              ? <X className="w-5 h-5" aria-hidden="true" />
-              : <Menu className="w-5 h-5" aria-hidden="true" />
-            }
-          </button>
-        </div>
-      </div>
-
-      {/* ── Mobile Navigation Drawer ───────────────────────────── */}
-      {isMobileMenuOpen && (
-        <div
-          id="mobile-nav"
-          role="navigation"
-          aria-label="Mobile navigation"
-          className="md:hidden fixed inset-x-0 bottom-0 bg-white overflow-y-auto mobile-nav-enter"
-          style={{
-            top: scrolled ? '57px' : '65px',
-            borderTop: '1px solid #F1D5E3',
-            zIndex: 40,
-          }}
-        >
-          <div className="px-4 pt-5 pb-8 space-y-1">
-
-            {/* Primary Nav Links */}
-            {[
-              { to: '/', label: 'Home' },
-              { to: '/about', label: 'About PDFora' },
-              { to: '/contact', label: 'Contact Support' },
-            ].map(({ to, label }) => (
-              <Link
-                key={to}
-                to={to}
-                className="flex items-center px-4 py-3 rounded-xl text-base font-semibold transition-all duration-150"
+              <div
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-white shadow-xs transition-transform group-hover:scale-105"
                 style={{
-                  color: location.pathname === to ? '#E85D9E' : '#18181B',
-                  background: location.pathname === to ? '#FCE7F3' : 'transparent',
-                  textDecoration: 'none',
+                  background: 'linear-gradient(135deg, #6C3FFC 0%, #4B24C5 100%)',
                 }}
               >
-                {label}
-              </Link>
-            ))}
-
-            {/* All Tools Link */}
-            <Link
-              to="/tools"
-              className="flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold transition-all duration-150"
-              style={{
-                color: location.pathname === '/tools' ? '#E85D9E' : '#18181B',
-                background: location.pathname === '/tools' ? '#FCE7F3' : 'transparent',
-                textDecoration: 'none',
-              }}
-            >
-              <span>All PDF Tools</span>
-              <span
-                className="text-[11px] font-bold px-2.5 py-0.5 rounded-full"
-                style={{ background: '#FCE7F3', color: '#B83A7C', border: '1px solid #F1D5E3' }}
-              >
-                {TOOLS.length} Tools
+                <FileCheck className="w-4 h-4" strokeWidth={2.3} aria-hidden="true" />
+              </div>
+              <span className="text-lg font-black tracking-tight text-zinc-900 dark:text-white font-heading">
+                PDF<span style={{ color: '#6C3FFC' }}>ora</span>
               </span>
             </Link>
 
-            {/* Quick Tool Links */}
-            <div
-              className="mx-1 mt-3 p-4 rounded-2xl space-y-4"
-              style={{ background: '#FFF7FB', border: '1px solid #F1D5E3' }}
-            >
-              <div>
-                <p
-                  className="text-[10px] font-bold uppercase tracking-widest mb-2.5"
-                  style={{ color: '#E85D9E' }}
+            {/* Header Main Links (Desktop) */}
+            <nav className="hidden lg:flex items-center gap-0.5 font-display" role="navigation">
+              
+              <Link
+                to="/"
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              >
+                {t('home')}
+              </Link>
+
+              {/* Tools ▼ Mega Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+                    isToolsDropdownOpen
+                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300'
+                      : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                  }`}
                 >
-                  Popular Converters
-                </p>
-                <div className="grid grid-cols-2 gap-1">
-                  {convertTools.slice(0, 4).map(t => (
-                    <Link
-                      key={t.id}
-                      to={t.path}
-                      className="flex items-center gap-2 px-2 py-2 rounded-lg text-xs font-semibold transition-colors"
-                      style={{ color: '#3F3F46', textDecoration: 'none' }}
-                    >
-                      <span
-                        className="w-1.5 h-1.5 rounded-full shrink-0"
-                        style={{ background: '#E85D9E' }}
-                        aria-hidden="true"
-                      />
-                      <span className="truncate">{t.name}</span>
-                    </Link>
-                  ))}
-                </div>
+                  <Grid className="w-3 h-3 text-purple-600" />
+                  <span>{t('toolsCategories')}</span>
+                  <ChevronDown className={`w-3 h-3 transition-transform ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
               </div>
 
-              <div style={{ borderTop: '1px solid #F1D5E3', paddingTop: '0.75rem' }}>
-                <p
-                  className="text-[10px] font-bold uppercase tracking-widest mb-2.5"
-                  style={{ color: '#E85D9E' }}
-                >
-                  Edit &amp; Organize
-                </p>
-                <div className="grid grid-cols-2 gap-1">
-                  {otherTools.map(t => (
-                    <Link
-                      key={t.id}
-                      to={t.path}
-                      className="flex items-center gap-2 px-2 py-2 rounded-lg text-xs font-semibold transition-colors"
-                      style={{ color: '#3F3F46', textDecoration: 'none' }}
-                    >
-                      <span
-                        className="w-1.5 h-1.5 rounded-full shrink-0"
-                        style={{ background: '#E85D9E' }}
-                        aria-hidden="true"
-                      />
-                      <span className="truncate">{t.name}</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile CTA */}
-            <div className="pt-4">
               <Link
                 to="/tools"
-                className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all active:scale-95"
-                style={{
-                  background: 'linear-gradient(135deg, #E85D9E 0%, #D44D8A 100%)',
-                  boxShadow: '0 4px 14px rgba(232, 93, 158, 0.28)',
-                  textDecoration: 'none',
-                }}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
               >
-                <Grid3x3 className="w-4 h-4" aria-hidden="true" />
-                <span>Explore All Tools</span>
+                {t('allToolsDirectory')}
               </Link>
+
+              <Link
+                to="/about"
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              >
+                {t('about')}
+              </Link>
+
+              <Link
+                to="/contact"
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              >
+                {t('support')}
+              </Link>
+
+            </nav>
+
+            {/* Right Action Bar */}
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              
+              {/* Quick Search Button (Desktop & Tablet) */}
+              <button
+                type="button"
+                onClick={() => setIsSearchOpen(true)}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-300 text-xs font-medium transition-all"
+              >
+                <Search className="w-3 h-3 text-purple-600" />
+                <span>{t('searchTools')}</span>
+                <kbd className="px-1 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 text-[10px] font-mono text-zinc-600 dark:text-zinc-300 font-bold">
+                  ⌘K
+                </kbd>
+              </button>
+
+              {/* Mobile Quick Search Button */}
+              <button
+                type="button"
+                onClick={() => setIsSearchOpen(true)}
+                className="p-1.5 rounded-lg text-purple-600 hover:bg-purple-50 dark:hover:bg-zinc-800 sm:hidden transition-colors"
+                aria-label="Search tools"
+              >
+                <Search className="w-4 h-4" />
+              </button>
+
+              <LanguageSwitcher />
+              <ThemeToggle />
+
+              {/* Mobile Hamburger Button */}
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-1.5 rounded-lg transition-colors text-zinc-900 hover:bg-zinc-100 dark:text-white dark:hover:bg-zinc-800 lg:hidden"
+                aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              >
+                {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              </button>
             </div>
+
           </div>
         </div>
-      )}
-    </header>
+
+        {/* ── Category-Structured Desktop Dropdown ───────────────────────── */}
+        {isToolsDropdownOpen && (
+          <div
+            onMouseLeave={() => setIsToolsDropdownOpen(false)}
+            className="hidden lg:block absolute top-full left-0 right-0 bg-white dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45] shadow-2xl p-5 z-50 animate-fade-in font-sans max-h-[80vh] overflow-y-auto"
+          >
+            <div className="max-w-7xl mx-auto space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800 sticky -top-5 bg-white dark:bg-[#141622] z-10 pt-1 -mt-1">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-purple-700 dark:text-purple-400 flex items-center gap-2">
+                  <Grid className="w-4 h-4" />
+                  <span>Tools Directory — PDF, Image, Video, Audio &amp; Developer Tools</span>
+                </span>
+                <button
+                  onClick={() => setIsToolsDropdownOpen(false)}
+                  className="text-xs font-bold text-zinc-400 hover:text-zinc-600 cursor-pointer bg-zinc-100 dark:bg-zinc-800 px-2.5 py-1 rounded-md"
+                >
+                  Close ✕
+                </button>
+              </div>
+
+              {/* 3 Main Suite Columns */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 text-xs">
+                
+                {/* 📄 COLUMN 1: PDF SUITE */}
+                <div className="space-y-4 p-4 rounded-2xl bg-purple-50/40 dark:bg-purple-950/20 border border-purple-100 dark:border-purple-900/50">
+                  <div className="flex items-center gap-2 pb-2 border-b border-purple-200/60 dark:border-purple-800/60">
+                    <span className="text-base">📄</span>
+                    <h3 className="font-extrabold text-xs text-purple-900 dark:text-purple-300 uppercase tracking-wider">
+                      PDF Tools Suite
+                    </h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {CATEGORIES_DATA.filter(c => c.id.startsWith('pdf')).map((cat) => (
+                      <div key={cat.id} className="space-y-2 p-2.5 rounded-xl bg-white dark:bg-[#1B1E2E] border border-purple-100/80 dark:border-[#2A2E45]">
+                        <p className="font-extrabold text-[11px] text-zinc-900 dark:text-white uppercase tracking-wider border-b border-zinc-100 dark:border-zinc-800 pb-1">
+                          {cat.name}
+                        </p>
+                        {cat.subcategories.map(sub => (
+                          <div key={sub.id} className="space-y-1">
+                            <p className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase">
+                              {sub.name}
+                            </p>
+                            <ul className="space-y-0.5 text-[11px] text-zinc-700 dark:text-zinc-300 pl-1 border-l border-zinc-200 dark:border-zinc-700 max-h-36 overflow-y-auto">
+                              {sub.toolIds.map(tId => {
+                                const tool = TOOLS.find(t => t.id === tId);
+                                if (!tool) return null;
+                                return (
+                                  <li key={tool.id}>
+                                    <Link
+                                      to={tool.path}
+                                      onClick={() => setIsToolsDropdownOpen(false)}
+                                      className="block hover:text-purple-600 dark:hover:text-purple-400 truncate py-0.5 transition-colors"
+                                    >
+                                      • {t(tool)}
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 🖼️ COLUMN 2: IMAGE TOOLS SUITE */}
+                <div className="space-y-4 p-4 rounded-2xl bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/50">
+                  <div className="flex items-center justify-between pb-2 border-b border-emerald-200/60 dark:border-emerald-800/60">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">🖼️</span>
+                      <h3 className="font-extrabold text-xs text-emerald-900 dark:text-emerald-300 uppercase tracking-wider">
+                        Image Tools &amp; Converters
+                      </h3>
+                    </div>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+                      Popular
+                    </span>
+                  </div>
+
+                  {CATEGORIES_DATA.filter(c => c.id === 'image-tools').map((cat) => (
+                    <div key={cat.id} className="space-y-3">
+                      {cat.subcategories.map(sub => (
+                        <div key={sub.id} className="p-3 rounded-xl bg-white dark:bg-[#1B1E2E] border border-emerald-100/80 dark:border-[#2A2E45] space-y-2">
+                          <p className="font-extrabold text-[11px] text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
+                            {sub.name}
+                          </p>
+                          <ul className="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] text-zinc-700 dark:text-zinc-300 max-h-48 overflow-y-auto">
+                            {sub.toolIds.map(tId => {
+                              const tool = TOOLS.find(t => t.id === tId);
+                              if (!tool) return null;
+                              return (
+                                <li key={tool.id}>
+                                  <Link
+                                    to={tool.path}
+                                    onClick={() => setIsToolsDropdownOpen(false)}
+                                    className="block hover:text-emerald-600 dark:hover:text-emerald-400 truncate py-0.5 transition-colors font-medium"
+                                  >
+                                    • {t(tool)}
+                                  </Link>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+
+                {/* 🎥 COLUMN 3: MEDIA (VIDEO & AUDIO) & DEV UTILITIES */}
+                <div className="space-y-4 p-4 rounded-2xl bg-blue-50/40 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/50">
+                  <div className="flex items-center justify-between pb-2 border-b border-blue-200/60 dark:border-blue-800/60">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">🎥</span>
+                      <h3 className="font-extrabold text-xs text-blue-900 dark:text-blue-300 uppercase tracking-wider">
+                        Video, Audio &amp; Dev Tools
+                      </h3>
+                    </div>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                      Media Suite
+                    </span>
+                  </div>
+
+                  {CATEGORIES_DATA.filter(c => c.id === 'media-dev-tools').map((cat) => (
+                    <div key={cat.id} className="space-y-3">
+                      {cat.subcategories.map(sub => (
+                        <div key={sub.id} className="p-3 rounded-xl bg-white dark:bg-[#1B1E2E] border border-blue-100/80 dark:border-[#2A2E45] space-y-2">
+                          <p className="font-extrabold text-[11px] text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+                            {sub.name}
+                          </p>
+                          <ul className="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] text-zinc-700 dark:text-zinc-300 max-h-48 overflow-y-auto">
+                            {sub.toolIds.map(tId => {
+                              const tool = TOOLS.find(t => t.id === tId);
+                              if (!tool) return null;
+                              return (
+                                <li key={tool.id}>
+                                  <Link
+                                    to={tool.path}
+                                    onClick={() => setIsToolsDropdownOpen(false)}
+                                    className="block hover:text-blue-600 dark:hover:text-blue-400 truncate py-0.5 transition-colors font-medium"
+                                  >
+                                    • {t(tool)}
+                                  </Link>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Category Accordion Mobile Navigation Drawer ────────────────── */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden absolute top-full left-0 right-0 bg-white dark:bg-[#141622] border-b border-zinc-200 dark:border-[#2A2E45] shadow-2xl p-4 max-h-[85vh] overflow-y-auto z-50 animate-fade-in font-sans space-y-4">
+            
+            <button
+              type="button"
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                setIsSearchOpen(true);
+              }}
+              className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-zinc-50 dark:bg-[#1B1E2E] border border-zinc-200 dark:border-[#2A2E45] text-xs font-medium text-zinc-600 dark:text-zinc-300"
+            >
+              <span className="flex items-center gap-2">
+                <Search className="w-4 h-4 text-purple-600" />
+                <span>{t('searchTools')}</span>
+              </span>
+              <kbd className="px-2 py-0.5 rounded bg-zinc-200 dark:bg-[#2A2E45] text-[10px] font-mono font-bold">Search</kbd>
+            </button>
+
+            <div className="space-y-2">
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-1">
+                Tool Categories
+              </p>
+
+              {CATEGORIES_DATA.map((cat) => {
+                const isExpanded = mobileExpandedCat === cat.id;
+                const totalTools = cat.subcategories.reduce((acc, sub) => acc + sub.toolIds.length, 0);
+
+                return (
+                  <div key={cat.id} className="rounded-2xl border border-zinc-200 dark:border-[#2A2E45] overflow-hidden bg-zinc-50/50 dark:bg-[#1B1E2E]/40">
+                    <button
+                      type="button"
+                      onClick={() => setMobileExpandedCat(isExpanded ? null : cat.id)}
+                      className="w-full px-4 py-3 text-left flex items-center justify-between font-bold text-xs text-zinc-900 dark:text-white"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-purple-600 dark:text-purple-400 font-extrabold">•</span>
+                        <span>{cat.name}</span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300">
+                          {totalTools} Tools
+                        </span>
+                      </div>
+                      <ChevronDown className={`w-4 h-4 text-zinc-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {isExpanded && (
+                      <div className="px-4 pb-3 pt-1 space-y-3 border-t border-zinc-200/60 dark:border-[#2A2E45] bg-white dark:bg-[#141622]">
+                        {cat.subcategories.map((sub) => (
+                          <div key={sub.id} className="space-y-1">
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                              {sub.name}
+                            </p>
+                            <div className="grid grid-cols-2 gap-1.5 pl-2">
+                              {sub.toolIds.map((tId) => {
+                                const tool = TOOLS.find(t => t.id === tId);
+                                if (!tool) return null;
+                                return (
+                                  <Link
+                                    key={tool.id}
+                                    to={tool.path}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="py-1 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-purple-600 dark:hover:text-purple-400 truncate"
+                                  >
+                                    • {t(tool)}
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="pt-3 border-t border-zinc-200 dark:border-[#2A2E45] flex items-center justify-around text-xs font-bold text-zinc-600 dark:text-zinc-300">
+              <Link to="/tools" onClick={() => setIsMobileMenuOpen(false)}>{t('allToolsDirectory')}</Link>
+              <Link to="/about" onClick={() => setIsMobileMenuOpen(false)}>{t('about')}</Link>
+              <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>{t('support')}</Link>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* Quick Search Modal */}
+      <QuickSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+    </>
   );
 }
