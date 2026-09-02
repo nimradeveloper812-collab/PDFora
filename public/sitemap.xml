@@ -388,12 +388,6 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://pdfora.nimradev.site/pdf-forms</loc>
-    <lastmod>2026-09-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://pdfora.nimradev.site/json-to-csv</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>weekly</changefreq>

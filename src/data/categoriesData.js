@@ -64,7 +64,7 @@ export const CATEGORIES_DATA = [
         desc: 'Fill forms, sign contracts, and brand your PDFs.',
         toolIds: [
           'edit-pdf', 'sign-pdf', 'watermark-pdf',
-          'add-page-numbers-pdf', 'redact-pdf', 'pdf-forms'
+          'add-page-numbers-pdf', 'redact-pdf'
         ]
       }
     ]

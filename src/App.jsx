@@ -51,7 +51,6 @@ const SignPdf = lazy(() => import('./pages/tools/SignPdf'));
 const RedactPdf = lazy(() => import('./pages/tools/RedactPdf'));
 const EditPdf = lazy(() => import('./pages/tools/EditPdf'));
 const ComparePdf = lazy(() => import('./pages/tools/ComparePdf'));
-const PdfForms = lazy(() => import('./pages/tools/PdfForms'));
 
 const JsonToCsv = lazy(() => import('./pages/tools/JsonToCsv'));
 const Base64ToPdf = lazy(() => import('./pages/tools/Base64ToPdf'));
@@ -130,7 +129,6 @@ function AppLayout() {
             <Route path="/redact-pdf" element={<RedactPdf />} />
             <Route path="/edit-pdf" element={<EditPdf />} />
             <Route path="/compare-pdf" element={<ComparePdf />} />
-            <Route path="/pdf-forms" element={<PdfForms />} />
             <Route path="/json-to-csv" element={<JsonToCsv />} />
             <Route path="/base64-to-pdf" element={<Base64ToPdf />} />
 

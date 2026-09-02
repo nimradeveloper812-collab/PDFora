@@ -4524,28 +4524,6 @@ export const TOOLS = [
     "primaryKeywords": ["compare pdf", "pdf diff tool free", "compare two pdf files"]
   },
   {
-    "id": "pdf-forms",
-    "name": "PDF Forms",
-    "slug": "pdf-forms",
-    "path": "/pdf-forms",
-    "category": "pdf",
-    "shortDesc": "Fill out and save interactive PDF form fields.",
-    "description": "Fill out interactive PDF application forms, surveys, and tax documents online.",
-    "iconName": "FileText",
-    "badge": "",
-    "acceptedTypes": ".pdf, application/pdf",
-    "acceptedFileLabel": "PDF files",
-    "maxFiles": 1,
-    "features": ["Fill out AcroForm fields", "Save form responses", "100% private execution"],
-    "steps": ["Upload your PDF form document.", "Click \"Process Form\".", "Download your filled PDF form."],
-    "overview": "Complete job applications, government registration forms, and tax sheets in your browser.",
-    "faqs": [{ "q": "Can I save filled form fields?", "a": "Yes, filled values are saved into the PDF form data structures." }],
-    "metaTitle": "Fill PDF Forms Online Free | PDFora",
-    "metaDescription": "Fill out interactive PDF forms and save responses online for free. Private, fast form processing in your browser.",
-    "h1Title": "Fill PDF Forms Online",
-    "primaryKeywords": ["pdf forms", "fill pdf form free", "pdf form filler online"]
-  },
-  {
     "id": "json-to-csv",
     "name": "JSON to CSV & Excel",
     "slug": "json-to-csv",
