@@ -32,6 +32,10 @@ import WatermarkPdfTool from '../pdf/WatermarkPdfTool';
 import AddPageNumbersPdfTool from '../pdf/AddPageNumbersPdfTool';
 import RedactPdfTool from '../pdf/RedactPdfTool';
 import CompressPdfTool from '../pdf/CompressPdfTool';
+import PdfToWordTool from '../pdf/PdfToWordTool';
+import PdfToExcelTool from '../pdf/PdfToExcelTool';
+import PdfToPowerpointTool from '../pdf/PdfToPowerpointTool';
+import PdfToTextTool from '../pdf/PdfToTextTool';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
@@ -294,6 +298,14 @@ export default function ToolLayout({ tool }) {
           <RedactPdfTool />
         ) : tool.id === 'compress-pdf' ? (
           <CompressPdfTool />
+        ) : tool.id === 'pdf-to-word' ? (
+          <PdfToWordTool />
+        ) : tool.id === 'pdf-to-excel' ? (
+          <PdfToExcelTool />
+        ) : tool.id === 'pdf-to-powerpoint' ? (
+          <PdfToPowerpointTool />
+        ) : tool.id === 'pdf-to-text' ? (
+          <PdfToTextTool />
         ) : (
           <Dropzone tool={tool} />
         )}
