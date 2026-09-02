@@ -31,6 +31,7 @@ import RemovePagesPdfTool from '../pdf/RemovePagesPdfTool';
 import WatermarkPdfTool from '../pdf/WatermarkPdfTool';
 import AddPageNumbersPdfTool from '../pdf/AddPageNumbersPdfTool';
 import RedactPdfTool from '../pdf/RedactPdfTool';
+import CompressPdfTool from '../pdf/CompressPdfTool';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
@@ -291,6 +292,8 @@ export default function ToolLayout({ tool }) {
           <AddPageNumbersPdfTool />
         ) : tool.id === 'redact-pdf' ? (
           <RedactPdfTool />
+        ) : tool.id === 'compress-pdf' ? (
+          <CompressPdfTool />
         ) : (
           <Dropzone tool={tool} />
         )}
