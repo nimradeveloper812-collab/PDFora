@@ -47,6 +47,12 @@ async function generateSitemap() {
       lastmod: today,
       changefreq: 'monthly',
       priority: '0.5'
+    },
+    {
+      loc: `${baseUrl}/disclaimer`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.5'
     }
   ];
 

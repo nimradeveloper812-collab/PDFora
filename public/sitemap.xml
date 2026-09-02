@@ -40,6 +40,12 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://pdfora.nimradev.site/disclaimer</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://pdfora.nimradev.site/word-to-pdf</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>weekly</changefreq>

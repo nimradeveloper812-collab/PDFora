@@ -338,10 +338,10 @@ export default function ToolLayout({ tool }) {
              when the ad iframe loads. The rectangle variant (280px)
              is the highest-CPM IAB size for utility tool mid-content
              placements. Slot ID comes from VITE_AD_SLOT_TOOL in .env.local. */}
-        <div className="max-w-4xl mx-auto mt-4 sm:mt-6 min-h-[270px] sm:min-h-[300px]">
+        <div className="max-w-4xl mx-auto mt-4 sm:mt-6 min-h-[90px]">
           <AdBanner
-            slot={AD_SLOTS.tool}
-            variant="rectangle"
+            slot={AD_SLOTS.TOOL_BELOW_CONTENT}
+            format="auto"
             className="my-1 sm:my-2"
           />
         </div>

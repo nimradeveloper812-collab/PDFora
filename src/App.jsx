@@ -14,6 +14,7 @@ const Contact = lazy(() => import('./pages/Contact'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+const Disclaimer = lazy(() => import('./pages/Disclaimer'));
 
 const WordToPdf = lazy(() => import('./pages/tools/WordToPdf'));
 const ExcelToPdf = lazy(() => import('./pages/tools/ExcelToPdf'));
@@ -216,6 +217,7 @@ function AppLayout() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/disclaimer" element={<Disclaimer />} />
 
             {/* 404 */}
             <Route path="*" element={<NotFound />} />

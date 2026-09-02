@@ -130,6 +130,7 @@ export default function Footer() {
               <li><Link to="/contact" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">{t('footerContact')}</Link></li>
               <li><Link to="/privacy-policy" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">{t('footerPrivacy')}</Link></li>
               <li><Link to="/terms-of-service" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">{t('footerTerms')}</Link></li>
+              <li><Link to="/disclaimer" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">Disclaimer</Link></li>
             </ul>
           </div>
         </div>
@@ -156,6 +157,12 @@ export default function Footer() {
               className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
             >
               {t('footerTermsShort')}
+            </Link>
+            <Link
+              to="/disclaimer"
+              className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+            >
+              Disclaimer
             </Link>
             <Link
               to="/about"

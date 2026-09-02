@@ -9,6 +9,9 @@ import {
 import { TOOLS } from '../data/toolsData';
 import { CATEGORIES_DATA } from '../data/categoriesData';
 import { useLanguage } from '../context/LanguageContext';
+import AdBanner, { AD_SLOTS } from '../components/common/AdBanner';
+
+
 
 const iconComponentMap = {
   Layers, ArrowRightLeft, Edit3, ShieldCheck, Minimize2, Cpu, ImageIcon, Video, FileText
@@ -302,6 +305,11 @@ export default function Home() {
               })}
             </div>
           </section>
+
+          {/* ── Ad Banner ───────────────────────────── */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <AdBanner slot={AD_SLOTS.HOME_HORIZONTAL} format="horizontal" />
+          </div>
 
           {/* ── 3. TOOL EXPLORER ────────────────────── */}
           <section ref={explorerRef} className="py-5 bg-white dark:bg-[#141622] border-t border-zinc-200 dark:border-[#2A2E45]">
