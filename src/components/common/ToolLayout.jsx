@@ -30,6 +30,7 @@ import SplitPdfTool from '../pdf/SplitPdfTool';
 import RemovePagesPdfTool from '../pdf/RemovePagesPdfTool';
 import WatermarkPdfTool from '../pdf/WatermarkPdfTool';
 import AddPageNumbersPdfTool from '../pdf/AddPageNumbersPdfTool';
+import RedactPdfTool from '../pdf/RedactPdfTool';
 import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
@@ -288,6 +289,8 @@ export default function ToolLayout({ tool }) {
           <WatermarkPdfTool />
         ) : tool.id === 'add-page-numbers-pdf' ? (
           <AddPageNumbersPdfTool />
+        ) : tool.id === 'redact-pdf' ? (
+          <RedactPdfTool />
         ) : (
           <Dropzone tool={tool} />
         )}
