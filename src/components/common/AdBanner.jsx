@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 export const AD_SLOTS = {
   HOME_HORIZONTAL:    '2947093463',
   TOOL_BELOW_CONTENT: '4990802870',
-  DOWNLOAD_AREA:      '4990802870', // Reused for download success screen
+  DOWNLOAD_AREA:      '8567485183', // Unique ID for download success screen
   ABOVE_FOOTER:       '2500370909',
 };
 
