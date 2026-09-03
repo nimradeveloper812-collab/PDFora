@@ -68,8 +68,8 @@ export default function Contact() {
   const inputClasses = (hasError) =>
     `w-full text-sm px-4 py-3 rounded-xl bg-zinc-50 dark:bg-[#1B1E2E] text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 border ${
       hasError
-        ? 'border-red-400 dark:border-red-500 focus:ring-red-400'
-        : 'border-zinc-200 dark:border-[#2A2E45] focus:border-purple-600 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-600/20'
+        ? 'border-blue-400 dark:border-blue-500 focus:ring-2 focus:ring-blue-400/40'
+        : 'border-zinc-200 dark:border-[#2A2E45] focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20'
     } outline-none transition-all`;
 
   return (
@@ -165,8 +165,8 @@ export default function Contact() {
             ) : (
               <form onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xs space-y-4">
                 {submitError && (
-                  <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-xs font-bold text-red-700 dark:text-red-400">
-                    <AlertCircle className="w-4 h-4 shrink-0" />
+                  <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400" />
                     <span>{submitError}</span>
                   </div>
                 )}
@@ -174,7 +174,7 @@ export default function Contact() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                      Your Name <span className="text-purple-600">*</span>
+                      Your Name <span className="text-blue-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -184,12 +184,12 @@ export default function Contact() {
                       placeholder="e.g. John Doe"
                       className={inputClasses(!!errors.name)}
                     />
-                    {errors.name && <p className="text-[11px] font-semibold text-red-500">{errors.name}</p>}
+                    {errors.name && <p className="text-[11px] font-semibold text-blue-700 dark:text-blue-400">{errors.name}</p>}
                   </div>
 
                   <div className="space-y-1">
                     <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                      Email Address <span className="text-purple-600">*</span>
+                      Email Address <span className="text-blue-600">*</span>
                     </label>
                     <input
                       type="email"
@@ -199,13 +199,13 @@ export default function Contact() {
                       placeholder="e.g. john@example.com"
                       className={inputClasses(!!errors.email)}
                     />
-                    {errors.email && <p className="text-[11px] font-semibold text-red-500">{errors.email}</p>}
+                    {errors.email && <p className="text-[11px] font-semibold text-blue-700 dark:text-blue-400">{errors.email}</p>}
                   </div>
                 </div>
 
                 <div className="space-y-1">
                   <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                    Topic / Category <span className="text-purple-600">*</span>
+                    Topic / Category <span className="text-blue-600">*</span>
                   </label>
                   <select
                     name="topic"
@@ -218,12 +218,12 @@ export default function Contact() {
                       <option key={t} value={t}>{t}</option>
                     ))}
                   </select>
-                  {errors.topic && <p className="text-[11px] font-semibold text-red-500">{errors.topic}</p>}
+                  {errors.topic && <p className="text-[11px] font-semibold text-blue-700 dark:text-blue-400">{errors.topic}</p>}
                 </div>
 
                 <div className="space-y-1">
                   <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                    Message <span className="text-purple-600">*</span>
+                    Message <span className="text-blue-600">*</span>
                   </label>
                   <textarea
                     rows={5}
@@ -233,7 +233,7 @@ export default function Contact() {
                     placeholder="Describe your question or feedback in detail..."
                     className={`${inputClasses(!!errors.message)} resize-none`}
                   />
-                  {errors.message && <p className="text-[11px] font-semibold text-red-500">{errors.message}</p>}
+                  {errors.message && <p className="text-[11px] font-semibold text-blue-700 dark:text-blue-400">{errors.message}</p>}
                 </div>
 
                 <div className="pt-2 flex justify-end">

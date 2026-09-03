@@ -61,21 +61,21 @@ export default function RemovePdfControls({ totalPages = 1, value = '', onChange
       className="p-5 sm:p-6 rounded-2xl space-y-5"
       style={{
         background: '#FFFFFF',
-        border: '1.5px solid #FCA5A5',
-        boxShadow: '0 8px 24px rgba(239, 68, 68, 0.06)',
+        border: '1.5px solid #E2E8F0',
+        boxShadow: '0 8px 24px rgba(15, 23, 42, 0.04)',
       }}
     >
       {/* ── Header Bar ────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-red-100">
-        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-rose-600">
-          <Trash2 className="w-4 h-4" />
+      <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-slate-100">
+        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-700">
+          <Trash2 className="w-4 h-4 text-slate-500" />
           <span>Page Removal Options</span>
         </div>
         {totalPages > 0 && (
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-800 border border-rose-200">
-            <FileText className="w-3.5 h-3.5 text-rose-600" />
+          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-900 border border-blue-200">
+            <FileText className="w-3.5 h-3.5 text-blue-600" />
             <span>Total Document Pages:</span>
-            <strong className="text-rose-950">{totalPages}</strong>
+            <strong className="text-blue-950">{totalPages}</strong>
           </span>
         )}
       </div>
@@ -91,7 +91,7 @@ export default function RemovePdfControls({ totalPages = 1, value = '', onChange
             value={value}
             placeholder={`e.g. 1, 3, 5-${totalPages}`}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full text-xs sm:text-sm rounded-xl px-3.5 py-2.5 border border-rose-300 bg-white font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500"
+            className="w-full text-xs sm:text-sm rounded-xl px-3.5 py-2.5 border border-slate-300 bg-white font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -101,28 +101,28 @@ export default function RemovePdfControls({ totalPages = 1, value = '', onChange
           <button
             type="button"
             onClick={() => applyPreset('first')}
-            className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-rose-100 text-slate-700 hover:text-rose-700 transition-colors cursor-pointer"
+            className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-700 transition-colors cursor-pointer"
           >
             First Page (1)
           </button>
           <button
             type="button"
             onClick={() => applyPreset('last')}
-            className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-rose-100 text-slate-700 hover:text-rose-700 transition-colors cursor-pointer"
+            className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-700 transition-colors cursor-pointer"
           >
             Last Page ({totalPages})
           </button>
           <button
             type="button"
             onClick={() => applyPreset('odd')}
-            className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-rose-100 text-slate-700 hover:text-rose-700 transition-colors cursor-pointer"
+            className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-700 transition-colors cursor-pointer"
           >
             Odd Pages (1, 3...)
           </button>
           <button
             type="button"
             onClick={() => applyPreset('even')}
-            className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-rose-100 text-slate-700 hover:text-rose-700 transition-colors cursor-pointer"
+            className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-700 transition-colors cursor-pointer"
           >
             Even Pages (2, 4...)
           </button>
@@ -141,10 +141,10 @@ export default function RemovePdfControls({ totalPages = 1, value = '', onChange
         <div className="space-y-2 text-left pt-1">
           <div className="flex items-center justify-between text-xs font-bold text-slate-700">
             <span className="flex items-center gap-1.5">
-              <FileText className="w-3.5 h-3.5 text-rose-600" />
+              <FileText className="w-3.5 h-3.5 text-blue-600" />
               Page Number Selector ({removeSet.size} of {totalPages} pages marked to remove):
             </span>
-            <span className="text-[11px] text-rose-600 font-medium">Click page cards to toggle deletion</span>
+            <span className="text-[11px] text-slate-500 font-medium">Click page cards to toggle deletion</span>
           </div>
 
           <div className="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200 max-h-56 overflow-y-auto">
@@ -157,14 +157,14 @@ export default function RemovePdfControls({ totalPages = 1, value = '', onChange
                   onClick={() => togglePageNumber(pageNum)}
                   className={`flex flex-col items-center justify-center p-2 rounded-xl border text-xs font-bold transition-all cursor-pointer relative ${
                     isRemoved
-                      ? 'bg-rose-600 text-white border-rose-600 shadow-xs scale-[1.02]'
-                      : 'bg-white text-slate-700 border-slate-200 hover:border-rose-300 hover:bg-rose-50/50'
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-xs scale-[1.02]'
+                      : 'bg-white text-slate-700 border-slate-200 hover:border-blue-300 hover:bg-blue-50/50'
                   }`}
                 >
                   <span className="text-[10px] uppercase tracking-wider opacity-80">Page</span>
                   <span className="text-sm font-black">{pageNum}</span>
                   {isRemoved ? (
-                    <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-white text-rose-600 rounded-full flex items-center justify-center shadow-xs">
+                    <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-white text-slate-900 rounded-full flex items-center justify-center shadow-xs">
                       <Trash2 className="w-2.5 h-2.5 stroke-[2.5]" />
                     </span>
                   ) : (
@@ -180,14 +180,14 @@ export default function RemovePdfControls({ totalPages = 1, value = '', onChange
       )}
 
       {/* ── Real-Time Status Summary ─────────────────────────────── */}
-      <div className="p-3.5 rounded-xl bg-rose-50/80 border border-rose-200 flex items-center justify-between text-left text-xs">
+      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-left text-xs">
         <div className="flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-          <span className="font-semibold text-rose-900">
+          <AlertCircle className="w-4 h-4 text-blue-600 shrink-0" />
+          <span className="font-semibold text-slate-900">
             {removeSet.size === 0 ? (
               'No pages selected for deletion.'
             ) : removeSet.size >= totalPages ? (
-              <span className="text-red-700 font-bold">⚠️ Warning: All pages are marked for removal.</span>
+              <span className="text-slate-800 font-bold">⚠️ Warning: All pages are marked for removal.</span>
             ) : (
               <>
                 Removing <strong>{removeSet.size}</strong> page{removeSet.size > 1 ? 's' : ''} — <strong>{remainingCount}</strong> page{remainingCount > 1 ? 's' : ''} will remain in your output PDF.

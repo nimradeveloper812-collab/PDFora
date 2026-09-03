@@ -150,12 +150,12 @@ export default function ImageCompressorTool() {
         
         {/* Error Alert */}
         {errorMsg && (
-          <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3 text-red-700 text-sm animate-fade-in" role="alert">
-            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-red-500" />
+          <div className="mb-6 p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-3 text-slate-800 text-sm animate-fade-in" role="alert">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-blue-600" />
             <div className="flex-1 font-medium">{errorMsg}</div>
             <button
               onClick={() => setErrorMsg('')}
-              className="text-red-400 hover:text-red-600 font-bold ml-2"
+              className="text-slate-400 hover:text-slate-600 font-bold ml-2"
               aria-label="Dismiss error"
             >
               ×

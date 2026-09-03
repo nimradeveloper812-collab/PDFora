@@ -4618,7 +4618,7 @@ export const TOOLS = [
     "path": "/change-background",
     "category": "images",
     "shortDesc": "Remove image background and replace with custom colors.",
-    "description": "Replace photo backgrounds with passport blue, pure white, studio red, or custom background colors.",
+    "description": "Replace photo backgrounds with passport blue, pure white, navy blue, or custom background colors.",
     "iconName": "Image",
     "badge": "AI Feature",
     "acceptedTypes": ".jpg, .jpeg, .png, .webp",

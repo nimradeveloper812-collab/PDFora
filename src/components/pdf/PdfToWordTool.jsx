@@ -269,12 +269,12 @@ export default function PdfToWordTool() {
       
       {/* ── Error Banner ──────────────────────────────────── */}
       {errorMsg && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-400 text-xs font-semibold animate-shake">
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold animate-shake">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <p className="flex-1">{errorMsg}</p>
           <button
             onClick={() => setErrorMsg('')}
-            className="p-1 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-md transition-colors cursor-pointer"
+            className="p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-md transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -295,8 +295,8 @@ export default function PdfToWordTool() {
           }}
           className={`relative border-2 border-dashed rounded-3xl p-10 sm:p-16 text-center transition-all flex flex-col items-center justify-center min-h-[360px] cursor-pointer ${
             isDraggingOver
-              ? 'border-red-500 bg-red-50/50 dark:bg-red-950/20 scale-[1.01]'
-              : 'border-zinc-300 dark:border-[#2A2E45] bg-[#F8FAFC]/60 dark:bg-[#141622]/60 hover:border-red-400 dark:hover:border-red-600'
+              ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20 scale-[1.01]'
+              : 'border-zinc-300 dark:border-[#2A2E45] bg-[#F8FAFC]/60 dark:bg-[#141622]/60 hover:border-blue-400 dark:hover:border-blue-500'
           }`}
           onClick={() => fileInputRef.current?.click()}
         >
@@ -319,7 +319,7 @@ export default function PdfToWordTool() {
 
           <button
             type="button"
-            className="px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-lg sm:text-xl shadow-lg shadow-red-600/30 transition-all flex items-center gap-3 cursor-pointer"
+            className="px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-lg sm:text-xl shadow-lg shadow-blue-600/25 transition-all flex items-center gap-3 cursor-pointer"
           >
             <span>Select PDF file</span>
             <UploadCloud className="w-6 h-6" />
@@ -356,7 +356,7 @@ export default function PdfToWordTool() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/40 text-red-600 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add more PDFs</span>
@@ -385,7 +385,7 @@ export default function PdfToWordTool() {
                   <button
                     type="button"
                     onClick={() => removeFile(item.id)}
-                    className="absolute -top-2 -right-2 p-1.5 bg-zinc-900 text-white hover:bg-red-600 rounded-full shadow-md text-xs opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-10"
+                    className="absolute -top-2 -right-2 p-1.5 bg-zinc-900 text-white hover:bg-slate-800 rounded-full shadow-md text-xs opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-10"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -412,9 +412,9 @@ export default function PdfToWordTool() {
 
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-zinc-300 dark:border-[#2A2E45] hover:border-red-400 rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[160px] bg-zinc-50/50 dark:bg-[#141622]/40 transition-colors"
+                className="border-2 border-dashed border-zinc-300 dark:border-[#2A2E45] hover:border-blue-400 rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[160px] bg-zinc-50/50 dark:bg-[#141622]/40 transition-colors"
               >
-                <div className="w-10 h-10 rounded-full bg-red-50 dark:bg-red-950/50 text-red-600 flex items-center justify-center mb-2">
+                <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-950/50 text-blue-600 flex items-center justify-center mb-2">
                   <Plus className="w-5 h-5" />
                 </div>
                 <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400">Add more</span>
@@ -441,7 +441,7 @@ export default function PdfToWordTool() {
                   onClick={() => setOcrMode('standard')}
                   className={`p-3.5 rounded-2xl border-2 transition-all cursor-pointer text-left ${
                     ocrMode === 'standard'
-                      ? 'border-red-500 bg-red-50/40 dark:bg-red-950/20'
+                      ? 'border-blue-500 bg-blue-50/40 dark:bg-blue-950/20'
                       : 'border-zinc-200 dark:border-[#2A2E45] hover:border-zinc-300'
                   }`}
                 >
@@ -449,7 +449,7 @@ export default function PdfToWordTool() {
                     <span className="text-xs font-black text-zinc-900 dark:text-white">
                       Standard Conversion
                     </span>
-                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-red-600 text-white">
+                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-600 text-white">
                       Fast
                     </span>
                   </div>
@@ -462,7 +462,7 @@ export default function PdfToWordTool() {
                   onClick={() => setOcrMode('ocr')}
                   className={`p-3.5 rounded-2xl border-2 transition-all cursor-pointer text-left ${
                     ocrMode === 'ocr'
-                      ? 'border-red-500 bg-red-50/40 dark:bg-red-950/20'
+                      ? 'border-blue-500 bg-blue-50/40 dark:bg-blue-950/20'
                       : 'border-zinc-200 dark:border-[#2A2E45] hover:border-zinc-300'
                   }`}
                 >
@@ -483,7 +483,7 @@ export default function PdfToWordTool() {
               <button
                 type="button"
                 onClick={handleConvertAll}
-                className="w-full py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-base shadow-lg shadow-red-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-base shadow-lg shadow-blue-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Convert to WORD</span>
                 <ArrowRight className="w-5 h-5" />
@@ -498,7 +498,7 @@ export default function PdfToWordTool() {
       {status === 'processing' && (
         <div className="rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] p-10 sm:p-16 text-center space-y-6 shadow-sm">
           <div className="relative w-20 h-20 mx-auto">
-            <div className="w-20 h-20 rounded-full border-4 border-red-100 dark:border-red-950 border-t-red-600 animate-spin" />
+            <div className="w-20 h-20 rounded-full border-4 border-blue-100 dark:border-blue-950 border-t-blue-600 animate-spin" />
             <div className="absolute inset-0 flex items-center justify-center text-xs font-black text-zinc-900 dark:text-white">
               {progress}%
             </div>
@@ -515,7 +515,7 @@ export default function PdfToWordTool() {
 
           <div className="max-w-md mx-auto w-full bg-zinc-100 dark:bg-[#1B1E2E] h-2.5 rounded-full overflow-hidden">
             <div
-              className="bg-red-600 h-full transition-all duration-300 ease-out"
+              className="bg-blue-600 h-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -554,7 +554,7 @@ export default function PdfToWordTool() {
               <a
                 href={convertedResults[0].blobUrl}
                 download={convertedResults[0].originalName.replace(/\.pdf$/i, '.docx')}
-                className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-base shadow-xl shadow-red-600/30 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+                className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-base shadow-xl shadow-blue-600/25 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
               >
                 <Download className="w-5 h-5" />
                 <span>Download WORD Document</span>
@@ -563,7 +563,7 @@ export default function PdfToWordTool() {
               <a
                 href={downloadZipUrl}
                 download="converted_word_docs.zip"
-                className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-base shadow-xl shadow-red-600/30 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+                className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-base shadow-xl shadow-blue-600/25 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
               >
                 <Download className="w-5 h-5" />
                 <span>Download All (ZIP)</span>
@@ -576,7 +576,7 @@ export default function PdfToWordTool() {
             <button
               type="button"
               onClick={handleReset}
-              className="inline-flex items-center gap-2 text-xs font-bold text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 text-xs font-bold text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Convert another PDF</span>

@@ -14,19 +14,19 @@
   --surface-elevated: #FFFFFF;
   --border: #E2E8F0;
   --border-subtle: #F1F5F9;
-  --text-primary: #0D0D14;
-  --text-secondary: #475569;
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
   --text-muted: #64748B;
-  --primary: #6C3FFC;
-  --primary-hover: #5B2FE4;
-  --primary-active: #4C23CE;
-  --accent: #8B5CF6;
+  --primary: #1E3A8A;
+  --primary-hover: #172554;
+  --primary-active: #0F172A;
+  --accent: #2563EB;
   --success: #10B981;
   --warning: #F59E0B;
-  --error: #EF4444;
+  --error: #475569;
   --input-background: #FFFFFF;
   --input-border: #CBD5E1;
-  --focus-ring: rgba(108, 63, 252, 0.4);
+  --focus-ring: rgba(37, 99, 235, 0.4);
   --overlay: rgba(13, 13, 20, 0.6);
 }
 
@@ -41,16 +41,16 @@ html.dark {
   --text-primary: #F8FAFC;
   --text-secondary: #CBD5E1;
   --text-muted: #94A3B8;
-  --primary: #8B5CF6;
-  --primary-hover: #7C3AED;
-  --primary-active: #6D28D9;
-  --accent: #A78BFA;
+  --primary: #3B82F6;
+  --primary-hover: #2563EB;
+  --primary-active: #1D4ED8;
+  --accent: #60A5FA;
   --success: #34D399;
   --warning: #FBBF24;
-  --error: #F87171;
+  --error: #94A3B8;
   --input-background: #141622;
   --input-border: #2A2E45;
-  --focus-ring: rgba(139, 92, 246, 0.5);
+  --focus-ring: rgba(59, 130, 246, 0.5);
   --overlay: rgba(0, 0, 0, 0.75);
 }
 
@@ -164,7 +164,7 @@ html.dark .progress-track {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #6C3FFC 0%, #8B5CF6 100%);
+  background: linear-gradient(90deg, #1E3A8A 0%, #2563EB 100%);
   border-radius: 9999px;
   transition: width 300ms ease-out;
 }

@@ -435,20 +435,18 @@ export default function Dropzone({ tool }) {
           <div className="space-y-5">
             {errorMsg && (
               <div
-                className="flex items-start gap-3 p-4 rounded-2xl animate-fade-up"
-                style={{ background: '#FFF5F5', border: '1px solid #FCA5A5' }}
+                className="flex items-start gap-3 p-4 rounded-2xl animate-fade-up bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800"
                 role="alert"
                 aria-live="polite"
               >
-                <AlertCircle className="w-4.5 h-4.5 mt-0.5 shrink-0" style={{ color: '#EF4444' }} aria-hidden="true" />
+                <AlertCircle className="w-4.5 h-4.5 mt-0.5 shrink-0 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                 <div className="flex-1">
-                  <p className="text-xs font-bold" style={{ color: '#B91C1C' }}>Upload issue</p>
-                  <p className="text-xs mt-0.5" style={{ color: '#DC2626' }}>{errorMsg}</p>
+                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200">Upload issue</p>
+                  <p className="text-xs mt-0.5 text-slate-600 dark:text-slate-400">{errorMsg}</p>
                 </div>
                 <button
                   onClick={() => setErrorMsg('')}
-                  className="shrink-0 p-1 rounded-lg transition-colors hover:bg-red-100"
-                  style={{ color: '#EF4444' }}
+                  className="shrink-0 p-1 rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
                   aria-label="Dismiss error"
                 >
                   <X className="w-3.5 h-3.5" aria-hidden="true" />
@@ -663,11 +661,8 @@ export default function Dropzone({ tool }) {
                         <button
                           type="button"
                           onClick={() => removeFile(idx)}
-                          className="p-1.5 rounded-lg transition-colors hover:bg-red-50 cursor-pointer"
-                          style={{ color: '#A1A1AA' }}
+                          className="p-1.5 rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
                           aria-label={`Remove ${file.name}`}
-                          onMouseEnter={e => (e.currentTarget.style.color = '#EF4444')}
-                          onMouseLeave={e => (e.currentTarget.style.color = '#A1A1AA')}
                         >
                           <X className="w-3.5 h-3.5" aria-hidden="true" />
                         </button>

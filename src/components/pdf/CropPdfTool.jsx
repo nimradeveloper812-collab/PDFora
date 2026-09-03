@@ -358,12 +358,12 @@ export default function CropPdfTool() {
 
       {/* ── Error Banner ──────────────────────────────────── */}
       {errorMsg && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-400 text-xs font-semibold animate-shake">
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold animate-shake">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <p className="flex-1">{errorMsg}</p>
           <button
             onClick={() => setErrorMsg('')}
-            className="p-1 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-md transition-colors cursor-pointer"
+            className="p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-md transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -384,8 +384,8 @@ export default function CropPdfTool() {
           }}
           className={`relative border-2 border-dashed rounded-3xl p-10 sm:p-16 text-center transition-all flex flex-col items-center justify-center min-h-[360px] cursor-pointer ${
             isDraggingOver
-              ? 'border-red-500 bg-red-50/50 dark:bg-red-950/20 scale-[1.01]'
-              : 'border-zinc-300 dark:border-[#2A2E45] bg-[#F8FAFC]/60 dark:bg-[#141622]/60 hover:border-red-400 dark:hover:border-red-600'
+              ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20 scale-[1.01]'
+              : 'border-zinc-300 dark:border-[#2A2E45] bg-[#F8FAFC]/60 dark:bg-[#141622]/60 hover:border-blue-400 dark:hover:border-blue-500'
           }`}
           onClick={() => fileInputRef.current?.click()}
         >
@@ -401,13 +401,13 @@ export default function CropPdfTool() {
             }}
           />
 
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-red-500 text-white flex items-center justify-center shadow-xl shadow-red-500/25 mb-6 group-hover:scale-105 transition-transform">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-blue-600 text-white flex items-center justify-center shadow-xl shadow-blue-600/25 mb-6 group-hover:scale-105 transition-transform">
             <Crop className="w-10 h-10 sm:w-12 sm:h-12" />
           </div>
 
           <button
             type="button"
-            className="px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-lg sm:text-xl shadow-lg shadow-red-600/30 transition-all flex items-center gap-3 cursor-pointer"
+            className="px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-lg sm:text-xl shadow-lg shadow-blue-600/25 transition-all flex items-center gap-3 cursor-pointer"
           >
             <span>Select PDF file</span>
             <UploadCloud className="w-6 h-6" />
@@ -433,7 +433,7 @@ export default function CropPdfTool() {
       {/* ── 2. LOADING STATE ───────────────────────────────── */}
       {status === 'loading_file' && (
         <div className="rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] p-12 text-center space-y-4 shadow-sm">
-          <div className="w-12 h-12 rounded-full border-4 border-red-200 border-t-red-600 animate-spin mx-auto" />
+          <div className="w-12 h-12 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin mx-auto" />
           <p className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
             {progressText || 'Reading PDF pages...'}
           </p>
@@ -463,7 +463,7 @@ export default function CropPdfTool() {
                 </button>
 
                 <div className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
-                  Page <span className="text-red-600 font-black">{currentPage}</span> of {totalPages}
+                  Page <span className="text-blue-600 font-black">{currentPage}</span> of {totalPages}
                 </div>
 
                 <button
@@ -538,7 +538,7 @@ export default function CropPdfTool() {
                 {/* ── DRAGGABLE & RESIZABLE CROP BOX OVERLAY ── */}
                 <div
                   onMouseDown={handleMouseDownBox}
-                  className="absolute border-2 border-red-500 shadow-sm cursor-move group"
+                  className="absolute border-2 border-blue-500 shadow-sm cursor-move group"
                   style={{
                     left: `${cropBox.x}%`,
                     top: `${cropBox.y}%`,
@@ -563,42 +563,42 @@ export default function CropPdfTool() {
                   {/* NW */}
                   <div
                     onMouseDown={(e) => handleMouseDownHandle(e, 'nw')}
-                    className="absolute -top-1.5 -left-1.5 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-nwse-resize shadow-md"
+                    className="absolute -top-1.5 -left-1.5 w-3.5 h-3.5 bg-blue-600 border-2 border-white rounded-full cursor-nwse-resize shadow-md"
                   />
                   {/* N */}
                   <div
                     onMouseDown={(e) => handleMouseDownHandle(e, 'n')}
-                    className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-ns-resize shadow-md"
+                    className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-blue-600 border-2 border-white rounded-full cursor-ns-resize shadow-md"
                   />
                   {/* NE */}
                   <div
                     onMouseDown={(e) => handleMouseDownHandle(e, 'ne')}
-                    className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-nesw-resize shadow-md"
+                    className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-blue-600 border-2 border-white rounded-full cursor-nesw-resize shadow-md"
                   />
                   {/* E */}
                   <div
                     onMouseDown={(e) => handleMouseDownHandle(e, 'e')}
-                    className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-ew-resize shadow-md"
+                    className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3.5 h-3.5 bg-blue-600 border-2 border-white rounded-full cursor-ew-resize shadow-md"
                   />
                   {/* SE */}
                   <div
                     onMouseDown={(e) => handleMouseDownHandle(e, 'se')}
-                    className="absolute -bottom-1.5 -right-1.5 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-nwse-resize shadow-md"
+                    className="absolute -bottom-1.5 -right-1.5 w-3.5 h-3.5 bg-blue-600 border-2 border-white rounded-full cursor-nwse-resize shadow-md"
                   />
                   {/* S */}
                   <div
                     onMouseDown={(e) => handleMouseDownHandle(e, 's')}
-                    className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-ns-resize shadow-md"
+                    className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-blue-600 border-2 border-white rounded-full cursor-ns-resize shadow-md"
                   />
                   {/* SW */}
                   <div
                     onMouseDown={(e) => handleMouseDownHandle(e, 'sw')}
-                    className="absolute -bottom-1.5 -left-1.5 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-nesw-resize shadow-md"
+                    className="absolute -bottom-1.5 -left-1.5 w-3.5 h-3.5 bg-blue-600 border-2 border-white rounded-full cursor-nesw-resize shadow-md"
                   />
                   {/* W */}
                   <div
                     onMouseDown={(e) => handleMouseDownHandle(e, 'w')}
-                    className="absolute top-1/2 -translate-y-1/2 -left-1.5 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-ew-resize shadow-md"
+                    className="absolute top-1/2 -translate-y-1/2 -left-1.5 w-3.5 h-3.5 bg-blue-600 border-2 border-white rounded-full cursor-ew-resize shadow-md"
                   />
 
                   {/* Dimensions Tag */}
@@ -619,7 +619,7 @@ export default function CropPdfTool() {
             {/* File Info */}
             <div className="p-4 rounded-2xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] shadow-xs flex items-center justify-between">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0">
                   <File className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
@@ -635,7 +635,7 @@ export default function CropPdfTool() {
               <button
                 type="button"
                 onClick={handleReset}
-                className="p-1.5 text-zinc-400 hover:text-red-600 rounded-lg hover:bg-zinc-100 dark:hover:bg-[#1B1E2E] transition-colors cursor-pointer"
+                className="p-1.5 text-zinc-400 hover:text-blue-600 rounded-lg hover:bg-zinc-100 dark:hover:bg-[#1B1E2E] transition-colors cursor-pointer"
                 title="Change PDF file"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -663,28 +663,28 @@ export default function CropPdfTool() {
                   <button
                     type="button"
                     onClick={() => applyPreset('auto_trim')}
-                    className="py-2 px-2.5 rounded-xl bg-zinc-50 hover:bg-red-50 text-zinc-700 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold border border-zinc-200 dark:border-[#2A2E45] transition-colors cursor-pointer"
+                    className="py-2 px-2.5 rounded-xl bg-zinc-50 hover:bg-blue-50 text-zinc-700 hover:text-blue-600 dark:bg-[#1B1E2E] dark:hover:bg-blue-950/40 text-xs font-bold border border-zinc-200 dark:border-[#2A2E45] transition-colors cursor-pointer"
                   >
                     Trim Margins
                   </button>
                   <button
                     type="button"
                     onClick={() => applyPreset('letter_center')}
-                    className="py-2 px-2.5 rounded-xl bg-zinc-50 hover:bg-red-50 text-zinc-700 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold border border-zinc-200 dark:border-[#2A2E45] transition-colors cursor-pointer"
+                    className="py-2 px-2.5 rounded-xl bg-zinc-50 hover:bg-blue-50 text-zinc-700 hover:text-blue-600 dark:bg-[#1B1E2E] dark:hover:bg-blue-950/40 text-xs font-bold border border-zinc-200 dark:border-[#2A2E45] transition-colors cursor-pointer"
                   >
                     Center Fit
                   </button>
                   <button
                     type="button"
                     onClick={() => applyPreset('square')}
-                    className="py-2 px-2.5 rounded-xl bg-zinc-50 hover:bg-red-50 text-zinc-700 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold border border-zinc-200 dark:border-[#2A2E45] transition-colors cursor-pointer"
+                    className="py-2 px-2.5 rounded-xl bg-zinc-50 hover:bg-blue-50 text-zinc-700 hover:text-blue-600 dark:bg-[#1B1E2E] dark:hover:bg-blue-950/40 text-xs font-bold border border-zinc-200 dark:border-[#2A2E45] transition-colors cursor-pointer"
                   >
                     Square Crop
                   </button>
                   <button
                     type="button"
                     onClick={() => applyPreset('full')}
-                    className="py-2 px-2.5 rounded-xl bg-zinc-50 hover:bg-red-50 text-zinc-700 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold border border-zinc-200 dark:border-[#2A2E45] transition-colors cursor-pointer"
+                    className="py-2 px-2.5 rounded-xl bg-zinc-50 hover:bg-blue-50 text-zinc-700 hover:text-blue-600 dark:bg-[#1B1E2E] dark:hover:bg-blue-950/40 text-xs font-bold border border-zinc-200 dark:border-[#2A2E45] transition-colors cursor-pointer"
                   >
                     Reset Full
                   </button>
@@ -704,7 +704,7 @@ export default function CropPdfTool() {
                       name="cropScope"
                       checked={cropScope === 'all'}
                       onChange={() => setCropScope('all')}
-                      className="w-4 h-4 text-red-600 focus:ring-red-500"
+                      className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
                       All pages in document ({totalPages} pages)
@@ -717,7 +717,7 @@ export default function CropPdfTool() {
                       name="cropScope"
                       checked={cropScope === 'current'}
                       onChange={() => setCropScope('current')}
-                      className="w-4 h-4 text-red-600 focus:ring-red-500"
+                      className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
                       Current page only (Page {currentPage})
@@ -730,7 +730,7 @@ export default function CropPdfTool() {
                       name="cropScope"
                       checked={cropScope === 'custom'}
                       onChange={() => setCropScope('custom')}
-                      className="w-4 h-4 text-red-600 focus:ring-red-500"
+                      className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
                       Custom page selection
@@ -745,7 +745,7 @@ export default function CropPdfTool() {
                       value={customPagesText}
                       placeholder={`e.g. 1, 3, 5-${totalPages}`}
                       onChange={(e) => setCustomPagesText(e.target.value)}
-                      className="w-full text-xs rounded-xl px-3 py-2 border border-zinc-300 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] font-bold text-zinc-900 dark:text-white focus:ring-2 focus:ring-red-500"
+                      className="w-full text-xs rounded-xl px-3 py-2 border border-zinc-300 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] font-bold text-zinc-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 )}
@@ -755,7 +755,7 @@ export default function CropPdfTool() {
               <button
                 type="button"
                 onClick={handleCropPdf}
-                className="w-full py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-base shadow-lg shadow-red-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-base shadow-lg shadow-blue-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Crop PDF</span>
                 <ArrowRight className="w-5 h-5" />
@@ -772,7 +772,7 @@ export default function CropPdfTool() {
       {status === 'processing' && (
         <div className="rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] p-10 sm:p-16 text-center space-y-6 shadow-sm">
           <div className="relative w-20 h-20 mx-auto">
-            <div className="w-20 h-20 rounded-full border-4 border-red-100 dark:border-red-950 border-t-red-600 animate-spin" />
+            <div className="w-20 h-20 rounded-full border-4 border-blue-100 dark:border-blue-950 border-t-blue-600 animate-spin" />
             <div className="absolute inset-0 flex items-center justify-center text-xs font-black text-zinc-900 dark:text-white">
               {progress}%
             </div>
@@ -789,7 +789,7 @@ export default function CropPdfTool() {
 
           <div className="max-w-md mx-auto w-full bg-zinc-100 dark:bg-[#1B1E2E] h-2.5 rounded-full overflow-hidden">
             <div
-              className="bg-red-600 h-full transition-all duration-300 ease-out"
+              className="bg-blue-600 h-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -827,7 +827,7 @@ export default function CropPdfTool() {
             <a
               href={resultBlobUrl}
               download={resultFilename}
-              className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-base shadow-xl shadow-red-600/30 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+              className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-base shadow-xl shadow-blue-600/25 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
             >
               <Download className="w-5 h-5" />
               <span>Download Cropped PDF</span>
@@ -859,7 +859,7 @@ export default function CropPdfTool() {
             <button
               type="button"
               onClick={handleReset}
-              className="inline-flex items-center gap-2 text-xs font-bold text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 text-xs font-bold text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Crop another PDF document</span>

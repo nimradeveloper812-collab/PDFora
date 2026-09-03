@@ -270,12 +270,12 @@ export default function PdfToExcelTool() {
       
       {/* ── Error Banner ──────────────────────────────────── */}
       {errorMsg && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-400 text-xs font-semibold animate-shake">
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold animate-shake">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <p className="flex-1">{errorMsg}</p>
           <button
             onClick={() => setErrorMsg('')}
-            className="p-1 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-md transition-colors cursor-pointer"
+            className="p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-md transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -320,7 +320,7 @@ export default function PdfToExcelTool() {
 
           <button
             type="button"
-            className="px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-lg sm:text-xl shadow-lg shadow-red-600/30 transition-all flex items-center gap-3 cursor-pointer"
+            className="px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-lg sm:text-xl shadow-lg shadow-blue-600/25 transition-all flex items-center gap-3 cursor-pointer"
           >
             <span>Select PDF file</span>
             <UploadCloud className="w-6 h-6" />
@@ -357,7 +357,7 @@ export default function PdfToExcelTool() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/40 text-red-600 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add more PDFs</span>
@@ -386,7 +386,7 @@ export default function PdfToExcelTool() {
                   <button
                     type="button"
                     onClick={() => removeFile(item.id)}
-                    className="absolute -top-2 -right-2 p-1.5 bg-zinc-900 text-white hover:bg-red-600 rounded-full shadow-md text-xs opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-10"
+                    className="absolute -top-2 -right-2 p-1.5 bg-zinc-900 text-white hover:bg-slate-800 rounded-full shadow-md text-xs opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-10"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -484,7 +484,7 @@ export default function PdfToExcelTool() {
               <button
                 type="button"
                 onClick={handleConvertAll}
-                className="w-full py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-base shadow-lg shadow-red-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-base shadow-lg shadow-blue-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Convert to EXCEL</span>
                 <ArrowRight className="w-5 h-5" />
@@ -555,7 +555,7 @@ export default function PdfToExcelTool() {
               <a
                 href={convertedResults[0].blobUrl}
                 download={convertedResults[0].originalName.replace(/\.pdf$/i, '.xlsx')}
-                className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-base shadow-xl shadow-red-600/30 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+                className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-base shadow-xl shadow-blue-600/25 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
               >
                 <Download className="w-5 h-5" />
                 <span>Download EXCEL Spreadsheet</span>
@@ -564,7 +564,7 @@ export default function PdfToExcelTool() {
               <a
                 href={downloadZipUrl}
                 download="converted_excel_spreadsheets.zip"
-                className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-base shadow-xl shadow-red-600/30 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+                className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-base shadow-xl shadow-blue-600/25 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
               >
                 <Download className="w-5 h-5" />
                 <span>Download All (ZIP)</span>
@@ -577,7 +577,7 @@ export default function PdfToExcelTool() {
             <button
               type="button"
               onClick={handleReset}
-              className="inline-flex items-center gap-2 text-xs font-bold text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 text-xs font-bold text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Convert another PDF</span>

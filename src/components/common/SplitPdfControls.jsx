@@ -212,7 +212,7 @@ export default function SplitPdfControls({ totalPages = 1, config, onChange }) {
                       <button
                         type="button"
                         onClick={() => removeRange(idx)}
-                        className="p-1.5 rounded-lg text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                         title="Remove range"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -370,7 +370,7 @@ export default function SplitPdfControls({ totalPages = 1, config, onChange }) {
                 <button
                   type="button"
                   onClick={() => applyPreset('clear')}
-                  className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors cursor-pointer"
+                  className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 transition-colors cursor-pointer"
                 >
                   Clear Selection
                 </button>

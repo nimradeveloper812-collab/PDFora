@@ -170,8 +170,8 @@ export default function VideoToAudioTool() {
 
       {/* Error Alert */}
       {errorMsg && (
-        <div className="mt-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 flex items-center gap-3">
-          <AlertCircle className="w-5 h-5 flex-shrink-0" />
+        <div className="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 flex-shrink-0 text-blue-600" />
           <p className="text-sm font-medium">{errorMsg}</p>
         </div>
       )}

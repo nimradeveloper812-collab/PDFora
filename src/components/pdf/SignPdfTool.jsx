@@ -358,7 +358,7 @@ export default function SignPdfTool() {
       canvas.height = 100;
       const ctx = canvas.getContext('2d');
       ctx.font = 'bold 70px sans-serif';
-      ctx.fillStyle = '#EF4444';
+      ctx.fillStyle = '#1E3A8A';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('✓', 50, 50);
@@ -642,12 +642,12 @@ export default function SignPdfTool() {
       
       {/* ── Error Banner ──────────────────────────────────── */}
       {errorMsg && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-400 text-xs font-semibold animate-shake">
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold animate-shake">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <p className="flex-1">{errorMsg}</p>
           <button
             onClick={() => setErrorMsg('')}
-            className="p-1 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-md transition-colors cursor-pointer"
+            className="p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-md transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -668,8 +668,8 @@ export default function SignPdfTool() {
           }}
           className={`relative border-2 border-dashed rounded-3xl p-10 sm:p-16 text-center transition-all flex flex-col items-center justify-center min-h-[360px] cursor-pointer ${
             isDraggingOver
-              ? 'border-red-500 bg-red-50/50 dark:bg-red-950/20 scale-[1.01]'
-              : 'border-zinc-300 dark:border-[#2A2E45] bg-[#F8FAFC]/60 dark:bg-[#141622]/60 hover:border-red-400 dark:hover:border-red-600'
+              ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20 scale-[1.01]'
+              : 'border-zinc-300 dark:border-[#2A2E45] bg-[#F8FAFC]/60 dark:bg-[#141622]/60 hover:border-blue-400 dark:hover:border-blue-500'
           }`}
           onClick={() => fileInputRef.current?.click()}
         >
@@ -685,13 +685,13 @@ export default function SignPdfTool() {
             }}
           />
 
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-red-500 text-white flex items-center justify-center shadow-xl shadow-red-500/25 mb-6 group-hover:scale-105 transition-transform">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-blue-600 text-white flex items-center justify-center shadow-xl shadow-blue-600/25 mb-6 group-hover:scale-105 transition-transform">
             <Edit3 className="w-10 h-10 sm:w-12 sm:h-12" />
           </div>
 
           <button
             type="button"
-            className="px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-lg sm:text-xl shadow-lg shadow-red-600/30 transition-all flex items-center gap-3 cursor-pointer"
+            className="px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-lg sm:text-xl shadow-lg shadow-blue-600/25 transition-all flex items-center gap-3 cursor-pointer"
           >
             <span>Select PDF file</span>
             <UploadCloud className="w-6 h-6" />
@@ -717,7 +717,7 @@ export default function SignPdfTool() {
       {/* ── 2. LOADING STATE ───────────────────────────────── */}
       {(status === 'loading' || status === 'processing') && (
         <div className="rounded-3xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] p-12 text-center space-y-4 shadow-sm">
-          <div className="w-12 h-12 rounded-full border-4 border-red-200 border-t-red-600 animate-spin mx-auto" />
+          <div className="w-12 h-12 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin mx-auto" />
           <p className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
             {progressText || 'Processing document...'}
           </p>
@@ -734,7 +734,7 @@ export default function SignPdfTool() {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(true)}
-                className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md shadow-red-600/20 transition-all flex items-center gap-2 cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-600/20 transition-all flex items-center gap-2 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>Create Signature / Field</span>
@@ -751,7 +751,7 @@ export default function SignPdfTool() {
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <span>
-                Page <span className="text-red-600 font-black">{currentPage}</span> of {numPages}
+                Page <span className="text-blue-600 font-black">{currentPage}</span> of {numPages}
               </span>
               <button
                 disabled={currentPage >= numPages}
@@ -785,7 +785,7 @@ export default function SignPdfTool() {
               <button
                 type="button"
                 onClick={handleApplySignatureAndDownload}
-                className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-md shadow-red-600/30 transition-all flex items-center gap-2 cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black shadow-md shadow-blue-600/25 transition-all flex items-center gap-2 cursor-pointer"
               >
                 <span>Sign PDF</span>
                 <ArrowRight className="w-4 h-4" />
@@ -817,8 +817,8 @@ export default function SignPdfTool() {
                       onMouseDown={(e) => handleElementMouseDown(e, elem.id)}
                       className={`absolute group cursor-move select-none p-1 rounded transition-shadow ${
                         isSelected
-                          ? 'border-2 border-dashed border-red-500 ring-2 ring-red-500/30 bg-white/40 shadow-lg z-20'
-                          : 'border border-transparent hover:border-red-400/80 z-10'
+                          ? 'border-2 border-dashed border-blue-500 ring-2 ring-blue-500/30 bg-white/40 shadow-lg z-20'
+                          : 'border border-transparent hover:border-blue-400/80 z-10'
                       }`}
                       style={{
                         left: `${elem.x * zoom}px`,
@@ -841,7 +841,7 @@ export default function SignPdfTool() {
                             <button
                               type="button"
                               onClick={(e) => { e.stopPropagation(); duplicateElement(elem.id); }}
-                              className="p-0.5 hover:text-red-400"
+                              className="p-0.5 hover:text-blue-400"
                               title="Duplicate"
                             >
                               <Copy className="w-3 h-3" />
@@ -857,7 +857,7 @@ export default function SignPdfTool() {
                             <button
                               type="button"
                               onClick={(e) => { e.stopPropagation(); deleteElement(elem.id); }}
-                              className="p-0.5 hover:text-red-400"
+                              className="p-0.5 hover:text-blue-400"
                               title="Delete"
                             >
                               <Trash2 className="w-3 h-3" />
@@ -867,7 +867,7 @@ export default function SignPdfTool() {
                           {/* Resize Handle */}
                           <div
                             onMouseDown={(e) => handleResizeMouseDown(e, elem.id)}
-                            className="absolute -bottom-1.5 -right-1.5 w-3.5 h-3.5 bg-red-600 border-2 border-white rounded-full cursor-nwse-resize shadow-md"
+                            className="absolute -bottom-1.5 -right-1.5 w-3.5 h-3.5 bg-blue-600 border-2 border-white rounded-full cursor-nwse-resize shadow-md"
                           />
                         </>
                       )}
@@ -892,7 +892,7 @@ export default function SignPdfTool() {
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(true)}
-                    className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 cursor-pointer"
+                    className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Create New</span>
@@ -904,33 +904,33 @@ export default function SignPdfTool() {
                   <button
                     type="button"
                     onClick={() => { setModalTab('signature'); setIsModalOpen(true); }}
-                    className="p-2.5 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 hover:bg-red-50 text-zinc-800 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold transition-colors flex items-center gap-2 cursor-pointer"
+                    className="p-2.5 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 hover:bg-blue-50 text-zinc-800 hover:text-blue-600 dark:bg-[#1B1E2E] dark:hover:bg-blue-950/40 text-xs font-bold transition-colors flex items-center gap-2 cursor-pointer"
                   >
-                    <Edit3 className="w-4 h-4 text-red-600" />
+                    <Edit3 className="w-4 h-4 text-blue-600" />
                     <span>Signature</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => { setModalTab('initials'); setIsModalOpen(true); }}
-                    className="p-2.5 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 hover:bg-red-50 text-zinc-800 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold transition-colors flex items-center gap-2 cursor-pointer"
+                    className="p-2.5 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 hover:bg-blue-50 text-zinc-800 hover:text-blue-600 dark:bg-[#1B1E2E] dark:hover:bg-blue-950/40 text-xs font-bold transition-colors flex items-center gap-2 cursor-pointer"
                   >
-                    <Type className="w-4 h-4 text-red-600" />
+                    <Type className="w-4 h-4 text-blue-600" />
                     <span>Initials</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => { setModalTab('date'); setIsModalOpen(true); }}
-                    className="p-2.5 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 hover:bg-red-50 text-zinc-800 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold transition-colors flex items-center gap-2 cursor-pointer"
+                    className="p-2.5 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 hover:bg-blue-50 text-zinc-800 hover:text-blue-600 dark:bg-[#1B1E2E] dark:hover:bg-blue-950/40 text-xs font-bold transition-colors flex items-center gap-2 cursor-pointer"
                   >
-                    <Calendar className="w-4 h-4 text-red-600" />
+                    <Calendar className="w-4 h-4 text-blue-600" />
                     <span>Date Stamp</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => { setModalTab('checkmark'); setIsModalOpen(true); }}
-                    className="p-2.5 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 hover:bg-red-50 text-zinc-800 hover:text-red-600 dark:bg-[#1B1E2E] dark:hover:bg-red-950/40 text-xs font-bold transition-colors flex items-center gap-2 cursor-pointer"
+                    className="p-2.5 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-zinc-50 hover:bg-blue-50 text-zinc-800 hover:text-blue-600 dark:bg-[#1B1E2E] dark:hover:bg-blue-950/40 text-xs font-bold transition-colors flex items-center gap-2 cursor-pointer"
                   >
-                    <CheckSquare className="w-4 h-4 text-red-600" />
+                    <CheckSquare className="w-4 h-4 text-blue-600" />
                     <span>Checkmark</span>
                   </button>
                 </div>
@@ -944,7 +944,7 @@ export default function SignPdfTool() {
                         <div
                           key={sig.id}
                           onClick={() => placeItemOnCurrentPage(sig.dataUrl, 'signature')}
-                          className="p-2 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-white dark:bg-[#1B1E2E] hover:border-red-500 cursor-pointer shadow-2xs group flex items-center justify-center h-14"
+                          className="p-2 rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-white dark:bg-[#1B1E2E] hover:border-blue-500 cursor-pointer shadow-2xs group flex items-center justify-center h-14"
                         >
                           <img src={sig.dataUrl} alt="Saved Sig" className="max-h-10 max-w-full object-contain" />
                         </div>
@@ -968,7 +968,7 @@ export default function SignPdfTool() {
                       onClick={() => setCurrentPage(p.pageNum)}
                       className={`p-1.5 rounded-xl border text-center transition-all cursor-pointer ${
                         currentPage === p.pageNum
-                          ? 'border-red-500 ring-2 ring-red-500/30 bg-red-50/50 dark:bg-red-950/20'
+                          ? 'border-blue-500 ring-2 ring-blue-500/30 bg-blue-50/50 dark:bg-blue-950/20'
                           : 'border-zinc-200 dark:border-[#2A2E45] hover:border-zinc-300'
                       }`}
                     >
@@ -1025,7 +1025,7 @@ export default function SignPdfTool() {
             <a
               href={resultBlobUrl}
               download={resultFilename}
-              className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-base shadow-xl shadow-red-600/30 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+              className="w-full sm:w-auto flex-1 px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-base shadow-xl shadow-blue-600/25 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
             >
               <Download className="w-5 h-5" />
               <span>Download Signed PDF</span>
@@ -1057,7 +1057,7 @@ export default function SignPdfTool() {
             <button
               type="button"
               onClick={handleReset}
-              className="inline-flex items-center gap-2 text-xs font-bold text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 text-xs font-bold text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Sign another PDF document</span>
@@ -1092,7 +1092,7 @@ export default function SignPdfTool() {
                   type="button"
                   onClick={() => setModalTab(t)}
                   className={`py-1.5 rounded-lg capitalize transition-colors cursor-pointer ${
-                    modalTab === t ? 'bg-white dark:bg-[#2A2E45] text-red-600 shadow-xs' : 'text-zinc-500'
+                    modalTab === t ? 'bg-white dark:bg-[#2A2E45] text-blue-600 shadow-xs' : 'text-zinc-500'
                   }`}
                 >
                   {t}
@@ -1109,7 +1109,7 @@ export default function SignPdfTool() {
                     type="button"
                     onClick={() => setSigMode('draw')}
                     className={`px-4 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
-                      sigMode === 'draw' ? 'bg-red-50 text-red-600 border-red-300 dark:bg-red-950/40' : 'bg-white dark:bg-[#1B1E2E] border-zinc-200'
+                      sigMode === 'draw' ? 'bg-blue-50 text-blue-600 border-blue-300 dark:bg-blue-950/40' : 'bg-white dark:bg-[#1B1E2E] border-zinc-200'
                     }`}
                   >
                     ✍️ Draw
@@ -1118,7 +1118,7 @@ export default function SignPdfTool() {
                     type="button"
                     onClick={() => setSigMode('type')}
                     className={`px-4 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
-                      sigMode === 'type' ? 'bg-red-50 text-red-600 border-red-300 dark:bg-red-950/40' : 'bg-white dark:bg-[#1B1E2E] border-zinc-200'
+                      sigMode === 'type' ? 'bg-blue-50 text-blue-600 border-blue-300 dark:bg-blue-950/40' : 'bg-white dark:bg-[#1B1E2E] border-zinc-200'
                     }`}
                   >
                     ⌨️ Type (Calligraphy)
@@ -1150,14 +1150,14 @@ export default function SignPdfTool() {
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        {['#000000', '#2563EB', '#DC2626'].map(c => (
+                        {['#000000', '#1E3A8A', '#2563EB'].map(c => (
                           <button
                             key={c}
                             type="button"
                             onClick={() => setPenColor(c)}
                             style={{ backgroundColor: c }}
                             className={`w-5 h-5 rounded-full border border-white shadow-xs ${
-                              penColor === c ? 'ring-2 ring-red-500 scale-110' : ''
+                              penColor === c ? 'ring-2 ring-blue-500 scale-110' : ''
                             }`}
                           />
                         ))}
@@ -1165,7 +1165,7 @@ export default function SignPdfTool() {
                       <button
                         type="button"
                         onClick={clearSigCanvas}
-                        className="text-xs font-bold text-zinc-500 hover:text-red-600"
+                        className="text-xs font-bold text-zinc-500 hover:text-blue-600"
                       >
                         Clear Canvas
                       </button>
@@ -1180,7 +1180,7 @@ export default function SignPdfTool() {
                       value={typedName}
                       placeholder="Type name here..."
                       onChange={(e) => setTypedName(e.target.value)}
-                      className="w-full text-sm rounded-xl px-3.5 py-2.5 border border-zinc-300 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] font-bold text-zinc-900 dark:text-white focus:ring-2 focus:ring-red-500"
+                      className="w-full text-sm rounded-xl px-3.5 py-2.5 border border-zinc-300 dark:border-[#2A2E45] bg-zinc-50 dark:bg-[#1B1E2E] font-bold text-zinc-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                     />
 
                     {/* Handwriting Font Options */}
@@ -1191,7 +1191,7 @@ export default function SignPdfTool() {
                           onClick={() => setSelectedFont(f.family)}
                           className={`p-3 rounded-xl border text-center cursor-pointer transition-all ${
                             selectedFont === f.family
-                              ? 'border-red-500 bg-red-50/50 dark:bg-red-950/30'
+                              ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/30'
                               : 'border-zinc-200 dark:border-[#2A2E45]'
                           }`}
                         >
@@ -1236,7 +1236,7 @@ export default function SignPdfTool() {
             {/* Tab: Checkmark */}
             {modalTab === 'checkmark' && (
               <div className="py-6 text-center space-y-2">
-                <div className="w-16 h-16 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mx-auto text-3xl font-black">
+                <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto text-3xl font-black">
                   ✓
                 </div>
                 <p className="text-xs text-zinc-500">Insert an approval checkmark on the document.</p>
@@ -1255,7 +1255,7 @@ export default function SignPdfTool() {
               <button
                 type="button"
                 onClick={handleSaveSignature}
-                className="px-6 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md shadow-red-600/30"
+                className="px-6 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-600/25"
               >
                 Place on Document
               </button>

@@ -59,8 +59,8 @@ export default function JsonFormatterTool() {
         </div>
 
         {errorMsg && (
-          <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-red-600" />
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-xs font-bold flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-blue-600" />
             <span>{errorMsg}</span>
           </div>
         )}

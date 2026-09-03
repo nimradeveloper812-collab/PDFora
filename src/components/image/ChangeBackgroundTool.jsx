@@ -15,7 +15,7 @@ export default function ChangeBackgroundTool() {
   const colorPresets = [
     { label: 'Passport Blue', hex: '#2563EB' },
     { label: 'Pure White', hex: '#FFFFFF' },
-    { label: 'Studio Red', hex: '#DC2626' },
+    { label: 'Navy Blue', hex: '#1E3A8A' },
     { label: 'Light Gray', hex: '#F1F5F9' },
     { label: 'Soft Green', hex: '#16A34A' },
     { label: 'Dark Slate', hex: '#0F172A' },

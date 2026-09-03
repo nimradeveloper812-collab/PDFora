@@ -109,11 +109,11 @@ export default function UnlockPdfTool() {
 
       <div className="rounded-3xl overflow-hidden bg-white dark:bg-[#141622] border border-blue-200 dark:border-[#2A2E45] shadow-xl p-6 sm:p-8">
         {errorMsg && (
-          <div className="mb-4 flex items-start gap-3 p-4 rounded-2xl bg-red-50 border border-red-200">
-            <AlertCircle className="w-4.5 h-4.5 mt-0.5 shrink-0 text-red-600" />
+          <div className="mb-4 flex items-start gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+            <AlertCircle className="w-4.5 h-4.5 mt-0.5 shrink-0 text-blue-600" />
             <div className="flex-1 text-left">
-              <p className="text-xs font-bold text-red-700">Decryption Issue</p>
-              <p className="text-xs text-red-600 mt-0.5">{errorMsg}</p>
+              <p className="text-xs font-bold text-slate-800 dark:text-slate-200">Decryption Issue</p>
+              <p className="text-xs text-blue-600 mt-0.5">{errorMsg}</p>
             </div>
           </div>
         )}
@@ -163,7 +163,7 @@ export default function UnlockPdfTool() {
               </div>
               <button
                 onClick={handleReset}
-                className="text-xs font-bold text-red-500 hover:text-red-700 transition-colors"
+                className="text-xs font-bold text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
               >
                 Remove
               </button>

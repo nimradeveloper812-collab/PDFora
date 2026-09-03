@@ -36,7 +36,7 @@ const PRESET_COLORS = [
   { name: 'Purple',    fg: '#6C3FFC', bg: '#FFFFFF' },
   { name: 'Royal Blue',fg: '#2563EB', bg: '#FFFFFF' },
   { name: 'Emerald',   fg: '#059669', bg: '#FFFFFF' },
-  { name: 'Crimson',   fg: '#DC2626', bg: '#FFFFFF' },
+  { name: 'Navy',      fg: '#1E3A8A', bg: '#FFFFFF' },
   { name: 'Midnight',  fg: '#1E1B4B', bg: '#EEF2FF' },
   { name: 'Slate',     fg: '#334155', bg: '#F8FAFC' },
   { name: 'Amber',     fg: '#D97706', bg: '#FFFBEB' },
@@ -742,7 +742,7 @@ export default function QrGeneratorTool() {
                         <button
                           type="button"
                           onClick={() => setLogoDataUrl(null)}
-                          className="p-1.5 rounded-lg bg-red-50 dark:bg-red-950/50 text-red-500 hover:bg-red-100 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>

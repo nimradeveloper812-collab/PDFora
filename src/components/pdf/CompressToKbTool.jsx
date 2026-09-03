@@ -387,8 +387,8 @@ export default function CompressToKbTool() {
 
           {/* Error */}
           {error && (
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-xs font-bold text-red-700 dark:text-red-400">
-              <XCircle className="w-4 h-4 shrink-0" />
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200">
+              <XCircle className="w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400" />
               {error}
             </div>
           )}
