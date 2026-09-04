@@ -7,6 +7,7 @@ const __dirname = path.dirname(__filename);
 
 async function generateSitemap() {
   const { TOOLS } = await import('../src/data/toolsData.js');
+  const { BLOG_POSTS } = await import('../src/data/blogData.js');
   
   const today = new Date().toISOString().split('T')[0];
   const baseUrl = 'https://pdfora.nimradev.site';
@@ -25,36 +26,49 @@ async function generateSitemap() {
       priority: '0.9'
     },
     {
+      loc: `${baseUrl}/blog`,
+      lastmod: today,
+      changefreq: 'weekly',
+      priority: '0.85'
+    },
+    {
       loc: `${baseUrl}/about`,
       lastmod: today,
       changefreq: 'monthly',
-      priority: '0.7'
+      priority: '0.8'
     },
     {
       loc: `${baseUrl}/contact`,
       lastmod: today,
       changefreq: 'monthly',
-      priority: '0.7'
+      priority: '0.8'
     },
     {
       loc: `${baseUrl}/privacy-policy`,
       lastmod: today,
       changefreq: 'monthly',
-      priority: '0.5'
+      priority: '0.7'
     },
     {
       loc: `${baseUrl}/terms-of-service`,
       lastmod: today,
       changefreq: 'monthly',
-      priority: '0.5'
+      priority: '0.7'
     },
     {
       loc: `${baseUrl}/disclaimer`,
       lastmod: today,
       changefreq: 'monthly',
-      priority: '0.5'
+      priority: '0.6'
     }
   ];
+
+  const blogPages = BLOG_POSTS.map(post => ({
+    loc: `${baseUrl}/blog/${post.slug}`,
+    lastmod: post.updatedAt || today,
+    changefreq: 'monthly',
+    priority: post.featured ? '0.85' : '0.8'
+  }));
 
   const toolPages = TOOLS.map(tool => ({
     loc: `${baseUrl}${tool.path}`,
@@ -63,7 +77,7 @@ async function generateSitemap() {
     priority: tool.popular ? '0.9' : '0.85'
   }));
 
-  const allPages = [...staticPages, ...toolPages];
+  const allPages = [...staticPages, ...blogPages, ...toolPages];
 
   const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"

@@ -126,6 +126,7 @@ export default function Footer() {
             </h4>
             <ul className="space-y-1">
               <li><Link to="/tools" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">{t('footerAllTools')}</Link></li>
+              <li><Link to="/blog" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">Guides &amp; Articles</Link></li>
               <li><Link to="/about" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">{t('footerAbout')}</Link></li>
               <li><Link to="/contact" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">{t('footerContact')}</Link></li>
               <li><Link to="/privacy-policy" className="text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-sans block">{t('footerPrivacy')}</Link></li>

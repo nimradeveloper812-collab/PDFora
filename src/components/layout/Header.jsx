@@ -111,6 +111,13 @@ export default function Header() {
               </Link>
 
               <Link
+                to="/blog"
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              >
+                Guides
+              </Link>
+
+              <Link
                 to="/about"
                 className="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
               >
@@ -408,6 +415,7 @@ export default function Header() {
 
             <div className="pt-3 border-t border-zinc-200 dark:border-[#2A2E45] flex items-center justify-around text-xs font-bold text-zinc-600 dark:text-zinc-300">
               <Link to="/tools" onClick={() => setIsMobileMenuOpen(false)}>{t('allToolsDirectory')}</Link>
+              <Link to="/blog" onClick={() => setIsMobileMenuOpen(false)}>Guides</Link>
               <Link to="/about" onClick={() => setIsMobileMenuOpen(false)}>{t('about')}</Link>
               <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>{t('support')}</Link>
             </div>

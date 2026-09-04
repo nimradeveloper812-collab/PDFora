@@ -201,6 +201,13 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
         {/* Info Pages */}
         <div className="pt-2 border-t border-zinc-100 space-y-1">
           <Link
+            to="/blog"
+            onClick={() => setMobileOpen && setMobileOpen(false)}
+            className="block px-2.5 py-1 text-xs text-zinc-500 hover:text-purple-700 font-medium"
+          >
+            Guides &amp; Articles
+          </Link>
+          <Link
             to="/about"
             onClick={() => setMobileOpen && setMobileOpen(false)}
             className="block px-2.5 py-1 text-xs text-zinc-500 hover:text-purple-700"

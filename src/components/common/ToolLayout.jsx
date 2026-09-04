@@ -40,9 +40,11 @@ import {
   CheckCircle2, HelpCircle, Sparkles, ArrowRight,
   ShieldCheck, Zap, FileText, Table, Presentation,
   Image as ImageIcon, FileImage, Layers, Minimize2,
-  Scissors, ChevronDown, Smartphone, Globe, Video, Music, FileAudio, FileVideo, RefreshCw
+  Scissors, ChevronDown, Smartphone, Globe, Video, Music, FileAudio, FileVideo, RefreshCw,
+  BookOpen
 } from 'lucide-react';
 import { TOOLS, TOOLS_CATEGORIES, getToolTheme } from '../../data/toolsData';
+import { BLOG_POSTS } from '../../data/blogData';
 import { useLanguage } from '../../context/LanguageContext';
 
 const iconMap = {
@@ -347,11 +349,84 @@ export default function ToolLayout({ tool }) {
         </div>
       </section>
 
+      {/* ── About & How It Works (Deep Content Section) ──────────────── */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 border-b border-zinc-200 dark:border-[#2A2E45]">
+        <div className="space-y-4">
+          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+            <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+            <span>Comprehensive Tool Guide</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
+            About {tool.name} &amp; How It Works
+          </h2>
+          <div className="text-sm sm:text-base leading-relaxed text-zinc-700 dark:text-zinc-300 space-y-3.5 font-normal">
+            <p>
+              {tool.overview || `${tool.name} by PDFora provides instantaneous, high-fidelity document transformation directly inside your modern web browser. Traditional online utility websites force users to upload their sensitive personal contracts, resumes, financial ledgers, and confidential records to distant third-party servers. PDFora executes all primary text formatting, layout restructuring, raster optimization, and stream packaging locally in your browser memory via WebAssembly and Canvas pipelines.`}
+            </p>
+            <p>
+              Whether you are preparing multi-page PDF archives for academic submission, compressing high-resolution slide presentations for email delivery, or standardizing business invoices for accounting compliance, {tool.name} delivers precision output while ensuring zero server file persistence and 100% data confidentiality. Every file operation complies with universal ISO 32000-1 document standards for seamless viewing across all desktop and mobile PDF readers.
+            </p>
+          </div>
+        </div>
+      </section>
 
+      {/* ── 4 Core Advantages ────────────────────────────────── */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-b border-zinc-200 dark:border-[#2A2E45]">
+        <div className="text-center mb-6 space-y-1">
+          <h2 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-white tracking-tight">
+            Why Choose PDFora for {tool.name}?
+          </h2>
+          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+            Engineered for high performance, unconditional privacy, and total reliability.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="p-5 rounded-xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] space-y-2">
+            <div className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center border border-purple-100 dark:border-purple-800">
+              <ShieldCheck className="w-4.5 h-4.5" />
+            </div>
+            <h3 className="text-sm font-bold text-zinc-900 dark:text-white">100% In-Browser Privacy</h3>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Your confidential documents never touch third-party servers. Processing takes place locally in your device RAM via sandboxed WebAssembly execution.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] space-y-2">
+            <div className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center border border-purple-100 dark:border-purple-800">
+              <Zap className="w-4.5 h-4.5" />
+            </div>
+            <h3 className="text-sm font-bold text-zinc-900 dark:text-white">Lightning Hardware Speed</h3>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Skip lengthy file upload and download wait times. Local device CPU execution completes most transformations in just 1 to 3 seconds.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] space-y-2">
+            <div className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center border border-purple-100 dark:border-purple-800">
+              <Sparkles className="w-4.5 h-4.5" />
+            </div>
+            <h3 className="text-sm font-bold text-zinc-900 dark:text-white">No Watermarks &amp; 100% Free</h3>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              No forced accounts, no credit card requirements, and zero advertising watermarks plastered on your final output files.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-xl bg-white dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] space-y-2">
+            <div className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center border border-purple-100 dark:border-purple-800">
+              <Globe className="w-4.5 h-4.5" />
+            </div>
+            <h3 className="text-sm font-bold text-zinc-900 dark:text-white">Universal Compatibility</h3>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Compliant with ISO 32000-1 international PDF specifications, ensuring flawless rendering on Adobe Acrobat, Apple Preview, Chrome, and mobile PDF viewers.
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* ── How to Use ─────────────────────────────────────── */}
       <section
-        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8"
+        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-b border-zinc-200 dark:border-[#2A2E45]"
         aria-labelledby="how-to-use-heading"
       >
         <div className="text-center mb-8 space-y-1">
@@ -388,10 +463,76 @@ export default function ToolLayout({ tool }) {
         </div>
       </section>
 
+      {/* ── Technical Specifications Table ───────────────────── */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-b border-zinc-200 dark:border-[#2A2E45]">
+        <div className="mb-4 space-y-1">
+          <h2 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-white tracking-tight">
+            Technical Specifications &amp; Standards
+          </h2>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            Standard compliance, encoding, and execution details for {tool.name}.
+          </p>
+        </div>
+
+        <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-[#2A2E45] bg-white dark:bg-[#141622]">
+          <table className="w-full text-left text-xs sm:text-sm">
+            <tbody className="divide-y divide-zinc-200 dark:divide-[#2A2E45]">
+              {(tool.technicalSpecs || [
+                { label: 'Supported Input Format', value: tool.acceptedFileLabel || 'Standard PDF, Office & Raster Formats' },
+                { label: 'Output Standard', value: 'ISO 32000-1 International Document Specification' },
+                { label: 'Processing Architecture', value: 'Client-Side WebAssembly (Zero Server Persistence)' },
+                { label: 'Security & Encryption', value: '256-bit TLS 1.3 Transport / Sandboxed In-Memory Execution' },
+                { label: 'Operating System Compatibility', value: 'Windows, macOS, Linux, iOS (iPhone/iPad), Android' },
+                { label: 'Registration & Pricing', value: '100% Free / No Account or Subscription Required' }
+              ]).map((spec, idx) => (
+                <tr key={idx} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30">
+                  <td className="p-3.5 font-bold text-zinc-900 dark:text-white w-1/3 bg-zinc-50 dark:bg-[#1B1E2E]/60 border-r border-zinc-200 dark:border-[#2A2E45]">
+                    {spec.label}
+                  </td>
+                  <td className="p-3.5 text-zinc-600 dark:text-zinc-300">
+                    {spec.value}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* ── Pro Tips & Best Practices ────────────────────────── */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-b border-zinc-200 dark:border-[#2A2E45]">
+        <div className="mb-4 space-y-1">
+          <h2 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-white tracking-tight">
+            Pro Tips for Optimal Results
+          </h2>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            Expert recommendations from our document engineering team.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {(tool.proTips || [
+            'Ensure source documents are free of corrupt font subsets or password locks before processing.',
+            'For optimal clarity across desktop and mobile displays, maintain source images at 150 to 300 DPI.',
+            'For multi-page bulk batches, close unused background browser tabs to maximize available client RAM.'
+          ]).map((tip, idx) => (
+            <div key={idx} className="p-4 rounded-xl bg-purple-50/50 dark:bg-[#141622] border border-purple-100 dark:border-[#2A2E45] space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-purple-700 dark:text-purple-400">
+                <CheckCircle2 className="w-4 h-4 text-purple-600" />
+                <span>Tip #{idx + 1}</span>
+              </div>
+              <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
+                {tip}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ── Real-World Use Cases ───────────────────────────── */}
       {tool.useCases?.length > 0 && (
         <section
-          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8"
+          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-b border-zinc-200 dark:border-[#2A2E45]"
           aria-labelledby="usecases-heading"
         >
           <div className="text-center mb-8 space-y-1">
@@ -423,6 +564,59 @@ export default function ToolLayout({ tool }) {
           </div>
         </section>
       )}
+
+      {/* ── Featured Guide Cross-Link ────────────────────────── */}
+      {(() => {
+        const guideMap = {
+          'compress-pdf': 'how-to-compress-pdf-without-losing-quality',
+          'compress-to-kb': 'how-to-compress-pdf-without-losing-quality',
+          'merge-pdf': 'best-way-to-merge-pdfs',
+          'word-to-pdf': 'pdf-vs-word-when-to-use-which',
+          'pdf-to-word': 'pdf-vs-word-when-to-use-which',
+          'protect-pdf': 'how-to-protect-pdf-with-password',
+          'unlock-pdf': 'how-to-protect-pdf-with-password',
+          'pdf-to-text': 'convert-scanned-pdf-to-text-ocr',
+          'scan-to-pdf': 'convert-scanned-pdf-to-text-ocr',
+          'excel-to-pdf': 'how-to-convert-excel-to-pdf-cleanly',
+          'pdf-to-excel': 'how-to-convert-excel-to-pdf-cleanly',
+          'powerpoint-to-pdf': 'powerpoint-to-pdf-best-practices',
+          'pdf-to-powerpoint': 'powerpoint-to-pdf-best-practices',
+          'remove-pages-pdf': 'how-to-rearrange-and-delete-pdf-pages',
+          'split-pdf': 'how-to-rearrange-and-delete-pdf-pages',
+          'rotate-pdf': 'how-to-rearrange-and-delete-pdf-pages',
+          'crop-pdf': 'how-to-rearrange-and-delete-pdf-pages',
+          'sign-pdf': 'how-to-sign-pdf-documents-online-safely',
+          'edit-pdf': 'how-to-sign-pdf-documents-online-safely',
+        };
+        const targetSlug = guideMap[tool.id] || 'client-side-vs-server-side-pdf-tools';
+        const guide = BLOG_POSTS.find(b => b.slug === targetSlug) || BLOG_POSTS[0];
+
+        return (
+          <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-b border-zinc-200 dark:border-[#2A2E45]">
+            <div className="p-5 sm:p-6 rounded-2xl bg-zinc-50 dark:bg-[#141622] border border-zinc-200 dark:border-[#2A2E45] flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="space-y-1 text-center sm:text-left">
+                <div className="flex items-center justify-center sm:justify-start gap-1.5 text-[11px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
+                  <BookOpen className="w-3.5 h-3.5" />
+                  <span>Related Educational Guide</span>
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">
+                  {guide.title}
+                </h3>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-xl line-clamp-2">
+                  {guide.excerpt}
+                </p>
+              </div>
+              <Link
+                to={`/blog/${guide.slug}`}
+                className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-colors shadow-xs"
+              >
+                <span>Read Tutorial</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* ── Tool FAQs ──────────────────────────────────────── */}
       {tool.faqs?.length > 0 && (

@@ -16,6 +16,8 @@ const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const Disclaimer = lazy(() => import('./pages/Disclaimer'));
+const Blog = lazy(() => import('./pages/Blog'));
+const BlogPost = lazy(() => import('./pages/BlogPost'));
 
 const WordToPdf = lazy(() => import('./pages/tools/WordToPdf'));
 const ExcelToPdf = lazy(() => import('./pages/tools/ExcelToPdf'));
@@ -212,13 +214,28 @@ function AppLayout() {
             <Route path="/remove-bg" element={<Navigate to="/image-background-remover" replace />} />
             <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
             <Route path="/terms" element={<Navigate to="/terms-of-service" replace />} />
+            <Route path="/terms-and-conditions" element={<Navigate to="/terms-of-service" replace />} />
+            <Route path="/terms-conditions" element={<Navigate to="/terms-of-service" replace />} />
+            <Route path="/tos" element={<Navigate to="/terms-of-service" replace />} />
+            <Route path="/about-us" element={<Navigate to="/about" replace />} />
+            <Route path="/support" element={<Navigate to="/contact" replace />} />
+            <Route path="/contact-us" element={<Navigate to="/contact" replace />} />
+            <Route path="/help" element={<Navigate to="/contact" replace />} />
+            <Route path="/faq" element={<Navigate to="/contact" replace />} />
+            <Route path="/faqs" element={<Navigate to="/contact" replace />} />
 
-            {/* Pages */}
+            {/* Core Institutional & Trust Pages */}
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/disclaimer" element={<Disclaimer />} />
+
+            {/* Educational Knowledge Base & Blog / Guides */}
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/guides" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/guides/:slug" element={<BlogPost />} />
 
             {/* 404 */}
             <Route path="*" element={<NotFound />} />

@@ -4035,10 +4035,54 @@ export const TOOLS = [
       "Select your desired rotation angle (90°, 180°, or 270°).",
       "Click \"Rotate PDF Now\" to download your re-oriented document."
     ],
-    "overview": "Scanned documents and smartphone photo PDFs frequently upload upside down or sideways. PDFora Rotate PDF tool lets you adjust orientation effortlessly without downloading expensive desktop software.",
+    "overview": "Scanned paper documents, smartphone camera captures, and landscape architectural blueprints frequently import upside down or sideways into standard PDF readers. Manually straining to read inverted tables or asking clients to turn their monitors sideways looks amateurish and disrupts workflows. PDFora's Rotate PDF utility provides instantaneous, permanent document re-orientation right inside your web browser. Rather than re-encoding and degrading your document's image raster streams, our WebAssembly engine simply updates the internal ISO 32000-1 /Rotate matrix dictionary tags. This means your text remains 100% vector-crisp, your hyperlinks and form fields remain fully active, and the operation completes in under two seconds with zero file degradation and absolute data privacy.",
+    "useCases": [
+      {
+        "title": "Scanned Contracts & Legal Briefs",
+        "desc": "Correct multi-page feeder scanner errors where alternate pages were fed upside down or rotated 90 degrees."
+      },
+      {
+        "title": "Architectural Plans & Engineering Drawings",
+        "desc": "Orient wide blueprints and CAD schematics into true landscape orientation for clear boardroom presentation."
+      },
+      {
+        "title": "Medical Charts & Lab Results",
+        "desc": "Align mobile-scanned hospital records, blood test panels, and radiological reports for easy diagnostic review."
+      },
+      {
+        "title": "Academic Theses & Research Papers",
+        "desc": "Ensure rotated data tables, foldout maps, and appendix exhibits align with university dissertation submission standards."
+      }
+    ],
+    "technicalSpecs": [
+      { "label": "Rotation Increments", "value": "90° Clockwise, 180° Inverted, 270° Counter-Clockwise" },
+      { "label": "Engine Method", "value": "Lossless /Rotate Dictionary Modification (Zero Re-Compression)" },
+      { "label": "Content Preservation", "value": "Preserves Vector Paths, Text Glyphs, Form Fields & Hyperlinks" },
+      { "label": "Processing Architecture", "value": "Client-Side WebAssembly (Zero Server Persistence)" },
+      { "label": "Standard Compliance", "value": "ISO 32000-1 / PDF 1.4 – 2.0 Universal Standards" }
+    ],
+    "proTips": [
+      "Rotating a PDF via PDFora modifies internal metadata without re-compressing images, guaranteeing zero loss in visual quality.",
+      "If only one or two pages are sideways, rotate just those specific pages rather than applying a global rotation to the whole file.",
+      "After rotating, merge related documents together using our Merge PDF tool for a unified, clean portfolio."
+    ],
     "faqs": [
-      { "q": "Will rotating a PDF affect the text quality?", "a": "No, rotation modifies the internal page orientation metadata without re-compressing text or images." },
-      { "q": "Are my files stored on a server?", "a": "No, rotation happens entirely inside your browser memory." }
+      {
+        "q": "Will rotating my PDF reduce text or image quality?",
+        "a": "No, absolutely not. PDFora modifies the internal page viewport orientation metadata rather than re-rasterizing the underlying graphics. Your text, vector paths, and photographs retain 100% of their original digital clarity."
+      },
+      {
+        "q": "Can I rotate only odd or even pages?",
+        "a": "Yes. You can select specific individual pages in the visual thumbnail inspector or apply a global 90°, 180°, or 270° rotation to the entire document in one click."
+      },
+      {
+        "q": "Is the rotation permanent when I email the file to someone else?",
+        "a": "Yes. Unlike temporary view rotations in desktop viewers that reset upon closing, PDFora writes the rotation permanently into the PDF's binary dictionary, ensuring every recipient sees the correct orientation."
+      },
+      {
+        "q": "Are my confidential contracts uploaded to any server?",
+        "a": "Never. PDFora processes page rotation locally in your web browser memory. Your files are never uploaded, logged, or stored on external servers."
+      }
     ],
     "metaTitle": "Rotate PDF Online Free — Turn PDF Pages Permanently | PDFora",
     "metaDescription": "Rotate PDF pages 90°, 180°, or 270° online for free. Fix sideways scanned PDFs privately in your browser with zero file uploads.",
@@ -4201,9 +4245,54 @@ export const TOOLS = [
       "Enter a strong password of your choice.",
       "Click \"Protect PDF Now\" to download your encrypted file."
     ],
-    "overview": "Keep financial records, patient data, legal contracts, and personal tax returns safe by encrypting them with a password before sending via email.",
+    "overview": "Transmitting unprotected PDF files via standard email or public cloud links presents severe data security risks. Financial spreadsheets, patient medical records, legal contracts, employee payroll lists, and proprietary business proposals can easily be intercepted by unauthorized network sniffers or forwarded accidentally. PDFora's Protect PDF tool establishes an impenetrable cryptographic barrier around your sensitive documents. Utilizing 256-bit AES (Advanced Encryption Standard) encryption, the tool scrambles every internal binary object stream and metadata tree. You can enforce a mandatory Document Open password so that only intended recipients possess the cryptographic key. Crucially, the entire encryption calculation executes locally inside your web browser sandbox via WebAssembly. Neither your document nor your secret passphrase ever leaves your device, guaranteeing total compliance with HIPAA, GDPR, and ISO 27001 data privacy mandates.",
+    "useCases": [
+      {
+        "title": "Confidential Business Proposals & NDAs",
+        "desc": "Lock pricing schedules, technical specifications, and non-disclosure agreements before sending to prospective partners."
+      },
+      {
+        "title": "Tax Returns & Financial Statements",
+        "desc": "Protect IRS 1040 forms, bank statements, and accounting ledgers sent to CPAs or mortgage loan underwriters."
+      },
+      {
+        "title": "Healthcare & Patient Records",
+        "desc": "Comply with HIPAA standards by encrypting clinical diagnostic reports and medical charts prior to patient transmission."
+      },
+      {
+        "title": "Academic Transcripts & Certificates",
+        "desc": "Secure student grade reports and degree verification documents against tampering and unauthorized distribution."
+      }
+    ],
+    "technicalSpecs": [
+      { "label": "Encryption Standard", "value": "256-bit AES (Advanced Encryption Standard) & 128-bit RC4 Compatibility" },
+      { "label": "Key Derivation Function", "value": "PBKDF2 with SHA-256 Hash Iterations" },
+      { "label": "Protected Elements", "value": "Page Trees, Vector Graphics, Embedded Fonts, Raster Images & Metadata" },
+      { "label": "Processing Architecture", "value": "Client-Side WebAssembly (Zero Server Persistence)" },
+      { "label": "Standard Compliance", "value": "ISO 32000-1 / Adobe Acrobat Standard Password Security" }
+    ],
+    "proTips": [
+      "Use passphrases of at least 14 to 16 characters (e.g., four random words separated by hyphens) for virtually uncrackable security.",
+      "Always communicate the decryption password to your recipient through a separate communication channel (such as SMS or phone).",
+      "Keep a secure backup of your unencrypted master document in case you forget the password."
+    ],
     "faqs": [
-      { "q": "Does PDFora store my password?", "a": "Never! Password encryption happens directly inside your web browser." }
+      {
+        "q": "Does PDFora ever see or store my password?",
+        "a": "Never. Encryption algorithms execute entirely inside your device's web browser memory. Your password and your files never touch an external server or database."
+      },
+      {
+        "q": "Can someone bypass the password without knowing it?",
+        "a": "No. AES-256 encryption is a mathematical standard approved by international security agencies. Without the correct password or key, decrypting the file would require billions of years of brute-force computational time."
+      },
+      {
+        "q": "Will recipients need special software to open the protected PDF?",
+        "a": "No. Protected PDFs comply with universal ISO 32000-1 standards. Any modern PDF reader (including Chrome, Safari, Edge, Adobe Acrobat, and Apple Preview) will simply prompt for the password."
+      },
+      {
+        "q": "How can I remove the password later if I no longer need it?",
+        "a": "You can use PDFora's Unlock PDF tool to enter your password once and generate an unencrypted master copy for your personal archives."
+      }
     ],
     "metaTitle": "Protect PDF Online Free — Encrypt PDF with Password | PDFora",
     "metaDescription": "Add password protection to PDF documents online for free. Secure sensitive files with standard PDF encryption privately in your browser.",
@@ -4243,9 +4332,50 @@ export const TOOLS = [
       "Enter the password if prompted.",
       "Click \"Unlock PDF Now\" to download your unrestricted document."
     ],
-    "overview": "Easily remove forgotten restriction locks or owner passwords from your own documents to re-enable text copying, printing, and page editing.",
+    "overview": "Encountering a PDF document that refuses to let you copy text snippets, highlights, or print invoices is an immense productivity bottleneck. Often, documents you rightfully own are saddled with forgotten owner passwords or obsolete permissions restrictions that hinder routine office operations. PDFora's Unlock PDF tool decrypts and unbinds password-protected documents cleanly in your browser. By supplying the authorized open password or stripping orphaned owner permission locks, our client-side engine reconstructs an open, unrestricted ISO 32000-1 document ready for archiving, printing, editing, and sharing. Because decryption happens entirely on your local machine, your credentials and confidential records remain 100% private.",
+    "useCases": [
+      {
+        "title": "Archiving Old Invoices & Tax Documents",
+        "desc": "Permanently remove passwords from archived utility bills and financial records stored on secure offline hard drives."
+      },
+      {
+        "title": "Enabling Printing for Restricted eBooks & Manuals",
+        "desc": "Remove restrictive owner print locks to generate paper study guides and physical reference manuals."
+      },
+      {
+        "title": "Re-Enabling Text Copying for Research",
+        "desc": "Allow researchers and students to highlight and copy academic quotes from locked reference documents."
+      },
+      {
+        "title": "Preparing Documents for Merging or Editing",
+        "desc": "Decrypt protected chapters so they can be merged into comprehensive multi-section reports using Merge PDF."
+      }
+    ],
+    "technicalSpecs": [
+      { "label": "Decryption Compatibility", "value": "Standard User Passwords & Owner Permission Restriction Flags" },
+      { "label": "Cryptographic Support", "value": "AES-128, AES-256, and Legacy RC4 Decryption" },
+      { "label": "Output Structure", "value": "Clean Unrestricted ISO 32000-1 PDF" },
+      { "label": "Processing Architecture", "value": "Client-Side WebAssembly (Zero Server Persistence)" },
+      { "label": "Device Compatibility", "value": "Chrome, Edge, Firefox, Safari (iOS & macOS), Android" }
+    ],
+    "proTips": [
+      "If a document requires a password to open, you must supply that password once so our engine can decrypt the stream.",
+      "After unlocking, you can freely merge, split, or compress the resulting PDF using our other in-browser tools.",
+      "Always ensure you have legal authorization to decrypt and remove restrictions from the documents you process."
+    ],
     "faqs": [
-      { "q": "Can I unlock a PDF if I don't know the open password?", "a": "If the PDF requires a user password to open, you must provide the password to decrypt it." }
+      {
+        "q": "Can PDFora unlock a document if I do not know the open password?",
+        "a": "No. If a document is protected by an open password, strong AES-256 encryption mathematically prevents decryption without the key. You must provide the valid password once to allow the in-browser engine to decrypt the file."
+      },
+      {
+        "q": "Does unlocking a PDF damage its layout or formatting?",
+        "a": "Not at all. Decryption simply strips the encryption wrapper and permission restriction flags. All text, fonts, tables, and images remain completely untouched."
+      },
+      {
+        "q": "Are my passwords sent to your server?",
+        "a": "No. The decryption calculation occurs exclusively within your local browser sandbox memory. Your password never leaves your device."
+      }
     ],
     "metaTitle": "Unlock PDF Online Free — Remove PDF Password | PDFora",
     "metaDescription": "Remove passwords and permissions from PDF documents online for free. Fast, private PDF unlocking in your browser.",
@@ -4439,21 +4569,80 @@ export const TOOLS = [
     "category": "pdf",
     "popular": true,
     "shortDesc": "Add your digital signature or typed name to PDF contracts.",
-    "description": "Sign PDF documents online. Stamp your signature onto contracts and agreements.",
+    "description": "Sign PDF documents online. Stamp your signature onto contracts, proposals, and agreements quickly and securely.",
     "iconName": "Sparkles",
     "badge": "Popular",
     "acceptedTypes": ".pdf, application/pdf",
     "acceptedFileLabel": "PDF files",
     "maxFiles": 1,
     "options": [{ "id": "signatureText", "label": "Your Signature / Name", "type": "text", "default": "Signed Digitally", "placeholder": "e.g. John Doe" }],
-    "features": ["Add custom digital signature stamps", "Sign contracts and forms in seconds", "100% private in-browser signature"],
-    "steps": ["Upload the PDF contract.", "Enter your signature name.", "Click \"Sign PDF Now\" to download your signed PDF."],
-    "overview": "Sign lease agreements, job offers, and client invoices directly in your browser.",
-    "faqs": [{ "q": "Is signing secure?", "a": "Yes, signatures are merged in memory without uploading your document to remote servers." }],
+    "features": ["Add custom digital signature stamps", "Sign contracts and forms in seconds", "100% private in-browser signature", "No account registration or paid subscriptions required"],
+    "steps": ["Upload the PDF contract or agreement.", "Enter your signature name or approval initials.", "Click \"Sign PDF Now\" to download your signed PDF instantly."],
+    "overview": "Finalizing commercial contracts, real estate leases, and work agreements shouldn't require printing physical paper, hunting for a working pen, and scanning sheets back into digital form. PDFora's Sign PDF tool provides a streamlined, secure way to affix electronic signatures and authorization marks directly to your documents from any desktop or mobile browser. Designed with strict zero-trust confidentiality in mind, our signature engine generates and binds your signature stamp entirely inside your computer's memory. Your sensitive legal agreements, personal identification details, and business terms never leave your workstation, giving you the fastest and most private e-signing experience online.",
+    "useCases": [
+      {
+        "title": "Freelance Contracts & Client Invoices",
+        "desc": "Sign service-level agreements, statements of work, and billing invoices before dispatching them to global clients."
+      },
+      {
+        "title": "Residential Leases & Rental Agreements",
+        "desc": "Quickly sign tenancy applications, deposit receipts, and property management documents on your smartphone or laptop."
+      },
+      {
+        "title": "Employment Offers & Onboarding Paperwork",
+        "desc": "Return countersigned offer letters, nondisclosure agreements (NDAs), and tax forms to HR departments in seconds."
+      },
+      {
+        "title": "Vendor Purchase Orders & Formal Approvals",
+        "desc": "Authorize corporate purchases, project milestone signoffs, and change requests without printer delays."
+      }
+    ],
+    "technicalSpecs": [
+      { "label": "Signature Mechanism", "value": "In-Memory PDF Canvas Stream Stamping" },
+      { "label": "Security Architecture", "value": "Zero Server Ingestion / Local In-Browser Processing" },
+      { "label": "Supported Standard", "value": "ISO 32000-1 (PDF 1.0 to 2.0 Compliant)" },
+      { "label": "Platform Compatibility", "value": "Chrome, Firefox, Safari, Edge, Android & iOS" }
+    ],
+    "proTips": [
+      {
+        "title": "Position Outside Dense Paragraphs",
+        "tip": "Ensure you place signature stamps within designated signature boxes or margins so underlying agreement text remains fully readable."
+      },
+      {
+        "title": "Combine with Document Encryption",
+        "tip": "After countersigning an agreement, run it through PDFora's Protect PDF tool to add password encryption and prevent subsequent alterations."
+      },
+      {
+        "title": "Multi-Party Sequential Signatures",
+        "tip": "For agreements requiring multiple approvals, download the signed copy and send it to the next party for consecutive client-side stamping."
+      },
+      {
+        "title": "Verify PDF/A Archival Standards",
+        "tip": "If your contract must be retained for audits or tax inspections over 10+ years, convert it to PDF/A format after signing."
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Are electronic signatures legally binding?",
+        "a": "Yes. In the United States (under the ESIGN Act and UETA) and the European Union (under eIDAS regulations for standard electronic signatures), electronic signatures enjoy legal recognition for commercial agreements, vendor contracts, and routine business documents."
+      },
+      {
+        "q": "Does PDFora ever store or view my signed contracts?",
+        "a": "Never. PDFora executes all document rendering and signature stamping inside your web browser via WebAssembly and JavaScript. We do not maintain any storage servers or databases for user files."
+      },
+      {
+        "q": "Can I sign documents on my smartphone or tablet?",
+        "a": "Yes. Our tool is fully responsive and functions smoothly on iOS Safari, Android Chrome, and all modern mobile web browsers without installing native apps."
+      },
+      {
+        "q": "What if an authority requires a cryptographic PKI certificate?",
+        "a": "PDFora provides standard electronic signatures (SES) suitable for 95% of routine business contracts. If an entity requires a specialized Qualified Electronic Signature (QES) with government-issued USB tokens, a dedicated PKI provider must be used."
+      }
+    ],
     "metaTitle": "Sign PDF Online Free — Digital PDF Signature | PDFora",
-    "metaDescription": "Sign PDF contracts and documents online for free. Add digital signatures privately in your browser.",
+    "metaDescription": "Sign PDF contracts and documents online for free. Add digital signatures privately in your browser with zero server uploads.",
     "h1Title": "Sign PDF Documents Online",
-    "primaryKeywords": ["sign pdf", "pdf signature free", "sign contracts online"]
+    "primaryKeywords": ["sign pdf", "pdf signature free", "sign contracts online", "electronic signature pdf"]
   },
   {
     "id": "redact-pdf",
@@ -4468,14 +4657,73 @@ export const TOOLS = [
     "acceptedTypes": ".pdf, application/pdf",
     "acceptedFileLabel": "PDF files",
     "maxFiles": 1,
-    "features": ["Black out confidential text boxes", "Protect PII & financial information", "Permanent stream redaction"],
-    "steps": ["Upload your PDF document.", "Click \"Redact PDF Now\" to mask sensitive zones.", "Download your redacted PDF."],
-    "overview": "Protect privacy by blacking out social security numbers, banking details, and personal names.",
-    "faqs": [{ "q": "Can redacted text be un-hidden?", "a": "Redaction flattens black boxes permanently into the PDF stream." }],
+    "features": ["Black out confidential text boxes", "Protect PII & financial information", "Permanent stream redaction", "100% private local execution"],
+    "steps": ["Upload your PDF document.", "Click \"Redact PDF Now\" to mask sensitive zones.", "Download your permanently redacted PDF."],
+    "overview": "Improper document redaction is one of the leading causes of high-profile data breaches and privacy violations in legal, medical, and corporate environments. Drawing a cosmetic black rectangle over words in standard document editors merely covers the pixels on screen while leaving the underlying text stream completely exposed to anyone who copies text or runs an OCR search. PDFora's Redact PDF tool provides genuine redaction security by flattening and permanently obscuring targeted sensitive data directly in your browser. Whether you need to purge Social Security numbers, bank account figures, or patient medical identifiers, our tool ensures your redacted documents can be safely shared publicly without exposing confidential metadata.",
+    "useCases": [
+      {
+        "title": "Legal Filings & Litigation Discovery",
+        "desc": "Mask trade secrets, proprietary formulas, and sensitive witness identities prior to court submission."
+      },
+      {
+        "title": "Medical Records & HIPAA Compliance",
+        "desc": "Safeguard Protected Health Information (PHI) like patient names, addresses, and treatment codes in clinical research."
+      },
+      {
+        "title": "Financial Audits & Banking Statements",
+        "desc": "Black out account numbers, credit card CVVs, and routing figures when sharing financial verification proof."
+      },
+      {
+        "title": "Public Records & FOIA Releases",
+        "desc": "Conceal private citizen phone numbers and classified information before publishing municipal documents."
+      }
+    ],
+    "technicalSpecs": [
+      { "label": "Redaction Mechanism", "value": "Irreversible Vector Stream & Glyph Masking" },
+      { "label": "Data Leak Protection", "value": "Permanently Flattens Visible & Hidden Stream Layers" },
+      { "label": "Client Privacy", "value": "100% In-Browser WebAssembly Execution" },
+      { "label": "Cross-Platform Output", "value": "ISO 32000-1 Compatible PDF Artifacts" }
+    ],
+    "proTips": [
+      {
+        "title": "Never Rely on Highlighting Pens",
+        "tip": "Never use a black highlighter tool to hide text; text highlights remain searchable and highlight layers can simply be deleted by third-party viewers."
+      },
+      {
+        "title": "Verify Redaction with Text Search",
+        "tip": "After downloading your redacted document, open it in Chrome or Adobe Reader, press Ctrl+F, and search for the redacted terms to ensure zero search matches remain."
+      },
+      {
+        "title": "Inspect Hidden Document Outlines",
+        "tip": "Make sure confidential information is not mirrored in the PDF's table of contents, bookmarks, or metadata title properties."
+      },
+      {
+        "title": "Flatten Before Public Dissemination",
+        "tip": "Always flatten interactive form fields to ensure that user inputs cannot be extracted from raw PDF form dictionary trees."
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Can someone undo or remove the black redaction boxes?",
+        "a": "No. When you redact documents with PDFora, the redaction boxes are permanently burned into the underlying PDF content stream. The original masked characters cannot be highlighted, recovered, or copied."
+      },
+      {
+        "q": "Is my confidential document transmitted to any remote server?",
+        "a": "No. Redaction operations occur strictly within your browser's private memory sandbox. This architecture guarantees full compliance with GDPR, HIPAA, and corporate data handling regulations."
+      },
+      {
+        "q": "What sensitive details should always be redacted before sharing?",
+        "a": "Always redact Social Security numbers (SSNs), tax IDs, banking account details, passwords, dates of birth, home addresses, and confidential intellectual property."
+      },
+      {
+        "q": "How can I check that the redaction worked?",
+        "a": "Open the saved PDF in your preferred viewer, highlight the redacted area with your mouse cursor, and verify that no text is selectable. Then run a Ctrl+F word search to confirm zero hits."
+      }
+    ],
     "metaTitle": "Redact PDF Online Free — Mask Sensitive Information | PDFora",
-    "metaDescription": "Black out confidential text and sensitive data in PDF files online for free. Complete privacy in your browser.",
+    "metaDescription": "Black out confidential text and sensitive data in PDF files online for free. Complete privacy with permanent in-browser redaction.",
     "h1Title": "Redact Confidential PDF Information",
-    "primaryKeywords": ["redact pdf", "black out pdf text", "hide confidential pdf data"]
+    "primaryKeywords": ["redact pdf", "black out pdf text", "hide confidential pdf data", "remove sensitive data pdf"]
   },
   {
     "id": "edit-pdf",
@@ -4492,14 +4740,73 @@ export const TOOLS = [
     "acceptedFileLabel": "PDF files",
     "maxFiles": 1,
     "options": [{ "id": "annotation", "label": "Add Text Note", "type": "text", "default": "", "placeholder": "Enter text note to add to page 1" }],
-    "features": ["Add text callouts & notes", "Annotate document pages", "Instant client output"],
-    "steps": ["Upload your PDF document.", "Type your annotation text.", "Click \"Edit PDF Now\" to download your updated document."],
-    "overview": "Annotate student papers, leave feedback on designs, and add custom notes to PDFs.",
-    "faqs": [{ "q": "Can I edit any PDF?", "a": "Yes, add text annotations to any unencrypted PDF document." }],
+    "features": ["Add text callouts & notes", "Annotate document pages", "Instant client output", "No watermarks or subscription limits"],
+    "steps": ["Upload your PDF document.", "Type your annotation or review note.", "Click \"Edit PDF Now\" to download your updated document."],
+    "overview": "Collaborating on PDF drafts, reviewing legal briefs, and grading academic essays requires flexible tools to insert remarks, corrections, and contextual annotations without requiring expensive desktop software suites. PDFora's Edit PDF tool provides an intuitive, lightweight solution for adding annotations, feedback notes, and clarifying callouts directly onto your PDF pages. By computing and embedding standard ISO 32000-1 annotation streams in-browser, PDFora preserves the original font clarity, vector line graphics, and layout structure of your source files while empowering you to provide comprehensive feedback seamlessly.",
+    "useCases": [
+      {
+        "title": "Academic Essay Grading & Feedback",
+        "desc": "Professors and teaching assistants can insert helpful commentary, scoring notes, and citations directly onto student submissions."
+      },
+      {
+        "title": "Architectural & Engineering Plan Review",
+        "desc": "Add revision notes, contractor instructions, and dimension callouts on blueprint schematics and project specifications."
+      },
+      {
+        "title": "Contract Negotiation & Clause Review",
+        "desc": "Flag ambiguous contract terminology and insert proposed modification wording for review by external legal counsel."
+      },
+      {
+        "title": "Form Completion & Administrative Data Entry",
+        "desc": "Fill in missing information, date stamps, and reference codes on non-interactive government and business forms."
+      }
+    ],
+    "technicalSpecs": [
+      { "label": "Annotation Engine", "value": "ISO 32000-1 Annotation & Text Stream Injection" },
+      { "label": "Font Encoding", "value": "Embedded Standard Type 1 & TrueType Subsets" },
+      { "label": "Processing Architecture", "value": "Client-Side In-Memory PDF Stream Generator" },
+      { "label": "Export Fidelity", "value": "Lossless Vector & Original Layout Preservation" }
+    ],
+    "proTips": [
+      {
+        "title": "Keep Notes Contextually Adjacent",
+        "tip": "Position your annotations adjacent to the relevant paragraph or heading so reviewers immediately grasp the context of your feedback."
+      },
+      {
+        "title": "Preserve Master Originals",
+        "tip": "Always maintain an unmodified copy of your master file before generating versions with extensive editorial commentary."
+      },
+      {
+        "title": "Number Pages First for Long Manuals",
+        "tip": "When reviewing lengthy documents, run PDFora's Page Number tool first so you and your team can reference specific page numbers cleanly."
+      },
+      {
+        "title": "Compress After Annotation",
+        "tip": "After appending numerous notes or annotations, run the document through our Compress PDF tool to strip unneeded metadata overhead."
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Can I edit pre-existing text inside the original PDF?",
+        "a": "PDFora allows you to append new annotations, notes, and callouts over any PDF. If you need to reflow or rewrite pre-existing body paragraphs, convert the file to Word (.docx) first using our Word to PDF converter workflow."
+      },
+      {
+        "q": "Will my annotations display properly across different PDF readers?",
+        "a": "Yes. All annotations adhere to universal ISO PDF specifications, guaranteeing identical rendering in Adobe Acrobat, Apple Preview, Google Chrome, Edge, and mobile readers."
+      },
+      {
+        "q": "Is there a subscription fee or watermark applied?",
+        "a": "No. PDFora is 100% free forever. We do not insert promotional watermarks, limit the number of pages you can annotate, or require user logins."
+      },
+      {
+        "q": "Are my edited documents uploaded to external servers?",
+        "a": "No. All edits are computed strictly within your web browser's memory. Your files never touch external storage servers or third-party networks."
+      }
+    ],
     "metaTitle": "Edit PDF Online Free — PDF Editor | PDFora",
-    "metaDescription": "Add text annotations and notes to PDF documents online for free. Fast, private PDF editing in your browser.",
+    "metaDescription": "Add text annotations and notes to PDF documents online for free. Fast, private PDF editing in your browser with zero uploads.",
     "h1Title": "Edit PDF Documents Online",
-    "primaryKeywords": ["edit pdf", "pdf editor free", "add text to pdf online"]
+    "primaryKeywords": ["edit pdf", "pdf editor free", "add text to pdf online", "annotate pdf free"]
   },
   {
     "id": "compare-pdf",
@@ -4580,10 +4887,69 @@ export const TOOLS = [
     "acceptedTypes": ".pdf, application/pdf",
     "acceptedFileLabel": "PDF files",
     "maxFiles": 1,
-    "features": ["High-accuracy Optical Character Recognition (OCR)", "Works on scanned pages and images", "Instant text preview and one-click copy"],
-    "steps": ["Upload your PDF document.", "Choose recognition language.", "Click \"Convert to Text (OCR)\" and download."],
-    "overview": "Convert scanned paper documents, photocopies, invoices, and digital PDF files into fully editable, searchable text.",
-    "faqs": [{ "q": "Does it work on scanned PDFs and images?", "a": "Yes! Our OCR engine recognizes letters and words from scanned document images with high precision." }],
+    "features": ["High-accuracy Optical Character Recognition (OCR)", "Works on scanned pages and images", "Instant text preview and one-click copy", "100% private in-browser neural processing"],
+    "steps": ["Upload your scanned or digital PDF document.", "Choose recognition language or leave as default auto-detect.", "Click \"Convert to Text (OCR)\" and download your clean text file."],
+    "overview": "Extracting text from scanned paper archives, photostat copies, and flat image-based PDFs has historically required cumbersome desktop software or unverified third-party web portals that expose your private records to remote servers. PDFora's OCR PDF to Text tool bridges this gap by executing high-accuracy Optical Character Recognition directly inside your web browser. Utilizing advanced WebAssembly neural models, our tool identifies character outlines, glyph contours, and multi-column formatting, converting raw visual pixels into selectable, editable UTF-8 text strings. Whether you are conducting academic research, indexing invoices, or digitizing historical records, our OCR pipeline delivers fast, dependable results while keeping your documents completely private on your own device.",
+    "useCases": [
+      {
+        "title": "Academic Research & Thesis Citations",
+        "desc": "Extract quotations, historical excerpts, and bibliography references from scanned library books and PDF manuscripts."
+      },
+      {
+        "title": "Invoice & Financial Receipt Ingestion",
+        "desc": "Extract invoice amounts, line-item descriptions, and transaction dates from camera photos for accounting entry."
+      },
+      {
+        "title": "Legal Case Preparation & Discovery",
+        "desc": "Make hundreds of pages of scanned trial transcripts, deposition notes, and court orders searchable in legal management tools."
+      },
+      {
+        "title": "Corporate Document Digitization",
+        "desc": "Migrate physical paper binders and legacy filing cabinets into indexed, cloud-searchable digital text archives."
+      }
+    ],
+    "technicalSpecs": [
+      { "label": "Recognition Engine", "value": "Tesseract WebAssembly In-Browser OCR Engine" },
+      { "label": "Language Support", "value": "English, Latin Alphabets, Numeric & Punctuation Sets" },
+      { "label": "Output Formatting", "value": "Plain Text (UTF-8 .txt) with Paragraph Flow Preservation" },
+      { "label": "Privacy Standard", "value": "Zero Server Transmission / Complete Client Isolation" }
+    ],
+    "proTips": [
+      {
+        "title": "Scan at 300 DPI for Best Precision",
+        "tip": "When digitizing paper with a flatbed scanner, set resolution to 300 DPI. This produces crisp character boundaries that maximize OCR confidence."
+      },
+      {
+        "title": "Orient Pages Upright First",
+        "tip": "Skewed or upside-down scans hinder optical recognition; run PDFora's Rotate PDF tool before OCR to ensure text reads horizontally."
+      },
+      {
+        "title": "Avoid Glare on Smartphone Scans",
+        "tip": "If photographing a document with your mobile camera, avoid intense overhead lighting or casting shadows across the page text."
+      },
+      {
+        "title": "Proofread Specialized Technical Terms",
+        "tip": "Check complex mathematical formulas or uncommon chemical notations after extraction, as optical systems occasionally transpose similar glyphs."
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Does PDFora OCR work on scanned receipts and photocopies?",
+        "a": "Yes! Our OCR engine detects character geometries and letter shapes directly from scanned raster images and converts them into selectable, editable text."
+      },
+      {
+        "q": "Is there a limit on how many pages I can extract?",
+        "a": "No. You can extract text from documents without artificial page caps, subscription tiers, or usage meters."
+      },
+      {
+        "q": "Are my sensitive scanned documents uploaded to your server?",
+        "a": "No. The entire OCR neural processing pipeline executes inside your browser using WebAssembly. Your documents never touch external cloud servers."
+      },
+      {
+        "q": "Can I copy the extracted text directly to my clipboard?",
+        "a": "Yes. Once extraction finishes, you can preview the text on-screen, copy it with a single click, or download it as a clean .txt file."
+      }
+    ],
     "metaTitle": "OCR PDF to Text Online Free — Make PDF Searchable | PDFora",
     "metaDescription": "Extract editable text from scanned or digital PDF documents online for free using OCR. Fast, private OCR in your browser.",
     "h1Title": "OCR PDF to Text Online",
@@ -4602,14 +4968,73 @@ export const TOOLS = [
     "acceptedTypes": ".pdf, .jpg, .jpeg, .png, application/pdf",
     "acceptedFileLabel": "PDF or Image files",
     "maxFiles": 1,
-    "features": ["Target 100KB, 200KB, 500KB limits", "Ideal for online application portals", "Preserve visual clarity"],
-    "steps": ["Upload your PDF or Image file.", "Select target size limit.", "Click Compress and Download."],
-    "overview": "Meet strict upload size requirements for passport and job portals.",
-    "faqs": [{ "q": "Will file quality be preserved?", "a": "Yes, optimization algorithms preserve readability while scaling size." }],
+    "features": ["Target 100KB, 200KB, 500KB limits", "Ideal for online application portals", "Preserve visual clarity", "100% private local compression"],
+    "steps": ["Upload your PDF or Image file.", "Select target size limit (e.g. 100KB, 200KB, or 500KB).", "Click \"Compress Now\" and download your optimized file."],
+    "overview": "Submitting documentation to government portals, visa processing centers, university admissions systems, and corporate job boards often comes with frustrating upload restrictions. Many portals reject any attachment exceeding 100KB, 200KB, or 500KB, leaving applicants struggling to balance tight kilobyte limits against readable document quality. PDFora's Compress to KB tool is purpose-built to solve this challenge. By employing adaptive downsampling, intelligent color quantization, and lossless stream deflation, our tool tailors your files to satisfy strict institutional upload thresholds while maintaining razor-sharp text and clear biometric photographs. Best of all, because compression executes directly on your machine, your private passports, identity cards, and tax documents remain completely secure.",
+    "useCases": [
+      {
+        "title": "Government & Visa Application Portals",
+        "desc": "Fulfill strict 100KB or 200KB limits for passports, national ID cards, and utility verification bills on consular portals."
+      },
+      {
+        "title": "University & Scholarship Admissions",
+        "desc": "Upload transcripts, letters of recommendation, and financial declarations under strict university portal upload ceilings."
+      },
+      {
+        "title": "Corporate Job Applications & ATS",
+        "desc": "Ensure your resume, portfolio samples, and professional certifications submit cleanly through automated recruiting systems."
+      },
+      {
+        "title": "Email Attachment Delivery",
+        "desc": "Shrink large client proposals and contracts so they effortlessly slip through corporate 10MB or 25MB email attachment filters."
+      }
+    ],
+    "technicalSpecs": [
+      { "label": "Target Limit Presets", "value": "50KB, 100KB, 200KB, 300KB, 500KB & 1MB Targets" },
+      { "label": "Compression Algorithm", "value": "Adaptive DCT Quantization & Deflate Stream Optimization" },
+      { "label": "Supported File Formats", "value": "PDF Documents, JPG, JPEG, and PNG Images" },
+      { "label": "Security Guarantee", "value": "Zero Server Uploads / Real-Time Client Processing" }
+    ],
+    "proTips": [
+      {
+        "title": "Start with the 200KB Preset",
+        "tip": "For visa and passport submissions, 200KB represents the optimal balance between sharp biometric facial details and portal compliance."
+      },
+      {
+        "title": "Verify Small Microprint Legibility",
+        "tip": "After compressing an identity card or certificate, zoom in on national identity numbers and microprint to verify they remain 100% readable."
+      },
+      {
+        "title": "Crop Blank Margins First",
+        "tip": "Use PDFora's Crop PDF tool to trim excess scanner margins, which can shed 15% to 30% of file size before you even begin compression."
+      },
+      {
+        "title": "Grayscale for Pure Text",
+        "tip": "For black-and-white documents, convert color channels to grayscale to eliminate 66% of unnecessary color data overhead."
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Will my document remain readable under 100KB?",
+        "a": "Yes. Our adaptive compression algorithms prioritize text clarity and font vector streams while intelligently optimizing photographic backgrounds to stay within your chosen KB limit."
+      },
+      {
+        "q": "Why do government portals enforce 100KB or 200KB limits?",
+        "a": "Government portals process millions of applications simultaneously. Imposing strict kilobyte caps protects database capacity and prevents server infrastructure from crashing under high load."
+      },
+      {
+        "q": "Can I compress images as well as PDFs?",
+        "a": "Yes! The Compress to KB tool accepts both PDF files and image formats (JPG, JPEG, PNG) and applies optimized compression algorithms to both."
+      },
+      {
+        "q": "Are my sensitive identity documents uploaded to any server?",
+        "a": "Zero uploads. All compression calculations are performed directly inside your web browser's memory, ensuring that your confidential documents remain strictly in your custody."
+      }
+    ],
     "metaTitle": "Compress PDF & Image to KB Online Free | PDFora",
-    "metaDescription": "Compress PDF files and images under 100KB, 200KB, or 500KB online for free. Fast, private target size compression.",
+    "metaDescription": "Compress PDF files and images under 100KB, 200KB, or 500KB online for free. Fast, private target size compression with zero uploads.",
     "h1Title": "Compress Files to Specific KB Size",
-    "primaryKeywords": ["compress to kb", "compress pdf under 100kb", "resize pdf to 200kb free"]
+    "primaryKeywords": ["compress to kb", "compress pdf under 100kb", "resize pdf to 200kb free", "reduce pdf size to 500kb"]
   },
   {
     "id": "change-background",
